@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard - Unasemeje</title>
+</head>
+<body>
+
+  <h2>Dashboard</h2>
+
+  <p>Balance: <span id="balance">Loading...</span></p>
+
+  <button onclick="loadBalance()">Refresh Balance</button>
+  <button onclick="logout()">Logout</button>
+
+  <h3>Place Order</h3>
+
+  <input type="text" id="service" placeholder="Service ID">
+  <input type="text" id="link" placeholder="Link">
+  <input type="number" id="quantity" placeholder="Quantity">
+  <button onclick="placeOrder()">Submit Order</button>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
