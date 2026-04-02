@@ -4,14 +4,8 @@ function register() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  // ✅ Validation
   if (!email || !password) {
     alert("Please fill all fields");
-    return;
-  }
-
-  if (password.length < 4) {
-    alert("Password must be at least 4 characters");
     return;
   }
 
@@ -24,19 +18,15 @@ function register() {
   })
   .then(res => res.json())
   .then(data => {
-    // ✅ Handle backend errors
     if (data.error) {
       alert(data.error);
-      return;
+    } else {
+      alert(data.message);
+      window.location.href = "index.html";
     }
-
-    alert(data.message || "Registration successful");
-
-    // Redirect to login page
-    window.location.href = "index.html";
   })
   .catch(err => {
-    console.error("Error:", err);
-    alert("Registration failed. Check your connection or server.");
+    console.error(err);
+    alert("Registration failed");
   });
 }
