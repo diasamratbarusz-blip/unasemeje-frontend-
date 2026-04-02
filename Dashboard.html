@@ -2,23 +2,42 @@
 <html>
 <head>
   <title>Dashboard - Unasemeje</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h2>Dashboard</h2>
+  <h2>Unasemeje Dashboard</h2>
 
-  <p>Balance: <span id="balance">Loading...</span></p>
-
+  <!-- Balance Section -->
+  <p><strong>Balance:</strong> <span id="balance">Loading...</span></p>
   <button onclick="loadBalance()">Refresh Balance</button>
   <button onclick="logout()">Logout</button>
 
-  <h3>Place Order</h3>
+  <hr>
 
+  <!-- Order Section -->
+  <h3>Place Order</h3>
   <input type="text" id="service" placeholder="Service ID">
   <input type="text" id="link" placeholder="Link">
   <input type="number" id="quantity" placeholder="Quantity">
   <button onclick="placeOrder()">Submit Order</button>
 
+  <hr>
+
+  <!-- Orders History -->
+  <h3>My Orders</h3>
+  <button onclick="loadOrders()">Load Orders</button>
+  <ul id="orders"></ul>
+
+  <hr>
+
+  <!-- Deposit Section -->
+  <h3>Deposit</h3>
+  <input type="number" id="amount" placeholder="Amount">
+  <input type="text" id="code" placeholder="M-Pesa Code">
+  <button onclick="deposit()">Submit Deposit</button>
+
   <script src="dashboard.js"></script>
+
 </body>
 </html>
