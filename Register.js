@@ -1,8 +1,19 @@
 const API_URL = "https://unasemeje.onrender.com";
 
 function register() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  // ✅ Validation
+  if (!email || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  if (password.length < 4) {
+    alert("Password must be at least 4 characters");
+    return;
+  }
 
   fetch(`${API_URL}/register`, {
     method: "POST",
@@ -13,11 +24,19 @@ function register() {
   })
   .then(res => res.json())
   .then(data => {
-    alert(data.message);
+    // ✅ Handle backend errors
+    if (data.error) {
+      alert(data.error);
+      return;
+    }
+
+    alert(data.message || "Registration successful");
+
+    // Redirect to login page
     window.location.href = "index.html";
   })
   .catch(err => {
-    console.error(err);
-    alert("Registration failed");
+    console.error("Error:", err);
+    alert("Registration failed. Check your connection or server.");
   });
 }
