@@ -19,5 +19,9 @@ function login() {
     } else {
       alert("Login failed");
     }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error connecting to server");
   });
 }
