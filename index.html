@@ -3,16 +3,30 @@
 <head>
   <title>Unasemeje Panel</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google Login Script -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
   <h1>Unasemeje Login</h1>
 
+  <!-- Normal Login -->
   <input type="email" id="email" placeholder="Email" />
   <input type="password" id="password" placeholder="Password" />
   <button onclick="login()">Login</button>
 
   <p>Don't have an account? <a href="register.html">Register here</a></p>
+
+  <hr>
+
+  <!-- Google Login -->
+  <div id="g_id_onload"
+       data-client_id="30448917635-n84epqf5psu72o1gevd8o6ll60pnfri0.apps.googleusercontent.com"
+       data-callback="handleCredentialResponse">
+  </div>
+
+  <div class="g_id_signin"></div>
 
   <script src="script.js"></script>
 </body>
