@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - Unasemeje</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google OAuth -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -15,6 +18,16 @@
     <input type="password" id="password" placeholder="Password" required />
 
     <button onclick="register()">Register</button>
+
+    <hr>
+
+    <!-- Google Login Button -->
+    <div id="g_id_onload"
+         data-client_id="30448917635-n84epqf5psu72o1gevd8o6ll60pnfri0.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse">
+    </div>
+
+    <div class="g_id_signin" data-type="standard"></div>
 
     <p>
       Already have an account?
