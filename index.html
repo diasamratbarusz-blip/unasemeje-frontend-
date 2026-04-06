@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="auth.js"></script>
+  <title>Login - Unasemeje</title>
+
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <div class="container">
@@ -15,9 +16,14 @@
   <input type="email" id="email" placeholder="Email">
   <input type="password" id="password" placeholder="Password">
 
-  <button onclick="loginUser()">Login</button>
-  <button onclick="signupUser()">Signup</button>
+  <button onclick="login()">Login</button>
+
+  <p>Don't have an account?</p>
+  <a href="register.html"><button>Register</button></a>
 </div>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
 
 </body>
 </html>
