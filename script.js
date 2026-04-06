@@ -1,63 +1,21 @@
-const API_URL = "https://unasemeje.onrender.com";
+const supabase = supabase.createClient(
+  "https://hudcypsorcmarkknamre.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZGN5cHNvcmNtYXJra25hbXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0ODkxMzYsImV4cCI6MjA5MTA2NTEzNn0.5S3gs7u5JI6nbh8y13VK0b4E-rxCBFdaDj1dlExVLT0"
+);
 
-/* ================= NORMAL LOGIN ================= */
-function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  if (!email || !password) {
-    alert("Please fill all fields");
-    return;
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    localStorage.setItem("token", data.session.access_token);
+    window.location.href = "dashboard.html";
   }
-
-  fetch(`${API_URL}/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email, password })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      window.location.href = "dashboard.html";
-    } else {
-      alert(data.error || "Login failed");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Error connecting to server");
-  });
-}
-
-/* ================= GOOGLE LOGIN ================= */
-function handleCredentialResponse(response) {
-  console.log("Google credential:", response);
-
-  fetch(`${API_URL}/auth/google`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      token: response.credential
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    console.log("Backend response:", data);
-
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      window.location.href = "dashboard.html";
-    } else {
-      alert(data.error || "Google login failed");
-    }
-  })
-  .catch(err => {
-    console.error("Google login error:", err);
-    alert("Google login error");
-  });
 }
