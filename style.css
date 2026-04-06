@@ -1,32 +1,95 @@
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  margin-top: 50px;
-  background-color: #f4f4f4;
+  font-family: Arial;
+  margin: 0;
+  background: #0f172a;
+  color: white;
 }
 
+/* Login */
 .container {
-  background: white;
-  padding: 20px;
-  margin: auto;
   width: 300px;
+  margin: 100px auto;
+  background: #111827;
+  padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
 
-input {
-  display: block;
-  margin: 10px auto;
+input, button {
+  width: 100%;
+  margin: 8px 0;
   padding: 10px;
-  width: 90%;
+  border-radius: 6px;
+  border: none;
 }
 
 button {
-  padding: 10px 20px;
+  background: #38bdf8;
+  color: black;
+  font-weight: bold;
   cursor: pointer;
-  width: 100%;
 }
 
-a {
+/* Dashboard */
+.dashboard {
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  background: #111827;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar a {
+  display: block;
+  color: white;
+  margin: 10px 0;
   text-decoration: none;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cards {
+  display: flex;
+  gap: 10px;
+}
+
+.card {
+  background: #111827;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 10px 0;
+  flex: 1;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #38bdf8;
+  color: black;
+  padding: 10px;
+  border-radius: 6px;
+  display: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+
+  .cards {
+    flex-direction: column;
+  }
 }
