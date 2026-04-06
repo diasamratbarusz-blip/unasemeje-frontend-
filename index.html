@@ -3,35 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unasemeje Panel</title>
-
+  <title>Unasemeje Login</title>
   <link rel="stylesheet" href="style.css">
 
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
 
-  <h1>Unasemeje Login</h1>
+  <div class="container">
+    <h1>Login</h1>
 
-  <!-- Normal Login -->
-  <input type="email" id="email" placeholder="Email" />
-  <input type="password" id="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
 
-  <p>Don't have an account? <a href="register.html">Register here</a></p>
+    <button onclick="login()">Login</button>
 
-  <hr>
-
-  <!-- Google Login Button -->
-  <div id="g_id_onload"
-       data-client_id="393933065797-4ab9imv9dldgd2h7djjnhc7soeblh9fm.apps.googleusercontent.com"
-       data-callback="handleCredentialResponse">
+    <p>Don't have an account? <a href="register.html">Register</a></p>
   </div>
 
-  <div class="g_id_signin" data-type="standard"></div>
-
-  <!-- JS file -->
   <script src="script.js"></script>
 </body>
 </html>
