@@ -3,72 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Dashboard - Unasemeje</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module" src="dashboard.js"></script>
 </head>
 
 <body class="dashboard">
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>Unasemeje</h2>
-    <a href="#">Dashboard</a>
-    <a href="#">Orders</a>
-    <a href="#">Deposit</a>
-    <a href="#" onclick="logout()">Logout</a>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>Unasemeje</h2>
+
+  <a href="#">Dashboard</a>
+  <a href="#orders">Orders</a>
+  <a href="#deposit">Deposit</a>
+  <a href="#" onclick="logoutUser()">Logout</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <h3>Dashboard</h3>
+    <button onclick="logoutUser()">Logout</button>
   </div>
 
-  <!-- Main -->
-  <div class="main">
-
-    <div class="navbar">
-      <h3>Dashboard</h3>
-      <button onclick="logout()">Logout</button>
-    </div>
-
-    <div class="cards">
-      <div class="card">
-        <h4>Balance</h4>
-        <p id="balance">0</p>
-      </div>
-
-      <div class="card">
-        <h4>Total Orders</h4>
-        <p id="totalOrders">0</p>
-      </div>
+  <!-- Cards -->
+  <div class="cards">
+    <div class="card">
+      <h4>Balance</h4>
+      <p id="balance">0</p>
     </div>
 
     <div class="card">
-      <h3>Create Order</h3>
-      <input id="service" placeholder="Service">
-      <input id="link" placeholder="Link">
-      <input id="quantity" placeholder="Quantity">
-      <button onclick="createOrder()">Submit</button>
+      <h4>Total Orders</h4>
+      <p id="totalOrders">0</p>
     </div>
-
-    <div class="card">
-      <h3>Deposit</h3>
-      <input id="amount" placeholder="Amount">
-      <input id="code" placeholder="M-Pesa Code">
-      <button onclick="deposit()">Deposit</button>
-    </div>
-
-    <div class="card">
-      <h3>Orders Chart</h3>
-      <canvas id="chart"></canvas>
-    </div>
-
-    <div class="card">
-      <h3>My Orders</h3>
-      <ul id="orders"></ul>
-    </div>
-
   </div>
 
-  <div id="toast"></div>
+  <!-- ORDER -->
+  <div class="form-section">
+    <h3>Create Order</h3>
+
+    <input id="service" placeholder="Service ID">
+    <input id="link" placeholder="Link">
+    <input id="quantity" placeholder="Quantity">
+
+    <button onclick="placeOrder()">Submit Order</button>
+  </div>
+
+  <!-- DEPOSIT -->
+  <div class="form-section" id="deposit">
+    <h3>M-Pesa Deposit</h3>
+
+    <input id="phone" placeholder="2547XXXXXXXX">
+    <input id="amount" placeholder="Amount">
+
+    <button onclick="deposit()">Pay with M-Pesa</button>
+  </div>
+
+  <!-- CHART -->
+  <div class="card">
+    <h3>Orders Overview</h3>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="card" id="orders">
+    <h3>My Orders</h3>
+    <ul id="ordersList"></ul>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/dashboard.js"></script>
 
 </body>
 </html>
