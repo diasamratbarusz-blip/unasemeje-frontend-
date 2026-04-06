@@ -1,25 +1,40 @@
-const API_URL = "https://unasemeje.onrender.com";
-const token = localStorage.getItem("token");
+const supabase = supabase.createClient(
+  "https://hudcypsorcmarkknamre.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZGN5cHNvcmNtYXJra25hbXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0ODkxMzYsImV4cCI6MjA5MTA2NTEzNn0.5S3gs7u5JI6nbh8y13VK0b4E-rxCBFdaDj1dlExVLT0"
+);
 
-// Redirect if not logged in
-if (!token) {
-  window.location.href = "index.html";
+const API_URL = "https://unasemeje.onrender.com";
+
+// Check login
+async function checkUser() {
+  const { data } = await supabase.auth.getSession();
+
+  if (!data.session) {
+    window.location.href = "index.html";
+  }
 }
+
+checkUser();
 
 // Load balance
 function loadBalance() {
+  const token = localStorage.getItem("token");
+
   fetch(`${API_URL}/balance`, {
-    headers: { Authorization: token }
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   })
   .then(res => res.json())
   .then(data => {
     document.getElementById("balance").innerText = data.balance;
-  })
-  .catch(err => console.log(err));
+  });
 }
 
 // Place order
 function placeOrder() {
+  const token = localStorage.getItem("token");
+
   const service = document.getElementById("service").value;
   const link = document.getElementById("link").value;
   const quantity = document.getElementById("quantity").value;
@@ -28,22 +43,25 @@ function placeOrder() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({ service, link, quantity })
   })
   .then(res => res.json())
   .then(data => {
     alert(data.message);
-    loadOrders(); // refresh orders
-  })
-  .catch(err => console.log(err));
+    loadOrders();
+  });
 }
 
 // Load orders
 function loadOrders() {
+  const token = localStorage.getItem("token");
+
   fetch(`${API_URL}/orders`, {
-    headers: { Authorization: token }
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
   })
   .then(res => res.json())
   .then(data => {
@@ -55,12 +73,13 @@ function loadOrders() {
       li.innerText = `${order.service} | ${order.quantity} | ${order.status}`;
       list.appendChild(li);
     });
-  })
-  .catch(err => console.log(err));
+  });
 }
 
 // Deposit
 function deposit() {
+  const token = localStorage.getItem("token");
+
   const amount = document.getElementById("amount").value;
   const code = document.getElementById("code").value;
 
@@ -68,22 +87,22 @@ function deposit() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: token
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({ amount, code })
   })
   .then(res => res.json())
   .then(data => {
     alert(data.message);
-  })
-  .catch(err => console.log(err));
+  });
 }
 
 // Logout
-function logout() {
+async function logout() {
+  await supabase.auth.signOut();
   localStorage.removeItem("token");
   window.location.href = "index.html";
 }
 
-// Auto load balance
+// Auto load
 loadBalance();
