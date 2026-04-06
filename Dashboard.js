@@ -1,108 +1,129 @@
-const supabase = supabase.createClient(
-  "https://hudcypsorcmarkknamre.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZGN5cHNvcmNtYXJra25hbXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0ODkxMzYsImV4cCI6MjA5MTA2NTEzNn0.5S3gs7u5JI6nbh8y13VK0b4E-rxCBFdaDj1dlExVLT0"
-);
+import { supabase } from "./supabase.js";
 
-const API_URL = "https://unasemeje.onrender.com";
+/* Toast */
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.style.display = "block";
+  setTimeout(() => (t.style.display = "none"), 3000);
+}
 
-// Check login
-async function checkUser() {
-  const { data } = await supabase.auth.getSession();
-
-  if (!data.session) {
+/* Get user */
+async function getUser() {
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) {
     window.location.href = "index.html";
   }
+  return data.user;
 }
 
-checkUser();
+let user;
 
-// Load balance
-function loadBalance() {
-  const token = localStorage.getItem("token");
+/* Logout */
+window.logout = async function () {
+  await supabase.auth.signOut();
+  window.location.href = "index.html";
+};
 
-  fetch(`${API_URL}/balance`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("balance").innerText = data.balance;
+/* Balance */
+async function loadBalance() {
+  const { data } = await supabase
+    .from("profiles")
+    .select("balance")
+    .eq("id", user.id)
+    .single();
+
+  document.getElementById("balance").innerText = data?.balance || 0;
+}
+
+/* Orders */
+async function loadOrders() {
+  const { data } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  const list = document.getElementById("orders");
+  list.innerHTML = "";
+
+  document.getElementById("totalOrders").innerText = data.length;
+
+  data.forEach(o => {
+    const li = document.createElement("li");
+    li.innerText = `${o.service} - ${o.quantity} (${o.status})`;
+    list.appendChild(li);
   });
+
+  drawChart(data.length);
 }
 
-// Place order
-function placeOrder() {
-  const token = localStorage.getItem("token");
-
+/* Create order */
+window.createOrder = async function () {
   const service = document.getElementById("service").value;
   const link = document.getElementById("link").value;
   const quantity = document.getElementById("quantity").value;
 
-  fetch(`${API_URL}/order`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ service, link, quantity })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message);
-    loadOrders();
-  });
-}
+  const { error } = await supabase.from("orders").insert([
+    { user_id: user.id, service, link, quantity }
+  ]);
 
-// Load orders
-function loadOrders() {
-  const token = localStorage.getItem("token");
+  if (error) return toast(error.message);
 
-  fetch(`${API_URL}/orders`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-  .then(res => res.json())
-  .then(data => {
-    const list = document.getElementById("orders");
-    list.innerHTML = "";
+  toast("Order created");
+  loadOrders();
+};
 
-    data.forEach(order => {
-      const li = document.createElement("li");
-      li.innerText = `${order.service} | ${order.quantity} | ${order.status}`;
-      list.appendChild(li);
-    });
-  });
-}
-
-// Deposit
-function deposit() {
-  const token = localStorage.getItem("token");
-
+/* Deposit */
+window.deposit = async function () {
   const amount = document.getElementById("amount").value;
   const code = document.getElementById("code").value;
 
-  fetch(`${API_URL}/deposit`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ amount, code })
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message);
+  const { error } = await supabase.from("deposits").insert([
+    { user_id: user.id, amount, code }
+  ]);
+
+  if (error) return toast(error.message);
+
+  toast("Deposit submitted");
+};
+
+/* Chart */
+let chart;
+
+function drawChart(count) {
+  const ctx = document.getElementById("chart");
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Orders"],
+      datasets: [
+        {
+          label: "Total Orders",
+          data: [count]
+        }
+      ]
+    }
   });
 }
 
-// Logout
-async function logout() {
-  await supabase.auth.signOut();
-  localStorage.removeItem("token");
-  window.location.href = "index.html";
+/* Realtime updates */
+function realtime() {
+  supabase
+    .channel("orders")
+    .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
+      loadOrders();
+    })
+    .subscribe();
 }
 
-// Auto load
-loadBalance();
+/* Init */
+(async () => {
+  user = await getUser();
+  await loadBalance();
+  await loadOrders();
+  realtime();
+})();
