@@ -1,59 +1,21 @@
-const API_URL = "https://unasemeje.onrender.com";
+const supabase = supabase.createClient(
+  "https://hudcypsorcmarkknamre.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1ZGN5cHNvcmNtYXJra25hbXJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0ODkxMzYsImV4cCI6MjA5MTA2NTEzNn0.5S3gs7u5JI6nbh8y13VK0b4E-rxCBFdaDj1dlExVLT0"
+);
 
-/* ---------------- REGISTER ---------------- */
-function register() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+async function register() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  if (!email || !password) {
-    alert("Please fill all fields");
-    return;
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("Check your email to confirm account");
+    window.location.href = "index.html";
   }
-
-  fetch(`${API_URL}/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email, password })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.error) {
-      alert(data.error);
-    } else {
-      alert(data.message);
-      window.location.href = "index.html";
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Registration failed");
-  });
-}
-
-/* ---------------- GOOGLE LOGIN ---------------- */
-function handleCredentialResponse(response) {
-  fetch(`${API_URL}/auth/google`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      token: response.credential
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      window.location.href = "dashboard.html";
-    } else {
-      alert("Google login failed");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("Google login error");
-  });
 }
