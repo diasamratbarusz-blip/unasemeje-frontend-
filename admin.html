@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: Arial; background:#0f172a; color:white; padding:20px; }
+    table { width:100%; border-collapse: collapse; margin-bottom:20px; }
+    th, td { padding:10px; border-bottom:1px solid #334155; }
+    button { padding:6px 10px; cursor:pointer; }
+  </style>
+</head>
+<body>
+
+<h2>Admin Panel</h2>
+
+<button onclick="logout()">Logout</button>
+
+<h3>Deposit Requests</h3>
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="depositTable"></tbody>
+</table>
+
+<h3>All Orders</h3>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Service</th>
+      <th>Qty</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="orderTable"></tbody>
+</table>
+
+<script>
+const API_URL = "https://unasemeje-backend-3.onrender.com/api";
+
+function getToken(){
+  return localStorage.getItem("token");
+}
+
+function logout(){
+  localStorage.removeItem("token");
+  window.location.href = "index.html";
+}
+
+// LOAD DEPOSITS
+async function loadDeposits(){
+  const res = await fetch(API_URL + "/admin/deposits", {
+    headers: { Authorization: "Bearer " + getToken() }
+  });
+
+  const data = await res.json();
+
+  const table = document.getElementById("depositTable");
+  table.innerHTML = "";
+
+  data.forEach(d => {
+    table.innerHTML += `
+      <tr>
+        <td>${d.userId}</td>
+        <td>${d.amount}</td>
+        <td>${d.status}</td>
+        <td>
+          ${d.status === "pending" 
+            ? `<button onclick="approveDeposit('${d._id}')">Approve</button>` 
+            : "Done"}
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// APPROVE DEPOSIT
+async function approveDeposit(id){
+  await fetch(API_URL + "/deposits/approve", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + getToken()
+    },
+    body: JSON.stringify({ id })
+  });
+
+  alert("Approved");
+  loadDeposits();
+}
+
+// LOAD ALL ORDERS
+async function loadOrders(){
+  const res = await fetch(API_URL + "/admin/orders", {
+    headers: { Authorization: "Bearer " + getToken() }
+  });
+
+  const orders = await res.json();
+
+  const table = document.getElementById("orderTable");
+  table.innerHTML = "";
+
+  orders.forEach(o => {
+    table.innerHTML += `
+      <tr>
+        <td>${o._id}</td>
+        <td>${o.userId}</td>
+        <td>${o.service}</td>
+        <td>${o.quantity}</td>
+        <td>${o.status}</td>
+      </tr>
+    `;
+  });
+}
+
+// INIT
+window.onload = () => {
+  if (!getToken()) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  loadDeposits();
+  loadOrders();
+};
+</script>
+
+</body>
+</html>
