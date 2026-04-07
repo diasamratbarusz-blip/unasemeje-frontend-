@@ -1,5 +1,5 @@
 // ================= CONFIG =================
-const API_URL = "https://your-api-url.com"; // change this
+const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
 // ================= TOAST =================
 function showToast(msg) {
@@ -38,7 +38,7 @@ function removeToken() {
   localStorage.removeItem("token");
 }
 
-// ================= JWT DECODE (no library) =================
+// ================= JWT DECODE =================
 function decodeToken(token) {
   try {
     const payload = token.split(".")[1];
@@ -71,15 +71,7 @@ function checkAuth() {
   }
 }
 
-// Run on dashboard load
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.location.pathname.includes("dashboard")) {
-    checkAuth();
-    loadUser();
-  }
-});
-
-// ================= LOAD USER INFO =================
+// ================= LOAD USER =================
 function loadUser() {
   const token = getToken();
   if (!token) return;
@@ -90,6 +82,14 @@ function loadUser() {
   const el = document.getElementById("userEmail");
   if (el) el.innerText = user.email || "User";
 }
+
+// Run auth check on dashboard
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.pathname.includes("dashboard")) {
+    checkAuth();
+    loadUser();
+  }
+});
 
 // ================= LOGIN =================
 async function login() {
@@ -122,8 +122,6 @@ async function login() {
       setTimeout(() => {
         window.location.href = "dashboard.html";
       }, 1000);
-    } else {
-      showToast("Invalid server response");
     }
 
   } catch (err) {
@@ -181,7 +179,7 @@ function logoutUser() {
   }, 800);
 }
 
-// ================= AUTH FETCH HELPER =================
+// ================= AUTH FETCH =================
 async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -192,4 +190,4 @@ async function authFetch(url, options = {}) {
       Authorization: `Bearer ${token}`
     }
   });
-    }
+}
