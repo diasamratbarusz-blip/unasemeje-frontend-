@@ -1,30 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - Unasemeje</title>
-
-  <link rel="stylesheet" href="css/style.css">
+  <title>Register</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="container">
   <h2>Create Account</h2>
 
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-  <input type="text" id="phone" placeholder="2547XXXXXXXX">
+  <input id="email" placeholder="Email">
+  <input id="password" placeholder="Password">
+  <input id="phone" placeholder="2547XXXXXXXX">
 
   <button onclick="register()">Register</button>
 
-  <p>Already have an account?</p>
   <a href="index.html"><button>Login</button></a>
 </div>
 
-<script src="js/config.js"></script>
-<script src="js/auth.js"></script>
+<div id="toast"></div>
+
+<script src="config.js"></script>
+<script src="auth.js"></script>
 
 </body>
 </html>
