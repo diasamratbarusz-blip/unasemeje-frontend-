@@ -1,16 +1,25 @@
 <script>
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
+/* ERROR HANDLER (prevents white screen) */
+window.onerror = function(message) {
+  console.log("JS ERROR:", message);
+};
+
 /* TOAST */
 function showToast(msg){
   const t = document.getElementById("toast");
+  if(!t) return alert(msg);
+
   t.innerText = msg;
   t.style.display = "block";
   setTimeout(()=>t.style.display="none",3000);
 }
 
 /* TOKEN */
-function getToken(){ return localStorage.getItem("token"); }
+function getToken(){ 
+  return localStorage.getItem("token"); 
+}
 
 /* LOGOUT */
 function logout(){
@@ -21,14 +30,15 @@ function logout(){
 /* SECTION SWITCH */
 function showSection(id){
   document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-  document.getElementById(id+"Section").style.display='block';
+  const el = document.getElementById(id+"Section");
+  if(el) el.style.display = 'block';
 }
 
 /* LOAD USER */
 async function loadUser(){
   try {
     const res = await fetch(API_URL+"/balance",{
-      headers:{Authorization:"Bearer "+getToken()}
+      headers:{ Authorization:"Bearer "+getToken() }
     });
 
     const data = await res.json();
@@ -36,20 +46,21 @@ async function loadUser(){
     document.getElementById("balance").innerText = data.balance || 0;
     document.getElementById("balance2").innerText = data.balance || 0;
 
-  } catch {
+  } catch(err){
+    console.error(err);
     showToast("Failed to load user");
   }
 }
 
-/* LOAD SERVICES */
+/* SERVICES */
 let allServices = [];
 
 async function loadServices(){
   try {
     const res = await fetch(API_URL+"/services");
     allServices = await res.json();
-  } catch {
-    showToast("Failed to load services");
+  } catch(err){
+    console.error(err);
   }
 }
 
@@ -61,44 +72,35 @@ function filterServices(){
   serviceEl.innerHTML = "";
 
   const filtered = allServices.filter(s =>
-    s.category?.toLowerCase().includes(category)
+    s.name.toLowerCase().includes(category)
   );
 
   filtered.forEach(s=>{
-    serviceEl.innerHTML += `
-      <option value="${s.serviceId}">
-        ${s.name} - KES ${s.rate}
-      </option>
-    `;
+    serviceEl.innerHTML += `<option value="${s.externalServiceId}">${s.name}</option>`;
   });
 }
 
 /* CREATE ORDER */
 async function createOrder(){
   try {
-    const res = await fetch(API_URL+"/order",{
+    const service = document.getElementById("service").value;
+    const link = document.getElementById("link").value;
+    const quantity = document.getElementById("quantity").value;
+
+    await fetch(API_URL+"/order",{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
         Authorization:"Bearer "+getToken()
       },
-      body: JSON.stringify({
-        service: document.getElementById("service").value,
-        link: document.getElementById("link").value,
-        quantity: document.getElementById("quantity").value
-      })
+      body: JSON.stringify({ service, link, quantity })
     });
 
-    const data = await res.json();
+    showToast("Order placed");
+    loadOrders();
 
-    if(data.error){
-      showToast(data.error);
-    } else {
-      showToast("Order placed successfully");
-      loadOrders();
-    }
-
-  } catch {
+  } catch(err){
+    console.error(err);
     showToast("Order failed");
   }
 }
@@ -107,15 +109,16 @@ async function createOrder(){
 async function loadOrders(){
   try {
     const res = await fetch(API_URL+"/orders",{
-      headers:{Authorization:"Bearer "+getToken()}
+      headers:{ Authorization:"Bearer "+getToken() }
     });
 
     const data = await res.json();
 
     const table = document.getElementById("ordersTable");
-    table.innerHTML = "";
+    const total = document.getElementById("totalOrders");
 
-    document.getElementById("totalOrders").innerText = data.length;
+    table.innerHTML = "";
+    total.innerText = data.length;
 
     data.forEach(o=>{
       table.innerHTML += `
@@ -128,35 +131,31 @@ async function loadOrders(){
       `;
     });
 
-  } catch {
-    showToast("Failed to load orders");
+  } catch(err){
+    console.error(err);
   }
 }
 
-/* DEPOSIT (STK PUSH) */
+/* DEPOSIT */
 async function deposit(){
   try {
-    const res = await fetch(API_URL+"/mpesa/stk",{
+    const phone = document.getElementById("phone").value;
+    const amount = document.getElementById("amount").value;
+    const code = document.getElementById("code").value;
+
+    await fetch(API_URL+"/deposits/request",{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
         Authorization:"Bearer "+getToken()
       },
-      body: JSON.stringify({
-        phone: document.getElementById("phone").value,
-        amount: document.getElementById("amount").value
-      })
+      body: JSON.stringify({ phone, amount, code })
     });
 
-    const data = await res.json();
+    showToast("Deposit submitted");
 
-    if(data.error){
-      showToast(data.error);
-    } else {
-      showToast("STK sent to your phone 📲");
-    }
-
-  } catch {
+  } catch(err){
+    console.error(err);
     showToast("Deposit failed");
   }
 }
@@ -172,4 +171,4 @@ window.onload = ()=>{
   loadServices();
   loadOrders();
 };
-    </script>
+  </script>
