@@ -1,142 +1,296 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SMM Panel Dashboard</title>
+  <title>unasemeje Panel</title>
+
   <style>
-    body { margin: 0; font-family: Arial; background:#0f172a; color:#e2e8f0; }
-    .container { display:flex; height:100vh; }
-    .sidebar { width:220px; background:#020617; padding:20px; }
-    .sidebar button { width:100%; margin-bottom:10px; padding:10px; background:#1e293b; border:none; color:white; cursor:pointer; border-radius:5px; }
-    .main { flex:1; padding:20px; overflow-y:auto; }
-    .card { background:#1e293b; padding:20px; border-radius:10px; margin-bottom:20px; }
-    input, select { width:100%; padding:10px; margin:5px 0 10px; border-radius:5px; border:none; }
-    button.action { padding:10px; background:#22c55e; border:none; color:white; cursor:pointer; border-radius:5px; }
-    table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px; border-bottom:1px solid #334155; }
-    .hidden { display:none; }
+    body {
+      margin:0;
+      font-family: Arial;
+      background:#0f172a;
+      color:white;
+    }
+
+    .layout { display:flex; }
+
+    .sidebar {
+      width:230px;
+      height:100vh;
+      background:#020617;
+      padding:20px;
+    }
+
+    .sidebar h2 { margin-bottom:20px; }
+
+    .sidebar button {
+      width:100%;
+      padding:12px;
+      margin-bottom:10px;
+      background:#1e293b;
+      border:none;
+      color:white;
+      cursor:pointer;
+      border-radius:6px;
+      text-align:left;
+    }
+
+    .main { flex:1; padding:20px; }
+
+    .topbar {
+      display:flex;
+      justify-content:space-between;
+      background:#1e293b;
+      padding:12px;
+      border-radius:10px;
+      margin-bottom:20px;
+    }
+
+    .stats {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+      gap:15px;
+      margin-bottom:20px;
+    }
+
+    .stat-card {
+      background:#1e293b;
+      padding:15px;
+      border-radius:10px;
+    }
+
+    .card {
+      background:#1e293b;
+      padding:20px;
+      border-radius:10px;
+      margin-bottom:20px;
+    }
+
+    select, input {
+      width:100%;
+      padding:12px;
+      margin:10px 0;
+      border:none;
+      border-radius:6px;
+    }
+
+    button.action {
+      width:100%;
+      padding:12px;
+      background:#3b82f6;
+      border:none;
+      color:white;
+      border-radius:6px;
+      cursor:pointer;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+    }
+
+    th, td {
+      padding:10px;
+      border-bottom:1px solid #334155;
+    }
+
+    #toast {
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      background:#22c55e;
+      padding:10px 15px;
+      border-radius:5px;
+      display:none;
+    }
+
+    @media(max-width:768px){
+      .layout { flex-direction:column; }
+      .sidebar { width:100%; height:auto; }
+    }
+
   </style>
 </head>
+
 <body>
-<div class="container">
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
   <div class="sidebar">
-    <h2>SMM Panel</h2>
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('order')">Place Order</button>
-    <button onclick="showSection('orders')">My Orders</button>
-    <button onclick="showSection('deposit')">Deposit</button>
+    <h2>unasemeje</h2>
+
+    <button onclick="show('dashboard')">Dashboard</button>
+    <button onclick="show('order')">New Order</button>
+    <button onclick="show('orders')">Orders</button>
+    <button onclick="show('deposit')">Add Funds</button>
     <button onclick="logout()">Logout</button>
-  </div>  <div class="main"><div id="dashboard" class="card">
-  <h2>Dashboard</h2>
-  <p>Email: <span id="userEmail"></span></p>
-  <p>Balance: <span id="balance">0</span></p>
-</div>
+  </div>
 
-<div id="order" class="card hidden">
-  <h2>Place Order</h2>
-  <select id="service"></select>
-  <input id="link" placeholder="Link" />
-  <input id="quantity" type="number" placeholder="Quantity" />
-  <button class="action" onclick="createOrder()">Submit</button>
-</div>
+  <!-- MAIN -->
+  <div class="main">
 
-<div id="orders" class="card hidden">
-  <h2>My Orders</h2>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>Service</th><th>Qty</th><th>Status</th></tr>
-    </thead>
-    <tbody id="ordersTable"></tbody>
-  </table>
-</div>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div id="userEmail"></div>
+      <div>Balance: KES <span id="balance">0</span></div>
+    </div>
 
-<div id="deposit" class="card hidden">
-  <h2>Deposit</h2>
-  <input id="amount" type="number" placeholder="Amount" />
-  <button class="action" onclick="submitDeposit()">Submit</button>
-</div>
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">Total Orders: <span id="totalOrders">0</span></div>
+      <div class="stat-card">Balance: KES <span id="statBalance">0</span></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="card">
+      <h2>Dashboard</h2>
+      <p>Welcome to unasemeje premium panel</p>
+    </div>
+
+    <!-- ORDER -->
+    <div id="order" class="card">
+      <h2>New Order</h2>
+
+      <select id="service"></select>
+      <input id="link" placeholder="Enter Link">
+      <input id="quantity" type="number" placeholder="Quantity">
+
+      <button class="action" onclick="createOrder()">Submit Order</button>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="orders" class="card">
+      <h2>Order History</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Service</th>
+            <th>Qty</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable"></tbody>
+      </table>
+    </div>
+
+    <!-- DEPOSIT -->
+    <div id="deposit" class="card">
+      <h2>Add Funds</h2>
+
+      <input id="amount" placeholder="Enter Amount">
+      <button class="action" onclick="deposit()">Deposit</button>
+    </div>
 
   </div>
-</div><script>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.innerText = msg;
+  t.style.display="block";
+  setTimeout(()=>t.style.display="none",3000);
+}
+
 function getToken(){ return localStorage.getItem("token"); }
-function logout(){ localStorage.removeItem("token"); location.href="index.html"; }
 
-function showSection(id){ document.querySelectorAll('.card').forEach(el=>el.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function logout(){
+  localStorage.removeItem("token");
+  location.href="index.html";
+}
 
-// LOAD USER
+function show(id){
+  document.querySelectorAll('.card').forEach(el=>el.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+// USER
 async function loadUser(){
   const res = await fetch(API_URL+"/me",{headers:{Authorization:"Bearer "+getToken()}});
   const data = await res.json();
-  document.getElementById("userEmail").innerText = data.email;
-  document.getElementById("balance").innerText = data.balance;
+  userEmail.innerText = data.email;
+  balance.innerText = data.balance;
+  statBalance.innerText = data.balance;
 }
 
-// LOAD SERVICES (upgrade)
+// SERVICES
 async function loadServices(){
   const res = await fetch(API_URL+"/services");
-  const services = await res.json();
+  const data = await res.json();
 
-  const select = document.getElementById("service");
-  select.innerHTML = "";
-
-  services.forEach(s=>{
-    select.innerHTML += `<option value="${s.externalServiceId}">${s.name} - ${s.rate}</option>`;
+  service.innerHTML="";
+  data.forEach(x=>{
+    service.innerHTML += `<option value="${x.externalServiceId}">${x.name}</option>`;
   });
 }
 
 // CREATE ORDER
 async function createOrder(){
-  const service = document.getElementById("service").value;
-  const link = document.getElementById("link").value;
-  const quantity = document.getElementById("quantity").value;
-
   const res = await fetch(API_URL+"/orders",{
     method:"POST",
-    headers:{"Content-Type":"application/json", Authorization:"Bearer "+getToken()},
-    body: JSON.stringify({service,link,quantity})
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+getToken()
+    },
+    body: JSON.stringify({
+      service: service.value,
+      link: link.value,
+      quantity: quantity.value
+    })
   });
 
-  alert("Order placed");
+  showToast("Order placed");
   loadOrders();
 }
 
-// LOAD ORDERS (auto refresh)
+// LOAD ORDERS
 async function loadOrders(){
   const res = await fetch(API_URL+"/orders",{headers:{Authorization:"Bearer "+getToken()}});
-  const orders = await res.json();
+  const data = await res.json();
 
-  const table = document.getElementById("ordersTable");
-  table.innerHTML = "";
+  ordersTable.innerHTML="";
+  totalOrders.innerText = data.length;
 
-  orders.forEach(o=>{
-    table.innerHTML += `<tr><td>${o._id}</td><td>${o.service}</td><td>${o.quantity}</td><td>${o.status}</td></tr>`;
+  data.forEach(o=>{
+    ordersTable.innerHTML += `<tr>
+      <td>${o._id}</td>
+      <td>${o.service}</td>
+      <td>${o.quantity}</td>
+      <td>${o.status}</td>
+    </tr>`;
   });
 }
 
-// AUTO REFRESH ORDERS EVERY 10s
-setInterval(loadOrders,10000);
-
 // DEPOSIT
-async function submitDeposit(){
-  const amount = document.getElementById("amount").value;
-
+async function deposit(){
   await fetch(API_URL+"/deposits/request",{
     method:"POST",
-    headers:{"Content-Type":"application/json", Authorization:"Bearer "+getToken()},
-    body: JSON.stringify({amount})
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+getToken()
+    },
+    body: JSON.stringify({amount: amount.value})
   });
 
-  alert("Deposit requested");
+  showToast("Deposit requested");
 }
 
 // INIT
 window.onload = ()=>{
   if(!getToken()){ location.href="index.html"; return; }
+
   loadUser();
-  loadOrders();
   loadServices();
+  loadOrders();
 };
-</script></body>
+</script>
+
+</body>
 </html>
