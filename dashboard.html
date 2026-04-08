@@ -63,6 +63,7 @@
       padding:20px;
       border-radius:10px;
       margin-bottom:20px;
+      display:none;
     }
 
     select, input {
@@ -107,7 +108,6 @@
       .layout { flex-direction:column; }
       .sidebar { width:100%; height:auto; }
     }
-
   </style>
 </head>
 
@@ -142,7 +142,7 @@
     </div>
 
     <!-- DASHBOARD -->
-    <div id="dashboard" class="card">
+    <div id="dashboard" class="card" style="display:block;">
       <h2>Dashboard</h2>
       <p>Welcome to unasemeje premium panel</p>
     </div>
@@ -175,12 +175,18 @@
       </table>
     </div>
 
-    <!-- DEPOSIT -->
+    <!-- ✅ UPDATED DEPOSIT SECTION -->
     <div id="deposit" class="card">
-      <h2>Add Funds</h2>
+      <h2>Add Funds (M-Pesa)</h2>
 
-      <input id="amount" placeholder="Enter Amount">
-      <button class="action" onclick="deposit()">Deposit</button>
+      <p>Send money to:</p>
+      <p><b>Paybill/Till: 0715509440</b></p>
+
+      <input id="phone" placeholder="Your Phone (07XXXXXXXX)">
+      <input id="amount" placeholder="Amount">
+      <input id="code" placeholder="M-Pesa Transaction Code">
+
+      <button class="action" onclick="submitDeposit()">Submit Deposit</button>
     </div>
 
   </div>
@@ -233,7 +239,7 @@ async function loadServices(){
 
 // CREATE ORDER
 async function createOrder(){
-  const res = await fetch(API_URL+"/orders",{
+  await fetch(API_URL+"/orders",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
@@ -268,18 +274,22 @@ async function loadOrders(){
   });
 }
 
-// DEPOSIT
-async function deposit(){
+// ✅ UPDATED DEPOSIT FUNCTION
+async function submitDeposit(){
   await fetch(API_URL+"/deposits/request",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+getToken()
     },
-    body: JSON.stringify({amount: amount.value})
+    body: JSON.stringify({
+      phone: phone.value,
+      amount: amount.value,
+      code: code.value
+    })
   });
 
-  showToast("Deposit requested");
+  showToast("Deposit submitted, waiting for approval");
 }
 
 // INIT
