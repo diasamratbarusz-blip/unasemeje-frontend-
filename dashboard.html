@@ -1,129 +1,130 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>unasemeje Panel</title>
+  <title>Dashboard - unasemeje</title>
+  <link rel="stylesheet" href="style.css">
 
   <style>
-    body {
-      margin:0;
-      font-family: Arial;
-      background:#0f172a;
-      color:white;
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
     }
 
-    .layout { display:flex; }
-
+    /* SIDEBAR */
     .sidebar {
-      width:230px;
-      height:100vh;
-      background:#020617;
-      padding:20px;
+      width: 220px;
+      background: #020617;
+      padding: 20px;
     }
 
-    .sidebar h2 { margin-bottom:20px; }
-
-    .sidebar button {
-      width:100%;
-      padding:12px;
-      margin-bottom:10px;
-      background:#1e293b;
-      border:none;
-      color:white;
-      cursor:pointer;
-      border-radius:6px;
-      text-align:left;
+    .sidebar h2 {
+      color: #38bdf8;
+      margin-bottom: 20px;
     }
 
-    .main { flex:1; padding:20px; }
+    .sidebar a {
+      display: block;
+      color: #cbd5f5;
+      margin: 12px 0;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .sidebar a:hover {
+      color: #38bdf8;
+      padding-left: 5px;
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 20px;
+    }
 
     .topbar {
-      display:flex;
-      justify-content:space-between;
-      background:#1e293b;
-      padding:12px;
-      border-radius:10px;
-      margin-bottom:20px;
+      display: flex;
+      justify-content: space-between;
+      background: rgba(17,24,39,0.85);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
     }
 
-    .stats {
-      display:grid;
+    .cards {
+      display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-      gap:15px;
-      margin-bottom:20px;
-    }
-
-    .stat-card {
-      background:#1e293b;
-      padding:15px;
-      border-radius:10px;
+      gap: 15px;
     }
 
     .card {
-      background:#1e293b;
-      padding:20px;
-      border-radius:10px;
-      margin-bottom:20px;
-      display:none;
+      background: rgba(17,24,39,0.85);
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .section {
+      margin-top: 20px;
+      background: rgba(17,24,39,0.85);
+      padding: 20px;
+      border-radius: 12px;
     }
 
     select, input {
-      width:100%;
-      padding:12px;
-      margin:10px 0;
-      border:none;
-      border-radius:6px;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      background: #1e293b;
+      color: white;
     }
 
-    button.action {
-      width:100%;
-      padding:12px;
-      background:#3b82f6;
-      border:none;
-      color:white;
-      border-radius:6px;
-      cursor:pointer;
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg,#38bdf8,#22c55e);
+      cursor: pointer;
+      font-weight: bold;
     }
 
     table {
-      width:100%;
-      border-collapse:collapse;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
 
     th, td {
-      padding:10px;
-      border-bottom:1px solid #334155;
+      padding: 10px;
+      border-bottom: 1px solid #1e293b;
+      text-align: left;
     }
 
     #toast {
-      position:fixed;
-      bottom:20px;
-      right:20px;
-      background:#22c55e;
-      padding:10px 15px;
-      border-radius:5px;
-      display:none;
-    }
-
-    @media(max-width:768px){
-      .layout { flex-direction:column; }
-      .sidebar { width:100%; height:auto; }
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #22c55e;
+      padding: 10px 15px;
+      border-radius: 8px;
+      display: none;
     }
   </style>
 </head>
 
 <body>
 
-<div class="layout">
+<div class="dashboard">
 
   <!-- SIDEBAR -->
   <div class="sidebar">
     <h2>unasemeje</h2>
-
-    <button onclick="show('dashboard')">Dashboard</button>
-    <button onclick="show('order')">New Order</button>
-    <button onclick="show('orders')">Orders</button>
-    <button onclick="show('deposit')">Add Funds</button>
-    <button onclick="logout()">Logout</button>
+    <a onclick="showSection('dashboard')">Dashboard</a>
+    <a onclick="showSection('order')">New Order</a>
+    <a onclick="showSection('orders')">Orders</a>
+    <a onclick="showSection('deposit')">Add Funds</a>
+    <a onclick="logout()">Logout</a>
   </div>
 
   <!-- MAIN -->
@@ -131,36 +132,43 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-      <div id="userEmail"></div>
+      <div id="userEmail">User</div>
       <div>Balance: KES <span id="balance">0</span></div>
     </div>
 
-    <!-- STATS -->
-    <div class="stats">
-      <div class="stat-card">Total Orders: <span id="totalOrders">0</span></div>
-      <div class="stat-card">Balance: KES <span id="statBalance">0</span></div>
-    </div>
-
     <!-- DASHBOARD -->
-    <div id="dashboard" class="card" style="display:block;">
-      <h2>Dashboard</h2>
-      <p>Welcome to unasemeje premium panel</p>
+    <div id="dashboardSection">
+
+      <div class="cards">
+        <div class="card">Total Orders: <span id="totalOrders">0</span></div>
+        <div class="card">Balance: <span id="balance2">0</span></div>
+      </div>
+
     </div>
 
     <!-- ORDER -->
-    <div id="order" class="card">
-      <h2>New Order</h2>
+    <div id="orderSection" class="section" style="display:none;">
+      <h3>New Order</h3>
+
+      <select id="category" onchange="filterServices()">
+        <option value="">Select Category</option>
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+        <option value="tiktok">TikTok</option>
+        <option value="youtube">YouTube</option>
+      </select>
 
       <select id="service"></select>
+
       <input id="link" placeholder="Enter Link">
       <input id="quantity" type="number" placeholder="Quantity">
 
-      <button class="action" onclick="createOrder()">Submit Order</button>
+      <button onclick="createOrder()">Place Order</button>
     </div>
 
     <!-- ORDERS -->
-    <div id="orders" class="card">
-      <h2>Order History</h2>
+    <div id="ordersSection" class="section" style="display:none;">
+      <h3>Orders</h3>
 
       <table>
         <thead>
@@ -175,22 +183,20 @@
       </table>
     </div>
 
-    <!-- ✅ UPDATED DEPOSIT SECTION -->
-    <div id="deposit" class="card">
-      <h2>Add Funds (M-Pesa)</h2>
+    <!-- DEPOSIT -->
+    <div id="depositSection" class="section" style="display:none;">
+      <h3>Add Funds (M-Pesa)</h3>
 
-      <p>Send money to:</p>
-      <p><b>Paybill/Till: 0715509440</b></p>
+      <p><b>Send to: 0715509440</b></p>
 
-      <input id="phone" placeholder="Your Phone (07XXXXXXXX)">
+      <input id="phone" placeholder="Your Phone">
       <input id="amount" placeholder="Amount">
-      <input id="code" placeholder="M-Pesa Transaction Code">
+      <input id="code" placeholder="Transaction Code">
 
-      <button class="action" onclick="submitDeposit()">Submit Deposit</button>
+      <button onclick="deposit()">Submit Deposit</button>
     </div>
 
   </div>
-
 </div>
 
 <div id="toast"></div>
@@ -201,7 +207,7 @@ const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 function showToast(msg){
   const t = document.getElementById("toast");
   t.innerText = msg;
-  t.style.display="block";
+  t.style.display = "block";
   setTimeout(()=>t.style.display="none",3000);
 }
 
@@ -212,32 +218,47 @@ function logout(){
   location.href="index.html";
 }
 
-function show(id){
-  document.querySelectorAll('.card').forEach(el=>el.style.display='none');
-  document.getElementById(id).style.display='block';
+/* SECTION SWITCH */
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.style.display='none');
+  document.getElementById(id+"Section").style.display='block';
 }
 
-// USER
+/* LOAD USER */
 async function loadUser(){
   const res = await fetch(API_URL+"/me",{headers:{Authorization:"Bearer "+getToken()}});
   const data = await res.json();
+
   userEmail.innerText = data.email;
   balance.innerText = data.balance;
-  statBalance.innerText = data.balance;
+  balance2.innerText = data.balance;
 }
 
-// SERVICES
+/* LOAD SERVICES */
+let allServices = [];
+
 async function loadServices(){
   const res = await fetch(API_URL+"/services");
-  const data = await res.json();
+  allServices = await res.json();
+}
 
-  service.innerHTML="";
-  data.forEach(x=>{
-    service.innerHTML += `<option value="${x.externalServiceId}">${x.name}</option>`;
+/* FILTER SERVICES */
+function filterServices(){
+  const category = document.getElementById("category").value;
+  const service = document.getElementById("service");
+
+  service.innerHTML = "";
+
+  const filtered = allServices.filter(s =>
+    s.name.toLowerCase().includes(category)
+  );
+
+  filtered.forEach(s=>{
+    service.innerHTML += `<option value="${s.externalServiceId}">${s.name}</option>`;
   });
 }
 
-// CREATE ORDER
+/* CREATE ORDER */
 async function createOrder(){
   await fetch(API_URL+"/orders",{
     method:"POST",
@@ -256,26 +277,28 @@ async function createOrder(){
   loadOrders();
 }
 
-// LOAD ORDERS
+/* LOAD ORDERS */
 async function loadOrders(){
   const res = await fetch(API_URL+"/orders",{headers:{Authorization:"Bearer "+getToken()}});
   const data = await res.json();
 
-  ordersTable.innerHTML="";
+  ordersTable.innerHTML = "";
   totalOrders.innerText = data.length;
 
   data.forEach(o=>{
-    ordersTable.innerHTML += `<tr>
-      <td>${o._id}</td>
-      <td>${o.service}</td>
-      <td>${o.quantity}</td>
-      <td>${o.status}</td>
-    </tr>`;
+    ordersTable.innerHTML += `
+      <tr>
+        <td>${o._id}</td>
+        <td>${o.service}</td>
+        <td>${o.quantity}</td>
+        <td>${o.status}</td>
+      </tr>
+    `;
   });
 }
 
-// ✅ UPDATED DEPOSIT FUNCTION
-async function submitDeposit(){
+/* DEPOSIT */
+async function deposit(){
   await fetch(API_URL+"/deposits/request",{
     method:"POST",
     headers:{
@@ -289,12 +312,15 @@ async function submitDeposit(){
     })
   });
 
-  showToast("Deposit submitted, waiting for approval");
+  showToast("Deposit submitted");
 }
 
-// INIT
+/* INIT */
 window.onload = ()=>{
-  if(!getToken()){ location.href="index.html"; return; }
+  if(!getToken()){
+    location.href="index.html";
+    return;
+  }
 
   loadUser();
   loadServices();
