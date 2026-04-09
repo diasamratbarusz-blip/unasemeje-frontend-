@@ -2,7 +2,6 @@
 <html>
 <head>
   <title>unasemeje ø dia smm-panel</title>
-  <link rel="stylesheet" href="style.css">
 
   <style>
     body {
@@ -14,14 +13,14 @@
 
     .container {
       max-width:400px;
-      margin:40px auto;
+      margin:20px auto;
       background:#1e293b;
       padding:20px;
       border-radius:10px;
       text-align:center;
     }
 
-    input {
+    input, select {
       width:100%;
       padding:10px;
       margin:8px 0;
@@ -52,6 +51,10 @@
       text-align:center;
       margin-top:30px;
     }
+
+    #dashboard {
+      display:none;
+    }
   </style>
 </head>
 
@@ -60,63 +63,140 @@
 <!-- HEADER -->
 <div class="section">
   <h1>unasemeje ø dia smm-panel</h1>
-  <p>Best SMM Panel in Africa & Kenya for Fast Social Media Growth</p>
+  <p>Best SMM Panel in Africa & Kenya</p>
 </div>
 
-<!-- LOGIN / REGISTER -->
-<div class="container">
-
+<!-- LOGIN -->
+<div class="container" id="authBox">
   <h2>Login / Register</h2>
 
-  <input id="email" placeholder="Email Address">
-  <input id="phone" placeholder="Phone Number">
+  <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
 
-  <label>
-    <input type="checkbox"> Remember me
-  </label>
-
-  <button onclick="login()">Sign In</button>
-
-  <p>Do not have an account?</p>
-  <button onclick="register()">Sign Up</button>
-
+  <button onclick="login()">Login</button>
+  <button onclick="register()">Register</button>
 </div>
 
-<!-- COVERAGE -->
-<div class="section">
-  <h2>African Coverage</h2>
-  <p>Kenya (M-Pesa), Uganda (MTN), Tanzania (Airtel), Nigeria (Bank Transfer)</p>
-</div>
+<!-- DASHBOARD -->
+<div id="dashboard">
 
-<!-- FEATURES -->
-<div class="section">
-  <h2>Why Choose Us?</h2>
-  <p>Non-drop services, API access, cheapest rates in Africa</p>
-</div>
+  <!-- SERVICES -->
+  <div class="container">
+    <h2>Services</h2>
+    <select id="serviceList"></select>
+  </div>
 
-<!-- HOW IT WORKS -->
-<div class="section">
-  <h2>How It Works</h2>
-  <p>Register → Deposit → Order → Get fast delivery</p>
+  <!-- ORDER -->
+  <div class="container">
+    <h2>Place Order</h2>
+
+    <input id="link" placeholder="Enter Link">
+    <input id="quantity" placeholder="Quantity">
+
+    <button onclick="placeOrder()">Submit Order</button>
+  </div>
+
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <h3>unasemeje ø dia smm-panel</h3>
-  <p>Grow faster across Africa</p>
-
-  <p><b>Phone:</b> 0715509440</p>
-  <p><b>Email:</b> support@unasemeje-dia.com</p>
-  <p><b>Location:</b> Nairobi, Kenya</p>
-
-  <p>© 2026 All Rights Reserved</p>
+  <p>© 2026 unasemeje ø dia smm-panel</p>
 </footer>
 
-<div id="toast"></div>
+<script>
+const API = "http://localhost:5000/api";
 
-<script src="config.js"></script>
-<script src="auth.js"></script>
+let token = localStorage.getItem("token");
+
+// ================= LOGIN =================
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch(API + "/auth/login", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if(data.token){
+    localStorage.setItem("token", data.token);
+    token = data.token;
+    showDashboard();
+  } else {
+    alert(data.message || "Login failed");
+  }
+}
+
+// ================= REGISTER =================
+async function register() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch(API + "/auth/register", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+  alert("Registered! Now login.");
+}
+
+// ================= SHOW DASHBOARD =================
+function showDashboard(){
+  document.getElementById("authBox").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  loadServices();
+}
+
+// ================= LOAD SERVICES =================
+async function loadServices(){
+  const res = await fetch(API + "/services");
+  const data = await res.json();
+
+  const select = document.getElementById("serviceList");
+  select.innerHTML = "";
+
+  data.forEach(s=>{
+    const option = document.createElement("option");
+    option.value = s.service;
+    option.text = `${s.name} ($${s.rate})`;
+    select.appendChild(option);
+  });
+}
+
+// ================= PLACE ORDER =================
+async function placeOrder(){
+  const service = document.getElementById("serviceList").value;
+  const link = document.getElementById("link").value;
+  const quantity = document.getElementById("quantity").value;
+
+  const res = await fetch(API + "/order", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer " + token
+    },
+    body:JSON.stringify({ service, link, quantity })
+  });
+
+  const data = await res.json();
+
+  if(data.success){
+    alert("Order placed successfully!");
+  } else {
+    alert("Error placing order");
+  }
+}
+
+// ================= AUTO LOGIN =================
+if(token){
+  showDashboard();
+}
+</script>
 
 </body>
 </html>
