@@ -46,6 +46,19 @@
       text-align:center;
     }
 
+    .services-box {
+      max-width:800px;
+      margin:auto;
+      text-align:left;
+    }
+
+    .service-item {
+      background:#020617;
+      padding:10px;
+      margin:10px 0;
+      border-radius:6px;
+    }
+
     footer {
       background:#020617;
       padding:20px;
@@ -83,6 +96,14 @@
 
 </div>
 
+<!-- SERVICES SECTION (NEW) -->
+<div class="section">
+  <h2>Our Services</h2>
+  <div id="services" class="services-box">
+    <p>Loading services...</p>
+  </div>
+</div>
+
 <!-- COVERAGE -->
 <div class="section">
   <h2>African Coverage</h2>
@@ -117,6 +138,46 @@
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
+
+<!-- 🔥 SERVICES SCRIPT -->
+<script>
+async function loadServices() {
+  try {
+    const res = await fetch("https://your-backend.onrender.com/api/services");
+    const data = await res.json();
+
+    console.log("SERVICES:", data);
+
+    const container = document.getElementById("services");
+    container.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      container.innerHTML = "<p>No services available</p>";
+      return;
+    }
+
+    data.slice(0, 20).forEach(service => { // limit to 20 for UI
+      const div = document.createElement("div");
+      div.className = "service-item";
+
+      div.innerHTML = `
+        <strong>${service.name}</strong><br>
+        Rate: ${service.rate}<br>
+        Min: ${service.min} | Max: ${service.max}
+      `;
+
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error("Error loading services:", err);
+    document.getElementById("services").innerHTML =
+      "<p>Failed to load services</p>";
+  }
+}
+
+loadServices();
+</script>
 
 </body>
 </html>
