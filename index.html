@@ -31,12 +31,12 @@
 
     button {
       width:100%;
-      padding:12px;
+      padding:10px;
       margin-top:10px;
       background:#3b82f6;
       border:none;
       color:white;
-      font-size:16px;
+      font-size:14px;
       border-radius:5px;
       cursor:pointer;
     }
@@ -54,7 +54,7 @@
 
     .service-item {
       background:#020617;
-      padding:10px;
+      padding:12px;
       margin:10px 0;
       border-radius:6px;
     }
@@ -78,7 +78,6 @@
 
 <!-- LOGIN / REGISTER -->
 <div class="container">
-
   <h2>Login / Register</h2>
 
   <input id="email" placeholder="Email Address">
@@ -93,33 +92,14 @@
 
   <p>Do not have an account?</p>
   <button onclick="register()">Sign Up</button>
-
 </div>
 
-<!-- SERVICES SECTION (NEW) -->
+<!-- SERVICES -->
 <div class="section">
   <h2>Our Services</h2>
   <div id="services" class="services-box">
     <p>Loading services...</p>
   </div>
-</div>
-
-<!-- COVERAGE -->
-<div class="section">
-  <h2>African Coverage</h2>
-  <p>Kenya (M-Pesa), Uganda (MTN), Tanzania (Airtel), Nigeria (Bank Transfer)</p>
-</div>
-
-<!-- FEATURES -->
-<div class="section">
-  <h2>Why Choose Us?</h2>
-  <p>Non-drop services, API access, cheapest rates in Africa</p>
-</div>
-
-<!-- HOW IT WORKS -->
-<div class="section">
-  <h2>How It Works</h2>
-  <p>Register → Deposit → Order → Get fast delivery</p>
 </div>
 
 <!-- FOOTER -->
@@ -139,14 +119,15 @@
 <script src="config.js"></script>
 <script src="auth.js"></script>
 
-<!-- 🔥 SERVICES SCRIPT -->
+<!-- 🔥 SERVICES + ORDER SCRIPT -->
 <script>
+const BASE_URL = "https://your-backend.onrender.com"; // 🔴 CHANGE THIS
+
+// LOAD SERVICES
 async function loadServices() {
   try {
-    const res = await fetch("https://your-backend.onrender.com/api/services");
+    const res = await fetch(BASE_URL + "/api/services");
     const data = await res.json();
-
-    console.log("SERVICES:", data);
 
     const container = document.getElementById("services");
     container.innerHTML = "";
@@ -156,23 +137,72 @@ async function loadServices() {
       return;
     }
 
-    data.slice(0, 20).forEach(service => { // limit to 20 for UI
+    data.slice(0, 20).forEach(service => {
       const div = document.createElement("div");
       div.className = "service-item";
 
       div.innerHTML = `
         <strong>${service.name}</strong><br>
         Rate: ${service.rate}<br>
-        Min: ${service.min} | Max: ${service.max}
+        Min: ${service.min} | Max: ${service.max}<br><br>
+
+        <button onclick="placeOrder(${service.serviceId})">
+          Order
+        </button>
       `;
 
       container.appendChild(div);
     });
 
   } catch (err) {
-    console.error("Error loading services:", err);
+    console.error(err);
     document.getElementById("services").innerHTML =
       "<p>Failed to load services</p>";
+  }
+}
+
+// PLACE ORDER
+async function placeOrder(serviceId) {
+  const link = prompt("Enter link:");
+  const quantity = prompt("Enter quantity:");
+
+  if (!link || !quantity) {
+    alert("All fields required");
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Please login first");
+      return;
+    }
+
+    const res = await fetch(BASE_URL + "/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        serviceId,
+        link,
+        quantity
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("✅ Order placed successfully");
+    } else {
+      alert("❌ " + data.error);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Order failed");
   }
 }
 
