@@ -10,7 +10,6 @@
       min-height: 100vh;
     }
 
-    /* SIDEBAR */
     .sidebar {
       width: 220px;
       background: #020617;
@@ -35,7 +34,6 @@
       padding-left: 5px;
     }
 
-    /* MAIN */
     .main {
       flex: 1;
       padding: 20px;
@@ -130,7 +128,6 @@
   <!-- MAIN -->
   <div class="main">
 
-    <!-- TOPBAR -->
     <div class="topbar">
       <div id="userEmail">User</div>
       <div>Balance: KES <span id="balance">0</span></div>
@@ -138,12 +135,10 @@
 
     <!-- DASHBOARD -->
     <div id="dashboardSection">
-
       <div class="cards">
         <div class="card">Total Orders: <span id="totalOrders">0</span></div>
         <div class="card">Balance: <span id="balance2">0</span></div>
       </div>
-
     </div>
 
     <!-- ORDER -->
@@ -204,6 +199,8 @@
 <script>
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
+let allServices = [];
+
 function showToast(msg){
   const t = document.getElementById("toast");
   t.innerText = msg;
@@ -211,38 +208,41 @@ function showToast(msg){
   setTimeout(()=>t.style.display="none",3000);
 }
 
-function getToken(){ return localStorage.getItem("token"); }
+function getToken(){
+  return localStorage.getItem("token");
+}
 
 function logout(){
   localStorage.removeItem("token");
   location.href="index.html";
 }
 
-/* SECTION SWITCH */
 function showSection(id){
   document.querySelectorAll('.section').forEach(s=>s.style.display='none');
   document.getElementById(id+"Section").style.display='block';
 }
 
-/* LOAD USER */
+/* USER */
 async function loadUser(){
-  const res = await fetch(API_URL+"/me",{headers:{Authorization:"Bearer "+getToken()}});
+  const res = await fetch(API_URL+"/me", {
+    headers: { Authorization: "Bearer " + getToken() }
+  });
+
   const data = await res.json();
 
-  userEmail.innerText = data.email;
-  balance.innerText = data.balance;
-  balance2.innerText = data.balance;
+  document.getElementById("userEmail").innerText = data.email;
+  document.getElementById("balance").innerText = data.balance;
+  document.getElementById("balance2").innerText = data.balance;
 }
 
-/* LOAD SERVICES */
-let allServices = [];
-
+/* SERVICES */
 async function loadServices(){
   const res = await fetch(API_URL+"/services");
   allServices = await res.json();
+
+  filterServices();
 }
 
-/* FILTER SERVICES */
 function filterServices(){
   const category = document.getElementById("category").value;
   const service = document.getElementById("service");
@@ -250,43 +250,31 @@ function filterServices(){
   service.innerHTML = "";
 
   const filtered = allServices.filter(s =>
-    s.name.toLowerCase().includes(category)
+    (s.category || "").toLowerCase().includes(category)
   );
 
   filtered.forEach(s=>{
-    service.innerHTML += `<option value="${s.externalServiceId}">${s.name}</option>`;
+    service.innerHTML += `
+      <option value="${s.serviceId}">
+        ${s.name} - ${s.rate}
+      </option>
+    `;
   });
 }
 
-/* CREATE ORDER */
-async function createOrder(){
-  await fetch(API_URL+"/orders",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+getToken()
-    },
-    body: JSON.stringify({
-      service: service.value,
-      link: link.value,
-      quantity: quantity.value
-    })
-  });
-
-  showToast("Order placed");
-  loadOrders();
-}
-
-/* LOAD ORDERS */
+/* ORDERS */
 async function loadOrders(){
-  const res = await fetch(API_URL+"/orders",{headers:{Authorization:"Bearer "+getToken()}});
+  const res = await fetch(API_URL+"/orders", {
+    headers: { Authorization: "Bearer " + getToken() }
+  });
+
   const data = await res.json();
 
-  ordersTable.innerHTML = "";
-  totalOrders.innerText = data.length;
+  document.getElementById("ordersTable").innerHTML = "";
+  document.getElementById("totalOrders").innerText = data.length;
 
   data.forEach(o=>{
-    ordersTable.innerHTML += `
+    document.getElementById("ordersTable").innerHTML += `
       <tr>
         <td>${o._id}</td>
         <td>${o.service}</td>
@@ -297,18 +285,37 @@ async function loadOrders(){
   });
 }
 
+/* ORDER */
+async function createOrder(){
+  const service = document.getElementById("service").value;
+  const link = document.getElementById("link").value;
+  const quantity = document.getElementById("quantity").value;
+
+  await fetch(API_URL+"/order", {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json",
+      Authorization: "Bearer " + getToken()
+    },
+    body: JSON.stringify({ serviceId: service, link, quantity })
+  });
+
+  showToast("Order placed");
+  loadOrders();
+}
+
 /* DEPOSIT */
 async function deposit(){
-  await fetch(API_URL+"/deposits/request",{
+  await fetch(API_URL+"/deposits/request", {
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+getToken()
     },
     body: JSON.stringify({
-      phone: phone.value,
-      amount: amount.value,
-      code: code.value
+      phone: document.getElementById("phone").value,
+      amount: document.getElementById("amount").value,
+      code: document.getElementById("code").value
     })
   });
 
