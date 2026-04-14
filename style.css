@@ -8,34 +8,46 @@ body {
 
 /* ================= LOGIN ================= */
 .container {
-  width: 320px;
+  width: 340px;
   margin: 100px auto;
-  background: rgba(17, 24, 39, 0.8);
-  padding: 25px;
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  background: rgba(17, 24, 39, 0.75);
+  padding: 28px;
+  border-radius: 18px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
   text-align: center;
+  transition: 0.3s ease;
+}
+
+.container:hover {
+  transform: translateY(-3px);
 }
 
 .container h2 {
   margin-bottom: 20px;
+  color: #38bdf8;
 }
 
 /* ================= INPUT ================= */
 input {
   width: 100%;
   margin: 10px 0;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
   outline: none;
-  background: #1e293b;
+  background: #0f172a;
   color: white;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56,189,248,0.4);
 }
 
 input::placeholder {
-  color: #94a3b8;
+  color: #64748b;
 }
 
 /* ================= BUTTON ================= */
@@ -43,18 +55,23 @@ button {
   width: 100%;
   margin-top: 10px;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
   background: linear-gradient(135deg, #38bdf8, #22c55e);
   color: black;
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #0ea5e9, #16a34a);
+  transform: scale(1.04);
+  filter: brightness(1.1);
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 /* ================= DASHBOARD ================= */
@@ -65,7 +82,7 @@ button:hover {
 
 /* ================= SIDEBAR ================= */
 .sidebar {
-  width: 220px;
+  width: 240px;
   background: #020617;
   padding: 20px;
   border-right: 1px solid #1e293b;
@@ -80,12 +97,15 @@ button:hover {
   color: #cbd5f5;
   margin: 12px 0;
   text-decoration: none;
+  padding: 8px;
+  border-radius: 8px;
   transition: 0.3s;
 }
 
 .sidebar a:hover {
   color: #38bdf8;
-  padding-left: 5px;
+  background: rgba(56,189,248,0.1);
+  padding-left: 12px;
 }
 
 /* ================= MAIN ================= */
@@ -99,6 +119,10 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(17, 24, 39, 0.7);
+  padding: 12px 15px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
 }
 
 .navbar button {
@@ -111,28 +135,33 @@ button:hover {
   display: flex;
   gap: 15px;
   margin-top: 20px;
+  flex-wrap: wrap;
 }
 
 .card {
-  background: rgba(17, 24, 39, 0.8);
+  background: rgba(17, 24, 39, 0.7);
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 16px;
   flex: 1;
+  min-width: 180px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   transition: 0.3s;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  border: 1px solid #38bdf8;
 }
 
 /* ================= FORM SECTIONS ================= */
 .form-section {
-  background: rgba(17, 24, 39, 0.8);
+  background: rgba(17, 24, 39, 0.7);
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 16px;
   margin-top: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 /* ================= ORDERS ================= */
@@ -143,9 +172,16 @@ ul {
 
 ul li {
   background: #020617;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #1e293b;
+  transition: 0.3s;
+}
+
+ul li:hover {
+  border-color: #38bdf8;
+  transform: translateX(5px);
 }
 
 /* ================= TOAST ================= */
@@ -156,9 +192,10 @@ ul li {
   background: #22c55e;
   color: black;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   display: none;
   animation: fadeIn 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
 /* ================= ANIMATIONS ================= */
@@ -189,6 +226,6 @@ ul li {
 
   .container {
     width: 90%;
-    margin: 50px auto;
+    margin: 60px auto;
   }
 }
