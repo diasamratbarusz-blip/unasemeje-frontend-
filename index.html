@@ -1,102 +1,106 @@
 <script>
+function showToast(msg, ok = true) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.style.borderColor = ok ? "#22c55e" : "#ef4444";
+  toast.classList.add("show");
 
-const BASE_URL = "https://your-backend.onrender.com"; // MUST CHANGE
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
 
-// ================= LOAD SERVICES =================
-async function loadServices() {
-  try {
-    const res = await fetch(BASE_URL + "/api/services");
+function setLoading(btnId, state, text) {
+  const btn = document.getElementById(btnId);
 
-    const data = await res.json();
-
-    if (!res.ok || !Array.isArray(data)) {
-      throw new Error("Invalid API response");
-    }
-
-    const container = document.getElementById("services");
-    container.innerHTML = "";
-
-    if (data.length === 0) {
-      container.innerHTML = "<p>No services available</p>";
-      return;
-    }
-
-    data.slice(0, 20).forEach(service => {
-
-      const id = service.serviceId || service.service || service.id;
-
-      const div = document.createElement("div");
-      div.className = "service-item";
-
-      div.innerHTML = `
-        <strong>${service.name}</strong><br>
-        Rate: ${service.rate}<br>
-        Min: ${service.min} | Max: ${service.max}<br><br>
-
-        <button onclick="placeOrder('${id}')">
-          Order
-        </button>
-      `;
-
-      container.appendChild(div);
-    });
-
-  } catch (err) {
-    console.error("Service load error:", err);
-
-    document.getElementById("services").innerHTML =
-      "<p style='color:red'>Failed to load services</p>";
+  if (state) {
+    btn.dataset.old = btn.innerText;
+    btn.innerText = text;
+    btn.disabled = true;
+    btn.classList.add("loading");
+  } else {
+    btn.innerText = btn.dataset.old;
+    btn.disabled = false;
+    btn.classList.remove("loading");
   }
 }
 
-// ================= PLACE ORDER =================
-async function placeOrder(serviceId) {
+/* LOGIN */
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  const link = prompt("Enter link:");
-  const quantity = prompt("Enter quantity:");
-
-  if (!link || !quantity) {
-    alert("All fields required");
+  if (!email || !password) {
+    showToast("Fill all fields", false);
     return;
   }
 
+  setLoading("loginBtn", true, "Logging in...");
+
   try {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Please login first");
-      return;
-    }
-
-    const res = await fetch(BASE_URL + "/api/order", {
+    const res = await fetch(BASE_URL + "/api/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({
-        serviceId,
-        link,
-        quantity: Number(quantity)
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      alert("❌ " + (data.error || "Order failed"));
+      showToast(data.error || "Login failed", false);
       return;
     }
 
-    alert("✅ Order placed successfully");
+    localStorage.setItem("token", data.token);
+
+    showToast("Login successful ✅");
+
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
 
   } catch (err) {
-    console.error("Order error:", err);
-    alert("❌ Network error");
+    console.error(err);
+    showToast("Server error", false);
+  } finally {
+    setLoading("loginBtn", false);
   }
 }
 
-// INIT
-loadServices();
+/* REGISTER */
+async function register() {
+  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value;
+  const password = document.getElementById("password").value;
 
+  if (!email || !password) {
+    showToast("Fill required fields", false);
+    return;
+  }
+
+  setLoading("registerBtn", true, "Creating account...");
+
+  try {
+    const res = await fetch(BASE_URL + "/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, phone, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.error || "Registration failed", false);
+      return;
+    }
+
+    showToast("Account created successfully ✅");
+
+  } catch (err) {
+    console.error(err);
+    showToast("Server error", false);
+  } finally {
+    setLoading("registerBtn", false);
+  }
+}
 </script>
