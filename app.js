@@ -1,31 +1,67 @@
+const API = "https://your-backend-url.onrender.com/api"; 
+// 🔥 change this to your live backend
+
+// ================= LOAD SERVICES =================
 async function loadServices() {
-  const res = await fetch("http://localhost:5000/api/services");
-  const data = await res.json();
+  try {
+    const res = await fetch(API + "/services");
 
-  const list = document.getElementById("services");
+    if (!res.ok) throw new Error("Failed to load services");
 
-  data.forEach(s => {
-    const li = document.createElement("li");
-    li.innerText = `${s.service} - ${s.name} ($${s.rate})`;
-    list.appendChild(li);
-  });
+    const data = await res.json();
+
+    const list = document.getElementById("services");
+
+    list.innerHTML = ""; // 🔥 prevent duplicates
+
+    data.forEach(s => {
+      const li = document.createElement("li");
+
+      li.innerText = `${s.serviceId || s.service} - ${s.name} (Rate: ${s.rate})`;
+
+      list.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error("Load services error:", err);
+
+    document.getElementById("services").innerHTML =
+      "<li style='color:red'>Failed to load services</li>";
+  }
 }
 
+// ================= PLACE ORDER =================
 async function placeOrder() {
-  const service = document.getElementById("service").value;
-  const link = document.getElementById("link").value;
-  const quantity = document.getElementById("quantity").value;
+  try {
+    const service = document.getElementById("service").value;
+    const link = document.getElementById("link").value;
+    const quantity = document.getElementById("quantity").value;
 
-  const res = await fetch("http://localhost:5000/api/order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ service, link, quantity })
-  });
+    const token = localStorage.getItem("token");
 
-  const data = await res.json();
-  alert("Order placed: " + JSON.stringify(data));
+    const res = await fetch(API + "/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ serviceId: service, link, quantity })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert("❌ " + (data.error || "Order failed"));
+      return;
+    }
+
+    alert("✅ Order placed successfully");
+
+  } catch (err) {
+    console.error("Order error:", err);
+    alert("❌ Network error");
+  }
 }
 
+// ================= INIT =================
 loadServices();
