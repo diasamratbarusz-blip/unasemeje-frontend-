@@ -1,89 +1,208 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Panel</title>
+  <title>Admin Dashboard - SMM Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
-    body { font-family: Arial; background:#0f172a; color:white; padding:20px; }
-    table { width:100%; border-collapse: collapse; margin-bottom:20px; }
-    th, td { padding:10px; border-bottom:1px solid #334155; }
-    button { padding:6px 10px; cursor:pointer; }
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+    }
+
+    .sidebar {
+      width: 220px;
+      height: 100vh;
+      background: #020617;
+      position: fixed;
+      padding: 20px;
+    }
+
+    .sidebar h2 {
+      color: #38bdf8;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #cbd5f5;
+      margin: 15px 0;
+      cursor: pointer;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #111827;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #22c55e;
+      color: black;
+      font-weight: bold;
+    }
+
+    .danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .loading {
+      color: #38bdf8;
+    }
   </style>
 </head>
+
 <body>
 
-<h2>Admin Panel</h2>
+<div class="sidebar">
+  <h2>ADMIN PANEL</h2>
+  <a onclick="loadUsers()">👤 Users</a>
+  <a onclick="loadDeposits()">💰 Deposits</a>
+  <a onclick="logout()">🚪 Logout</a>
+</div>
 
-<button onclick="logout()">Logout</button>
-
-<h3>Deposit Requests</h3>
-<table>
-  <thead>
-    <tr>
-      <th>User</th>
-      <th>Amount</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody id="depositTable"></tbody>
-</table>
-
-<h3>All Orders</h3>
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>User</th>
-      <th>Service</th>
-      <th>Qty</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody id="orderTable"></tbody>
-</table>
+<div class="main">
+  <h1>Admin Dashboard</h1>
+  <div id="content"></div>
+</div>
 
 <script>
-const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
+const API = "https://unasemeje-backend-3.onrender.com/api";
+
+// ================= TOKEN =================
 function getToken(){
   return localStorage.getItem("token");
 }
 
+// ================= LOGOUT =================
 function logout(){
   localStorage.removeItem("token");
-  window.location.href = "index.html";
+  location.href = "index.html";
 }
 
-// LOAD DEPOSITS
-async function loadDeposits(){
-  const res = await fetch(API_URL + "/admin/deposits", {
+// ================= SAFE FETCH =================
+async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    if (!res.ok) throw new Error("Request failed");
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+// ================= USERS =================
+async function loadUsers(){
+
+  document.getElementById("content").innerHTML =
+    "<p class='loading'>⏳ Loading users...</p>";
+
+  const data = await safeFetch(API + "/admin/users", {
     headers: { Authorization: "Bearer " + getToken() }
   });
 
-  const data = await res.json();
+  if(!data){
+    document.getElementById("content").innerHTML =
+      "<p style='color:red'>❌ Failed to load users</p>";
+    return;
+  }
 
-  const table = document.getElementById("depositTable");
-  table.innerHTML = "";
+  let html = `<h2>Users</h2>`;
+
+  data.forEach(u => {
+    html += `
+      <div class="card">
+        <b>Email:</b> ${u.email}<br>
+        <b>Phone:</b> ${u.phone || "N/A"}<br>
+        <b>Balance:</b> KES ${u.balance}
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+
+// ================= DEPOSITS =================
+async function loadDeposits(){
+
+  document.getElementById("content").innerHTML =
+    "<p class='loading'>⏳ Loading deposits...</p>";
+
+  const data = await safeFetch(API + "/admin/deposits", {
+    headers: { Authorization: "Bearer " + getToken() }
+  });
+
+  if(!data){
+    document.getElementById("content").innerHTML =
+      "<p style='color:red'>❌ Failed to load deposits</p>";
+    return;
+  }
+
+  let html = `<h2>Deposits</h2>`;
+
+  html += `
+    <table>
+      <tr>
+        <th>Phone</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+  `;
 
   data.forEach(d => {
-    table.innerHTML += `
+    html += `
       <tr>
-        <td>${d.userId}</td>
-        <td>${d.amount}</td>
+        <td>${d.phone}</td>
+        <td>KES ${d.amount}</td>
         <td>${d.status}</td>
         <td>
-          ${d.status === "pending" 
-            ? `<button onclick="approveDeposit('${d._id}')">Approve</button>` 
-            : "Done"}
+          ${d.status !== "completed" ? `
+            <button onclick="approveDeposit('${d._id}')">
+              Approve
+            </button>
+          ` : "✔ Done"}
         </td>
       </tr>
     `;
   });
+
+  html += `</table>`;
+
+  document.getElementById("content").innerHTML = html;
 }
 
-// APPROVE DEPOSIT
+// ================= APPROVE DEPOSIT =================
 async function approveDeposit(id){
-  await fetch(API_URL + "/deposits/approve", {
+
+  if(!confirm("Approve this deposit?")) return;
+
+  const res = await safeFetch(API + "/admin/approve", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -92,44 +211,18 @@ async function approveDeposit(id){
     body: JSON.stringify({ id })
   });
 
-  alert("Approved");
-  loadDeposits();
-}
-
-// LOAD ALL ORDERS
-async function loadOrders(){
-  const res = await fetch(API_URL + "/admin/orders", {
-    headers: { Authorization: "Bearer " + getToken() }
-  });
-
-  const orders = await res.json();
-
-  const table = document.getElementById("orderTable");
-  table.innerHTML = "";
-
-  orders.forEach(o => {
-    table.innerHTML += `
-      <tr>
-        <td>${o._id}</td>
-        <td>${o.userId}</td>
-        <td>${o.service}</td>
-        <td>${o.quantity}</td>
-        <td>${o.status}</td>
-      </tr>
-    `;
-  });
-}
-
-// INIT
-window.onload = () => {
-  if (!getToken()) {
-    window.location.href = "index.html";
+  if(!res){
+    alert("❌ Failed");
     return;
   }
 
+  alert("✅ Deposit approved");
   loadDeposits();
-  loadOrders();
-};
+}
+
+// ================= INIT =================
+loadUsers();
+
 </script>
 
 </body>
