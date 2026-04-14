@@ -65,6 +65,28 @@
       text-align:center;
       margin-top:30px;
     }
+
+    /* 🔥 ADDED LOADER STYLE */
+    .btn-loader {
+      width: 16px;
+      height: 16px;
+      border: 2px solid white;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
   </style>
 </head>
 
@@ -92,6 +114,12 @@
 
   <p>Do not have an account?</p>
   <button onclick="register()">Sign Up</button>
+
+  <!-- 🔥 ADDED LOADING TEXT -->
+  <div id="loadingText" style="display:none; margin-top:10px; color:#38bdf8;">
+    ⏳ Processing request...
+  </div>
+
 </div>
 
 <!-- SERVICES -->
@@ -207,6 +235,52 @@ async function placeOrder(serviceId) {
 }
 
 loadServices();
+</script>
+
+<!-- 🔥 ADDED LOADING SCRIPT (NO CHANGES TO YOUR CODE) -->
+<script>
+function setButtonLoading(buttonText, loading) {
+  const buttons = document.querySelectorAll("button");
+
+  buttons.forEach(btn => {
+    if (btn.innerText.includes(buttonText)) {
+      if (loading) {
+        btn.disabled = true;
+        btn.dataset.original = btn.innerHTML;
+        btn.innerHTML = buttonText + ' <span class="btn-loader"></span>';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = btn.dataset.original;
+      }
+    }
+  });
+
+  document.getElementById("loadingText").style.display = loading ? "block" : "none";
+}
+
+// HOOK LOGIN
+const originalLogin = window.login;
+window.login = async function () {
+  setButtonLoading("Sign In", true);
+  try {
+    await originalLogin();
+  } catch (e) {
+    console.error(e);
+  }
+  setButtonLoading("Sign In", false);
+};
+
+// HOOK REGISTER
+const originalRegister = window.register;
+window.register = async function () {
+  setButtonLoading("Sign Up", true);
+  try {
+    await originalRegister();
+  } catch (e) {
+    console.error(e);
+  }
+  setButtonLoading("Sign Up", false);
+};
 </script>
 
 </body>
