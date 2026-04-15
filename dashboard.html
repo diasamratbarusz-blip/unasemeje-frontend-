@@ -24,7 +24,6 @@
       min-height:100vh;
     }
 
-    /* SIDEBAR */
     .sidebar{
       background:#0f172a;
       padding:20px;
@@ -38,12 +37,6 @@
       margin-bottom:20px;
     }
 
-    .role{
-      font-size:12px;
-      color:#94a3b8;
-      margin-bottom:15px;
-    }
-
     .nav a{
       display:block;
       padding:12px;
@@ -52,7 +45,6 @@
       border-radius:8px;
       cursor:pointer;
       text-decoration:none;
-      transition:0.2s;
     }
 
     .nav a:hover{
@@ -60,13 +52,8 @@
       color:#fff;
     }
 
-    .nav a.active{
-      background:#38bdf8;
-      color:#000;
-      font-weight:bold;
-    }
+    .hidden{display:none;}
 
-    /* MAIN */
     .main{
       padding:20px;
     }
@@ -86,7 +73,6 @@
       font-weight:bold;
     }
 
-    /* CARDS */
     .cards{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -101,36 +87,6 @@
       border:1px solid #1f2937;
     }
 
-    .card h3{
-      color:#38bdf8;
-      margin-bottom:5px;
-    }
-
-    /* SERVICES */
-    .services{
-      margin-top:20px;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:12px;
-    }
-
-    .service{
-      background:#0f172a;
-      padding:15px;
-      border-radius:12px;
-      border:1px solid #1f2937;
-    }
-
-    .badge{
-      font-size:12px;
-      background:#1e293b;
-      padding:4px 8px;
-      border-radius:6px;
-      color:#38bdf8;
-      display:inline-block;
-      margin:5px 0;
-    }
-
     button{
       width:100%;
       padding:10px;
@@ -142,13 +98,9 @@
       margin-top:10px;
     }
 
-    button:hover{
-      opacity:0.9;
-    }
-
     table{
       width:100%;
-      margin-top:15px;
+      margin-top:10px;
       border-collapse:collapse;
     }
 
@@ -161,21 +113,6 @@
     th{
       color:#38bdf8;
     }
-
-    .chartBox{
-      margin-top:20px;
-      background:#0f172a;
-      padding:15px;
-      border-radius:12px;
-      border:1px solid #1f2937;
-    }
-
-    .hidden{display:none;}
-
-    @media(max-width:768px){
-      .app{grid-template-columns:1fr;}
-      .sidebar{display:none;}
-    }
   </style>
 </head>
 
@@ -186,10 +123,9 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="brand">SMM PANEL</div>
-    <div class="role" id="roleText">User</div>
 
     <div class="nav">
-      <a class="active" onclick="show('dashboard')">Dashboard</a>
+      <a onclick="show('dashboard')">Dashboard</a>
       <a onclick="show('services')">Services</a>
       <a onclick="show('orders')">Orders</a>
       <a onclick="show('wallet')">Wallet</a>
@@ -201,7 +137,6 @@
   <!-- MAIN -->
   <div class="main">
 
-    <!-- TOPBAR -->
     <div class="topbar">
       <div id="email">Loading...</div>
       <div class="balance">KES <span id="balance">0</span></div>
@@ -211,21 +146,17 @@
     <div id="dashboard">
 
       <div class="cards">
-        <div class="card"><h3>Services</h3><div id="serviceCount">0</div></div>
-        <div class="card"><h3>Orders</h3><div id="orderCount">0</div></div>
-        <div class="card"><h3>Users</h3><div id="userCount">0</div></div>
-        <div class="card"><h3>Revenue</h3>KES <span id="revenue">0</span></div>
+        <div class="card">Services <div id="serviceCount">0</div></div>
+        <div class="card">Orders <div id="orderCount">0</div></div>
+        <div class="card">Revenue KES <div id="revenue">0</div></div>
       </div>
 
-      <div class="chartBox">
-        <canvas id="chart"></canvas>
-      </div>
     </div>
 
     <!-- SERVICES -->
     <div id="services" class="hidden">
       <h3>Services</h3>
-      <div id="serviceList" class="services"></div>
+      <div id="serviceList"></div>
     </div>
 
     <!-- ORDERS -->
@@ -246,33 +177,30 @@
 
     <!-- WALLET -->
     <div id="wallet" class="hidden">
-      <h3>Wallet Topup</h3>
-      <input id="phone" placeholder="Phone 2547..." style="padding:10px;width:100%;margin-top:10px;">
-      <input id="amount" placeholder="Amount" style="padding:10px;width:100%;margin-top:10px;">
+      <h3>Top Up</h3>
+
+      <input id="phone" placeholder="2547..." style="padding:10px;width:100%;margin-top:10px">
+      <input id="amount" placeholder="Amount" style="padding:10px;width:100%;margin-top:10px">
+
       <button onclick="topup()">Send STK Push</button>
     </div>
 
     <!-- ADMIN -->
     <div id="admin" class="hidden">
       <h3>Admin Panel</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Balance</th>
-          </tr>
-        </thead>
-        <tbody id="userTable"></tbody>
-      </table>
+      <p>Access backend admin routes for service management</p>
     </div>
 
   </div>
 </div>
 
 <script>
+
 const API = "https://unasemeje-backend-3.onrender.com/api";
 
-function getToken(){ return localStorage.getItem("token"); }
+function getToken(){
+  return localStorage.getItem("token");
+}
 
 function logout(){
   localStorage.removeItem("token");
@@ -280,148 +208,117 @@ function logout(){
 }
 
 function show(id){
-  document.querySelectorAll(".main > div").forEach(d=>d.classList.add("hidden"));
+  document.querySelectorAll(".main > div").forEach(d=>{
+    d.classList.add("hidden");
+  });
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* FETCH */
-async function fetchAPI(url,opt={}){
-  try{
-    const res=await fetch(url,opt);
-    return await res.json();
-  }catch(e){return null;}
-}
-
-/* USER */
+/* ================= USER ================= */
 async function loadUser(){
-  const data=await fetchAPI(API+"/me",{headers:{Authorization:"Bearer "+getToken()}});
+  const res = await fetch(API+"/me",{
+    headers:{Authorization:"Bearer "+getToken()}
+  });
+
+  const data = await res.json().catch(()=>null);
   if(!data) return;
 
-  document.getElementById("email").innerText=data.email;
-  document.getElementById("balance").innerText=data.balance;
+  document.getElementById("email").innerText = data.email;
+  document.getElementById("balance").innerText = data.balance;
 
-  if(data.role==="admin"){
-    document.getElementById("roleText").innerText="Admin";
-  } else {
+  if(data.role !== "admin"){
     document.getElementById("adminTab").style.display="none";
   }
 }
 
-/* SERVICES */
+/* ================= SERVICES ================= */
 async function loadServices(){
-  const data=await fetchAPI(API+"/services");
-  const list=document.getElementById("serviceList");
+  const res = await fetch(API+"/services");
+  const data = await res.json().catch(()=>null);
 
   if(!data) return;
 
-  document.getElementById("serviceCount").innerText=data.length;
+  document.getElementById("serviceCount").innerText = data.length;
 
-  list.innerHTML="";
+  const list = document.getElementById("serviceList");
+  list.innerHTML = "";
 
   data.forEach(s=>{
-    list.innerHTML+=`
-      <div class="service">
+    list.innerHTML += `
+      <div style="background:#0f172a;padding:10px;margin:10px;border-radius:10px">
         <b>${s.name}</b><br>
-        <span class="badge">${s.category||"General"}</span><br>
         Rate: ${s.rate}<br>
-
         <button onclick="order('${s.serviceId}')">Order</button>
       </div>
     `;
   });
 }
 
-/* ORDER */
+/* ================= ORDER ================= */
 async function order(id){
-  const link=prompt("Link:");
-  const qty=prompt("Quantity:");
+  const link = prompt("Enter link:");
+  const qty = prompt("Enter quantity:");
 
-  const res=await fetchAPI(API+"/orders",{
+  const res = await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+getToken()
     },
-    body:JSON.stringify({serviceId:id,link,quantity:Number(qty)})
+    body:JSON.stringify({
+      serviceId:id,
+      link,
+      quantity:Number(qty)
+    })
   });
 
-  alert(res? "Order placed":"Failed");
+  const data = await res.json().catch(()=>null);
+
+  alert(data?.message || "Order placed");
+
   loadOrders();
+  loadUser();
 }
 
-/* ORDERS */
+/* ================= ORDERS ================= */
 async function loadOrders(){
-  const data=await fetchAPI(API+"/orders",{headers:{Authorization:"Bearer "+getToken()}});
+  const res = await fetch(API+"/orders",{
+    headers:{Authorization:"Bearer "+getToken()}
+  });
+
+  const data = await res.json().catch(()=>null);
   if(!data) return;
 
-  document.getElementById("orderCount").innerText=data.length;
+  document.getElementById("orderCount").innerText = data.length;
 
-  const table=document.getElementById("orderTable");
-  table.innerHTML="";
+  const table = document.getElementById("orderTable");
+  table.innerHTML = "";
 
-  let revenue=0;
+  let revenue = 0;
 
   data.forEach(o=>{
-    revenue+=10;
+    revenue += Number(o.cost || 0);
 
-    table.innerHTML+=`
+    table.innerHTML += `
       <tr>
         <td>${o._id}</td>
         <td>${o.service}</td>
         <td>${o.quantity}</td>
-        <td>${o.status||"pending"}</td>
+        <td>${o.status || "pending"}</td>
       </tr>
     `;
   });
 
-  document.getElementById("revenue").innerText=revenue;
+  document.getElementById("revenue").innerText = revenue;
 }
 
-/* USERS (ADMIN) */
-async function loadUsers(){
-  const data=await fetchAPI(API+"/users",{headers:{Authorization:"Bearer "+getToken()}});
-  if(!data) return;
-
-  document.getElementById("userCount").innerText=data.length;
-
-  const table=document.getElementById("userTable");
-  table.innerHTML="";
-
-  data.forEach(u=>{
-    table.innerHTML+=`
-      <tr>
-        <td>${u.email}</td>
-        <td>KES ${u.balance}</td>
-      </tr>
-    `;
-  });
-}
-
-/* M-PESA TOPUP (UI ONLY HOOK) */
+/* ================= TOPUP ================= */
 async function topup(){
-  const phone=document.getElementById("phone").value;
-  const amount=document.getElementById("amount").value;
-
-  alert("STK Push sent to "+phone+" (backend required)");
+  alert("Use /api/mpesa/stk backend endpoint");
 }
 
-/* CHART */
-function loadChart(){
-  new Chart(document.getElementById("chart"),{
-    type:"line",
-    data:{
-      labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-      datasets:[{
-        label:"Orders",
-        data:[5,12,8,15,20,25,18],
-        borderColor:"#38bdf8"
-      }]
-    }
-  });
-}
-
-/* INIT */
-window.onload=()=>{
+/* ================= INIT ================= */
+window.onload = () => {
   if(!getToken()){
     location.href="index.html";
     return;
@@ -430,10 +327,9 @@ window.onload=()=>{
   loadUser();
   loadServices();
   loadOrders();
-  loadUsers();
-  loadChart();
 };
+
 </script>
 
 </body>
-  </html>
+</html>
