@@ -4,6 +4,9 @@
   <title>SMM Panel Pro Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- ICONS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
   <style>
     body {
       margin: 0;
@@ -78,6 +81,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .badge {
@@ -97,16 +102,30 @@
       z-index: 999;
     }
 
-    #loading {
-      display: none;
-      text-align: center;
-      color: #22c55e;
+    .social-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
     }
 
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+    .social-item {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid #334155;
+      transition: 0.2s;
+    }
+
+    .social-item:hover {
+      background: #334155;
+    }
+
+    .icon-box {
+      font-size: 20px;
+      margin-bottom: 5px;
     }
   </style>
 </head>
@@ -127,22 +146,26 @@
 
     <div>
       Balance: <span class="badge" id="balance">0</span>
-      <button onclick="logout()" style="margin-left:10px;background:red;width:auto;">Logout</button>
+      <button onclick="logout()" style="background:red;width:auto;">Logout</button>
     </div>
   </div>
 
-  <!-- FILTER -->
+  <!-- SOCIAL SELECTOR -->
+  <div class="card">
+    <h3>Choose Platform</h3>
+
+    <div class="social-list">
+      <div class="social-item" onclick="setPlatform('instagram')"><i class="fab fa-instagram"></i><br>Instagram</div>
+      <div class="social-item" onclick="setPlatform('tiktok')"><i class="fab fa-tiktok"></i><br>TikTok</div>
+      <div class="social-item" onclick="setPlatform('facebook')"><i class="fab fa-facebook"></i><br>Facebook</div>
+      <div class="social-item" onclick="setPlatform('youtube')"><i class="fab fa-youtube"></i><br>YouTube</div>
+      <div class="social-item" onclick="setPlatform('twitter')"><i class="fab fa-twitter"></i><br>Twitter/X</div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
   <div class="card">
     <input id="search" placeholder="Search services..." onkeyup="renderServices()">
-
-    <select id="platformFilter" onchange="renderServices()">
-      <option value="all">All Platforms</option>
-      <option>Instagram</option>
-      <option>TikTok</option>
-      <option>YouTube</option>
-      <option>Facebook</option>
-      <option>Twitter/X</option>
-    </select>
   </div>
 
   <!-- SERVICES -->
@@ -167,7 +190,7 @@
   <!-- DEPOSIT -->
   <div class="card">
     <h3>Deposit via M-Pesa</h3>
-    <input id="phone" placeholder="Phone (254...)">
+    <input id="phone" placeholder="2547XXXXXXXX">
     <input id="amount" placeholder="Amount">
 
     <button onclick="deposit()">Send STK Push</button>
@@ -182,15 +205,15 @@
 </div>
 
 <div id="toast"></div>
-<div id="loading">Loading...</div>
 
 <script>
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
 let allServices = [];
 let selectedRate = 0;
+let currentPlatform = "all";
 
-/* ================= AUTH ================= */
+/* AUTH */
 function getToken(){
   return localStorage.getItem("token");
 }
@@ -199,7 +222,7 @@ if(!getToken()){
   window.location.href = "index.html";
 }
 
-/* ================= TOAST ================= */
+/* TOAST */
 function toast(msg){
   const t = document.getElementById("toast");
   t.innerText = msg;
@@ -207,7 +230,7 @@ function toast(msg){
   setTimeout(()=>t.style.display="none",3000);
 }
 
-/* ================= USER ================= */
+/* USER */
 function loadUser(){
   try {
     const p = JSON.parse(atob(getToken().split(".")[1]));
@@ -215,17 +238,16 @@ function loadUser(){
   } catch {}
 }
 
-/* ================= BALANCE ================= */
+/* BALANCE */
 async function loadBalance(){
   const res = await fetch(API_URL+"/me",{
     headers:{Authorization:"Bearer "+getToken()}
   });
-
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance || 0;
 }
 
-/* ================= SERVICES ================= */
+/* LOAD SERVICES */
 async function loadServices(){
   const res = await fetch(API_URL+"/services");
   const json = await res.json();
@@ -234,19 +256,23 @@ async function loadServices(){
   renderServices();
 }
 
-/* ================= RENDER ================= */
+/* FILTER PLATFORM */
+function setPlatform(p){
+  currentPlatform = p;
+  renderServices();
+}
+
+/* RENDER */
 function renderServices(){
   const box = document.getElementById("services");
   box.innerHTML = "";
 
   const search = document.getElementById("search").value.toLowerCase();
-  const filter = document.getElementById("platformFilter").value;
 
   allServices.forEach(s=>{
+    const cat = (s.category||"").toLowerCase();
 
-    const platform = (s.category||"").toLowerCase();
-
-    if(filter!=="all" && !platform.includes(filter.toLowerCase())) return;
+    if(currentPlatform !== "all" && !cat.includes(currentPlatform)) return;
     if(!s.name.toLowerCase().includes(search)) return;
 
     const div = document.createElement("div");
@@ -268,17 +294,21 @@ function renderServices(){
   });
 }
 
-/* ================= PRICE ================= */
+/* PRICE */
 function calcPrice(){
   const q = document.getElementById("quantity").value || 0;
   document.getElementById("total").innerText = ((selectedRate/1000)*q).toFixed(2);
 }
 
-/* ================= ORDER ================= */
+/* ORDER */
 async function placeOrder(){
-  const serviceId = serviceId.value;
+  const serviceId = document.getElementById("serviceId").value;
   const link = document.getElementById("link").value;
   const quantity = document.getElementById("quantity").value;
+
+  if(!serviceId || !link || !quantity){
+    return toast("Fill all fields");
+  }
 
   const res = await fetch(API_URL+"/order",{
     method:"POST",
@@ -291,14 +321,14 @@ async function placeOrder(){
 
   const data = await res.json();
 
-  if(!res.ok) return toast(data.error || "Failed");
+  if(!res.ok) return toast(data.error);
 
   toast("Order placed");
   loadOrders();
   loadBalance();
 }
 
-/* ================= ORDERS ================= */
+/* ORDERS */
 async function loadOrders(){
   const res = await fetch(API_URL+"/orders",{
     headers:{Authorization:"Bearer "+getToken()}
@@ -316,7 +346,7 @@ async function loadOrders(){
   });
 }
 
-/* ================= DEPOSIT ================= */
+/* MPESA */
 async function deposit(){
   const phone = document.getElementById("phone").value;
   const amount = document.getElementById("amount").value;
@@ -334,18 +364,17 @@ async function deposit(){
   toast(data.message || "STK sent");
 }
 
-/* ================= LOGOUT ================= */
+/* LOGOUT */
 function logout(){
   localStorage.removeItem("token");
   window.location.href="index.html";
 }
 
-/* ================= INIT ================= */
+/* INIT */
 loadUser();
 loadServices();
 loadBalance();
 loadOrders();
-
 </script>
 
 </body>
