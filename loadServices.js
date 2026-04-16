@@ -1,4 +1,4 @@
-async function loadServices(){
+async function loadServices() {
   try {
     const res = await fetch(API_URL + "/services");
 
@@ -6,25 +6,59 @@ async function loadServices(){
       throw new Error("Failed to fetch services");
     }
 
-    const data = await res.json();
+    const json = await res.json();
 
-    if (!Array.isArray(data)) {
+    // =========================
+    // FIX: handle backend format
+    // =========================
+    let services = [];
+
+    if (Array.isArray(json)) {
+      services = json;
+    }
+    else if (json.data && Array.isArray(json.data)) {
+      services = json.data;
+    }
+    else if (json.data && typeof json.data === "object") {
+      // grouped format → flatten it
+      Object.values(json.data).forEach(group => {
+        if (Array.isArray(group)) {
+          services.push(...group);
+        } else if (typeof group === "object") {
+          Object.values(group).forEach(sub => {
+            if (Array.isArray(sub)) {
+              services.push(...sub);
+            }
+          });
+        }
+      });
+    } else {
       throw new Error("Invalid services format");
     }
 
-    allServices = data;
-
+    allServices = services;
     renderServices(allServices);
 
-  } catch(err){
+  } catch (err) {
     console.error("Services load error:", err);
 
-    // 🔥 fallback to external provider
+    // =========================
+    // fallback external provider
+    // =========================
     try {
       const res2 = await fetch(API_URL + "/services/external");
-      const data2 = await res2.json();
 
-      allServices = Array.isArray(data2) ? data2 : [];
+      const json2 = await res2.json();
+
+      let services2 = [];
+
+      if (Array.isArray(json2)) {
+        services2 = json2;
+      } else if (json2.data) {
+        services2 = json2.data;
+      }
+
+      allServices = services2;
 
       renderServices(allServices);
 
