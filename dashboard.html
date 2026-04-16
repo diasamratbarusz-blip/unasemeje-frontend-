@@ -1,118 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SMM Panel Pro System</title>
+  <title>SMM Panel Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Segoe UI;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI;}
+    body{background:#050b18;color:#e5e7eb;}
 
-    body{
-      background:#050b18;
-      color:#e5e7eb;
-    }
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
 
-    .app{
-      display:grid;
-      grid-template-columns:260px 1fr;
-      min-height:100vh;
-    }
-
-    .sidebar{
-      background:#0f172a;
-      padding:20px;
-      border-right:1px solid #1f2937;
-    }
-
-    .brand{
-      font-size:22px;
-      font-weight:bold;
-      color:#38bdf8;
-      margin-bottom:20px;
-    }
+    .sidebar{background:#0f172a;padding:20px;border-right:1px solid #1f2937;}
+    .brand{font-size:22px;font-weight:bold;color:#38bdf8;margin-bottom:20px;}
 
     .nav a{
-      display:block;
-      padding:12px;
-      margin:6px 0;
-      color:#94a3b8;
-      border-radius:8px;
-      cursor:pointer;
-      text-decoration:none;
+      display:block;padding:12px;margin:6px 0;
+      color:#94a3b8;border-radius:8px;cursor:pointer;text-decoration:none;
     }
+    .nav a:hover{background:#1e293b;color:#fff;}
 
-    .nav a:hover{
-      background:#1e293b;
-      color:#fff;
-    }
-
+    .main{padding:20px;}
     .hidden{display:none;}
 
-    .main{
-      padding:20px;
-    }
-
     .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      background:#0f172a;
-      padding:15px;
-      border-radius:12px;
-      border:1px solid #1f2937;
+      display:flex;justify-content:space-between;align-items:center;
+      background:#0f172a;padding:15px;border-radius:12px;border:1px solid #1f2937;
     }
 
-    .balance{
-      color:#22c55e;
-      font-weight:bold;
-    }
+    .balance{color:#22c55e;font-weight:bold;}
 
     .cards{
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:12px;
-      margin-top:20px;
+      gap:12px;margin-top:20px;
     }
 
     .card{
-      background:#0f172a;
-      padding:15px;
-      border-radius:12px;
-      border:1px solid #1f2937;
+      background:#0f172a;padding:15px;border-radius:12px;border:1px solid #1f2937;
     }
 
     button{
-      width:100%;
-      padding:10px;
-      border:none;
-      border-radius:8px;
-      background:#38bdf8;
-      font-weight:bold;
-      cursor:pointer;
-      margin-top:10px;
+      width:100%;padding:10px;border:none;border-radius:8px;
+      background:#38bdf8;font-weight:bold;cursor:pointer;margin-top:10px;
     }
 
-    table{
-      width:100%;
-      margin-top:10px;
-      border-collapse:collapse;
+    input{
+      padding:10px;width:100%;margin-top:10px;border-radius:8px;border:none;
     }
 
-    th,td{
-      padding:10px;
-      border-bottom:1px solid #1f2937;
-      font-size:14px;
-    }
+    table{width:100%;margin-top:10px;border-collapse:collapse;}
+    th,td{padding:10px;border-bottom:1px solid #1f2937;font-size:14px;}
+    th{color:#38bdf8;}
 
-    th{
-      color:#38bdf8;
-    }
+    .success{color:#22c55e;margin-top:10px;}
+    .error{color:#ef4444;margin-top:10px;}
   </style>
 </head>
 
@@ -123,7 +65,6 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="brand">SMM PANEL</div>
-
     <div class="nav">
       <a onclick="show('dashboard')">Dashboard</a>
       <a onclick="show('services')">Services</a>
@@ -144,18 +85,18 @@
 
     <!-- DASHBOARD -->
     <div id="dashboard">
-
       <div class="cards">
         <div class="card">Services <div id="serviceCount">0</div></div>
         <div class="card">Orders <div id="orderCount">0</div></div>
-        <div class="card">Revenue KES <div id="revenue">0</div></div>
+        <div class="card">Revenue <div id="revenue">0</div></div>
       </div>
-
     </div>
 
     <!-- SERVICES -->
     <div id="services" class="hidden">
       <h3>Services</h3>
+      <input id="search" placeholder="Search services...">
+      <div id="tabs" style="margin-top:10px"></div>
       <div id="serviceList"></div>
     </div>
 
@@ -165,32 +106,58 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Service</th>
-            <th>Qty</th>
-            <th>Status</th>
+            <th>ID</th><th>Service</th><th>Qty</th><th>Status</th>
           </tr>
         </thead>
         <tbody id="orderTable"></tbody>
       </table>
     </div>
 
-    <!-- WALLET -->
+    <!-- WALLET (MPESA UI) -->
     <div id="wallet" class="hidden">
-      <h3>Top Up</h3>
+      <h3>Deposit via MPESA</h3>
 
-      <input id="phone" placeholder="2547..." style="padding:10px;width:100%;margin-top:10px">
-      <input id="amount" placeholder="Amount" style="padding:10px;width:100%;margin-top:10px">
+      <input id="phone" placeholder="2547XXXXXXXX">
+      <input id="amount" placeholder="Amount (KES)">
 
       <button onclick="topup()">Send STK Push</button>
+
+      <div id="paymentStatus"></div>
     </div>
 
     <!-- ADMIN -->
     <div id="admin" class="hidden">
       <h3>Admin Panel</h3>
-      <p>Access backend admin routes for service management</p>
+
+      <div class="cards">
+        <div class="card">Users <div id="adminUsers">0</div></div>
+        <div class="card">Orders <div id="adminOrders">0</div></div>
+        <div class="card">Revenue <div id="adminRevenue">0</div></div>
+      </div>
+
+      <canvas id="ordersChart" style="margin-top:20px"></canvas>
+
+      <h3 style="margin-top:20px">Pending Deposits</h3>
+      <div id="depositList"></div>
     </div>
 
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div id="orderModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;justify-content:center;align-items:center">
+  <div style="background:#0f172a;padding:20px;border-radius:12px;width:320px">
+    <h3 id="modalServiceName"></h3>
+
+    <p>Min: <span id="minQty"></span> | Max: <span id="maxQty"></span></p>
+
+    <input id="orderLink" placeholder="Enter link">
+    <input id="orderQty" placeholder="Quantity">
+
+    <div>💰 Total: KES <span id="totalPrice">0</span></div>
+
+    <button onclick="submitOrder()">Submit</button>
+    <button onclick="closeModal()" style="background:red">Cancel</button>
   </div>
 </div>
 
@@ -198,132 +165,187 @@
 
 const API = "https://unasemeje-backend-3.onrender.com/api";
 
-function getToken(){
-  return localStorage.getItem("token");
-}
-
-function logout(){
-  localStorage.removeItem("token");
-  location.href="index.html";
-}
+function getToken(){ return localStorage.getItem("token"); }
+function logout(){ localStorage.removeItem("token"); location.href="index.html"; }
 
 function show(id){
-  document.querySelectorAll(".main > div").forEach(d=>{
-    d.classList.add("hidden");
-  });
+  document.querySelectorAll(".main > div").forEach(d=>d.classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
+
+  if(id==="admin"){ loadAdmin(); loadDeposits(); }
 }
 
-/* ================= USER ================= */
+/* USER */
 async function loadUser(){
-  const res = await fetch(API+"/me",{
-    headers:{Authorization:"Bearer "+getToken()}
-  });
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+getToken()}});
+  const d = await res.json();
+  email.innerText = d.email;
+  balance.innerText = d.balance;
 
-  const data = await res.json().catch(()=>null);
-  if(!data) return;
-
-  document.getElementById("email").innerText = data.email;
-  document.getElementById("balance").innerText = data.balance;
-
-  if(data.role !== "admin"){
-    document.getElementById("adminTab").style.display="none";
-  }
+  if(d.role!=="admin") adminTab.style.display="none";
 }
 
-/* ================= SERVICES ================= */
+/* SERVICES */
+let ALL={}, CURRENT=null, SELECTED=null;
+
 async function loadServices(){
   const res = await fetch(API+"/services");
-  const data = await res.json().catch(()=>null);
-
-  if(!data) return;
-
-  document.getElementById("serviceCount").innerText = data.length;
-
-  const list = document.getElementById("serviceList");
-  list.innerHTML = "";
-
-  data.forEach(s=>{
-    list.innerHTML += `
-      <div style="background:#0f172a;padding:10px;margin:10px;border-radius:10px">
-        <b>${s.name}</b><br>
-        Rate: ${s.rate}<br>
-        <button onclick="order('${s.serviceId}')">Order</button>
-      </div>
-    `;
-  });
+  const data = await res.json();
+  ALL = data.data;
+  renderTabs();
+  renderServices();
 }
 
-/* ================= ORDER ================= */
-async function order(id){
-  const link = prompt("Enter link:");
-  const qty = prompt("Enter quantity:");
+function renderTabs(){
+  tabs.innerHTML="";
+  Object.keys(ALL).forEach(p=>{
+    const b=document.createElement("button");
+    b.innerText=p;
+    b.onclick=()=>{CURRENT=p;renderServices();};
+    tabs.appendChild(b);
+  });
+  CURRENT=Object.keys(ALL)[0];
+}
 
-  const res = await fetch(API+"/order",{
+function renderServices(){
+  serviceList.innerHTML="";
+  let total=0;
+
+  for(let type in ALL[CURRENT]){
+    serviceList.innerHTML+=`<h3>${type}</h3>`;
+
+    ALL[CURRENT][type].forEach(s=>{
+      total++;
+      serviceList.innerHTML+=`
+        <div class="card">
+          <b>${s.name}</b><br>
+          KES ${Number(s.rate).toFixed(2)}
+          <button onclick='openModal(${JSON.stringify(s)})'>Order</button>
+        </div>
+      `;
+    });
+  }
+
+  serviceCount.innerText=total;
+}
+
+/* MODAL */
+function openModal(s){
+  SELECTED=s;
+  orderModal.style.display="flex";
+  modalServiceName.innerText=s.name;
+  minQty.innerText=s.min;
+  maxQty.innerText=s.max;
+}
+
+function closeModal(){ orderModal.style.display="none"; }
+
+orderQty.oninput=()=>{
+  if(!SELECTED) return;
+  totalPrice.innerText=((SELECTED.rate/1000)*orderQty.value).toFixed(2);
+};
+
+/* ORDER */
+async function submitOrder(){
+  await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+getToken()
     },
     body:JSON.stringify({
-      serviceId:id,
-      link,
-      quantity:Number(qty)
+      serviceId:SELECTED.serviceId,
+      link:orderLink.value,
+      quantity:Number(orderQty.value)
     })
   });
 
-  const data = await res.json().catch(()=>null);
-
-  alert(data?.message || "Order placed");
-
+  alert("Order placed");
+  closeModal();
   loadOrders();
-  loadUser();
 }
 
-/* ================= ORDERS ================= */
+/* ORDERS */
 async function loadOrders(){
-  const res = await fetch(API+"/orders",{
-    headers:{Authorization:"Bearer "+getToken()}
-  });
+  const res=await fetch(API+"/orders",{headers:{Authorization:"Bearer "+getToken()}});
+  const data=await res.json();
 
-  const data = await res.json().catch(()=>null);
-  if(!data) return;
-
-  document.getElementById("orderCount").innerText = data.length;
-
-  const table = document.getElementById("orderTable");
-  table.innerHTML = "";
-
-  let revenue = 0;
+  let rev=0;
+  orderTable.innerHTML="";
 
   data.forEach(o=>{
-    revenue += Number(o.cost || 0);
-
-    table.innerHTML += `
-      <tr>
-        <td>${o._id}</td>
-        <td>${o.service}</td>
-        <td>${o.quantity}</td>
-        <td>${o.status || "pending"}</td>
-      </tr>
-    `;
+    rev+=o.cost||0;
+    orderTable.innerHTML+=`<tr><td>${o._id}</td><td>${o.service}</td><td>${o.quantity}</td><td>${o.status||"pending"}</td></tr>`;
   });
 
-  document.getElementById("revenue").innerText = revenue;
+  orderCount.innerText=data.length;
+  revenue.innerText=rev;
 }
 
-/* ================= TOPUP ================= */
+/* MPESA */
 async function topup(){
-  alert("Use /api/mpesa/stk backend endpoint");
+  const phone=document.getElementById("phone").value;
+  const amount=document.getElementById("amount").value;
+
+  const res=await fetch(API+"/mpesa/stk",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+getToken()
+    },
+    body:JSON.stringify({phone,amount})
+  });
+
+  const data=await res.json().catch(()=>null);
+
+  paymentStatus.innerHTML = `<div class="success">STK sent. Check your phone 📲</div>`;
 }
 
-/* ================= INIT ================= */
-window.onload = () => {
-  if(!getToken()){
-    location.href="index.html";
-    return;
-  }
+/* ADMIN */
+async function loadAdmin(){
+  const res=await fetch(API+"/admin/stats",{headers:{Authorization:"Bearer "+getToken()}});
+  const d=await res.json();
 
+  adminUsers.innerText=d.users;
+  adminOrders.innerText=d.orders;
+  adminRevenue.innerText=d.revenue;
+
+  new Chart(ordersChart,{
+    type:"line",
+    data:{labels:d.chart.labels,datasets:[{label:"Orders",data:d.chart.values}]}
+  });
+}
+
+async function loadDeposits(){
+  const res=await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+getToken()}});
+  const data=await res.json();
+
+  depositList.innerHTML="";
+  data.forEach(x=>{
+    depositList.innerHTML+=`
+      <div class="card">
+        ${x.phone} - ${x.amount}
+        <button onclick="approve('${x._id}')">Approve</button>
+      </div>
+    `;
+  });
+}
+
+async function approve(id){
+  await fetch(API+"/admin/approve",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+getToken()
+    },
+    body:JSON.stringify({id})
+  });
+  loadDeposits();
+}
+
+/* INIT */
+window.onload=()=>{
+  if(!getToken()) location.href="index.html";
   loadUser();
   loadServices();
   loadOrders();
