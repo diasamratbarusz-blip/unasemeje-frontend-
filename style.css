@@ -1,7 +1,12 @@
 /* ================= GLOBAL ================= */
-body {
-  font-family: 'Poppins', Arial, sans-serif;
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
   background: linear-gradient(135deg, #0f172a, #020617);
   color: white;
 }
@@ -29,7 +34,7 @@ body {
 }
 
 /* ================= INPUT ================= */
-input {
+input, select {
   width: 100%;
   margin: 10px 0;
   padding: 12px 14px;
@@ -41,7 +46,7 @@ input {
   transition: 0.3s;
 }
 
-input:focus {
+input:focus, select:focus {
   border-color: #38bdf8;
   box-shadow: 0 0 8px rgba(56,189,248,0.4);
 }
@@ -66,12 +71,12 @@ button {
 }
 
 button:hover {
-  transform: scale(1.04);
+  transform: scale(1.05);
   filter: brightness(1.1);
 }
 
 button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 /* ================= DASHBOARD ================= */
@@ -90,6 +95,7 @@ button:active {
 
 .sidebar h2 {
   color: #38bdf8;
+  margin-bottom: 15px;
 }
 
 .sidebar a {
@@ -97,7 +103,7 @@ button:active {
   color: #cbd5f5;
   margin: 12px 0;
   text-decoration: none;
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
   transition: 0.3s;
 }
@@ -105,7 +111,7 @@ button:active {
 .sidebar a:hover {
   color: #38bdf8;
   background: rgba(56,189,248,0.1);
-  padding-left: 12px;
+  padding-left: 14px;
 }
 
 /* ================= MAIN ================= */
@@ -131,37 +137,98 @@ button:active {
 }
 
 /* ================= CARDS ================= */
-.cards {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
 .card {
   background: rgba(17, 24, 39, 0.7);
   padding: 20px;
   border-radius: 16px;
-  flex: 1;
-  min-width: 180px;
+  margin-top: 20px;
   backdrop-filter: blur(10px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
   transition: 0.3s;
 }
 
 .card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-5px);
   border: 1px solid #38bdf8;
 }
 
-/* ================= FORM SECTIONS ================= */
-.form-section {
-  background: rgba(17, 24, 39, 0.7);
-  padding: 20px;
-  border-radius: 16px;
-  margin-top: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+/* ================= GRID SERVICES ================= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+/* ================= SERVICE CARD ================= */
+.service {
+  background: #020617;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #1e293b;
+  transition: 0.3s;
+}
+
+.service:hover {
+  background: #1e293b;
+  transform: scale(1.02);
+  border-color: #38bdf8;
+}
+
+/* ================= SOCIAL SELECTOR ================= */
+.panel-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.social-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.social-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 10px;
+  border-bottom: 1px solid #1a1f26;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.social-item:hover {
+  background-color: #161b22;
+}
+
+/* ICON */
+.icon-box {
+  width: 38px;
+  height: 38px;
+  background-color: #1a1f26;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 18px;
+  border: 1px solid #2d343f;
+}
+
+.icon-box i {
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+/* TEXT */
+.platform-name {
+  color: #d1d5db;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 /* ================= ORDERS ================= */
@@ -184,6 +251,13 @@ ul li:hover {
   transform: translateX(5px);
 }
 
+/* ================= BADGE ================= */
+.badge {
+  background: #22c55e;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
 /* ================= TOAST ================= */
 #toast {
   position: fixed;
@@ -198,7 +272,15 @@ ul li:hover {
   box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
 
-/* ================= ANIMATIONS ================= */
+/* ================= LOADING ================= */
+#loading {
+  display: none;
+  text-align: center;
+  color: #38bdf8;
+  margin-top: 10px;
+}
+
+/* ================= ANIMATION ================= */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -220,12 +302,12 @@ ul li:hover {
     display: none;
   }
 
-  .cards {
-    flex-direction: column;
+  .main {
+    padding: 10px;
   }
 
   .container {
     width: 90%;
     margin: 60px auto;
   }
-}
+  }
