@@ -76,10 +76,6 @@
     button:hover {
       background: #16a34a;
     }
-
-    .hidden {
-      display: none;
-    }
   </style>
 </head>
 
@@ -94,7 +90,7 @@
   <!-- FILTERS -->
   <div class="row">
     <input id="search" placeholder="Search services..." onkeyup="renderServices()">
-    
+
     <select id="platformFilter" onchange="renderServices()">
       <option value="all">All Platforms</option>
       <option value="Instagram">Instagram</option>
@@ -127,25 +123,26 @@
 </div>
 
 <script>
+
 let servicesData = [];
+let selectedRate = 0;
 
 /**
  * =========================
- * LOAD SERVICES (FIXED)
+ * LOAD SERVICES
  * =========================
  */
 async function loadServices() {
   try {
-    let res = await fetch("/api/services/all");
+    let res = await fetch("/api/services");
     let json = await res.json();
 
     servicesData = json.data || [];
-
     renderServices();
 
   } catch (err) {
     console.error(err);
-    alert("Failed to load services. Check backend.");
+    alert("Failed to load services");
   }
 }
 
@@ -166,7 +163,7 @@ function renderServices() {
     let platform = detectPlatform(s.category || "");
 
     if (filter !== "all" && platform !== filter) return;
-    if (s.name.toLowerCase().indexOf(search) === -1) return;
+    if (!s.name.toLowerCase().includes(search)) return;
 
     let div = document.createElement("div");
     div.className = "service";
@@ -205,11 +202,9 @@ function detectPlatform(cat) {
  * SELECT SERVICE
  * =========================
  */
-let selectedRate = 0;
-
 function selectService(service) {
   document.getElementById("serviceId").value = service.serviceId;
-  selectedRate = service.rate;
+  selectedRate = Number(service.rate || 0);
   calcPrice();
 }
 
@@ -219,24 +214,26 @@ function selectService(service) {
  * =========================
  */
 function calcPrice() {
-  let qty = document.getElementById("quantity").value;
-  let total = qty * selectedRate;
+  let qty = Number(document.getElementById("quantity").value);
+  let total = (qty * selectedRate) / 1000;
 
-  if (!total) total = 0;
-
-  document.getElementById("total").innerText = total.toFixed(2);
+  document.getElementById("total").innerText =
+    isNaN(total) ? "0" : total.toFixed(2);
 }
 
 /**
  * =========================
- * PLACE ORDER (API READY)
+ * PLACE ORDER (FIXED AUTH)
  * =========================
  */
 async function placeOrder() {
+
+  let token = localStorage.getItem("token");
+
   let data = {
     serviceId: document.getElementById("serviceId").value,
     link: document.getElementById("link").value,
-    quantity: document.getElementById("quantity").value
+    quantity: Number(document.getElementById("quantity").value)
   };
 
   if (!data.serviceId || !data.link || !data.quantity) {
@@ -244,22 +241,31 @@ async function placeOrder() {
     return;
   }
 
-  let res = await fetch("/api/orders", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
+  try {
+    let res = await fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(data)
+    });
 
-  let json = await res.json();
+    let json = await res.json();
 
-  alert(json.message || "Order placed");
+    alert(json.message || json.error || "Done");
+
+  } catch (err) {
+    alert("Order failed");
+  }
 }
 
 /**
  * INIT
  */
 loadServices();
+
 </script>
 
 </body>
-</html>
+  </html>
