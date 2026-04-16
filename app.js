@@ -1,23 +1,37 @@
-const API = "https://your-backend-url.onrender.com/api"; 
-// 🔥 change this to your live backend
+const API = "https://your-backend-url.onrender.com/api";
 
-// ================= LOAD SERVICES =================
+/* ================= LOAD SERVICES ================= */
 async function loadServices() {
   try {
     const res = await fetch(API + "/services");
 
     if (!res.ok) throw new Error("Failed to load services");
 
-    const data = await res.json();
+    const json = await res.json();
+
+    // ✅ FIX: backend returns { success: true, data: [...] }
+    let services = [];
+
+    if (Array.isArray(json)) {
+      services = json;
+    } else if (json.data && Array.isArray(json.data)) {
+      services = json.data;
+    } else {
+      console.error("Invalid response:", json);
+      throw new Error("Invalid services format");
+    }
 
     const list = document.getElementById("services");
+    list.innerHTML = "";
 
-    list.innerHTML = ""; // 🔥 prevent duplicates
-
-    data.forEach(s => {
+    services.forEach(s => {
       const li = document.createElement("li");
 
       li.innerText = `${s.serviceId || s.service} - ${s.name} (Rate: ${s.rate})`;
+
+      li.onclick = () => {
+        document.getElementById("service").value = s.serviceId || s.service;
+      };
 
       list.appendChild(li);
     });
@@ -30,7 +44,7 @@ async function loadServices() {
   }
 }
 
-// ================= PLACE ORDER =================
+/* ================= PLACE ORDER ================= */
 async function placeOrder() {
   try {
     const service = document.getElementById("service").value;
@@ -45,7 +59,11 @@ async function placeOrder() {
         "Content-Type": "application/json",
         "Authorization": "Bearer " + token
       },
-      body: JSON.stringify({ serviceId: service, link, quantity })
+      body: JSON.stringify({
+        serviceId: service,
+        link,
+        quantity
+      })
     });
 
     const data = await res.json();
@@ -57,11 +75,14 @@ async function placeOrder() {
 
     alert("✅ Order placed successfully");
 
+    // optional refresh
+    loadServices();
+
   } catch (err) {
     console.error("Order error:", err);
     alert("❌ Network error");
   }
 }
 
-// ================= INIT =================
+/* ================= INIT ================= */
 loadServices();
