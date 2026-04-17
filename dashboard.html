@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🚀 SMM Panel Pro Dashboard</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
@@ -16,10 +13,9 @@
 
 <div class="dashboard">
 
-  <!-- ================= SIDEBAR ================= -->
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <h2>SMM PANEL</h2>
-
     <a onclick="showPage('home')">Dashboard</a>
     <a onclick="showPage('services')">Services</a>
     <a onclick="showPage('orders')">Orders</a>
@@ -27,21 +23,20 @@
     <a onclick="logout()">Logout</a>
   </div>
 
-  <!-- ================= MAIN ================= -->
+  <!-- MAIN -->
   <div class="main">
 
     <!-- NAVBAR -->
     <div class="navbar">
       <div>👤 <b id="userEmail">Loading...</b></div>
-      <div>💰 Balance: <span class="badge" id="balance">0</span></div>
+      <div>💰 Balance: <span id="balance">0</span></div>
     </div>
 
-    <!-- ================= HOME ================= -->
+    <!-- HOME -->
     <div id="home" class="page card">
       <h3>Select Social Platform</h3>
 
       <div class="social-list">
-
         <div class="social-item" onclick="selectPlatform('Instagram')">
           <div class="icon-box"><i class="fab fa-instagram"></i></div>
           <span class="platform-name">Instagram</span>
@@ -66,20 +61,17 @@
           <div class="icon-box"><i class="fab fa-twitter"></i></div>
           <span class="platform-name">Twitter / X</span>
         </div>
-
       </div>
     </div>
 
-    <!-- ================= SERVICES ================= -->
+    <!-- SERVICES -->
     <div id="servicesPage" class="page card" style="display:none;">
       <h3>Services</h3>
-
       <input id="search" placeholder="Search services..." onkeyup="renderServices()">
-
       <div id="services" class="grid"></div>
     </div>
 
-    <!-- ================= ORDER ================= -->
+    <!-- ORDER -->
     <div class="card">
       <h3>Place Order</h3>
 
@@ -92,7 +84,7 @@
       <button onclick="placeOrder()">Place Order</button>
     </div>
 
-    <!-- ================= DEPOSIT ================= -->
+    <!-- DEPOSIT -->
     <div id="depositPage" class="page card" style="display:none;">
       <h3>M-Pesa Deposit</h3>
 
@@ -102,7 +94,7 @@
       <button onclick="deposit()">Send STK Push</button>
     </div>
 
-    <!-- ================= ORDERS ================= -->
+    <!-- ORDERS -->
     <div id="ordersPage" class="page card" style="display:none;">
       <h3>My Orders</h3>
       <ul id="orders"></ul>
@@ -111,10 +103,8 @@
   </div>
 </div>
 
-<!-- ================= TOAST ================= -->
 <div id="toast"></div>
 
-<!-- ================= SCRIPT ================= -->
 <script>
 
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
@@ -123,25 +113,21 @@ let servicesData = [];
 let selectedRate = 0;
 let currentPlatform = "";
 
-/* ================= AUTH ================= */
 const token = localStorage.getItem("token");
 
 if (!token) {
   window.location.href = "index.html";
 }
 
-/* ================= TOAST ================= */
+/* TOAST */
 function showToast(msg) {
   const t = document.getElementById("toast");
   t.innerText = msg;
   t.style.display = "block";
-
-  setTimeout(() => {
-    t.style.display = "none";
-  }, 3000);
+  setTimeout(() => t.style.display = "none", 3000);
 }
 
-/* ================= USER ================= */
+/* USER */
 function loadUser() {
   try {
     const decoded = JSON.parse(atob(token.split(".")[1]));
@@ -151,45 +137,54 @@ function loadUser() {
   }
 }
 
-/* ================= BALANCE ================= */
+/* BALANCE */
 async function loadBalance() {
   try {
     const res = await fetch(API_URL + "/me", {
       headers: { Authorization: "Bearer " + token }
     });
-
     const data = await res.json();
     document.getElementById("balance").innerText = data.balance || 0;
-
   } catch {
     showToast("Failed to load balance");
   }
 }
 
-/* ================= SERVICES ================= */
+/* ✅ FIXED SERVICES */
 async function loadServices() {
   try {
     const res = await fetch(API_URL + "/services");
+
+    if (!res.ok) {
+      throw new Error("Server error");
+    }
+
     const json = await res.json();
 
-    if (!json.success) throw new Error();
+    console.log("SERVICES:", json);
+
+    if (!json.data) {
+      throw new Error("Invalid format");
+    }
 
     servicesData = Object.values(json.data).flat();
+
     renderServices();
 
-  } catch {
+  } catch (err) {
+    console.error("❌ SERVICE ERROR:", err.message);
     showToast("Failed to load services");
   }
 }
 
-/* ================= SELECT PLATFORM ================= */
+/* PLATFORM */
 function selectPlatform(platform) {
   currentPlatform = platform;
   showPage("services");
   renderServices();
 }
 
-/* ================= RENDER SERVICES ================= */
+/* RENDER */
 function renderServices() {
   const container = document.getElementById("services");
   const search = document.getElementById("search").value.toLowerCase();
@@ -198,7 +193,9 @@ function renderServices() {
 
   servicesData.forEach(s => {
 
-    if (currentPlatform && !s.category.toLowerCase().includes(currentPlatform.toLowerCase())) return;
+    if (currentPlatform &&
+        !s.category.toLowerCase().includes(currentPlatform.toLowerCase())) return;
+
     if (!s.name.toLowerCase().includes(search)) return;
 
     const div = document.createElement("div");
@@ -207,7 +204,7 @@ function renderServices() {
     div.innerHTML = `
       <b>${s.name}</b><br>
       ID: ${s.serviceId}<br>
-      Rate: ${s.rate}
+      Rate: KSh ${Number(s.rate).toFixed(2)}
     `;
 
     div.onclick = () => {
@@ -220,15 +217,14 @@ function renderServices() {
   });
 }
 
-/* ================= PRICE ================= */
+/* PRICE */
 function calcPrice() {
   const qty = document.getElementById("quantity").value || 0;
   const total = (selectedRate / 1000) * qty;
-
   document.getElementById("total").innerText = total.toFixed(2);
 }
 
-/* ================= ORDER ================= */
+/* ORDER */
 async function placeOrder() {
   const serviceId = document.getElementById("serviceId").value;
   const link = document.getElementById("link").value;
@@ -261,7 +257,7 @@ async function placeOrder() {
   }
 }
 
-/* ================= ORDERS ================= */
+/* ORDERS */
 async function loadOrders() {
   try {
     const res = await fetch(API_URL + "/orders", {
@@ -275,7 +271,7 @@ async function loadOrders() {
 
     data.forEach(o => {
       const li = document.createElement("li");
-      li.innerText = `${o.service} | ${o.quantity} | ${o.cost}`;
+      li.innerText = `${o.service} | ${o.quantity} | KSh ${Number(o.cost).toFixed(2)}`;
       list.appendChild(li);
     });
 
@@ -284,7 +280,7 @@ async function loadOrders() {
   }
 }
 
-/* ================= DEPOSIT ================= */
+/* DEPOSIT */
 async function deposit() {
   const phone = document.getElementById("phone").value;
   const amount = document.getElementById("amount").value;
@@ -311,7 +307,7 @@ async function deposit() {
   }
 }
 
-/* ================= NAVIGATION ================= */
+/* NAVIGATION */
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
 
@@ -321,13 +317,13 @@ function showPage(page) {
   if (page === "deposit") document.getElementById("depositPage").style.display = "block";
 }
 
-/* ================= LOGOUT ================= */
+/* LOGOUT */
 function logout() {
   localStorage.removeItem("token");
   window.location.href = "index.html";
 }
 
-/* ================= INIT ================= */
+/* INIT */
 loadUser();
 loadBalance();
 loadServices();
