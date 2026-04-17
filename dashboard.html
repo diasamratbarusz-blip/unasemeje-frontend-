@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚀 SMM Panel Pro Dashboard</title>
+  <title>SMM Panel Dashboard</title>
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,6 +16,7 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <h2>SMM PANEL</h2>
+
     <a onclick="showPage('home')">Dashboard</a>
     <a onclick="showPage('services')">Services</a>
     <a onclick="showPage('orders')">Orders</a>
@@ -26,7 +27,6 @@
   <!-- MAIN -->
   <div class="main">
 
-    <!-- NAVBAR -->
     <div class="navbar">
       <div>👤 <b id="userEmail">Loading...</b></div>
       <div>💰 Balance: <span id="balance">0</span></div>
@@ -34,40 +34,23 @@
 
     <!-- HOME -->
     <div id="home" class="page card">
-      <h3>Select Social Platform</h3>
+      <h3>Select Platform</h3>
 
       <div class="social-list">
-        <div class="social-item" onclick="selectPlatform('Instagram')">
-          <div class="icon-box"><i class="fab fa-instagram"></i></div>
-          <span class="platform-name">Instagram</span>
-        </div>
-
-        <div class="social-item" onclick="selectPlatform('TikTok')">
-          <div class="icon-box"><i class="fab fa-tiktok"></i></div>
-          <span class="platform-name">TikTok</span>
-        </div>
-
-        <div class="social-item" onclick="selectPlatform('YouTube')">
-          <div class="icon-box"><i class="fab fa-youtube"></i></div>
-          <span class="platform-name">YouTube</span>
-        </div>
-
-        <div class="social-item" onclick="selectPlatform('Facebook')">
-          <div class="icon-box"><i class="fab fa-facebook"></i></div>
-          <span class="platform-name">Facebook</span>
-        </div>
-
-        <div class="social-item" onclick="selectPlatform('Twitter')">
-          <div class="icon-box"><i class="fab fa-twitter"></i></div>
-          <span class="platform-name">Twitter / X</span>
-        </div>
+        <div onclick="selectPlatform('Instagram')">Instagram</div>
+        <div onclick="selectPlatform('TikTok')">TikTok</div>
+        <div onclick="selectPlatform('YouTube')">YouTube</div>
+        <div onclick="selectPlatform('Facebook')">Facebook</div>
+        <div onclick="selectPlatform('Twitter')">Twitter/X</div>
       </div>
     </div>
 
     <!-- SERVICES -->
     <div id="servicesPage" class="page card" style="display:none;">
       <h3>Services</h3>
+
       <input id="search" placeholder="Search services..." onkeyup="renderServices()">
+
       <div id="services" class="grid"></div>
     </div>
 
@@ -76,27 +59,27 @@
       <h3>Place Order</h3>
 
       <input id="serviceId" placeholder="Service ID" readonly>
-      <input id="link" placeholder="Target Link">
+      <input id="link" placeholder="Link">
       <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
 
-      <p>Total Price: <b id="total">0</b></p>
+      <p>Total: <b id="total">0</b></p>
 
-      <button onclick="placeOrder()">Place Order</button>
+      <button onclick="placeOrder()">Order</button>
     </div>
 
     <!-- DEPOSIT -->
     <div id="depositPage" class="page card" style="display:none;">
-      <h3>M-Pesa Deposit</h3>
+      <h3>Deposit</h3>
 
       <input id="phone" placeholder="2547XXXXXXXX">
       <input id="amount" placeholder="Amount">
 
-      <button onclick="deposit()">Send STK Push</button>
+      <button onclick="deposit()">Send STK</button>
     </div>
 
     <!-- ORDERS -->
     <div id="ordersPage" class="page card" style="display:none;">
-      <h3>My Orders</h3>
+      <h3>Orders</h3>
       <ul id="orders"></ul>
     </div>
 
@@ -119,7 +102,10 @@ if (!token) {
   window.location.href = "index.html";
 }
 
-/* TOAST */
+/* ================= DEBUG ================= */
+console.log("API:", API_URL);
+
+/* ================= TOAST ================= */
 function showToast(msg) {
   const t = document.getElementById("toast");
   t.innerText = msg;
@@ -127,7 +113,7 @@ function showToast(msg) {
   setTimeout(() => t.style.display = "none", 3000);
 }
 
-/* USER */
+/* ================= USER ================= */
 function loadUser() {
   try {
     const decoded = JSON.parse(atob(token.split(".")[1]));
@@ -137,54 +123,57 @@ function loadUser() {
   }
 }
 
-/* BALANCE */
+/* ================= BALANCE ================= */
 async function loadBalance() {
   try {
     const res = await fetch(API_URL + "/me", {
       headers: { Authorization: "Bearer " + token }
     });
+
     const data = await res.json();
     document.getElementById("balance").innerText = data.balance || 0;
-  } catch {
-    showToast("Failed to load balance");
+
+  } catch (err) {
+    console.error(err);
+    showToast("Balance failed");
   }
 }
 
-/* ✅ FIXED SERVICES */
+/* ================= SERVICES ================= */
 async function loadServices() {
   try {
     const res = await fetch(API_URL + "/services");
 
-    if (!res.ok) {
-      throw new Error("Server error");
-    }
-
     const json = await res.json();
 
-    console.log("SERVICES:", json);
+    console.log("SERVICES RESPONSE:", json);
 
-    if (!json.data) {
-      throw new Error("Invalid format");
+    if (!json.success || !json.data) {
+      throw new Error("Invalid API response");
     }
 
-    servicesData = Object.values(json.data).flat();
+    servicesData = [];
+
+    Object.values(json.data).forEach(group => {
+      group.forEach(s => servicesData.push(s));
+    });
 
     renderServices();
 
   } catch (err) {
-    console.error("❌ SERVICE ERROR:", err.message);
+    console.error("SERVICE ERROR:", err);
     showToast("Failed to load services");
   }
 }
 
-/* PLATFORM */
+/* ================= PLATFORM ================= */
 function selectPlatform(platform) {
   currentPlatform = platform;
   showPage("services");
   renderServices();
 }
 
-/* RENDER */
+/* ================= RENDER ================= */
 function renderServices() {
   const container = document.getElementById("services");
   const search = document.getElementById("search").value.toLowerCase();
@@ -193,10 +182,14 @@ function renderServices() {
 
   servicesData.forEach(s => {
 
-    if (currentPlatform &&
-        !s.category.toLowerCase().includes(currentPlatform.toLowerCase())) return;
+    const category = (s.category || "").toLowerCase();
+    const name = (s.name || "").toLowerCase();
 
-    if (!s.name.toLowerCase().includes(search)) return;
+    if (currentPlatform) {
+      if (!category.includes(currentPlatform.toLowerCase())) return;
+    }
+
+    if (search && !name.includes(search)) return;
 
     const div = document.createElement("div");
     div.className = "service";
@@ -204,12 +197,12 @@ function renderServices() {
     div.innerHTML = `
       <b>${s.name}</b><br>
       ID: ${s.serviceId}<br>
-      Rate: KSh ${Number(s.rate).toFixed(2)}
+      Rate: ${s.rate}
     `;
 
     div.onclick = () => {
       document.getElementById("serviceId").value = s.serviceId;
-      selectedRate = s.rate;
+      selectedRate = Number(s.rate);
       calcPrice();
     };
 
@@ -217,14 +210,14 @@ function renderServices() {
   });
 }
 
-/* PRICE */
+/* ================= PRICE ================= */
 function calcPrice() {
   const qty = document.getElementById("quantity").value || 0;
   const total = (selectedRate / 1000) * qty;
   document.getElementById("total").innerText = total.toFixed(2);
 }
 
-/* ORDER */
+/* ================= ORDER ================= */
 async function placeOrder() {
   const serviceId = document.getElementById("serviceId").value;
   const link = document.getElementById("link").value;
@@ -248,7 +241,7 @@ async function placeOrder() {
 
     if (!res.ok) return showToast(data.error);
 
-    showToast("Order placed successfully");
+    showToast("Order success");
     loadOrders();
     loadBalance();
 
@@ -257,7 +250,7 @@ async function placeOrder() {
   }
 }
 
-/* ORDERS */
+/* ================= ORDERS ================= */
 async function loadOrders() {
   try {
     const res = await fetch(API_URL + "/orders", {
@@ -271,23 +264,19 @@ async function loadOrders() {
 
     data.forEach(o => {
       const li = document.createElement("li");
-      li.innerText = `${o.service} | ${o.quantity} | KSh ${Number(o.cost).toFixed(2)}`;
+      li.innerText = `${o.service} | ${o.quantity} | ${o.cost}`;
       list.appendChild(li);
     });
 
   } catch {
-    showToast("Failed to load orders");
+    showToast("Orders failed");
   }
 }
 
-/* DEPOSIT */
+/* ================= DEPOSIT ================= */
 async function deposit() {
   const phone = document.getElementById("phone").value;
   const amount = document.getElementById("amount").value;
-
-  if (!phone || !amount) {
-    return showToast("Enter phone & amount");
-  }
 
   try {
     const res = await fetch(API_URL + "/mpesa/stk", {
@@ -307,7 +296,7 @@ async function deposit() {
   }
 }
 
-/* NAVIGATION */
+/* ================= NAV ================= */
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
 
@@ -317,13 +306,13 @@ function showPage(page) {
   if (page === "deposit") document.getElementById("depositPage").style.display = "block";
 }
 
-/* LOGOUT */
+/* ================= LOGOUT ================= */
 function logout() {
   localStorage.removeItem("token");
   window.location.href = "index.html";
 }
 
-/* INIT */
+/* ================= INIT ================= */
 loadUser();
 loadBalance();
 loadServices();
@@ -332,4 +321,4 @@ loadOrders();
 </script>
 
 </body>
-</html>
+  </html>
