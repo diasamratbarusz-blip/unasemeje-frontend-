@@ -7,6 +7,31 @@
 
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    .service {
+      background: #1f2937;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .service:hover {
+      background: #374151;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: black;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -60,6 +85,7 @@
 
       <input id="serviceId" placeholder="Service ID" readonly>
       <input id="link" placeholder="Link">
+
       <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
 
       <p>Total: <b id="total">0</b></p>
@@ -102,15 +128,12 @@ if (!token) {
   window.location.href = "index.html";
 }
 
-/* ================= DEBUG ================= */
-console.log("API:", API_URL);
-
 /* ================= TOAST ================= */
 function showToast(msg) {
   const t = document.getElementById("toast");
   t.innerText = msg;
   t.style.display = "block";
-  setTimeout(() => t.style.display = "none", 3000);
+  setTimeout(() => t.style.display = "none", 2500);
 }
 
 /* ================= USER ================= */
@@ -133,8 +156,7 @@ async function loadBalance() {
     const data = await res.json();
     document.getElementById("balance").innerText = data.balance || 0;
 
-  } catch (err) {
-    console.error(err);
+  } catch {
     showToast("Balance failed");
   }
 }
@@ -143,25 +165,23 @@ async function loadBalance() {
 async function loadServices() {
   try {
     const res = await fetch(API_URL + "/services");
-
     const json = await res.json();
 
-    console.log("SERVICES RESPONSE:", json);
-
-    if (!json.success || !json.data) {
-      throw new Error("Invalid API response");
+    if (!json.success) {
+      showToast("Service load failed");
+      return;
     }
 
     servicesData = [];
 
-    Object.values(json.data).forEach(group => {
+    Object.values(json.data || {}).forEach(group => {
       group.forEach(s => servicesData.push(s));
     });
 
     renderServices();
 
   } catch (err) {
-    console.error("SERVICE ERROR:", err);
+    console.error(err);
     showToast("Failed to load services");
   }
 }
@@ -180,14 +200,17 @@ function renderServices() {
 
   container.innerHTML = "";
 
+  if (!servicesData.length) {
+    container.innerHTML = "<p>No services available</p>";
+    return;
+  }
+
   servicesData.forEach(s => {
 
     const category = (s.category || "").toLowerCase();
     const name = (s.name || "").toLowerCase();
 
-    if (currentPlatform) {
-      if (!category.includes(currentPlatform.toLowerCase())) return;
-    }
+    if (currentPlatform && !category.includes(currentPlatform.toLowerCase())) return;
 
     if (search && !name.includes(search)) return;
 
@@ -212,7 +235,7 @@ function renderServices() {
 
 /* ================= PRICE ================= */
 function calcPrice() {
-  const qty = document.getElementById("quantity").value || 0;
+  const qty = Number(document.getElementById("quantity").value || 0);
   const total = (selectedRate / 1000) * qty;
   document.getElementById("total").innerText = total.toFixed(2);
 }
@@ -239,7 +262,7 @@ async function placeOrder() {
 
     const data = await res.json();
 
-    if (!res.ok) return showToast(data.error);
+    if (!res.ok) return showToast(data.error || "Order failed");
 
     showToast("Order success");
     loadOrders();
@@ -262,9 +285,11 @@ async function loadOrders() {
     const list = document.getElementById("orders");
     list.innerHTML = "";
 
+    if (!Array.isArray(data)) return;
+
     data.forEach(o => {
       const li = document.createElement("li");
-      li.innerText = `${o.service} | ${o.quantity} | ${o.cost}`;
+      li.innerText = `${o.service} | Qty: ${o.quantity} | Cost: ${o.cost}`;
       list.appendChild(li);
     });
 
@@ -321,4 +346,4 @@ loadOrders();
 </script>
 
 </body>
-  </html>
+</html>
