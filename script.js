@@ -62,7 +62,7 @@ async function login() {
     localStorage.setItem("token", data.token);
 
     toast("Login successful ✅");
-    setTimeout(() => location.href = "dashboard.html", 800);
+    setTimeout(() => (location.href = "dashboard.html"), 800);
 
   } catch (err) {
     toast(err.message, false);
@@ -140,29 +140,28 @@ async function loadServices() {
 
   const data = await safeFetch(API + "/services");
 
-  if (!data) {
+  if (!data || !data.data) {
     container.innerHTML = "<p style='color:red'>Failed to load services</p>";
     return;
   }
 
   container.innerHTML = "";
 
-  data.forEach(s => {
-    const div = document.createElement("div");
-    div.className = "service";
+  Object.values(data.data).forEach(group => {
+    group.forEach(s => {
+      const div = document.createElement("div");
+      div.className = "service";
 
-    div.innerHTML = `
-      <b>${s.name}</b><br>
-      Rate: ${s.rate}<br>
-      Min: ${s.min} | Max: ${s.max}<br><br>
-      <button onclick="order('${s.serviceId}')">Order</button>
-    `;
+      div.innerHTML = `
+        <b>${s.name}</b><br>
+        Rate: ${s.rate}<br>
+        Min: ${s.min} | Max: ${s.max}<br><br>
+        <button onclick="order('${s.serviceId}')">Order</button>
+      `;
 
-    container.appendChild(div);
+      container.appendChild(div);
+    });
   });
-
-  const count = document.getElementById("serviceCount");
-  if (count) count.innerText = data.length;
 }
 
 /* ================= ORDER ================= */
@@ -219,9 +218,6 @@ async function loadOrders() {
       </tr>
     `;
   });
-
-  const count = document.getElementById("orderCount");
-  if (count) count.innerText = data.length;
 }
 
 /* ================= LOGOUT ================= */
@@ -241,3 +237,25 @@ window.onload = () => {
   loadServices();
   loadOrders();
 };
+
+/* =========================================================
+   STEP ORDER FLOW (YOUR ADDITION - MERGED)
+========================================================= */
+
+function showStep(step) {
+  document.querySelectorAll(".step-container").forEach(s => {
+    s.style.display = "none";
+  });
+
+  const el = document.getElementById("step-" + step);
+  if (el) el.style.display = "block";
+}
+
+function setAmount(val) {
+  const pricePerUnit = 0.02;
+  const priceEl = document.getElementById("price");
+
+  if (!priceEl) return;
+
+  priceEl.innerText = (val * pricePerUnit).toFixed(2);
+  }
