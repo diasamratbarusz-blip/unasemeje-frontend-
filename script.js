@@ -13,29 +13,25 @@ function toast(msg, success = true) {
         t = document.createElement("div");
         t.id = "toast";
         document.body.appendChild(t);
+
+        t.style.position = "fixed";
+        t.style.bottom = "20px";
+        t.style.left = "50%";
+        t.style.transform = "translateX(-50%)";
+        t.style.padding = "10px 15px";
+        t.style.borderRadius = "8px";
+        t.style.color = "white";
+        t.style.zIndex = "9999";
+        t.style.fontSize = "14px";
     }
 
     t.innerText = msg;
-    t.style.display = "block";
     t.style.background = success ? "#22c55e" : "#ef4444";
+    t.style.display = "block";
 
     setTimeout(() => {
         t.style.display = "none";
     }, 2500);
-}
-
-/* ================= LOADING BUTTON ================= */
-function setLoading(btn, state, text = "Loading...") {
-    if (!btn) return;
-
-    if (state) {
-        btn.disabled = true;
-        btn.dataset.original = btn.innerText;
-        btn.innerText = text;
-    } else {
-        btn.disabled = false;
-        btn.innerText = btn.dataset.original || "Submit";
-    }
 }
 
 /* ================= SAFE FETCH ================= */
@@ -48,72 +44,9 @@ async function safeFetch(url, options = {}) {
 
         return data;
     } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
         return null;
     }
-}
-
-/* ================= LOGIN ================= */
-async function login() {
-    const btn = document.querySelector("button[onclick='login()']");
-
-    const email = document.getElementById("email")?.value;
-    const phone = document.getElementById("phone")?.value;
-    const password = document.getElementById("password")?.value;
-
-    setLoading(btn, true, "Logging in...");
-
-    try {
-        const res = await fetch(API + "/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, phone, password })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || "Login failed");
-
-        localStorage.setItem("token", data.token);
-
-        toast("Login successful ✅");
-        setTimeout(() => (location.href = "dashboard.html"), 800);
-
-    } catch (err) {
-        toast(err.message, false);
-    }
-
-    setLoading(btn, false);
-}
-
-/* ================= REGISTER ================= */
-async function register() {
-    const btn = document.querySelectorAll("button")[1];
-
-    const email = document.getElementById("email")?.value;
-    const phone = document.getElementById("phone")?.value;
-    const password = document.getElementById("password")?.value;
-
-    setLoading(btn, true, "Creating account...");
-
-    try {
-        const res = await fetch(API + "/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, phone, password })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || "Register failed");
-
-        toast("Account created ✅");
-
-    } catch (err) {
-        toast(err.message, false);
-    }
-
-    setLoading(btn, false);
 }
 
 /* ================= USER ================= */
@@ -124,44 +57,85 @@ async function loadUser() {
 
     if (!data) return;
 
-    const email = document.getElementById("email");
-    const balance = document.getElementById("balance");
+    const emailEl = document.getElementById("userEmail");
+    const balanceEl = document.getElementById("balance");
 
-    if (email) email.innerText = data.email || "User";
-    if (balance) balance.innerText = data.balance || 0;
+    if (emailEl) emailEl.innerText = data.email || "User";
+    if (balanceEl) balanceEl.innerText = data.balance || 0;
+}
+
+/* ================= NORMALIZE SERVICES ================= */
+function normalizeServices(data) {
+    let services = [];
+
+    if (Array.isArray(data)) {
+        services = data;
+    }
+    else if (data?.data && Array.isArray(data.data)) {
+        services = data.data;
+    }
+    else if (data?.data && typeof data.data === "object") {
+        Object.values(data.data).forEach(group => {
+            if (Array.isArray(group)) {
+                services.push(...group);
+            }
+        });
+    }
+
+    return services;
 }
 
 /* ================= SERVICES ================= */
+let ALL_SERVICES = [];
+
 async function loadServices() {
-    const container = document.getElementById("serviceList");
+    const container = document.getElementById("servicesList");
     if (!container) return;
 
     container.innerHTML = "<p>Loading services...</p>";
 
     const data = await safeFetch(API + "/services");
 
-    if (!data || !data.data) {
+    if (!data) {
         container.innerHTML = "<p style='color:red'>Failed to load services</p>";
         return;
     }
 
+    ALL_SERVICES = normalizeServices(data);
+
+    renderServices();
+}
+
+/* ================= RENDER SERVICES ================= */
+function renderServices(filter = "") {
+    const container = document.getElementById("servicesList");
+    if (!container) return;
+
     container.innerHTML = "";
 
-    Object.values(data.data).forEach(group => {
-        group.forEach(s => {
-            const div = document.createElement("div");
-            div.className = "service";
+    const query = filter.toLowerCase();
 
-            div.innerHTML = `
-                <b>${s.name}</b><br>
-                Rate: ${s.rate}<br>
-                Min: ${s.min} | Max: ${s.max}<br><br>
-                <button onclick="order('${s.serviceId}')">Order</button>
-            `;
+    ALL_SERVICES.forEach(s => {
+        if (query && !s.name.toLowerCase().includes(query)) return;
 
-            container.appendChild(div);
-        });
+        const div = document.createElement("div");
+        div.className = "service";
+
+        div.innerHTML = `
+            <b>${s.name}</b><br>
+            Platform: ${s.platform || "Other"}<br>
+            Rate: ${Number(s.rate).toFixed(2)}<br>
+            Min: ${s.min} | Max: ${s.max}<br><br>
+            <button onclick="order('${s.serviceId}')">Order</button>
+        `;
+
+        container.appendChild(div);
     });
+}
+
+/* ================= SEARCH SERVICES ================= */
+function searchServices(val) {
+    renderServices(val);
 }
 
 /* ================= ORDER ================= */
@@ -189,7 +163,7 @@ async function order(serviceId) {
         return;
     }
 
-    toast("Order placed successfully ✅");
+    toast("Order placed ✅");
 
     loadOrders();
     loadUser();
@@ -197,7 +171,7 @@ async function order(serviceId) {
 
 /* ================= ORDERS ================= */
 async function loadOrders() {
-    const table = document.getElementById("orderTable");
+    const table = document.getElementById("ordersList");
     if (!table) return;
 
     const data = await safeFetch(API + "/orders", {
@@ -209,82 +183,23 @@ async function loadOrders() {
     table.innerHTML = "";
 
     data.forEach(o => {
-        table.innerHTML += `
-            <tr>
-                <td>${o._id}</td>
-                <td>${o.service}</td>
-                <td>${o.quantity}</td>
-                <td>${o.status || "pending"}</td>
-            </tr>
-        `;
+        const li = document.createElement("li");
+        li.innerText = `${o.service} | Qty: ${o.quantity} | Cost: ${o.cost}`;
+        table.appendChild(li);
     });
 }
 
-/* ================= LOGOUT ================= */
-function logout() {
-    localStorage.removeItem("token");
-    location.href = "index.html";
-}
-
-/* ================= STEP FLOW (ORDER PAGE) ================= */
-function showStep(step) {
-    document.querySelectorAll(".step-container").forEach(s => {
-        s.style.display = "none";
+/* ================= STEP FLOW ================= */
+function showPage(page) {
+    document.querySelectorAll(".page").forEach(p => {
+        p.style.display = "none";
     });
 
-    const el = document.getElementById("step-" + step);
+    const el = document.getElementById(page);
     if (el) el.style.display = "block";
 }
 
-function setAmount(val) {
-    const pricePerUnit = 0.02;
-    const priceEl = document.getElementById("price");
-
-    if (!priceEl) return;
-
-    priceEl.innerText = (val * pricePerUnit).toFixed(2);
-}
-
-/* ================= SERVICE PAGE (?serviceId=) ================= */
-let currentService = null;
-
-function getServiceId() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get("serviceId");
-}
-
-async function loadService() {
-    const id = getServiceId();
-    if (!id) return;
-
-    const res = await fetch(API + "/services");
-    const data = await res.json();
-
-    if (!data || !data.data) return;
-
-    let allServices = [];
-
-    Object.values(data.data).forEach(group => {
-        group.forEach(s => allServices.push(s));
-    });
-
-    currentService = allServices.find(s => s.serviceId === id);
-
-    const box = document.getElementById("serviceInfo");
-    if (!box) return;
-
-    if (!currentService) {
-        box.innerHTML = "Service not found";
-        return;
-    }
-
-    box.innerHTML = `
-        <h3>${currentService.name}</h3>
-        <p>Price: ${currentService.rate} KSH / 1000</p>
-    `;
-}
-
-/* ================= INIT ================= */
+/* ================= LOGIN CHECK ================= */
 window.onload = () => {
     if (!getToken()) {
         location.href = "index.html";
@@ -294,5 +209,4 @@ window.onload = () => {
     loadUser();
     loadServices();
     loadOrders();
-    loadService();
 };
