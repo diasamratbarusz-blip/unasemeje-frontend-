@@ -1,183 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>SMM Panel Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-    }
-
-    header {
-      padding: 15px;
-      background: #111827;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .container {
-      padding: 15px;
-    }
-
-    .row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      width: 100%;
-      max-width: 300px;
-    }
-
-    .card {
-      background: #1e293b;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 10px;
-    }
-
-    .service {
-      background: #111827;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .service:hover {
-      background: #334155;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 10px;
-    }
-
-    button {
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #22c55e;
-      color: white;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background: #16a34a;
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-  SMM PANEL DASHBOARD
-</header>
-
-<div class="container">
-
-  <!-- BALANCE -->
-  <div class="card">
-    <h3>Balance: <span id="balance">0</span></h3>
-  </div>
-
-  <!-- FILTERS -->
-  <div class="row">
-    <input id="search" placeholder="Search services..." onkeyup="renderServices()">
-
-    <select id="platformFilter" onchange="renderServices()">
-      <option value="all">All Platforms</option>
-      <option value="Instagram">Instagram</option>
-      <option value="TikTok">TikTok</option>
-      <option value="Facebook">Facebook</option>
-      <option value="YouTube">YouTube</option>
-      <option value="Twitter/X">Twitter/X</option>
-    </select>
-  </div>
-
-  <!-- SERVICES -->
-  <div class="card">
-    <h3>Services</h3>
-    <div id="services" class="grid"></div>
-  </div>
-
-  <!-- ORDER -->
-  <div class="card">
-    <h3>Place Order</h3>
-
-    <input id="serviceId" placeholder="Service ID" readonly>
-    <input id="link" placeholder="Target Link">
-    <input id="quantity" placeholder="Quantity" type="number" oninput="calcPrice()">
-
-    <p>Total Price: <b id="total">0</b></p>
-
-    <button onclick="placeOrder()">Place Order</button>
-  </div>
-
-</div>
-
-<script>
-const API = "";
+// ================= API =================
+const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
-if (!token) window.location.href = "index.html";
+if (!token) {
+  window.location.href = "index.html";
+}
 
+// ================= GLOBAL STATE =================
 let servicesData = [];
-let selectedRate = 0;
+let selectedService = null;
 
-/* ================= LOAD BALANCE ================= */
-async function loadBalance() {
+// ================= AUTH HEADER =================
+function headers() {
+  return {
+    "Content-Type": "application/json",
+    Authorization: "Bearer " + token
+  };
+}
+
+// ================= LOAD USER =================
+async function loadUser() {
   try {
-    const res = await fetch("/api/me", {
-      headers: { Authorization: "Bearer " + token }
-    });
-
+    const res = await fetch(API + "/me", { headers: headers() });
     const data = await res.json();
-    document.getElementById("balance").innerText = data.balance || 0;
+
+    document.getElementById("balance").innerText =
+      Number(data.balance || 0).toFixed(2);
+
   } catch (err) {
-    console.error(err);
+    console.error("User load error", err);
   }
 }
 
-/* ================= LOAD SERVICES ================= */
+// ================= LOAD SERVICES =================
 async function loadServices() {
   try {
-    const res = await fetch("/api/services");
+    const res = await fetch(API + "/services");
     const json = await res.json();
 
-    servicesData = json.data || [];
+    // backend returns grouped: { Instagram: [], TikTok: [] }
+    servicesData = [];
+
+    Object.keys(json.data || {}).forEach(platform => {
+      json.data[platform].forEach(s => {
+        servicesData.push({
+          ...s,
+          platform
+        });
+      });
+    });
+
     renderServices();
 
   } catch (err) {
-    console.error("Services load error", err);
-    alert("Failed to load services");
+    console.error("Services error:", err);
   }
 }
 
-/* ================= RENDER SERVICES ================= */
+// ================= RENDER SERVICES =================
 function renderServices() {
   const container = document.getElementById("services");
+  if (!container) return;
+
+  const search = document.getElementById("search")?.value.toLowerCase() || "";
+  const filter = document.getElementById("platformFilter")?.value || "all";
+
   container.innerHTML = "";
 
-  const search = document.getElementById("search").value.toLowerCase();
-  const filter = document.getElementById("platformFilter").value;
-
   servicesData.forEach(s => {
-
-    const platform = detectPlatform(s.category || "");
-
-    if (filter !== "all" && platform !== filter) return;
+    if (filter !== "all" && s.platform !== filter) return;
     if (!s.name.toLowerCase().includes(search)) return;
 
     const div = document.createElement("div");
@@ -185,8 +76,8 @@ function renderServices() {
 
     div.innerHTML = `
       <b>${s.name}</b><br>
-      ID: ${s.serviceId}<br>
-      Price: ${s.rate}
+      <small>ID: ${s.serviceId}</small><br>
+      <span style="color:#22c55e">KSH ${s.rate}</span>
     `;
 
     div.onclick = () => selectService(s);
@@ -195,64 +86,83 @@ function renderServices() {
   });
 }
 
-/* ================= PLATFORM DETECT ================= */
-function detectPlatform(cat) {
-  cat = cat.toLowerCase();
-
-  if (cat.includes("instagram")) return "Instagram";
-  if (cat.includes("tiktok")) return "TikTok";
-  if (cat.includes("facebook")) return "Facebook";
-  if (cat.includes("youtube")) return "YouTube";
-  if (cat.includes("twitter") || cat.includes("x")) return "Twitter/X";
-
-  return "Other";
-}
-
-/* ================= SELECT SERVICE ================= */
+// ================= SELECT SERVICE =================
 function selectService(service) {
+  selectedService = service;
+
   document.getElementById("serviceId").value = service.serviceId;
-  selectedRate = Number(service.rate || 0);
-  calcPrice();
+
+  // auto scroll to order box (Delix style UX)
+  document.querySelector(".order-box")?.scrollIntoView({
+    behavior: "smooth"
+  });
+
+  calculatePrice();
 }
 
-/* ================= PRICE CALC ================= */
-function calcPrice() {
+// ================= PRICE CALCULATION =================
+function calculatePrice() {
+  if (!selectedService) return;
+
   const qty = Number(document.getElementById("quantity").value || 0);
-  const total = (selectedRate / 1000) * qty;
 
-  document.getElementById("total").innerText = total.toFixed(2);
+  const total = (Number(selectedService.rate) / 1000) * qty;
+
+  document.getElementById("total").innerText =
+    total.toFixed(2) + " KSH";
 }
 
-/* ================= PLACE ORDER ================= */
+// ================= PLACE ORDER =================
 async function placeOrder() {
   const serviceId = document.getElementById("serviceId").value;
   const link = document.getElementById("link").value;
   const quantity = document.getElementById("quantity").value;
 
   if (!serviceId || !link || !quantity) {
-    alert("Fill all fields");
+    alert("Please fill all fields");
     return;
   }
 
-  const res = await fetch("/api/order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    },
-    body: JSON.stringify({ serviceId, link, quantity })
-  });
+  try {
+    const res = await fetch(API + "/order", {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify({
+        serviceId,
+        link,
+        quantity: Number(quantity)
+      })
+    });
 
-  const json = await res.json();
+    const data = await res.json();
 
-  alert(json.message || json.error || "Done");
-  loadBalance();
+    if (!res.ok) throw new Error(data.error);
+
+    alert("Order placed successfully ✅");
+
+    loadUser();
+
+    // reset
+    document.getElementById("link").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("total").innerText = "0";
+
+  } catch (err) {
+    alert(err.message || "Order failed");
+  }
 }
 
-/* ================= INIT ================= */
-loadBalance();
-loadServices();
-</script>
+// ================= SEARCH / FILTER EVENTS =================
+document.addEventListener("input", (e) => {
+  if (e.target.id === "search" || e.target.id === "platformFilter") {
+    renderServices();
+  }
 
-</body>
-</html>
+  if (e.target.id === "quantity") {
+    calculatePrice();
+  }
+});
+
+// ================= INIT =================
+loadUser();
+loadServices();
