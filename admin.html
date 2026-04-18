@@ -1,84 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Admin Dashboard - SMM Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
 
-    .sidebar {
-      width: 220px;
-      height: 100vh;
-      background: #020617;
-      position: fixed;
-      padding: 20px;
-    }
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  position: fixed;
+  background: #020617;
+  padding: 20px;
+}
 
-    .sidebar h2 {
-      color: #38bdf8;
-    }
+.sidebar h2 {
+  color: #38bdf8;
+}
 
-    .sidebar a {
-      display: block;
-      color: #cbd5f5;
-      margin: 15px 0;
-      cursor: pointer;
-    }
+.sidebar a {
+  display: block;
+  margin: 12px 0;
+  cursor: pointer;
+  color: #cbd5f5;
+}
 
-    .main {
-      margin-left: 240px;
-      padding: 20px;
-    }
+.sidebar a:hover {
+  color: #fff;
+}
 
-    .card {
-      background: #111827;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-    }
+/* MAIN */
+.main {
+  margin-left: 240px;
+  padding: 20px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
+.card {
+  background: #111827;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
 
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #1f2937;
-    }
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-    button {
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #22c55e;
-      color: black;
-      font-weight: bold;
-    }
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #1f2937;
+}
 
-    .danger {
-      background: #ef4444;
-      color: white;
-    }
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+}
 
-    .loading {
-      color: #38bdf8;
-    }
-  </style>
+.danger {
+  background: #ef4444;
+  color: white;
+}
+</style>
 </head>
 
 <body>
 
 <div class="sidebar">
   <h2>ADMIN PANEL</h2>
+
   <a onclick="loadUsers()">👤 Users</a>
   <a onclick="loadDeposits()">💰 Deposits</a>
   <a onclick="logout()">🚪 Logout</a>
@@ -92,43 +96,62 @@
 <script>
 
 const API = "https://unasemeje-backend-3.onrender.com/api";
+const token = localStorage.getItem("token");
 
-// ================= TOKEN =================
-function getToken(){
-  return localStorage.getItem("token");
+/* ================= ADMIN SECURITY ================= */
+function checkAdmin() {
+  if (!token) {
+    location.href = "index.html";
+    return;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
+    const isAdmin =
+      payload.email === "diasamratbarusz@gmail.com" ||
+      payload.phone === "0715509440";
+
+    if (!isAdmin) {
+      alert("Access denied");
+      location.href = "dashboard.html";
+    }
+
+  } catch {
+    location.href = "index.html";
+  }
 }
 
-// ================= LOGOUT =================
-function logout(){
-  localStorage.removeItem("token");
-  location.href = "index.html";
-}
+checkAdmin();
 
-// ================= SAFE FETCH =================
+/* ================= FETCH SAFE ================= */
 async function safeFetch(url, options = {}) {
   try {
     const res = await fetch(url, options);
-    if (!res.ok) throw new Error("Request failed");
-    return await res.json();
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.error || "Request failed");
+
+    return data;
   } catch (err) {
     console.error(err);
     return null;
   }
 }
 
-// ================= USERS =================
-async function loadUsers(){
+/* ================= USERS ================= */
+async function loadUsers() {
 
   document.getElementById("content").innerHTML =
-    "<p class='loading'>⏳ Loading users...</p>";
+    "<p>Loading users...</p>";
 
   const data = await safeFetch(API + "/admin/users", {
-    headers: { Authorization: "Bearer " + getToken() }
+    headers: { Authorization: "Bearer " + token }
   });
 
-  if(!data){
+  if (!data) {
     document.getElementById("content").innerHTML =
-      "<p style='color:red'>❌ Failed to load users</p>";
+      "<p style='color:red'>Failed to load users</p>";
     return;
   }
 
@@ -147,32 +170,33 @@ async function loadUsers(){
   document.getElementById("content").innerHTML = html;
 }
 
-// ================= DEPOSITS =================
-async function loadDeposits(){
+/* ================= DEPOSITS ================= */
+async function loadDeposits() {
 
   document.getElementById("content").innerHTML =
-    "<p class='loading'>⏳ Loading deposits...</p>";
+    "<p>Loading deposits...</p>";
 
   const data = await safeFetch(API + "/admin/deposits", {
-    headers: { Authorization: "Bearer " + getToken() }
+    headers: { Authorization: "Bearer " + token }
   });
 
-  if(!data){
+  if (!data) {
     document.getElementById("content").innerHTML =
-      "<p style='color:red'>❌ Failed to load deposits</p>";
+      "<p style='color:red'>Failed to load deposits</p>";
     return;
   }
 
   let html = `<h2>Deposits</h2>`;
 
   html += `
-    <table>
-      <tr>
-        <th>Phone</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
+  <table>
+    <tr>
+      <th>Phone</th>
+      <th>Amount</th>
+      <th>Transaction</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
   `;
 
   data.forEach(d => {
@@ -180,13 +204,12 @@ async function loadDeposits(){
       <tr>
         <td>${d.phone}</td>
         <td>KES ${d.amount}</td>
+        <td>${d.transactionCode || "N/A"}</td>
         <td>${d.status}</td>
         <td>
-          ${d.status !== "completed" ? `
-            <button onclick="approveDeposit('${d._id}')">
-              Approve
-            </button>
-          ` : "✔ Done"}
+          ${d.status !== "approved"
+            ? `<button onclick="approveDeposit('${d._id}')">Approve</button>`
+            : "✔ Done"}
         </td>
       </tr>
     `;
@@ -197,30 +220,36 @@ async function loadDeposits(){
   document.getElementById("content").innerHTML = html;
 }
 
-// ================= APPROVE DEPOSIT =================
-async function approveDeposit(id){
+/* ================= APPROVE DEPOSIT ================= */
+async function approveDeposit(id) {
 
-  if(!confirm("Approve this deposit?")) return;
+  if (!confirm("Approve this deposit?")) return;
 
   const res = await safeFetch(API + "/admin/approve", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + getToken()
+      Authorization: "Bearer " + token
     },
     body: JSON.stringify({ id })
   });
 
-  if(!res){
-    alert("❌ Failed");
+  if (!res) {
+    alert("Failed");
     return;
   }
 
-  alert("✅ Deposit approved");
+  alert("Approved ✅");
   loadDeposits();
 }
 
-// ================= INIT =================
+/* ================= LOGOUT ================= */
+function logout() {
+  localStorage.removeItem("token");
+  location.href = "index.html";
+}
+
+/* ================= DEFAULT ================= */
 loadUsers();
 
 </script>
