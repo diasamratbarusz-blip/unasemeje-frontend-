@@ -7,51 +7,32 @@ async function loadServices() {
     try {
         const res = await fetch(API_URL + "/services");
 
-        if (!res.ok) {
-            throw new Error("Failed to fetch services");
-        }
+        if (!res.ok) throw new Error("Failed to fetch services");
 
         const json = await res.json();
 
         console.log("MAIN SERVICES RESPONSE:", json);
 
-        let services = [];
+        let services = extractServices(json);
 
-        // =========================
-        // CASE 1: direct array
-        // =========================
-        if (Array.isArray(json)) {
-            services = json;
-        }
+        if (!services.length) throw new Error("Empty services");
 
-        // =========================
-        // CASE 2: { data: [] }
-        // =========================
-        else if (json.data && Array.isArray(json.data)) {
-            services = json.data;
-        }
+        // ================= CLEAN + NORMALIZE =================
+        services = services
+            .filter(s => s && s.serviceId || s.id || s.name)
+            .map(s => ({
+                serviceId: String(s.serviceId || s.id || ""),
+                name: cleanText(s.name || "Service"),
+                rate: Number(s.rate || s.price || 0),
+                min: Number(s.min || 1),
+                max: Number(s.max || 10000),
+                category: s.category || "Other",
+                platform: detectPlatform(s),
+            }));
 
-        // =========================
-        // CASE 3: grouped format { data: { Instagram: [], TikTok: [] } }
-        // =========================
-        else if (json.data && typeof json.data === "object") {
-            Object.values(json.data).forEach(group => {
-                if (Array.isArray(group)) {
-                    services.push(...group);
-                }
-            });
-        }
+        // remove duplicates
+        services = [...new Map(services.map(s => [s.serviceId, s])).values()];
 
-        // =========================
-        // INVALID FORMAT
-        // =========================
-        else {
-            throw new Error("Invalid services format");
-        }
-
-        // =========================
-        // SAVE GLOBAL
-        // =========================
         allServices = services;
 
         renderServices(allServices);
@@ -59,9 +40,7 @@ async function loadServices() {
     } catch (err) {
         console.error("Main services error:", err);
 
-        // =========================
-        // FALLBACK: external provider
-        // =========================
+        // ================= FALLBACK =================
         try {
             const res2 = await fetch(API_URL + "/services/external");
 
@@ -71,23 +50,22 @@ async function loadServices() {
 
             console.log("EXTERNAL SERVICES RESPONSE:", json2);
 
-            let services2 = [];
+            let services2 = extractServices(json2);
 
-            if (Array.isArray(json2)) {
-                services2 = json2;
-            }
-            else if (json2.data && Array.isArray(json2.data)) {
-                services2 = json2.data;
-            }
-            else if (json2.data && typeof json2.data === "object") {
-                Object.values(json2.data).forEach(group => {
-                    if (Array.isArray(group)) {
-                        services2.push(...group);
-                    }
-                });
-            }
+            services2 = services2
+                .filter(s => s)
+                .map(s => ({
+                    serviceId: String(s.serviceId || s.id || ""),
+                    name: cleanText(s.name || "Service"),
+                    rate: Number(s.rate || s.price || 0),
+                    min: Number(s.min || 1),
+                    max: Number(s.max || 10000),
+                    category: s.category || "Other",
+                    platform: detectPlatform(s),
+                }));
 
             allServices = services2;
+
             renderServices(allServices);
 
         } catch (err2) {
