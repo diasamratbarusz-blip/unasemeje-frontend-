@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMM Panel Dashboard</title>
+<title>SMM Dashboard</title>
 
 <style>
 body {
@@ -13,12 +13,10 @@ body {
   color: white;
 }
 
-/* layout */
 .dashboard {
   display: flex;
 }
 
-/* sidebar */
 .sidebar {
   width: 220px;
   background: #111827;
@@ -27,7 +25,7 @@ body {
 }
 
 .sidebar h2 {
-  color: #fff;
+  color: white;
 }
 
 .sidebar a {
@@ -43,7 +41,6 @@ body {
   background: #1f2937;
 }
 
-/* main */
 .main {
   flex: 1;
   padding: 20px;
@@ -52,13 +49,12 @@ body {
 .navbar {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
   background: #1e293b;
   padding: 10px;
   border-radius: 10px;
+  margin-bottom: 20px;
 }
 
-/* cards */
 .card {
   background: #1e293b;
   padding: 20px;
@@ -66,7 +62,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* grid */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -80,18 +75,17 @@ body {
   cursor: pointer;
 }
 
-/* step flow */
 .step-container {
   background: #1e293b;
-  padding: 20px;
+  padding: 15px;
   border-radius: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .list-item {
   background: #334155;
-  padding: 12px;
-  margin-bottom: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -116,17 +110,16 @@ button {
   cursor: pointer;
 }
 
-#adminBtn{
-  display:none;
-  background:#ef4444;
-  padding:10px;
-  border-radius:6px;
-  color:white;
-  text-decoration:none;
-  margin-top:10px;
+#adminBtn {
+  display: none;
+  background: #ef4444;
+  padding: 10px;
+  border-radius: 6px;
+  color: white;
+  text-decoration: none;
+  margin-top: 10px;
 }
 </style>
-
 </head>
 
 <body>
@@ -142,7 +135,6 @@ button {
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Deposit</a>
 
-  <!-- ADMIN BUTTON (HIDDEN DEFAULT) -->
   <a id="adminBtn" href="admin.html">Admin Panel</a>
 
   <a onclick="logout()">Logout</a>
@@ -160,10 +152,8 @@ button {
 <div id="home" class="page">
 
 <div class="card">
-
 <h3>Quick Order Flow</h3>
 
-<!-- STEP 1 -->
 <div id="step-1" class="step-container">
   <h4>Select Platform</h4>
   <div class="list-item" onclick="selectPlatform('Instagram')">Instagram</div>
@@ -172,18 +162,14 @@ button {
   <div class="list-item" onclick="selectPlatform('Facebook')">Facebook</div>
 </div>
 
-<!-- STEP 2 -->
 <div id="step-2" class="step-container" style="display:none;">
   <button onclick="showStep(1)">Back</button>
   <h4>Services</h4>
   <div id="stepServices"></div>
 </div>
 
-<!-- STEP 3 -->
 <div id="step-3" class="step-container" style="display:none;">
   <button onclick="showStep(2)">Back</button>
-
-  <h4>Place Order</h4>
 
   <input id="serviceId" readonly placeholder="Service ID">
   <input id="link" placeholder="Link">
@@ -240,10 +226,9 @@ let selectedRate = 0;
 /* ================= AUTH CHECK ================= */
 if (!token) window.location.href = "index.html";
 
-/* ================= ADMIN HIDE/SHOW ================= */
+/* ================= ADMIN CONTROL ================= */
 try {
   const payload = JSON.parse(atob(token.split(".")[1]));
-
   if (payload.email === "diasamratbarusz@gmail.com") {
     document.getElementById("adminBtn").style.display = "block";
   }
@@ -259,33 +244,42 @@ function loadUser() {
 
 /* ================= BALANCE ================= */
 async function loadBalance() {
-  const res = await fetch(API + "/me", {
-    headers: { Authorization: "Bearer " + token }
-  });
+  try {
+    const res = await fetch(API + "/me", {
+      headers: { Authorization: "Bearer " + token }
+    });
 
-  const data = await res.json();
-  document.getElementById("balance").innerText = data.balance || 0;
+    const data = await res.json();
+    document.getElementById("balance").innerText = data.balance || 0;
+  } catch {}
 }
 
-/* ================= SERVICES (GROUPED FIX) ================= */
+/* ================= SERVICES ================= */
 async function loadServices() {
-  const res = await fetch(API + "/services");
-  const json = await res.json();
+  try {
+    const res = await fetch(API + "/services");
+    const json = await res.json();
 
-  servicesData = [];
+    servicesData = [];
 
-  if (json?.data) {
-    Object.values(json.data).forEach(group => {
-      group.forEach(s => servicesData.push(s));
-    });
+    if (json?.data) {
+      Object.values(json.data).forEach(group => {
+        group.forEach(s => servicesData.push(s));
+      });
+    }
+
+    renderServices();
+
+  } catch (err) {
+    console.error(err);
   }
-
-  renderServices();
 }
 
 /* ================= RENDER SERVICES ================= */
 function renderServices() {
   const container = document.getElementById("servicesList");
+  if (!container) return;
+
   const search = document.getElementById("search")?.value?.toLowerCase() || "";
 
   container.innerHTML = "";
