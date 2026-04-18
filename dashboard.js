@@ -1,4 +1,3 @@
-// ================= API =================
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
@@ -6,11 +5,11 @@ if (!token) {
   window.location.href = "index.html";
 }
 
-// ================= GLOBAL STATE =================
+/* ================= STATE ================= */
 let servicesData = [];
 let selectedService = null;
 
-// ================= AUTH HEADER =================
+/* ================= HEADERS ================= */
 function headers() {
   return {
     "Content-Type": "application/json",
@@ -18,37 +17,59 @@ function headers() {
   };
 }
 
-// ================= LOAD USER =================
+/* ================= LOAD USER ================= */
 async function loadUser() {
   try {
     const res = await fetch(API + "/me", { headers: headers() });
     const data = await res.json();
 
-    document.getElementById("balance").innerText =
-      Number(data.balance || 0).toFixed(2);
+    if (!res.ok) throw new Error("User load failed");
+
+    const balanceEl = document.getElementById("balance");
+    if (balanceEl) {
+      balanceEl.innerText = Number(data.balance || 0).toFixed(2);
+    }
 
   } catch (err) {
-    console.error("User load error", err);
+    console.error("User load error:", err);
   }
 }
 
-// ================= LOAD SERVICES =================
+/* ================= NORMALIZE SERVICES ================= */
+function normalizeServices(json) {
+  let services = [];
+
+  if (Array.isArray(json)) {
+    services = json;
+  }
+  else if (json?.data && Array.isArray(json.data)) {
+    services = json.data;
+  }
+  else if (json?.data && typeof json.data === "object") {
+    Object.entries(json.data).forEach(([platform, group]) => {
+      if (Array.isArray(group)) {
+        group.forEach(s => {
+          services.push({
+            ...s,
+            platform
+          });
+        });
+      }
+    });
+  }
+
+  return services;
+}
+
+/* ================= LOAD SERVICES ================= */
 async function loadServices() {
   try {
     const res = await fetch(API + "/services");
     const json = await res.json();
 
-    // backend returns grouped: { Instagram: [], TikTok: [] }
-    servicesData = [];
+    if (!res.ok) throw new Error("Services fetch failed");
 
-    Object.keys(json.data || {}).forEach(platform => {
-      json.data[platform].forEach(s => {
-        servicesData.push({
-          ...s,
-          platform
-        });
-      });
-    });
+    servicesData = normalizeServices(json);
 
     renderServices();
 
@@ -57,27 +78,31 @@ async function loadServices() {
   }
 }
 
-// ================= RENDER SERVICES =================
+/* ================= RENDER SERVICES ================= */
 function renderServices() {
   const container = document.getElementById("services");
   if (!container) return;
 
-  const search = document.getElementById("search")?.value.toLowerCase() || "";
+  const search = document.getElementById("search")?.value?.toLowerCase() || "";
   const filter = document.getElementById("platformFilter")?.value || "all";
 
   container.innerHTML = "";
 
   servicesData.forEach(s => {
+
     if (filter !== "all" && s.platform !== filter) return;
-    if (!s.name.toLowerCase().includes(search)) return;
+    if (search && !String(s.name).toLowerCase().includes(search)) return;
 
     const div = document.createElement("div");
     div.className = "service";
 
     div.innerHTML = `
       <b>${s.name}</b><br>
+      <small>Platform: ${s.platform || "Other"}</small><br>
       <small>ID: ${s.serviceId}</small><br>
-      <span style="color:#22c55e">KSH ${s.rate}</span>
+      <span style="color:#22c55e;font-weight:bold">
+        KSH ${Number(s.rate).toFixed(2)}
+      </span>
     `;
 
     div.onclick = () => selectService(s);
@@ -86,13 +111,13 @@ function renderServices() {
   });
 }
 
-// ================= SELECT SERVICE =================
+/* ================= SELECT SERVICE ================= */
 function selectService(service) {
   selectedService = service;
 
-  document.getElementById("serviceId").value = service.serviceId;
+  const idInput = document.getElementById("serviceId");
+  if (idInput) idInput.value = service.serviceId;
 
-  // auto scroll to order box (Delix style UX)
   document.querySelector(".order-box")?.scrollIntoView({
     behavior: "smooth"
   });
@@ -100,23 +125,25 @@ function selectService(service) {
   calculatePrice();
 }
 
-// ================= PRICE CALCULATION =================
+/* ================= PRICE CALC ================= */
 function calculatePrice() {
   if (!selectedService) return;
 
-  const qty = Number(document.getElementById("quantity").value || 0);
+  const qty = Number(document.getElementById("quantity")?.value || 0);
 
-  const total = (Number(selectedService.rate) / 1000) * qty;
+  const price = (Number(selectedService.rate) / 1000) * qty;
 
-  document.getElementById("total").innerText =
-    total.toFixed(2) + " KSH";
+  const totalEl = document.getElementById("total");
+  if (totalEl) {
+    totalEl.innerText = price.toFixed(2) + " KSH";
+  }
 }
 
-// ================= PLACE ORDER =================
+/* ================= PLACE ORDER ================= */
 async function placeOrder() {
-  const serviceId = document.getElementById("serviceId").value;
-  const link = document.getElementById("link").value;
-  const quantity = document.getElementById("quantity").value;
+  const serviceId = document.getElementById("serviceId")?.value;
+  const link = document.getElementById("link")?.value;
+  const quantity = document.getElementById("quantity")?.value;
 
   if (!serviceId || !link || !quantity) {
     alert("Please fill all fields");
@@ -136,24 +163,25 @@ async function placeOrder() {
 
     const data = await res.json();
 
-    if (!res.ok) throw new Error(data.error);
+    if (!res.ok) throw new Error(data.error || "Order failed");
 
     alert("Order placed successfully ✅");
 
     loadUser();
 
-    // reset
+    // reset fields
     document.getElementById("link").value = "";
     document.getElementById("quantity").value = "";
     document.getElementById("total").innerText = "0";
 
   } catch (err) {
-    alert(err.message || "Order failed");
+    alert(err.message);
   }
 }
 
-// ================= SEARCH / FILTER EVENTS =================
+/* ================= LIVE INPUT EVENTS ================= */
 document.addEventListener("input", (e) => {
+
   if (e.target.id === "search" || e.target.id === "platformFilter") {
     renderServices();
   }
@@ -163,6 +191,8 @@ document.addEventListener("input", (e) => {
   }
 });
 
-// ================= INIT =================
-loadUser();
-loadServices();
+/* ================= INIT ================= */
+window.onload = () => {
+  loadUser();
+  loadServices();
+};
