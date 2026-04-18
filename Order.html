@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place Order</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+/* ===== ORDER PAGE MODERN STYLE ===== */
+body {
+    background: #0b1220;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.order-card {
+    width: 100%;
+    max-width: 520px;
+    background: #111827;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: fadeIn 0.4s ease;
+}
+
+h2 {
+    margin-bottom: 10px;
+    color: #38bdf8;
+}
+
+.service-box {
+    background: #0f172a;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #1f2937;
+}
+
+label {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: 1px solid #1f2937;
+    background: #0b1220;
+    color: white;
+}
+
+.amount-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.amount-grid button {
+    background: #1f2937;
+    color: white;
+    padding: 10px;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.amount-grid button:hover {
+    background: #38bdf8;
+    color: black;
+}
+
+.price-box {
+    background: #0f172a;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #1f2937;
+    font-weight: bold;
+}
+
+button.order-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #38bdf8, #22c55e);
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: black;
+    transition: 0.3s;
+}
+
+button.order-btn:hover {
+    transform: scale(1.03);
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+</style>
+
+</head>
+<body>
+
+<div class="order-card">
+
+    <h2>Place Order</h2>
+
+    <div class="service-box" id="serviceInfo">
+        Loading service...
+    </div>
+
+    <label>Link</label>
+    <input type="text" id="link" placeholder="https://">
+
+    <label>Quantity</label>
+    <input type="number" id="quantity" placeholder="Enter quantity">
+
+    <div class="amount-grid">
+        <button onclick="setQty(100)">100</button>
+        <button onclick="setQty(500)">500</button>
+        <button onclick="setQty(1000)">1000</button>
+    </div>
+
+    <div class="price-box">
+        Total Price: <span id="price">0</span> KSH
+    </div>
+
+    <button class="order-btn" onclick="placeOrder()">Place Order</button>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
