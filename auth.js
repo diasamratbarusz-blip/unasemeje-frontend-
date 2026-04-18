@@ -2,11 +2,30 @@
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
 // ================= TOAST =================
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  if (!t) return alert(msg);
+function showToast(msg, type = "success") {
+  let t = document.getElementById("toast");
+
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "toast";
+    document.body.appendChild(t);
+
+    Object.assign(t.style, {
+      position: "fixed",
+      bottom: "20px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      padding: "12px 18px",
+      borderRadius: "8px",
+      color: "#fff",
+      fontSize: "14px",
+      zIndex: "9999",
+      display: "none"
+    });
+  }
 
   t.innerText = msg;
+  t.style.background = type === "error" ? "#ef4444" : "#22c55e";
   t.style.display = "block";
 
   setTimeout(() => {
@@ -41,63 +60,58 @@ function removeToken() {
 // ================= JWT DECODE =================
 function decodeToken(token) {
   try {
-    const payload = token.split(".")[1];
-    return JSON.parse(atob(payload));
-  } catch (e) {
+    if (!token) return null;
+    const base64 = token.split(".")[1];
+    return JSON.parse(atob(base64));
+  } catch (err) {
     return null;
   }
 }
 
-// ================= AUTH CHECK =================
+// ================= CHECK AUTH =================
 function checkAuth() {
   const token = getToken();
-
   if (!token) {
-    window.location.href = "index.html";
+    redirectLogin();
     return;
   }
 
-  const decoded = decodeToken(token);
-  if (!decoded) {
+  const user = decodeToken(token);
+  if (!user) {
     logoutUser();
     return;
   }
 
-  const currentTime = Date.now() / 1000;
+  const now = Date.now() / 1000;
 
-  if (decoded.exp && decoded.exp < currentTime) {
+  // expired token check
+  if (user.exp && user.exp < now) {
     logoutUser();
-    showToast("Session expired. Please login again.");
+    showToast("Session expired", "error");
   }
+}
+
+// ================= REDIRECT =================
+function redirectLogin() {
+  window.location.href = "index.html";
 }
 
 // ================= LOAD USER =================
 function loadUser() {
-  const token = getToken();
-  if (!token) return;
-
-  const user = decodeToken(token);
+  const user = decodeToken(getToken());
   if (!user) return;
 
   const el = document.getElementById("userEmail");
   if (el) el.innerText = user.email || "User";
 }
 
-// Run auth check on dashboard
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.location.pathname.includes("dashboard")) {
-    checkAuth();
-    loadUser();
-  }
-});
-
 // ================= LOGIN =================
 async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
+  const email = document.getElementById("email")?.value?.trim();
+  const password = document.getElementById("password")?.value?.trim();
 
   if (!email || !password) {
-    return showToast("Fill all fields");
+    return showToast("Fill all fields", "error");
   }
 
   showLoading();
@@ -115,17 +129,16 @@ async function login() {
       throw new Error(data.error || "Login failed");
     }
 
-    if (data.token) {
-      saveToken(data.token);
-      showToast("Login successful");
+    saveToken(data.token);
 
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 1000);
-    }
+    showToast("Login successful");
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 800);
 
   } catch (err) {
-    showToast(err.message);
+    showToast(err.message, "error");
   } finally {
     hideLoading();
   }
@@ -133,12 +146,12 @@ async function login() {
 
 // ================= REGISTER =================
 async function register() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email")?.value?.trim();
+  const password = document.getElementById("password")?.value?.trim();
+  const phone = document.getElementById("phone")?.value?.trim();
 
   if (!email || !password || !phone) {
-    return showToast("Fill all fields");
+    return showToast("Fill all fields", "error");
   }
 
   showLoading();
@@ -156,14 +169,14 @@ async function register() {
       throw new Error(data.error || "Registration failed");
     }
 
-    showToast("Registered successfully");
+    showToast("Account created successfully");
 
     setTimeout(() => {
       window.location.href = "index.html";
-    }, 1000);
+    }, 800);
 
   } catch (err) {
-    showToast(err.message);
+    showToast(err.message, "error");
   } finally {
     hideLoading();
   }
@@ -179,7 +192,7 @@ function logoutUser() {
   }, 800);
 }
 
-// ================= AUTH FETCH =================
+// ================= AUTH FETCH WRAPPER =================
 async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -187,7 +200,15 @@ async function authFetch(url, options = {}) {
     ...options,
     headers: {
       ...(options.headers || {}),
-      Authorization: `Bearer ${token}`
+      Authorization: token ? `Bearer ${token}` : ""
     }
   });
 }
+
+// ================= AUTO INIT =================
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.pathname.includes("dashboard")) {
+    checkAuth();
+    loadUser();
+  }
+});
