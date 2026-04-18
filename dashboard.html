@@ -115,6 +115,16 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
+
+#adminBtn{
+  display:none;
+  background:#ef4444;
+  padding:10px;
+  border-radius:6px;
+  color:white;
+  text-decoration:none;
+  margin-top:10px;
+}
 </style>
 
 </head>
@@ -131,6 +141,10 @@ button {
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Deposit</a>
+
+  <!-- ADMIN BUTTON (HIDDEN DEFAULT) -->
+  <a id="adminBtn" href="admin.html">Admin Panel</a>
+
   <a onclick="logout()">Logout</a>
 </div>
 
@@ -183,7 +197,7 @@ button {
 </div>
 </div>
 
-<!-- SERVICES PAGE -->
+<!-- SERVICES -->
 <div id="services" class="page" style="display:none;">
   <div class="card">
     <h3>All Services</h3>
@@ -223,8 +237,17 @@ const token = localStorage.getItem("token");
 let servicesData = [];
 let selectedRate = 0;
 
-/* ================= CHECK LOGIN ================= */
+/* ================= AUTH CHECK ================= */
 if (!token) window.location.href = "index.html";
+
+/* ================= ADMIN HIDE/SHOW ================= */
+try {
+  const payload = JSON.parse(atob(token.split(".")[1]));
+
+  if (payload.email === "diasamratbarusz@gmail.com") {
+    document.getElementById("adminBtn").style.display = "block";
+  }
+} catch {}
 
 /* ================= USER ================= */
 function loadUser() {
@@ -244,7 +267,7 @@ async function loadBalance() {
   document.getElementById("balance").innerText = data.balance || 0;
 }
 
-/* ================= SERVICES (FIXED) ================= */
+/* ================= SERVICES (GROUPED FIX) ================= */
 async function loadServices() {
   const res = await fetch(API + "/services");
   const json = await res.json();
@@ -390,7 +413,6 @@ async function deposit() {
 /* ================= NAV ================= */
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-
   document.getElementById(page).style.display = "block";
 }
 
