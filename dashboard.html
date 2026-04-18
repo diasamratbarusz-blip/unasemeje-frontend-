@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMM Panel Dashboard</title>
 
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <style>
 body {
   margin: 0;
@@ -84,16 +81,11 @@ body {
 }
 
 /* step flow */
-.container {
-  max-width: 500px;
-  margin-top: 20px;
-}
-
 .step-container {
   background: #1e293b;
   padding: 20px;
   border-radius: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .list-item {
@@ -101,21 +93,6 @@ body {
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 8px;
-  cursor: pointer;
-}
-
-.amount-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.amount-grid button {
-  padding: 10px;
-  background: #334155;
-  color: white;
-  border: none;
-  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -138,7 +115,6 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
-
 </style>
 
 </head>
@@ -147,97 +123,96 @@ button {
 
 <div class="dashboard">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h2>SMM PANEL</h2>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>SMM PANEL</h2>
 
-    <a onclick="showPage('home')">Dashboard</a>
-    <a onclick="showPage('services')">Services</a>
-    <a onclick="showPage('orders')">Orders</a>
-    <a onclick="showPage('deposit')">Deposit</a>
+  <a onclick="showPage('home')">Dashboard</a>
+  <a onclick="showPage('services')">Services</a>
+  <a onclick="showPage('orders')">Orders</a>
+  <a onclick="showPage('deposit')">Deposit</a>
+  <a onclick="logout()">Logout</a>
+</div>
 
-    <a onclick="logout()">Logout</a>
+<!-- MAIN -->
+<div class="main">
+
+<div class="navbar">
+  <div>👤 <b id="userEmail">Loading...</b></div>
+  <div>💰 Balance: <span id="balance">0</span></div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="page">
+
+<div class="card">
+
+<h3>Quick Order Flow</h3>
+
+<!-- STEP 1 -->
+<div id="step-1" class="step-container">
+  <h4>Select Platform</h4>
+  <div class="list-item" onclick="selectPlatform('Instagram')">Instagram</div>
+  <div class="list-item" onclick="selectPlatform('TikTok')">TikTok</div>
+  <div class="list-item" onclick="selectPlatform('YouTube')">YouTube</div>
+  <div class="list-item" onclick="selectPlatform('Facebook')">Facebook</div>
+</div>
+
+<!-- STEP 2 -->
+<div id="step-2" class="step-container" style="display:none;">
+  <button onclick="showStep(1)">Back</button>
+  <h4>Services</h4>
+  <div id="stepServices"></div>
+</div>
+
+<!-- STEP 3 -->
+<div id="step-3" class="step-container" style="display:none;">
+  <button onclick="showStep(2)">Back</button>
+
+  <h4>Place Order</h4>
+
+  <input id="serviceId" readonly placeholder="Service ID">
+  <input id="link" placeholder="Link">
+  <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
+
+  <p>Total: <b id="total">0</b></p>
+
+  <button onclick="placeOrder()">Create Order</button>
+</div>
+
+</div>
+</div>
+
+<!-- SERVICES PAGE -->
+<div id="services" class="page" style="display:none;">
+  <div class="card">
+    <h3>All Services</h3>
+    <input id="search" placeholder="Search..." onkeyup="renderServices()">
+    <div id="servicesList" class="grid"></div>
   </div>
+</div>
 
-  <!-- MAIN -->
-  <div class="main">
-
-    <div class="navbar">
-      <div>👤 <b id="userEmail">Loading...</b></div>
-      <div>💰 Balance: <span id="balance">0</span></div>
-    </div>
-
-    <!-- HOME + STEP ORDER FLOW -->
-    <div id="home" class="page">
-
-      <div class="card">
-        <h3>Quick Order Flow</h3>
-
-        <!-- STEP 1 -->
-        <div id="step-1" class="step-container">
-          <h4>Choose Platform</h4>
-          <div class="list-item" onclick="selectPlatform('Instagram')">Instagram</div>
-          <div class="list-item" onclick="selectPlatform('TikTok')">TikTok</div>
-          <div class="list-item" onclick="selectPlatform('YouTube')">YouTube</div>
-          <div class="list-item" onclick="selectPlatform('Facebook')">Facebook</div>
-        </div>
-
-        <!-- STEP 2 -->
-        <div id="step-2" class="step-container" style="display:none;">
-          <button onclick="showStep(1)">← Back</button>
-          <h4>Services</h4>
-          <div id="stepServices"></div>
-        </div>
-
-        <!-- STEP 3 -->
-        <div id="step-3" class="step-container" style="display:none;">
-          <button onclick="showStep(2)">← Back</button>
-
-          <h4>Place Order</h4>
-
-          <input id="serviceId" placeholder="Service ID" readonly>
-          <input id="link" placeholder="Paste link">
-
-          <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
-
-          <p>Total: <b id="total">0</b></p>
-
-          <button onclick="placeOrder()">Create Order</button>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- SERVICES PAGE -->
-    <div id="servicesPage" class="page" style="display:none;">
-      <div class="card">
-        <h3>All Services</h3>
-        <input id="search" placeholder="Search..." onkeyup="renderServices()">
-        <div id="services" class="grid"></div>
-      </div>
-    </div>
-
-    <!-- ORDERS -->
-    <div id="ordersPage" class="page" style="display:none;">
-      <div class="card">
-        <h3>Orders</h3>
-        <ul id="orders"></ul>
-      </div>
-    </div>
-
-    <!-- DEPOSIT -->
-    <div id="depositPage" class="page" style="display:none;">
-      <div class="card">
-        <h3>Deposit via M-Pesa</h3>
-
-        <input id="phone" placeholder="2547XXXXXXXX">
-        <input id="amount" placeholder="Amount">
-
-        <button onclick="deposit()">Send STK</button>
-      </div>
-    </div>
-
+<!-- ORDERS -->
+<div id="orders" class="page" style="display:none;">
+  <div class="card">
+    <h3>Orders</h3>
+    <ul id="ordersList"></ul>
   </div>
+</div>
+
+<!-- DEPOSIT -->
+<div id="deposit" class="page" style="display:none;">
+  <div class="card">
+    <h3>Deposit</h3>
+
+    <input id="phone" placeholder="2547XXXXXXXX">
+    <input id="amount" placeholder="Amount">
+
+    <button onclick="deposit()">Send STK</button>
+  </div>
+</div>
+
+</div>
 </div>
 
 <script>
@@ -247,8 +222,8 @@ const token = localStorage.getItem("token");
 
 let servicesData = [];
 let selectedRate = 0;
-let selectedService = "";
 
+/* ================= CHECK LOGIN ================= */
 if (!token) window.location.href = "index.html";
 
 /* ================= USER ================= */
@@ -264,27 +239,30 @@ async function loadBalance() {
   const res = await fetch(API + "/me", {
     headers: { Authorization: "Bearer " + token }
   });
+
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance || 0;
 }
 
-/* ================= SERVICES ================= */
+/* ================= SERVICES (FIXED) ================= */
 async function loadServices() {
   const res = await fetch(API + "/services");
   const json = await res.json();
 
   servicesData = [];
 
-  Object.values(json.data || {}).forEach(group => {
-    group.forEach(s => servicesData.push(s));
-  });
+  if (json?.data) {
+    Object.values(json.data).forEach(group => {
+      group.forEach(s => servicesData.push(s));
+    });
+  }
 
   renderServices();
 }
 
 /* ================= RENDER SERVICES ================= */
 function renderServices() {
-  const container = document.getElementById("services");
+  const container = document.getElementById("servicesList");
   const search = document.getElementById("search")?.value?.toLowerCase() || "";
 
   container.innerHTML = "";
@@ -302,10 +280,8 @@ function renderServices() {
     `;
 
     div.onclick = () => {
-      selectedService = s.serviceId;
-      selectedRate = Number(s.rate);
-
       document.getElementById("serviceId").value = s.serviceId;
+      selectedRate = Number(s.rate);
       showStep(3);
     };
 
@@ -320,6 +296,7 @@ function showStep(step) {
   document.getElementById("step-3").style.display = step === 3 ? "block" : "none";
 }
 
+/* ================= PLATFORM FILTER ================= */
 function selectPlatform(platform) {
   showStep(2);
 
@@ -336,10 +313,8 @@ function selectPlatform(platform) {
     div.innerText = s.name;
 
     div.onclick = () => {
-      selectedService = s.serviceId;
-      selectedRate = Number(s.rate);
-
       document.getElementById("serviceId").value = s.serviceId;
+      selectedRate = Number(s.rate);
       showStep(3);
     };
 
@@ -350,8 +325,8 @@ function selectPlatform(platform) {
 /* ================= PRICE ================= */
 function calcPrice() {
   const qty = document.getElementById("quantity").value || 0;
-  const total = (selectedRate / 1000) * qty;
-  document.getElementById("total").innerText = total.toFixed(2);
+  document.getElementById("total").innerText =
+    ((selectedRate / 1000) * qty).toFixed(2);
 }
 
 /* ================= ORDER ================= */
@@ -384,7 +359,7 @@ async function loadOrders() {
 
   const data = await res.json();
 
-  const list = document.getElementById("orders");
+  const list = document.getElementById("ordersList");
   list.innerHTML = "";
 
   data.forEach(o => {
@@ -416,16 +391,13 @@ async function deposit() {
 function showPage(page) {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
 
-  if (page === "home") document.getElementById("home").style.display = "block";
-  if (page === "services") document.getElementById("servicesPage").style.display = "block";
-  if (page === "orders") document.getElementById("ordersPage").style.display = "block";
-  if (page === "deposit") document.getElementById("depositPage").style.display = "block";
+  document.getElementById(page).style.display = "block";
 }
 
 /* ================= LOGOUT ================= */
 function logout() {
   localStorage.removeItem("token");
-  window.location.href = "index.html";
+  location.href = "index.html";
 }
 
 /* ================= INIT ================= */
