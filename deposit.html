@@ -1,31 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Deposit Funds</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.box {
+  width: 95%;
+  max-width: 500px;
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #38bdf8;
+}
+
+p {
+  font-size: 13px;
+  color: #cbd5e1;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+textarea {
+  width: 100%;
+  height: 180px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  resize: none;
+  background: #0f172a;
+  color: white;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:disabled {
+  background: #64748b;
+  cursor: not-allowed;
+}
+
+.note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+}
+</style>
+
+</head>
+
 <body>
 
-<h2>Deposit</h2>
+<div class="box">
 
-<textarea id="msg" placeholder="Paste M-Pesa message"></textarea>
-<br>
-<button onclick="deposit()">Submit</button>
+<h2>💰 Deposit Funds</h2>
+
+<p>
+Send money to your M-Pesa number then paste the full SMS message below.<br>
+System will auto-detect transaction code & amount.
+</p>
+
+<textarea id="msg" placeholder="Paste full M-Pesa message here..."></textarea>
+
+<button id="btn" onclick="deposit()">Submit Deposit</button>
+
+<p class="note">
+Example:  
+"ABC123XYZ Confirmed. Ksh1,000 sent to ..."
+</p>
+
+</div>
 
 <script>
+
 const API = "https://unasemeje-backend-3.onrender.com/api";
 
-async function deposit() {
-  const res = await fetch(API + "/deposit", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + localStorage.getItem("token")
-    },
-    body: JSON.stringify({
-      message: document.getElementById("msg").value
-    })
-  });
+/* ================= LOADING BUTTON ================= */
+function setLoading(state) {
+  const btn = document.getElementById("btn");
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  if (state) {
+    btn.disabled = true;
+    btn.innerText = "Processing...";
+  } else {
+    btn.disabled = false;
+    btn.innerText = "Submit Deposit";
+  }
 }
+
+/* ================= DEPOSIT ================= */
+async function deposit() {
+
+  const message = document.getElementById("msg").value.trim();
+
+  if (!message) {
+    alert("Please paste M-Pesa message");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const res = await fetch(API + "/deposit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token")
+      },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Deposit failed");
+    }
+
+    alert("✅ " + (data.message || "Submitted successfully"));
+
+    document.getElementById("msg").value = "";
+
+  } catch (err) {
+    alert("❌ " + err.message);
+  }
+
+  setLoading(false);
+}
+
 </script>
 
 </body>
