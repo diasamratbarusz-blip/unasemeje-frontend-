@@ -95,6 +95,12 @@ small { color: #94a3b8; }
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
+
+  <!-- ✅ ADMIN BUTTON (ADDED ONLY) -->
+  <a id="adminBtn" onclick="showPage('admin')" style="display:none;">
+    Admin Panel
+  </a>
+
   <a onclick="logout()">Logout</a>
 </div>
 
@@ -141,6 +147,20 @@ small { color: #94a3b8; }
 </div>
 </div>
 
+<!-- ADMIN PAGE (ADDED ONLY) -->
+<div id="admin" class="page" style="display:none;">
+<div class="card">
+<h3>Admin Panel</h3>
+
+<button onclick="loadUsers()">Load Users</button>
+<ul id="usersList"></ul>
+
+<button onclick="loadDeposits()">Load Deposits</button>
+<ul id="depositsList"></ul>
+
+</div>
+</div>
+
 <!-- ADD FUNDS -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
@@ -182,11 +202,22 @@ let selectedRate = 0;
 /* AUTH */
 if (!token) location.href = "index.html";
 
-/* USER */
-function loadUser(){
+/* USER (FIXED ADMIN DETECTION) */
+async function loadUser(){
   try {
-    const decoded = JSON.parse(atob(token.split(".")[1]));
-    document.getElementById("userEmail").innerText = decoded.email;
+    const res = await fetch(API+"/me",{
+      headers:{Authorization:"Bearer "+token}
+    });
+
+    const user = await res.json();
+
+    document.getElementById("userEmail").innerText = user.email;
+
+    // ✅ SHOW ADMIN BUTTON
+    if(user.isAdmin){
+      document.getElementById("adminBtn").style.display = "block";
+    }
+
   } catch {}
 }
 
@@ -204,8 +235,6 @@ async function loadServices(){
   try {
     const res = await fetch(API+"/services");
     const json = await res.json();
-
-    console.log("SERVICES:", json);
 
     servicesData = json.data || {};
 
@@ -246,14 +275,14 @@ function selectPlatform(p){
   });
 }
 
-/* SERVICES (FIXED PRICING) */
+/* SERVICES (PRICE FIXED) */
 function showServices(p,t){
   const c = document.getElementById("serviceList");
   c.innerHTML = "";
 
   (servicesData[p][t] || []).forEach(s=>{
 
-    const price = Number(s.rate || s.sellingRate || 0); // ✅ FORCE MARKUP PRICE
+    const price = Number(s.rate || 0);
 
     const div = document.createElement("div");
     div.className = "service";
@@ -265,7 +294,7 @@ function showServices(p,t){
 
     div.onclick = ()=>{
       document.getElementById("serviceId").value = s.serviceId;
-      selectedRate = price; // ✅ USE MARKUP
+      selectedRate = price;
     };
 
     c.appendChild(div);
@@ -286,11 +315,9 @@ function renderAllServices(){
       sub.innerHTML = `<b>${t}</b>`;
 
       (servicesData[p][t] || []).forEach(s=>{
-        const price = Number(s.rate || s.sellingRate || 0);
-
         const item = document.createElement("div");
         item.className = "service";
-        item.innerText = `${s.name} - KSH ${price}`;
+        item.innerText = `${s.name} - KSH ${s.rate}`;
         sub.appendChild(item);
       });
 
@@ -301,7 +328,7 @@ function renderAllServices(){
   });
 }
 
-/* PRICE CALC */
+/* PRICE */
 function calcPrice(){
   const qty = document.getElementById("quantity").value || 0;
   document.getElementById("total").innerText =
@@ -326,6 +353,56 @@ async function placeOrder(){
   const data = await res.json();
   alert(data.message || data.error);
   loadBalance();
+}
+
+/* ADMIN FUNCTIONS */
+async function loadUsers(){
+  const res = await fetch(API+"/admin/users",{
+    headers:{Authorization:"Bearer "+token}
+  });
+
+  const data = await res.json();
+  const list = document.getElementById("usersList");
+  list.innerHTML = "";
+
+  data.forEach(u=>{
+    const li = document.createElement("li");
+    li.innerText = `${u.email} - Balance: ${u.balance}`;
+    list.appendChild(li);
+  });
+}
+
+async function loadDeposits(){
+  const res = await fetch(API+"/admin/deposits",{
+    headers:{Authorization:"Bearer "+token}
+  });
+
+  const data = await res.json();
+  const list = document.getElementById("depositsList");
+  list.innerHTML = "";
+
+  data.forEach(d=>{
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${d.amount} - ${d.status}
+      <button onclick="approveDeposit('${d._id}')">Approve</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+async function approveDeposit(id){
+  await fetch(API+"/admin/approve-deposit",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({depositId:id})
+  });
+
+  alert("Approved");
+  loadDeposits();
 }
 
 /* DEPOSIT */
