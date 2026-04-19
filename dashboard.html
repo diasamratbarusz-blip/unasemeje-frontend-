@@ -117,7 +117,7 @@ button {
 <!-- HOME -->
 <div id="home" class="page">
   <div class="card">
-    <h3>Quick Order</h3>
+    <h3>Quick Order System</h3>
 
     <div id="platformList"></div>
     <div id="typeList"></div>
@@ -144,7 +144,7 @@ button {
 <!-- ORDERS -->
 <div id="orders" class="page" style="display:none;">
   <div class="card">
-    <h3>Orders</h3>
+    <h3>Your Orders</h3>
     <ul id="ordersList"></ul>
   </div>
 </div>
@@ -154,18 +154,18 @@ button {
   <div class="card">
     <h3>💰 Add Funds (M-Pesa)</h3>
 
-    <p>
-      Send Money To:<br>
-      <b>0715509440</b><br>
-      Name: <b>FAITH CHERUIYOT</b>
+    <p><b>Send Money To:</b><br>
+      0715509440<br>
+      <b>Name:</b> FAITH CHERUIYOT
     </p>
 
-    <p><b>Instructions:</b></p>
-    <ul>
+    <p><b>Steps:</b></p>
+    <ol>
       <li>Send money to the number above</li>
-      <li>Copy full M-Pesa SMS message</li>
-      <li>Paste below and click Add Funds</li>
-    </ul>
+      <li>Open M-Pesa SMS message</li>
+      <li>Copy FULL message</li>
+      <li>Paste below</li>
+    </ol>
 
     <textarea id="depMessage" placeholder="Paste full M-Pesa message here"></textarea>
 
@@ -207,13 +207,18 @@ async function loadBalance(){
 
 /* SERVICES */
 async function loadServices(){
-  const res = await fetch(API + "/services");
-  const json = await res.json();
+  try {
+    const res = await fetch(API + "/services");
+    const json = await res.json();
 
-  servicesData = json.data || {};
+    servicesData = json.data || {};
 
-  renderPlatforms();
-  renderAllServices();
+    renderPlatforms();
+    renderAllServices();
+
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 /* PLATFORM */
@@ -252,7 +257,7 @@ function selectType(p,t){
   (servicesData[p][t] || []).forEach(s=>{
     const div = document.createElement("div");
     div.className = "service";
-    div.innerHTML = `${s.name}<br><small>KSH ${s.rate}</small>`;
+    div.innerHTML = `<b>${s.name}</b><br>KSH ${s.rate}`;
 
     div.onclick = ()=>{
       document.getElementById("serviceId").value = s.serviceId;
@@ -335,7 +340,7 @@ async function submitDeposit(){
   alert(data.message || data.error);
 }
 
-/* NAV */
+/* NAVIGATION */
 function showPage(page){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
   document.getElementById(page).style.display="block";
