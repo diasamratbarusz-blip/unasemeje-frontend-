@@ -13,19 +13,13 @@ body {
   color: white;
 }
 
-.dashboard {
-  display: flex;
-}
+.dashboard { display: flex; }
 
 .sidebar {
   width: 230px;
   background: #111827;
   min-height: 100vh;
   padding: 20px;
-}
-
-.sidebar h2 {
-  color: white;
 }
 
 .sidebar a {
@@ -37,14 +31,9 @@ body {
   border-radius: 6px;
 }
 
-.sidebar a:hover {
-  background: #1f2937;
-}
+.sidebar a:hover { background: #1f2937; }
 
-.main {
-  flex: 1;
-  padding: 20px;
-}
+.main { flex: 1; padding: 20px; }
 
 .navbar {
   display: flex;
@@ -62,19 +51,12 @@ body {
   margin-bottom: 20px;
 }
 
-.list-item {
+.list-item, .service {
   background: #334155;
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 8px;
   cursor: pointer;
-}
-
-.service {
-  background: #334155;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
 }
 
 input, textarea {
@@ -97,9 +79,7 @@ button {
   cursor: pointer;
 }
 
-small {
-  color: #94a3b8;
-}
+small { color: #94a3b8; }
 </style>
 </head>
 
@@ -115,14 +95,12 @@ small {
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
-
   <a onclick="logout()">Logout</a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<!-- TOP BAR -->
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
   <div>💰 Balance: <span id="balance">0</span></div>
@@ -130,7 +108,6 @@ small {
 
 <!-- HOME -->
 <div id="home" class="page">
-
 <div class="card">
 <h3>Quick Order</h3>
 
@@ -140,19 +117,18 @@ small {
 
 <input id="serviceId" placeholder="Service ID" readonly>
 <input id="link" placeholder="Link">
-<input id="quantity" type="number" placeholder="Quantity">
+<input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
 
 <p>Total: <b id="total">0</b></p>
 
 <button onclick="placeOrder()">Create Order</button>
 </div>
-
 </div>
 
 <!-- SERVICES -->
 <div id="services" class="page" style="display:none;">
 <div class="card">
-<h3>All Services (Grouped)</h3>
+<h3>All Services</h3>
 <div id="allServices"></div>
 </div>
 </div>
@@ -165,39 +141,29 @@ small {
 </div>
 </div>
 
-<!-- ================= ADD FUNDS (FIXED FULL SECTION) ================= -->
+<!-- ADD FUNDS -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
 
 <h3>💰 Add Funds</h3>
 
-<p><b>STEP 1:</b> Send money to this number</p>
-<p style="font-size:18px;color:#22c55e">
-0715509440
-</p>
+<p><b>STEP 1:</b> Send money to:</p>
+<p style="color:#22c55e;font-size:18px;">0715509440</p>
 
-<p><b>Account Name:</b> FAITH CHERUIYOT</p>
+<p><b>Name:</b> FAITH CHERUIYOT</p>
 
 <hr>
 
-<p><b>STEP 2:</b> Fill details below</p>
-
-<input id="depPhone" placeholder="Your M-Pesa Phone Number (2547...)">
-<input id="depAmount" placeholder="Amount in KSH">
-
-<p><b>STEP 3:</b> Paste FULL M-Pesa Message</p>
+<input id="depPhone" placeholder="Your Phone (2547...)">
+<input id="depAmount" placeholder="Amount">
 
 <textarea id="depMessage" rows="5"
-placeholder="Example:
-You have send Ksh 1000 to faith che..."></textarea>
+placeholder="Paste FULL M-Pesa message"></textarea>
 
 <button onclick="submitDeposit()">Add Funds</button>
 
 <br><br>
-
-<small>
-⚠️ IMPORTANT: Make sure message is FULL M-Pesa confirmation SMS
-</small>
+<small>⚠️ Paste FULL SMS message</small>
 
 </div>
 </div>
@@ -235,16 +201,24 @@ async function loadBalance(){
 
 /* SERVICES */
 async function loadServices(){
-  const res = await fetch(API+"/services");
-  const json = await res.json();
+  try {
+    const res = await fetch(API+"/services");
+    const json = await res.json();
 
-  servicesData = json.data || {};
+    console.log("SERVICES:", json);
 
-  renderPlatforms();
-  renderAllServices();
+    servicesData = json.data || {};
+
+    renderPlatforms();
+    renderAllServices();
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to load services");
+  }
 }
 
-/* PLATFORM LIST */
+/* PLATFORM */
 function renderPlatforms(){
   const c = document.getElementById("platformList");
   c.innerHTML = "";
@@ -272,23 +246,26 @@ function selectPlatform(p){
   });
 }
 
-/* SERVICES */
+/* SERVICES (FIXED PRICING) */
 function showServices(p,t){
   const c = document.getElementById("serviceList");
   c.innerHTML = "";
 
   (servicesData[p][t] || []).forEach(s=>{
+
+    const price = Number(s.rate || s.sellingRate || 0); // ✅ FORCE MARKUP PRICE
+
     const div = document.createElement("div");
     div.className = "service";
 
     div.innerHTML = `
       <b>${s.name}</b><br>
-      KSH ${s.rate}
+      KSH ${price}
     `;
 
     div.onclick = ()=>{
       document.getElementById("serviceId").value = s.serviceId;
-      selectedRate = Number(s.rate);
+      selectedRate = price; // ✅ USE MARKUP
     };
 
     c.appendChild(div);
@@ -309,9 +286,11 @@ function renderAllServices(){
       sub.innerHTML = `<b>${t}</b>`;
 
       (servicesData[p][t] || []).forEach(s=>{
+        const price = Number(s.rate || s.sellingRate || 0);
+
         const item = document.createElement("div");
         item.className = "service";
-        item.innerText = `${s.name} - KSH ${s.rate}`;
+        item.innerText = `${s.name} - KSH ${price}`;
         sub.appendChild(item);
       });
 
@@ -322,7 +301,7 @@ function renderAllServices(){
   });
 }
 
-/* PRICE */
+/* PRICE CALC */
 function calcPrice(){
   const qty = document.getElementById("quantity").value || 0;
   document.getElementById("total").innerText =
@@ -346,11 +325,10 @@ async function placeOrder(){
 
   const data = await res.json();
   alert(data.message || data.error);
-
   loadBalance();
 }
 
-/* ================= ADD FUNDS FIX ================= */
+/* DEPOSIT */
 async function submitDeposit(){
   const phone = document.getElementById("depPhone").value;
   const amount = document.getElementById("depAmount").value;
@@ -362,11 +340,7 @@ async function submitDeposit(){
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({
-      phone,
-      amount,
-      message
-    })
+    body:JSON.stringify({phone,amount,message})
   });
 
   const data = await res.json();
@@ -393,4 +367,4 @@ loadServices();
 </script>
 
 </body>
-  </html>
+</html>
