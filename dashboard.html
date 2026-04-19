@@ -13,9 +13,7 @@ body {
   color: white;
 }
 
-.dashboard {
-  display: flex;
-}
+.dashboard { display: flex; }
 
 .sidebar {
   width: 230px;
@@ -34,10 +32,7 @@ body {
 }
 .sidebar a:hover { background: #1f2937; }
 
-.main {
-  flex: 1;
-  padding: 20px;
-}
+.main { flex: 1; padding: 20px; }
 
 .navbar {
   display: flex;
@@ -63,6 +58,13 @@ body {
   cursor: pointer;
 }
 
+.service {
+  background: #334155;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+
 input, textarea {
   width: 100%;
   padding: 10px;
@@ -83,10 +85,7 @@ button {
   cursor: pointer;
 }
 
-.cancel {
-  background: #ef4444;
-}
-
+.cancel { background: #ef4444; }
 </style>
 </head>
 
@@ -99,6 +98,7 @@ button {
   <h2>SMM PANEL</h2>
 
   <a onclick="showPage('home')">Dashboard</a>
+  <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
   <a onclick="logout()">Logout</a>
@@ -114,40 +114,31 @@ button {
 
 <!-- HOME -->
 <div id="home" class="page">
-
 <div class="card">
-
 <h3>Quick Order</h3>
 
-<!-- STEP 1 -->
 <div id="step-1">
   <h4>Select Platform</h4>
-  <div class="list-item" onclick="selectPlatform('Instagram')">Instagram</div>
-  <div class="list-item" onclick="selectPlatform('TikTok')">TikTok</div>
-  <div class="list-item" onclick="selectPlatform('YouTube')">YouTube</div>
-  <div class="list-item" onclick="selectPlatform('Facebook')">Facebook</div>
+  <div id="platformList"></div>
 </div>
 
-<!-- STEP 2 -->
 <div id="step-2" style="display:none;">
   <button onclick="showStep(1)">Back</button>
-  <h4>Select Service Type</h4>
-  <div id="stepTypes"></div>
+  <h4>Select Type</h4>
+  <div id="typeList"></div>
 </div>
 
-<!-- STEP 3 -->
 <div id="step-3" style="display:none;">
   <button onclick="showStep(2)">Back</button>
   <h4>Select Service</h4>
-  <div id="stepServices"></div>
+  <div id="serviceList"></div>
 </div>
 
-<!-- STEP 4 -->
 <div id="step-4" style="display:none;">
   <button onclick="showStep(3)">Back</button>
 
   <input id="serviceId" readonly>
-  <input id="link" placeholder="Enter Link">
+  <input id="link" placeholder="Enter link">
   <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
 
   <p>Total: <b id="total">0</b></p>
@@ -158,38 +149,40 @@ button {
 </div>
 </div>
 
+<!-- SERVICES PAGE -->
+<div id="services" class="page" style="display:none;">
+<div class="card">
+<h3>All Services (Grouped)</h3>
+<div id="allServices"></div>
+</div>
+</div>
+
 <!-- ORDERS -->
 <div id="orders" class="page" style="display:none;">
-  <div class="card">
-    <h3>Orders</h3>
-    <ul id="ordersList"></ul>
-  </div>
+<div class="card">
+<h3>Orders</h3>
+<ul id="ordersList"></ul>
+</div>
 </div>
 
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
-  <div class="card">
+<div class="card">
 
-    <h3>Add Funds (Manual M-Pesa)</h3>
+<h3>Add Funds</h3>
 
-    <p>
-      📱 Send money to:<br>
-      <b>0715509440</b><br>
-      Name: <b>FAITH CHERUIYOT</b>
-    </p>
+<p>
+Send to:<br>
+<b>0715509440</b><br>
+Name: <b>FAITH CHERUIYOT</b>
+</p>
 
-    <p>
-      After sending, paste the full M-Pesa message below.
-    </p>
+<input id="depMessage" placeholder="Paste full M-Pesa message">
 
-    <input id="depPhone" placeholder="Phone used (2547XXXXXXXX)">
-    <input id="depAmount" placeholder="Amount (KSH)">
-    <textarea id="depMessage" placeholder="Paste FULL M-Pesa message here"></textarea>
+<button onclick="submitDeposit()">Add Funds</button>
+<button class="cancel" onclick="clearDeposit()">Cancel</button>
 
-    <button onclick="submitDeposit()">Add Funds</button>
-    <button class="cancel" onclick="clearDeposit()">Cancel</button>
-
-  </div>
+</div>
 </div>
 
 </div>
@@ -205,61 +198,76 @@ let selectedRate = 0;
 if (!token) location.href = "index.html";
 
 /* USER */
-function loadUser() {
+function loadUser(){
   const decoded = JSON.parse(atob(token.split(".")[1]));
   document.getElementById("userEmail").innerText = decoded.email;
 }
 
 /* BALANCE */
-async function loadBalance() {
-  const res = await fetch(API + "/me", {
-    headers: { Authorization: "Bearer " + token }
-  });
+async function loadBalance(){
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance || 0;
+  document.getElementById("balance").innerText = data.balance||0;
 }
 
-/* LOAD SERVICES (FIXED GROUP) */
-async function loadServices() {
-  const res = await fetch(API + "/services");
+/* LOAD SERVICES */
+async function loadServices(){
+  const res = await fetch(API+"/services");
   const json = await res.json();
 
   servicesData = json.data || {};
+
+  renderPlatforms();
+  renderAllServices();
 }
 
-/* STEP 1 -> PLATFORM */
-function selectPlatform(platform) {
-  showStep(2);
+/* STEP 1 */
+function renderPlatforms(){
+  const container = document.getElementById("platformList");
+  container.innerHTML="";
 
-  const types = servicesData[platform] || {};
-  const container = document.getElementById("stepTypes");
-  container.innerHTML = "";
-
-  Object.keys(types).forEach(type => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = type;
-    div.onclick = () => selectType(platform, type);
+  Object.keys(servicesData).forEach(p=>{
+    const div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=p;
+    div.onclick=()=>selectPlatform(p);
     container.appendChild(div);
   });
 }
 
-/* STEP 2 -> TYPE */
-function selectType(platform, type) {
+/* STEP 2 */
+function selectPlatform(platform){
+  showStep(2);
+
+  const types = servicesData[platform];
+  const container=document.getElementById("typeList");
+  container.innerHTML="";
+
+  Object.keys(types).forEach(t=>{
+    const div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=t;
+    div.onclick=()=>selectType(platform,t);
+    container.appendChild(div);
+  });
+}
+
+/* STEP 3 */
+function selectType(platform,type){
   showStep(3);
 
-  const services = servicesData[platform][type] || [];
-  const container = document.getElementById("stepServices");
-  container.innerHTML = "";
+  const services = servicesData[platform][type];
+  const container=document.getElementById("serviceList");
+  container.innerHTML="";
 
-  services.forEach(s => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = `${s.name} (KSH ${s.rate})`;
+  services.forEach(s=>{
+    const div=document.createElement("div");
+    div.className="service";
+    div.innerText=`${s.name} (KSH ${s.rate})`;
 
-    div.onclick = () => {
-      document.getElementById("serviceId").value = s.serviceId;
-      selectedRate = s.rate;
+    div.onclick=()=>{
+      document.getElementById("serviceId").value=s.serviceId;
+      selectedRate=s.rate;
       showStep(4);
     };
 
@@ -267,93 +275,113 @@ function selectType(platform, type) {
   });
 }
 
-/* STEP CONTROL */
-function showStep(step) {
-  ["step-1","step-2","step-3","step-4"].forEach(id => {
-    document.getElementById(id).style.display = "none";
-  });
+/* ALL SERVICES PAGE */
+function renderAllServices(){
+  const container=document.getElementById("allServices");
+  container.innerHTML="";
 
-  document.getElementById("step-" + step).style.display = "block";
+  Object.keys(servicesData).forEach(platform=>{
+    const pDiv=document.createElement("div");
+    pDiv.innerHTML=`<h4>${platform}</h4>`;
+
+    Object.keys(servicesData[platform]).forEach(type=>{
+      const tDiv=document.createElement("div");
+      tDiv.innerHTML=`<b>${type}</b>`;
+
+      servicesData[platform][type].forEach(s=>{
+        const item=document.createElement("div");
+        item.className="service";
+        item.innerText=`${s.name} - KSH ${s.rate}`;
+        tDiv.appendChild(item);
+      });
+
+      pDiv.appendChild(tDiv);
+    });
+
+    container.appendChild(pDiv);
+  });
+}
+
+/* STEP */
+function showStep(step){
+  ["step-1","step-2","step-3","step-4"].forEach(id=>{
+    document.getElementById(id).style.display="none";
+  });
+  document.getElementById("step-"+step).style.display="block";
 }
 
 /* PRICE */
-function calcPrice() {
-  const qty = document.getElementById("quantity").value || 0;
-  document.getElementById("total").innerText =
-    ((selectedRate / 1000) * qty).toFixed(2);
+function calcPrice(){
+  const qty=document.getElementById("quantity").value||0;
+  document.getElementById("total").innerText=((selectedRate/1000)*qty).toFixed(2);
 }
 
 /* ORDER */
-async function placeOrder() {
-  const serviceId = document.getElementById("serviceId").value;
-  const link = document.getElementById("link").value;
-  const quantity = document.getElementById("quantity").value;
+async function placeOrder(){
+  const serviceId=document.getElementById("serviceId").value;
+  const link=document.getElementById("link").value;
+  const quantity=document.getElementById("quantity").value;
 
-  const res = await fetch(API + "/order", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
+  const res=await fetch(API+"/order",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
     },
-    body: JSON.stringify({ serviceId, link, quantity })
+    body:JSON.stringify({serviceId,link,quantity})
   });
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  const data=await res.json();
+  alert(data.message||data.error);
   loadBalance();
 }
 
-/* DEPOSIT (FIXED) */
-async function submitDeposit() {
-  const message = document.getElementById("depMessage").value;
+/* DEPOSIT */
+async function submitDeposit(){
+  const message=document.getElementById("depMessage").value;
 
-  const res = await fetch(API + "/deposit", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
+  const res=await fetch(API+"/deposit",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
     },
-    body: JSON.stringify({ message })
+    body:JSON.stringify({message})
   });
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  const data=await res.json();
+  alert(data.message||data.error);
 }
 
-/* CLEAR */
-function clearDeposit() {
-  document.getElementById("depPhone").value = "";
-  document.getElementById("depAmount").value = "";
-  document.getElementById("depMessage").value = "";
+function clearDeposit(){
+  document.getElementById("depMessage").value="";
 }
 
 /* ORDERS */
-async function loadOrders() {
-  const res = await fetch(API + "/orders", {
-    headers: { Authorization: "Bearer " + token }
-  });
+async function loadOrders(){
+  const res=await fetch(API+"/orders",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
 
-  const data = await res.json();
-  const list = document.getElementById("ordersList");
-  list.innerHTML = "";
+  const list=document.getElementById("ordersList");
+  list.innerHTML="";
 
-  data.forEach(o => {
-    const li = document.createElement("li");
-    li.innerText = `${o.service} | ${o.quantity} | ${o.status}`;
+  data.forEach(o=>{
+    const li=document.createElement("li");
+    li.innerText=`${o.service} | ${o.quantity}`;
     list.appendChild(li);
   });
 }
 
 /* NAV */
-function showPage(page) {
-  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-  document.getElementById(page).style.display = "block";
+function showPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
+  document.getElementById(page).style.display="block";
 }
 
 /* LOGOUT */
-function logout() {
+function logout(){
   localStorage.removeItem("token");
-  location.href = "index.html";
+  location.href="index.html";
 }
 
 /* INIT */
