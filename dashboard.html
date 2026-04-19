@@ -81,9 +81,9 @@ button {
 
 small { color: #94a3b8; }
 
-.support-buttons button{
-  margin-right: 10px;
+.support-btn {
   background: #16a34a;
+  margin-right: 10px;
 }
 </style>
 </head>
@@ -101,9 +101,8 @@ small { color: #94a3b8; }
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
   <a onclick="showPage('profile')">Profile</a>
-  <a onclick="openSupport()">Support</a>
+  <a onclick="showPage('support')">Support</a>
 
-  <!-- ADMIN ONLY -->
   <a id="adminBtn" style="display:none;background:#7c3aed;" onclick="showPage('admin')">
     Admin Panel
   </a>
@@ -114,7 +113,6 @@ small { color: #94a3b8; }
 <!-- MAIN -->
 <div class="main">
 
-<!-- TOP BAR -->
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
   <div>💰 Balance: <span id="balance">0</span></div>
@@ -156,24 +154,21 @@ small { color: #94a3b8; }
 </div>
 </div>
 
-<!-- ADD FUNDS -->
+<!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
 
 <h3>💰 Add Funds</h3>
 
-<p><b>Send money to:</b></p>
+<p>Send money to:</p>
 <p style="color:#22c55e;font-size:18px;">0715509440</p>
 
-<p><b>Name:</b> FAITH CHERUIYOT</p>
+<p>Name: FAITH CHERUIYOT</p>
 
-<hr>
-
-<input id="depPhone" placeholder="Your Phone">
+<input id="depPhone" placeholder="Phone">
 <input id="depAmount" placeholder="Amount">
 
-<textarea id="depMessage" rows="5"
-placeholder="Paste FULL M-Pesa message"></textarea>
+<textarea id="depMessage" rows="5" placeholder="Paste M-Pesa message"></textarea>
 
 <button onclick="submitDeposit()">Submit Deposit</button>
 
@@ -185,19 +180,28 @@ placeholder="Paste FULL M-Pesa message"></textarea>
 <!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
+
 <h3>My Profile</h3>
 
 <p>Email: <b id="pEmail"></b></p>
 <p>Phone: <b id="pPhone"></b></p>
 <p>Balance: <b id="pBalance"></b></p>
-</div>
-</div>
 
-<!-- ADMIN PANEL -->
-<div id="admin" class="page" style="display:none;">
-<div class="card">
-<h3>Admin Panel</h3>
-<p>Only visible to admin</p>
+<hr>
+
+<h4>Change Password</h4>
+<input id="oldPassword" type="password" placeholder="Old Password">
+<input id="newPassword" type="password" placeholder="New Password">
+<button onclick="changePassword()">Update Password</button>
+
+<p id="passMsg"></p>
+
+<hr>
+
+<h4>API KEY</h4>
+<button onclick="getApiKey()">Generate API Key</button>
+<p id="apiKeyBox" style="color:#22c55e;"></p>
+
 </div>
 </div>
 
@@ -207,24 +211,19 @@ placeholder="Paste FULL M-Pesa message"></textarea>
 
 <h3>Customer Support</h3>
 
-<div class="support-buttons">
+<button class="support-btn" onclick="openWhatsApp()">💬 WhatsApp</button>
+<button class="support-btn" onclick="callAdmin()">📞 Call</button>
 
-<!-- WhatsApp -->
-<button onclick="openWhatsApp()">
-💬 WhatsApp Chat
-</button>
-
-<!-- Call -->
-<button onclick="callAdmin()">
-📞 Call Now
-</button>
+<p>We reply instantly on WhatsApp.</p>
 
 </div>
+</div>
 
-<p style="margin-top:10px;">
-We are available 24/7 for support.
-</p>
-
+<!-- ADMIN -->
+<div id="admin" class="page" style="display:none;">
+<div class="card">
+<h3>Admin Panel</h3>
+<p>Only admin can access this.</p>
 </div>
 </div>
 
@@ -247,19 +246,15 @@ if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
-  try {
-    const decoded = JSON.parse(atob(token.split(".")[1]));
-    document.getElementById("userEmail").innerText = decoded.email;
+  const decoded = JSON.parse(atob(token.split(".")[1]));
+  document.getElementById("userEmail").innerText = decoded.email;
 
-    // ADMIN CHECK
-    if(decoded.email === ADMIN_EMAIL){
-      document.getElementById("adminBtn").style.display = "block";
-    }
-
-  } catch {}
+  if(decoded.email === ADMIN_EMAIL){
+    document.getElementById("adminBtn").style.display = "block";
+  }
 }
 
-/* BALANCE + PROFILE */
+/* BALANCE */
 async function loadBalance(){
   const res = await fetch(API+"/me",{
     headers:{Authorization:"Bearer "+token}
@@ -269,9 +264,9 @@ async function loadBalance(){
 
   document.getElementById("balance").innerText = data.balance || 0;
 
-  document.getElementById("pEmail").innerText = data.email || "";
-  document.getElementById("pPhone").innerText = data.phone || "";
-  document.getElementById("pBalance").innerText = data.balance || 0;
+  document.getElementById("pEmail").innerText = data.email;
+  document.getElementById("pPhone").innerText = data.phone;
+  document.getElementById("pBalance").innerText = data.balance;
 }
 
 /* SERVICES */
@@ -324,10 +319,7 @@ function showServices(p,t){
     const div = document.createElement("div");
     div.className = "service";
 
-    div.innerHTML = `
-      <b>${s.name}</b><br>
-      KSH ${price}
-    `;
+    div.innerHTML = `<b>${s.name}</b><br>KSH ${price}`;
 
     div.onclick = ()=>{
       document.getElementById("serviceId").value = s.serviceId;
@@ -335,33 +327,6 @@ function showServices(p,t){
     };
 
     c.appendChild(div);
-  });
-}
-
-/* ALL SERVICES */
-function renderAllServices(){
-  const c = document.getElementById("allServices");
-  c.innerHTML = "";
-
-  Object.keys(servicesData).forEach(p=>{
-    const block = document.createElement("div");
-    block.innerHTML = `<h4>${p}</h4>`;
-
-    Object.keys(servicesData[p]).forEach(t=>{
-      const sub = document.createElement("div");
-      sub.innerHTML = `<b>${t}</b>`;
-
-      (servicesData[p][t] || []).forEach(s=>{
-        const item = document.createElement("div");
-        item.className = "service";
-        item.innerText = `${s.name} - KSH ${s.rate}`;
-        sub.appendChild(item);
-      });
-
-      block.appendChild(sub);
-    });
-
-    c.appendChild(block);
   });
 }
 
@@ -374,17 +339,17 @@ function calcPrice(){
 
 /* ORDER */
 async function placeOrder(){
-  const serviceId = document.getElementById("serviceId").value;
-  const link = document.getElementById("link").value;
-  const quantity = document.getElementById("quantity").value;
-
   const res = await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({serviceId,link,quantity})
+    body:JSON.stringify({
+      serviceId: serviceId.value,
+      link: link.value,
+      quantity: quantity.value
+    })
   });
 
   const data = await res.json();
@@ -392,14 +357,10 @@ async function placeOrder(){
   loadBalance();
 }
 
-/* DEPOSIT + STATUS */
+/* DEPOSIT */
 async function submitDeposit(){
   document.getElementById("depositStatus").innerText =
     "⏳ Your request is in progress...";
-
-  const phone = document.getElementById("depPhone").value;
-  const amount = document.getElementById("depAmount").value;
-  const message = document.getElementById("depMessage").value;
 
   const res = await fetch(API+"/deposit",{
     method:"POST",
@@ -407,21 +368,49 @@ async function submitDeposit(){
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({phone,amount,message})
+    body:JSON.stringify({
+      phone:depPhone.value,
+      amount:depAmount.value,
+      message:depMessage.value
+    })
   });
 
   const data = await res.json();
-
   document.getElementById("depositStatus").innerText =
     data.message || data.error;
 }
 
+/* PASSWORD */
+async function changePassword(){
+  const res = await fetch(API+"/change-password",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      oldPassword:oldPassword.value,
+      newPassword:newPassword.value
+    })
+  });
+
+  const data = await res.json();
+  passMsg.innerText = data.message || data.error;
+}
+
+/* API KEY */
+async function getApiKey(){
+  const res = await fetch(API+"/api-key",{
+    headers:{Authorization:"Bearer "+token}
+  });
+
+  const data = await res.json();
+  apiKeyBox.innerText = data.apiKey || data.error;
+}
+
 /* SUPPORT */
 function openWhatsApp(){
-  window.open(
-    `https://wa.me/254715509440?text=Hello%20Support%20I%20need%20help`,
-    "_blank"
-  );
+  window.open("https://wa.me/254715509440","_blank");
 }
 
 function callAdmin(){
@@ -429,9 +418,9 @@ function callAdmin(){
 }
 
 /* NAV */
-function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-  document.getElementById(page).style.display="block";
+function showPage(p){
+  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
+  document.getElementById(p).style.display="block";
 }
 
 /* LOGOUT */
