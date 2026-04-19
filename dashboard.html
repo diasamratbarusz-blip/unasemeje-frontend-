@@ -13,10 +13,12 @@ body {
   color: white;
 }
 
-.dashboard { display: flex; }
+.dashboard {
+  display: flex;
+}
 
 .sidebar {
-  width: 220px;
+  width: 230px;
   background: #111827;
   min-height: 100vh;
   padding: 20px;
@@ -30,10 +32,12 @@ body {
   margin-top: 5px;
   border-radius: 6px;
 }
-
 .sidebar a:hover { background: #1f2937; }
 
-.main { flex: 1; padding: 20px; }
+.main {
+  flex: 1;
+  padding: 20px;
+}
 
 .navbar {
   display: flex;
@@ -51,15 +55,10 @@ body {
   margin-bottom: 20px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
-}
-
-.service {
+.list-item {
   background: #334155;
   padding: 10px;
+  margin-bottom: 8px;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -84,16 +83,10 @@ button {
   cursor: pointer;
 }
 
-.cancel-btn { background:#ef4444; }
-
-.instructions {
-  background:#111827;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:15px;
+.cancel {
+  background: #ef4444;
 }
 
-#adminBtn { display:none; background:#ef4444; }
 </style>
 </head>
 
@@ -106,12 +99,8 @@ button {
   <h2>SMM PANEL</h2>
 
   <a onclick="showPage('home')">Dashboard</a>
-  <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
-  <a onclick="showPage('deposit')">STK Deposit</a>
-  <a onclick="showPage('addFunds')">Add Funds</a>
-
-  <a id="adminBtn" href="admin.html">Admin Panel</a>
+  <a onclick="showPage('deposit')">Add Funds</a>
   <a onclick="logout()">Logout</a>
 </div>
 
@@ -125,27 +114,48 @@ button {
 
 <!-- HOME -->
 <div id="home" class="page">
-  <div class="card">
-    <h3>Quick Order</h3>
 
-    <input id="serviceId" placeholder="Service ID">
-    <input id="link" placeholder="Link">
-    <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
+<div class="card">
 
-    <p>Total: <b id="total">0</b></p>
+<h3>Quick Order</h3>
 
-    <button onclick="placeOrder()">Order</button>
-    <button class="cancel-btn" onclick="cancelOrder()">Cancel</button>
-  </div>
+<!-- STEP 1 -->
+<div id="step-1">
+  <h4>Select Platform</h4>
+  <div class="list-item" onclick="selectPlatform('Instagram')">Instagram</div>
+  <div class="list-item" onclick="selectPlatform('TikTok')">TikTok</div>
+  <div class="list-item" onclick="selectPlatform('YouTube')">YouTube</div>
+  <div class="list-item" onclick="selectPlatform('Facebook')">Facebook</div>
 </div>
 
-<!-- SERVICES -->
-<div id="services" class="page" style="display:none;">
-  <div class="card">
-    <h3>Services</h3>
-    <input id="search" placeholder="Search..." onkeyup="renderServices()">
-    <div id="servicesList" class="grid"></div>
-  </div>
+<!-- STEP 2 -->
+<div id="step-2" style="display:none;">
+  <button onclick="showStep(1)">Back</button>
+  <h4>Select Service Type</h4>
+  <div id="stepTypes"></div>
+</div>
+
+<!-- STEP 3 -->
+<div id="step-3" style="display:none;">
+  <button onclick="showStep(2)">Back</button>
+  <h4>Select Service</h4>
+  <div id="stepServices"></div>
+</div>
+
+<!-- STEP 4 -->
+<div id="step-4" style="display:none;">
+  <button onclick="showStep(3)">Back</button>
+
+  <input id="serviceId" readonly>
+  <input id="link" placeholder="Enter Link">
+  <input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
+
+  <p>Total: <b id="total">0</b></p>
+
+  <button onclick="placeOrder()">Create Order</button>
+</div>
+
+</div>
 </div>
 
 <!-- ORDERS -->
@@ -156,40 +166,28 @@ button {
   </div>
 </div>
 
-<!-- STK DEPOSIT -->
+<!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
   <div class="card">
-    <h3>STK Deposit</h3>
 
-    <input id="phone" placeholder="2547XXXXXXXX">
-    <input id="amount" placeholder="Amount">
+    <h3>Add Funds (Manual M-Pesa)</h3>
 
-    <button onclick="deposit()">Send STK</button>
-    <button class="cancel-btn" onclick="cancelSTK()">Cancel</button>
-  </div>
-</div>
+    <p>
+      📱 Send money to:<br>
+      <b>0715509440</b><br>
+      Name: <b>FAITH CHERUIYOT</b>
+    </p>
 
-<!-- ADD FUNDS -->
-<div id="addFunds" class="page" style="display:none;">
-  <div class="card">
+    <p>
+      After sending, paste the full M-Pesa message below.
+    </p>
 
-    <h3>💰 Add Funds via M-Pesa</h3>
-
-    <div class="instructions">
-      <p>1. Send money to:</p>
-      <p><b style="color:#22c55e;">0715509440</b></p>
-      <p>Name: <b>FAITH CHERUIYOT</b></p>
-      <p>2. Copy FULL M-Pesa message</p>
-      <p>3. Paste below</p>
-    </div>
-
-    <input id="depositPhone" placeholder="Phone used">
-    <input id="depositAmount" placeholder="Amount">
-
-    <textarea id="mpesaMessage" placeholder="Paste M-Pesa message"></textarea>
+    <input id="depPhone" placeholder="Phone used (2547XXXXXXXX)">
+    <input id="depAmount" placeholder="Amount (KSH)">
+    <textarea id="depMessage" placeholder="Paste FULL M-Pesa message here"></textarea>
 
     <button onclick="submitDeposit()">Add Funds</button>
-    <button class="cancel-btn" onclick="cancelDeposit()">Cancel</button>
+    <button class="cancel" onclick="clearDeposit()">Cancel</button>
 
   </div>
 </div>
@@ -198,163 +196,171 @@ button {
 </div>
 
 <script>
-
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
+let servicesData = {};
+let selectedRate = 0;
+
 if (!token) location.href = "index.html";
 
-/* ================= USER ================= */
-function loadUser(){
-  const d = JSON.parse(atob(token.split(".")[1]));
-  document.getElementById("userEmail").innerText = d.email;
+/* USER */
+function loadUser() {
+  const decoded = JSON.parse(atob(token.split(".")[1]));
+  document.getElementById("userEmail").innerText = decoded.email;
 }
 
-/* ================= BALANCE ================= */
-async function loadBalance(){
-  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-  const d = await res.json();
-  document.getElementById("balance").innerText = d.balance || 0;
+/* BALANCE */
+async function loadBalance() {
+  const res = await fetch(API + "/me", {
+    headers: { Authorization: "Bearer " + token }
+  });
+  const data = await res.json();
+  document.getElementById("balance").innerText = data.balance || 0;
 }
 
-/* ================= SERVICES ================= */
-let servicesData=[];
-async function loadServices(){
-  const res=await fetch(API+"/services");
-  const j=await res.json();
+/* LOAD SERVICES (FIXED GROUP) */
+async function loadServices() {
+  const res = await fetch(API + "/services");
+  const json = await res.json();
 
-  servicesData=[];
-  Object.values(j.data||{}).forEach(g=>g.forEach(s=>servicesData.push(s)));
-
-  renderServices();
+  servicesData = json.data || {};
 }
 
-function renderServices(){
-  const c=document.getElementById("servicesList");
-  c.innerHTML="";
-  servicesData.forEach(s=>{
-    const d=document.createElement("div");
-    d.className="service";
-    d.innerHTML=`${s.name}<br>KSH ${s.rate}`;
-    d.onclick=()=>{
-      document.getElementById("serviceId").value=s.serviceId;
+/* STEP 1 -> PLATFORM */
+function selectPlatform(platform) {
+  showStep(2);
+
+  const types = servicesData[platform] || {};
+  const container = document.getElementById("stepTypes");
+  container.innerHTML = "";
+
+  Object.keys(types).forEach(type => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerText = type;
+    div.onclick = () => selectType(platform, type);
+    container.appendChild(div);
+  });
+}
+
+/* STEP 2 -> TYPE */
+function selectType(platform, type) {
+  showStep(3);
+
+  const services = servicesData[platform][type] || [];
+  const container = document.getElementById("stepServices");
+  container.innerHTML = "";
+
+  services.forEach(s => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerText = `${s.name} (KSH ${s.rate})`;
+
+    div.onclick = () => {
+      document.getElementById("serviceId").value = s.serviceId;
+      selectedRate = s.rate;
+      showStep(4);
     };
-    c.appendChild(d);
+
+    container.appendChild(div);
   });
 }
 
-/* ================= ORDER ================= */
-function calcPrice(){
-  const qty=document.getElementById("quantity").value||0;
-  const total=(qty/1000)*10;
-  document.getElementById("total").innerText=total.toFixed(2);
+/* STEP CONTROL */
+function showStep(step) {
+  ["step-1","step-2","step-3","step-4"].forEach(id => {
+    document.getElementById(id).style.display = "none";
+  });
+
+  document.getElementById("step-" + step).style.display = "block";
 }
 
-async function placeOrder(){
-  const serviceId=document.getElementById("serviceId").value;
-  const link=document.getElementById("link").value;
-  const quantity=document.getElementById("quantity").value;
+/* PRICE */
+function calcPrice() {
+  const qty = document.getElementById("quantity").value || 0;
+  document.getElementById("total").innerText =
+    ((selectedRate / 1000) * qty).toFixed(2);
+}
 
-  const res=await fetch(API+"/order",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
+/* ORDER */
+async function placeOrder() {
+  const serviceId = document.getElementById("serviceId").value;
+  const link = document.getElementById("link").value;
+  const quantity = document.getElementById("quantity").value;
+
+  const res = await fetch(API + "/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
     },
-    body:JSON.stringify({serviceId,link,quantity})
+    body: JSON.stringify({ serviceId, link, quantity })
   });
 
-  const d=await res.json();
-  alert(d.message||d.error);
+  const data = await res.json();
+  alert(data.message || data.error);
   loadBalance();
 }
 
-function cancelOrder(){
-  document.getElementById("serviceId").value="";
-  document.getElementById("link").value="";
-  document.getElementById("quantity").value="";
-  document.getElementById("total").innerText="0";
-}
+/* DEPOSIT (FIXED) */
+async function submitDeposit() {
+  const message = document.getElementById("depMessage").value;
 
-/* ================= STK ================= */
-async function deposit(){
-  const phone=document.getElementById("phone").value;
-  const amount=document.getElementById("amount").value;
-
-  const res=await fetch(API+"/mpesa/stk",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
+  const res = await fetch(API + "/deposit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
     },
-    body:JSON.stringify({phone,amount})
+    body: JSON.stringify({ message })
   });
 
-  const d=await res.json();
-  alert(d.message);
+  const data = await res.json();
+  alert(data.message || data.error);
 }
 
-function cancelSTK(){
-  document.getElementById("phone").value="";
-  document.getElementById("amount").value="";
-  showPage("home");
+/* CLEAR */
+function clearDeposit() {
+  document.getElementById("depPhone").value = "";
+  document.getElementById("depAmount").value = "";
+  document.getElementById("depMessage").value = "";
 }
 
-/* ================= ADD FUNDS ================= */
-async function submitDeposit(){
-  const phone=document.getElementById("depositPhone").value;
-  const amount=document.getElementById("depositAmount").value;
-  const message=document.getElementById("mpesaMessage").value;
-
-  const res=await fetch(API+"/deposit",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({phone,amount,message})
+/* ORDERS */
+async function loadOrders() {
+  const res = await fetch(API + "/orders", {
+    headers: { Authorization: "Bearer " + token }
   });
 
-  const d=await res.json();
-  alert(d.message||d.error);
+  const data = await res.json();
+  const list = document.getElementById("ordersList");
+  list.innerHTML = "";
 
-  cancelDeposit();
-}
-
-function cancelDeposit(){
-  document.getElementById("depositPhone").value="";
-  document.getElementById("depositAmount").value="";
-  document.getElementById("mpesaMessage").value="";
-  showPage("home");
-}
-
-/* ================= ORDERS ================= */
-async function loadOrders(){
-  const res=await fetch(API+"/orders",{headers:{Authorization:"Bearer "+token}});
-  const data=await res.json();
-
-  const list=document.getElementById("ordersList");
-  list.innerHTML="";
-
-  data.forEach(o=>{
-    const li=document.createElement("li");
-    li.innerText=`${o.service} | ${o.quantity} | ${o.cost}`;
+  data.forEach(o => {
+    const li = document.createElement("li");
+    li.innerText = `${o.service} | ${o.quantity} | ${o.status}`;
     list.appendChild(li);
   });
 }
 
-/* ================= NAV ================= */
-function showPage(p){
-  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-  document.getElementById(p).style.display="block";
+/* NAV */
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(page).style.display = "block";
 }
 
-/* ================= INIT ================= */
+/* LOGOUT */
+function logout() {
+  localStorage.removeItem("token");
+  location.href = "index.html";
+}
+
+/* INIT */
 loadUser();
 loadBalance();
 loadServices();
 loadOrders();
-
 </script>
 
 </body>
