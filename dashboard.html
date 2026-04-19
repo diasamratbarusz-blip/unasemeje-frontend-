@@ -96,10 +96,8 @@ small { color: #94a3b8; }
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
 
-  <!-- ✅ ADMIN BUTTON (ADDED ONLY) -->
-  <a id="adminBtn" onclick="showPage('admin')" style="display:none;">
-    Admin Panel
-  </a>
+  <!-- ✅ ADMIN BUTTON (HIDDEN BY DEFAULT) -->
+  <a id="adminBtn" onclick="showPage('admin')" style="display:none;">Admin Panel</a>
 
   <a onclick="logout()">Logout</a>
 </div>
@@ -147,20 +145,6 @@ small { color: #94a3b8; }
 </div>
 </div>
 
-<!-- ADMIN PAGE (ADDED ONLY) -->
-<div id="admin" class="page" style="display:none;">
-<div class="card">
-<h3>Admin Panel</h3>
-
-<button onclick="loadUsers()">Load Users</button>
-<ul id="usersList"></ul>
-
-<button onclick="loadDeposits()">Load Deposits</button>
-<ul id="depositsList"></ul>
-
-</div>
-</div>
-
 <!-- ADD FUNDS -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
@@ -188,6 +172,22 @@ placeholder="Paste FULL M-Pesa message"></textarea>
 </div>
 </div>
 
+<!-- ✅ ADMIN PAGE -->
+<div id="admin" class="page" style="display:none;">
+<div class="card">
+<h3>🔥 ADMIN PANEL</h3>
+
+<p>Only visible to admin</p>
+
+<button onclick="loadAllUsers()">View Users</button>
+<button onclick="loadAllDeposits()">View Deposits</button>
+<button onclick="loadAllOrders()">View Orders</button>
+
+<div id="adminData"></div>
+
+</div>
+</div>
+
 </div>
 </div>
 
@@ -202,19 +202,16 @@ let selectedRate = 0;
 /* AUTH */
 if (!token) location.href = "index.html";
 
-/* USER (FIXED ADMIN DETECTION) */
-async function loadUser(){
+/* USER */
+function loadUser(){
   try {
-    const res = await fetch(API+"/me",{
-      headers:{Authorization:"Bearer "+token}
-    });
+    const decoded = JSON.parse(atob(token.split(".")[1]));
+    document.getElementById("userEmail").innerText = decoded.email;
 
-    const user = await res.json();
-
-    document.getElementById("userEmail").innerText = user.email;
-
-    // ✅ SHOW ADMIN BUTTON
-    if(user.isAdmin){
+    // ✅ ADMIN CHECK (ONLY YOU)
+    if (
+      decoded.email === "diasamratbarusz@gmail.com"
+    ) {
       document.getElementById("adminBtn").style.display = "block";
     }
 
@@ -232,19 +229,13 @@ async function loadBalance(){
 
 /* SERVICES */
 async function loadServices(){
-  try {
-    const res = await fetch(API+"/services");
-    const json = await res.json();
+  const res = await fetch(API+"/services");
+  const json = await res.json();
 
-    servicesData = json.data || {};
+  servicesData = json.data || {};
 
-    renderPlatforms();
-    renderAllServices();
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to load services");
-  }
+  renderPlatforms();
+  renderAllServices();
 }
 
 /* PLATFORM */
@@ -275,22 +266,18 @@ function selectPlatform(p){
   });
 }
 
-/* SERVICES (PRICE FIXED) */
+/* SERVICES */
 function showServices(p,t){
   const c = document.getElementById("serviceList");
   c.innerHTML = "";
 
   (servicesData[p][t] || []).forEach(s=>{
-
     const price = Number(s.rate || 0);
 
     const div = document.createElement("div");
     div.className = "service";
 
-    div.innerHTML = `
-      <b>${s.name}</b><br>
-      KSH ${price}
-    `;
+    div.innerHTML = `<b>${s.name}</b><br>KSH ${price}`;
 
     div.onclick = ()=>{
       document.getElementById("serviceId").value = s.serviceId;
@@ -352,57 +339,8 @@ async function placeOrder(){
 
   const data = await res.json();
   alert(data.message || data.error);
+
   loadBalance();
-}
-
-/* ADMIN FUNCTIONS */
-async function loadUsers(){
-  const res = await fetch(API+"/admin/users",{
-    headers:{Authorization:"Bearer "+token}
-  });
-
-  const data = await res.json();
-  const list = document.getElementById("usersList");
-  list.innerHTML = "";
-
-  data.forEach(u=>{
-    const li = document.createElement("li");
-    li.innerText = `${u.email} - Balance: ${u.balance}`;
-    list.appendChild(li);
-  });
-}
-
-async function loadDeposits(){
-  const res = await fetch(API+"/admin/deposits",{
-    headers:{Authorization:"Bearer "+token}
-  });
-
-  const data = await res.json();
-  const list = document.getElementById("depositsList");
-  list.innerHTML = "";
-
-  data.forEach(d=>{
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${d.amount} - ${d.status}
-      <button onclick="approveDeposit('${d._id}')">Approve</button>
-    `;
-    list.appendChild(li);
-  });
-}
-
-async function approveDeposit(id){
-  await fetch(API+"/admin/approve-deposit",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({depositId:id})
-  });
-
-  alert("Approved");
-  loadDeposits();
 }
 
 /* DEPOSIT */
@@ -422,6 +360,32 @@ async function submitDeposit(){
 
   const data = await res.json();
   alert(data.message || data.error);
+}
+
+/* ================= ADMIN FUNCTIONS ================= */
+
+async function loadAllUsers(){
+  const res = await fetch(API+"/admin/users",{
+    headers:{Authorization:"Bearer "+token}
+  });
+  const data = await res.json();
+  document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
+}
+
+async function loadAllDeposits(){
+  const res = await fetch(API+"/admin/deposits",{
+    headers:{Authorization:"Bearer "+token}
+  });
+  const data = await res.json();
+  document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
+}
+
+async function loadAllOrders(){
+  const res = await fetch(API+"/admin/orders",{
+    headers:{Authorization:"Bearer "+token}
+  });
+  const data = await res.json();
+  document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
 }
 
 /* NAV */
