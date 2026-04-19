@@ -29,6 +29,7 @@ body {
   cursor: pointer;
   margin-top: 5px;
   border-radius: 6px;
+  text-decoration:none;
 }
 
 .sidebar a:hover { background: #1f2937; }
@@ -95,9 +96,15 @@ small { color: #94a3b8; }
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
+  <a onclick="showPage('support')">Support</a>
 
-  <!-- ADMIN BUTTON -->
+  <!-- ADMIN ONLY -->
   <a id="adminBtn" onclick="showPage('admin')" style="display:none;">Admin Panel</a>
+
+  <!-- WHATSAPP -->
+  <a href="https://wa.me/254715509440?text=Hello%20Support" target="_blank">
+    WhatsApp Support
+  </a>
 
   <a onclick="logout()">Logout</a>
 </div>
@@ -105,6 +112,7 @@ small { color: #94a3b8; }
 <!-- MAIN -->
 <div class="main">
 
+<!-- TOP BAR -->
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
   <div>💰 Balance: <span id="balance">0</span></div>
@@ -145,31 +153,49 @@ small { color: #94a3b8; }
 </div>
 </div>
 
-<!-- ADD FUNDS -->
+<!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
 
 <h3>💰 Add Funds</h3>
 
-<p><b>STEP 1:</b> Send money to:</p>
+<p><b>Send to:</b></p>
 <p style="color:#22c55e;font-size:18px;">0715509440</p>
 
 <p><b>Name:</b> FAITH CHERUIYOT</p>
 
-<hr>
-
-<input id="depPhone" placeholder="Your Phone (2547...)">
+<input id="depPhone" placeholder="Phone (2547...)">
 <input id="depAmount" placeholder="Amount">
-
-<textarea id="depMessage" rows="5"
-placeholder="Paste FULL M-Pesa message"></textarea>
+<textarea id="depMessage" rows="5" placeholder="Paste M-Pesa message"></textarea>
 
 <button onclick="submitDeposit(event)">Add Funds</button>
 
 <div id="depositStatus"></div>
 
+</div>
+</div>
+
+<!-- SUPPORT -->
+<div id="support" class="page" style="display:none;">
+<div class="card">
+
+<h3>📩 Support Center</h3>
+
+<p>You can contact us directly via WhatsApp or send a message below.</p>
+
+<input id="supportSubject" placeholder="Subject">
+<textarea id="supportMessage" rows="5" placeholder="Message"></textarea>
+
+<button onclick="sendSupport()">Send Message</button>
+
 <br><br>
-<small>⚠️ Paste FULL SMS message</small>
+
+<a href="https://wa.me/254715509440?text=Hello%20Admin%20I%20need%20support"
+   target="_blank">
+   <button style="background:#22c55e;">💬 WhatsApp Support</button>
+</a>
+
+<div id="supportStatus"></div>
 
 </div>
 </div>
@@ -177,19 +203,30 @@ placeholder="Paste FULL M-Pesa message"></textarea>
 <!-- ADMIN -->
 <div id="admin" class="page" style="display:none;">
 <div class="card">
-<h3>🔥 ADMIN PANEL</h3>
-
-<button onclick="loadAllUsers()">Users</button>
-<button onclick="loadAllDeposits()">Deposits</button>
-<button onclick="loadAllOrders()">Orders</button>
-
+<h3>🔥 Admin Panel</h3>
 <pre id="adminData"></pre>
-
 </div>
 </div>
 
 </div>
 </div>
+
+<!-- FLOATING WHATSAPP -->
+<a href="https://wa.me/254715509440?text=Hello%20Support"
+style="
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+color:white;
+padding:15px;
+border-radius:50px;
+text-decoration:none;
+font-weight:bold;
+z-index:9999;
+">
+💬 WhatsApp
+</a>
 
 <script>
 
@@ -208,8 +245,7 @@ function loadUser(){
     const decoded = JSON.parse(atob(token.split(".")[1]));
     document.getElementById("userEmail").innerText = decoded.email;
 
-    // ADMIN ONLY YOU
-    if (decoded.email === "diasamratbarusz@gmail.com") {
+    if(decoded.email === "diasamratbarusz@gmail.com"){
       document.getElementById("adminBtn").style.display = "block";
     }
 
@@ -218,9 +254,7 @@ function loadUser(){
 
 /* BALANCE */
 async function loadBalance(){
-  const res = await fetch(API+"/me",{
-    headers:{Authorization:"Bearer "+token}
-  });
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance || 0;
 }
@@ -229,9 +263,7 @@ async function loadBalance(){
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
-
   servicesData = json.data || {};
-
   renderPlatforms();
   renderAllServices();
 }
@@ -240,7 +272,6 @@ async function loadServices(){
 function renderPlatforms(){
   const c = document.getElementById("platformList");
   c.innerHTML = "";
-
   Object.keys(servicesData).forEach(p=>{
     const div = document.createElement("div");
     div.className = "list-item";
@@ -254,7 +285,6 @@ function renderPlatforms(){
 function selectPlatform(p){
   const c = document.getElementById("categoryList");
   c.innerHTML = "";
-
   Object.keys(servicesData[p] || {}).forEach(t=>{
     const div = document.createElement("div");
     div.className = "list-item";
@@ -268,13 +298,11 @@ function selectPlatform(p){
 function showServices(p,t){
   const c = document.getElementById("serviceList");
   c.innerHTML = "";
-
   (servicesData[p][t] || []).forEach(s=>{
     const price = Number(s.rate || 0);
 
     const div = document.createElement("div");
     div.className = "service";
-
     div.innerHTML = `<b>${s.name}</b><br>KSH ${price}`;
 
     div.onclick = ()=>{
@@ -283,33 +311,6 @@ function showServices(p,t){
     };
 
     c.appendChild(div);
-  });
-}
-
-/* ALL SERVICES */
-function renderAllServices(){
-  const c = document.getElementById("allServices");
-  c.innerHTML = "";
-
-  Object.keys(servicesData).forEach(p=>{
-    const block = document.createElement("div");
-    block.innerHTML = `<h4>${p}</h4>`;
-
-    Object.keys(servicesData[p]).forEach(t=>{
-      const sub = document.createElement("div");
-      sub.innerHTML = `<b>${t}</b>`;
-
-      (servicesData[p][t] || []).forEach(s=>{
-        const item = document.createElement("div");
-        item.className = "service";
-        item.innerText = `${s.name} - KSH ${s.rate}`;
-        sub.appendChild(item);
-      });
-
-      block.appendChild(sub);
-    });
-
-    c.appendChild(block);
   });
 }
 
@@ -342,60 +343,49 @@ async function placeOrder(){
 
 /* DEPOSIT */
 async function submitDeposit(e){
-  const phone = document.getElementById("depPhone").value;
-  const amount = document.getElementById("depAmount").value;
-  const message = document.getElementById("depMessage").value;
-
-  if (!phone || !amount || !message) {
-    alert("Fill all fields");
-    return;
-  }
-
   const btn = e.target;
   btn.innerText = "Processing...";
   btn.disabled = true;
 
-  const res = await fetch(API+"/deposit",{
+  await fetch(API+"/deposit",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({phone,amount,message})
+    body:JSON.stringify({
+      phone:depPhone.value,
+      amount:depAmount.value,
+      message:depMessage.value
+    })
   });
 
-  await res.json();
-
-  document.getElementById("depositStatus").innerHTML = `
-    <p style="color:#22c55e;">
-      ✅ Your request is in progress. You will get results shortly.
-    </p>
-  `;
+  depositStatus.innerHTML =
+  `<p style="color:#22c55e;">✅ Your request is in progress. You will get results shortly.</p>`;
 
   btn.innerText = "Add Funds";
   btn.disabled = false;
 }
 
+/* SUPPORT */
+async function sendSupport(){
+  const subject = supportSubject.value;
+  const message = supportMessage.value;
+
+  await fetch(API+"/support",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({subject,message})
+  });
+
+  supportStatus.innerHTML =
+  `<p style="color:#22c55e;">✅ Message sent. We will respond soon.</p>`;
+}
+
 /* ADMIN */
-async function loadAllUsers(){
-  const res = await fetch(API+"/admin/users",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
-}
-
-async function loadAllDeposits(){
-  const res = await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
-}
-
-async function loadAllOrders(){
-  const res = await fetch(API+"/admin/orders",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
-}
-
-/* NAV */
 function showPage(page){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
   document.getElementById(page).style.display="block";
@@ -415,4 +405,4 @@ loadServices();
 </script>
 
 </body>
-  </html>
+</html>
