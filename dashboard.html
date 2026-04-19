@@ -13,29 +13,27 @@ body {
   color: white;
 }
 
-.dashboard {
-  display: flex;
-}
+.dashboard { display: flex; }
 
 .sidebar {
-  width: 230px;
+  width: 240px;
   background: #111827;
   min-height: 100vh;
   padding: 20px;
 }
 
+.sidebar h2 { margin-bottom: 20px; }
+
 .sidebar a {
   display: block;
   padding: 10px;
+  margin-bottom: 6px;
   color: #cbd5e1;
   cursor: pointer;
-  margin-top: 5px;
   border-radius: 6px;
 }
 
-.sidebar a:hover {
-  background: #1f2937;
-}
+.sidebar a:hover { background: #1f2937; }
 
 .main {
   flex: 1;
@@ -46,7 +44,7 @@ body {
   display: flex;
   justify-content: space-between;
   background: #1e293b;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
   margin-bottom: 20px;
 }
@@ -58,10 +56,10 @@ body {
   margin-bottom: 20px;
 }
 
-.list-item, .service {
+.service, .list-item {
   background: #334155;
   padding: 10px;
-  margin-bottom: 8px;
+  margin: 6px 0;
   border-radius: 8px;
   cursor: pointer;
 }
@@ -86,19 +84,17 @@ button {
   cursor: pointer;
 }
 
-/* ================= POPUP ================= */
+/* ================= ORDER MODAL ================= */
 #orderModal {
   display: none;
   position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.7);
   justify-content: center;
   align-items: center;
 }
 
-.modal-box {
+.modal {
   background: #1e293b;
   padding: 20px;
   width: 350px;
@@ -119,6 +115,7 @@ button {
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
+  <a onclick="logout()">Logout</a>
 </div>
 
 <!-- MAIN -->
@@ -129,15 +126,25 @@ button {
   <div>💰 Balance: <span id="balance">0</span></div>
 </div>
 
-<!-- SERVICES PAGE -->
-<div id="services" class="page">
+<!-- HOME -->
+<div id="home" class="page">
+
   <div class="card">
     <h3>Services</h3>
-    <div id="servicesList"></div>
+    <div id="servicesContainer"></div>
+  </div>
+
+</div>
+
+<!-- SERVICES PAGE -->
+<div id="services" class="page" style="display:none;">
+  <div class="card">
+    <h3>All Services</h3>
+    <div id="allServices"></div>
   </div>
 </div>
 
-<!-- ORDERS PAGE -->
+<!-- ORDERS -->
 <div id="orders" class="page" style="display:none;">
   <div class="card">
     <h3>Orders</h3>
@@ -145,19 +152,27 @@ button {
   </div>
 </div>
 
-<!-- DEPOSIT -->
+<!-- ADD FUNDS -->
 <div id="deposit" class="page" style="display:none;">
   <div class="card">
     <h3>Add Funds</h3>
 
     <p>
-      Send money to: <b>0715509440</b><br>
+      Send Money To:<br>
+      <b>0715509440</b><br>
       Name: <b>FAITH CHERUIYOT</b>
     </p>
 
-    <input id="depPhone" placeholder="Your phone">
+    <p><b>Instructions:</b></p>
+    <small>
+      1. Send money via M-Pesa<br>
+      2. Copy FULL confirmation SMS<br>
+      3. Paste below<br>
+    </small>
+
+    <input id="depPhone" placeholder="Your M-Pesa Phone">
     <input id="depAmount" placeholder="Amount">
-    <textarea id="depMessage" placeholder="Paste M-Pesa message"></textarea>
+    <textarea id="depMessage" placeholder="Paste full M-Pesa message"></textarea>
 
     <button onclick="submitDeposit()">Add Funds</button>
   </div>
@@ -166,20 +181,21 @@ button {
 </div>
 </div>
 
-<!-- ================= ORDER POPUP ================= -->
+<!-- ORDER MODAL -->
 <div id="orderModal">
-  <div class="modal-box">
+  <div class="modal">
+
     <h3>Place Order</h3>
+    <p><b id="serviceName"></b></p>
 
-    <p><b>Service:</b> <span id="mService"></span></p>
+    <input id="orderLink" placeholder="Link">
+    <input id="orderQty" type="number" placeholder="Quantity">
 
-    <input id="mLink" placeholder="Enter Link">
-    <input id="mQty" type="number" placeholder="Quantity">
-
-    <p>Total: <b id="mTotal">0</b></p>
+    <p>Total: <b id="total">0</b></p>
 
     <button onclick="placeOrder()">Confirm Order</button>
     <button onclick="closeModal()" style="background:red;">Cancel</button>
+
   </div>
 </div>
 
@@ -188,6 +204,7 @@ button {
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
+let services = {};
 let selectedService = null;
 
 /* AUTH */
@@ -204,7 +221,6 @@ async function loadBalance(){
   const res = await fetch(API+"/me",{
     headers:{Authorization:"Bearer "+token}
   });
-
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance || 0;
 }
@@ -214,16 +230,22 @@ async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
 
-  const services = json.data || {};
+  services = json.data || {};
 
-  const container = document.getElementById("servicesList");
-  container.innerHTML = "";
+  renderServices();
+  renderAll();
+}
+
+/* HOME SERVICES */
+function renderServices(){
+  const c = document.getElementById("servicesContainer");
+  c.innerHTML = "";
 
   Object.keys(services).forEach(platform => {
 
     const title = document.createElement("h4");
     title.innerText = platform;
-    container.appendChild(title);
+    c.appendChild(title);
 
     services[platform].forEach(s => {
       const div = document.createElement("div");
@@ -234,49 +256,64 @@ async function loadServices(){
         KSH ${s.rate}
       `;
 
-      // ✅ CLICK = OPEN ORDER POPUP
       div.onclick = () => openOrder(s);
 
-      container.appendChild(div);
+      c.appendChild(div);
     });
   });
 }
 
-/* ================= OPEN ORDER MODAL ================= */
+/* ALL SERVICES PAGE */
+function renderAll(){
+  const c = document.getElementById("allServices");
+  c.innerHTML = "";
+
+  Object.keys(services).forEach(platform => {
+
+    const block = document.createElement("div");
+    block.innerHTML = `<h4>${platform}</h4>`;
+
+    services[platform].forEach(s => {
+      const div = document.createElement("div");
+      div.className = "service";
+      div.innerText = `${s.name} - KSH ${s.rate}`;
+      div.onclick = () => openOrder(s);
+      block.appendChild(div);
+    });
+
+    c.appendChild(block);
+  });
+}
+
+/* OPEN ORDER */
 function openOrder(service){
   selectedService = service;
 
-  document.getElementById("mService").innerText = service.name;
+  document.getElementById("serviceName").innerText = service.name;
 
-  document.getElementById("mLink").value = "";
-  document.getElementById("mQty").value = "";
-  document.getElementById("mTotal").innerText = "0";
+  document.getElementById("orderQty").value = "";
+  document.getElementById("orderLink").value = "";
+  document.getElementById("total").innerText = "0";
 
   document.getElementById("orderModal").style.display = "flex";
 }
 
-/* CLOSE MODAL */
+/* CLOSE */
 function closeModal(){
   document.getElementById("orderModal").style.display = "none";
 }
 
-/* PRICE CALC */
-document.addEventListener("input", function(e){
-  if(e.target.id === "mQty"){
-    const qty = e.target.value || 0;
-    const rate = selectedService?.rate || 0;
+/* PRICE */
+document.getElementById("orderQty").addEventListener("input", function(){
+  const qty = this.value || 0;
+  const rate = selectedService?.rate || 0;
 
-    document.getElementById("mTotal").innerText =
-      ((rate/1000) * qty).toFixed(2);
-  }
+  document.getElementById("total").innerText =
+    ((rate/1000)*qty).toFixed(2);
 });
 
-/* PLACE ORDER */
+/* ORDER */
 async function placeOrder(){
-
-  const link = document.getElementById("mLink").value;
-  const quantity = document.getElementById("mQty").value;
-
   const res = await fetch(API+"/order",{
     method:"POST",
     headers:{
@@ -285,8 +322,8 @@ async function placeOrder(){
     },
     body:JSON.stringify({
       serviceId: selectedService.serviceId,
-      link,
-      quantity
+      link: document.getElementById("orderLink").value,
+      quantity: document.getElementById("orderQty").value
     })
   });
 
@@ -317,9 +354,15 @@ async function submitDeposit(){
 }
 
 /* NAV */
-function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-  document.getElementById(page).style.display="block";
+function showPage(p){
+  document.querySelectorAll(".page").forEach(e=>e.style.display="none");
+  document.getElementById(p).style.display="block";
+}
+
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("token");
+  location.href="index.html";
 }
 
 /* INIT */
