@@ -29,6 +29,7 @@ body {
   cursor: pointer;
   margin-top: 5px;
   border-radius: 6px;
+  text-decoration: none;
 }
 
 .sidebar a:hover { background: #1f2937; }
@@ -64,6 +65,7 @@ body {
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 input, textarea {
@@ -85,7 +87,6 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
-
 </style>
 </head>
 
@@ -151,7 +152,7 @@ button {
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
   <div class="card">
-    <h3>Add Funds</h3>
+    <h3>💰 Add Funds (M-Pesa)</h3>
 
     <p>
       Send Money To:<br>
@@ -159,9 +160,14 @@ button {
       Name: <b>FAITH CHERUIYOT</b>
     </p>
 
-    <p>Paste full M-Pesa message below:</p>
+    <p><b>Instructions:</b></p>
+    <ul>
+      <li>Send money to the number above</li>
+      <li>Copy full M-Pesa SMS message</li>
+      <li>Paste below and click Add Funds</li>
+    </ul>
 
-    <textarea id="depMessage" placeholder="Paste M-Pesa message here"></textarea>
+    <textarea id="depMessage" placeholder="Paste full M-Pesa message here"></textarea>
 
     <button onclick="submitDeposit()">Add Funds</button>
   </div>
@@ -191,32 +197,26 @@ function loadUser(){
 
 /* BALANCE */
 async function loadBalance(){
-  const res = await fetch(API+"/me",{
-    headers:{Authorization:"Bearer "+token}
+  const res = await fetch(API + "/me", {
+    headers: { Authorization: "Bearer " + token }
   });
+
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance || 0;
 }
 
 /* SERVICES */
 async function loadServices(){
-  try {
-    const res = await fetch(API+"/services");
-    const json = await res.json();
+  const res = await fetch(API + "/services");
+  const json = await res.json();
 
-    console.log("SERVICES API RESPONSE:", json);
+  servicesData = json.data || {};
 
-    servicesData = json.data || {};
-
-    renderPlatforms();
-    renderAllServices();
-
-  } catch (err) {
-    console.error(err);
-  }
+  renderPlatforms();
+  renderAllServices();
 }
 
-/* PLATFORM LIST */
+/* PLATFORM */
 function renderPlatforms(){
   const c = document.getElementById("platformList");
   c.innerHTML = "";
@@ -230,7 +230,7 @@ function renderPlatforms(){
   });
 }
 
-/* TYPE LIST */
+/* TYPE */
 function selectPlatform(p){
   const c = document.getElementById("typeList");
   c.innerHTML = "";
@@ -244,7 +244,7 @@ function selectPlatform(p){
   });
 }
 
-/* SERVICES LIST */
+/* SERVICES */
 function selectType(p,t){
   const c = document.getElementById("serviceList");
   c.innerHTML = "";
@@ -252,7 +252,7 @@ function selectType(p,t){
   (servicesData[p][t] || []).forEach(s=>{
     const div = document.createElement("div");
     div.className = "service";
-    div.innerText = `${s.name} - KSH ${s.rate}`;
+    div.innerHTML = `${s.name}<br><small>KSH ${s.rate}</small>`;
 
     div.onclick = ()=>{
       document.getElementById("serviceId").value = s.serviceId;
@@ -263,7 +263,7 @@ function selectType(p,t){
   });
 }
 
-/* ALL SERVICES PAGE */
+/* ALL SERVICES */
 function renderAllServices(){
   const c = document.getElementById("allServices");
   c.innerHTML = "";
@@ -276,7 +276,7 @@ function renderAllServices(){
       const sub = document.createElement("div");
       sub.innerHTML = `<b>${t}</b>`;
 
-      (servicesData[p][t] || []).forEach(s=>{
+      servicesData[p][t].forEach(s=>{
         const item = document.createElement("div");
         item.className = "service";
         item.innerText = `${s.name} - KSH ${s.rate}`;
@@ -303,13 +303,13 @@ async function placeOrder(){
   const link = document.getElementById("link").value;
   const quantity = document.getElementById("quantity").value;
 
-  const res = await fetch(API+"/order",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
+  const res = await fetch(API + "/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
     },
-    body:JSON.stringify({serviceId,link,quantity})
+    body: JSON.stringify({ serviceId, link, quantity })
   });
 
   const data = await res.json();
@@ -322,13 +322,13 @@ async function placeOrder(){
 async function submitDeposit(){
   const message = document.getElementById("depMessage").value;
 
-  const res = await fetch(API+"/deposit",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
+  const res = await fetch(API + "/deposit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
     },
-    body:JSON.stringify({message})
+    body: JSON.stringify({ message })
   });
 
   const data = await res.json();
