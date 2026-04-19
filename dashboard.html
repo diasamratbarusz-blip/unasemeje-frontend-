@@ -96,7 +96,7 @@ small { color: #94a3b8; }
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
 
-  <!-- ✅ ADMIN BUTTON (HIDDEN BY DEFAULT) -->
+  <!-- ADMIN BUTTON -->
   <a id="adminBtn" onclick="showPage('admin')" style="display:none;">Admin Panel</a>
 
   <a onclick="logout()">Logout</a>
@@ -164,7 +164,9 @@ small { color: #94a3b8; }
 <textarea id="depMessage" rows="5"
 placeholder="Paste FULL M-Pesa message"></textarea>
 
-<button onclick="submitDeposit()">Add Funds</button>
+<button onclick="submitDeposit(event)">Add Funds</button>
+
+<div id="depositStatus"></div>
 
 <br><br>
 <small>⚠️ Paste FULL SMS message</small>
@@ -172,18 +174,16 @@ placeholder="Paste FULL M-Pesa message"></textarea>
 </div>
 </div>
 
-<!-- ✅ ADMIN PAGE -->
+<!-- ADMIN -->
 <div id="admin" class="page" style="display:none;">
 <div class="card">
 <h3>🔥 ADMIN PANEL</h3>
 
-<p>Only visible to admin</p>
+<button onclick="loadAllUsers()">Users</button>
+<button onclick="loadAllDeposits()">Deposits</button>
+<button onclick="loadAllOrders()">Orders</button>
 
-<button onclick="loadAllUsers()">View Users</button>
-<button onclick="loadAllDeposits()">View Deposits</button>
-<button onclick="loadAllOrders()">View Orders</button>
-
-<div id="adminData"></div>
+<pre id="adminData"></pre>
 
 </div>
 </div>
@@ -208,10 +208,8 @@ function loadUser(){
     const decoded = JSON.parse(atob(token.split(".")[1]));
     document.getElementById("userEmail").innerText = decoded.email;
 
-    // ✅ ADMIN CHECK (ONLY YOU)
-    if (
-      decoded.email === "diasamratbarusz@gmail.com"
-    ) {
+    // ADMIN ONLY YOU
+    if (decoded.email === "diasamratbarusz@gmail.com") {
       document.getElementById("adminBtn").style.display = "block";
     }
 
@@ -339,15 +337,23 @@ async function placeOrder(){
 
   const data = await res.json();
   alert(data.message || data.error);
-
   loadBalance();
 }
 
 /* DEPOSIT */
-async function submitDeposit(){
+async function submitDeposit(e){
   const phone = document.getElementById("depPhone").value;
   const amount = document.getElementById("depAmount").value;
   const message = document.getElementById("depMessage").value;
+
+  if (!phone || !amount || !message) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const btn = e.target;
+  btn.innerText = "Processing...";
+  btn.disabled = true;
 
   const res = await fetch(API+"/deposit",{
     method:"POST",
@@ -358,32 +364,33 @@ async function submitDeposit(){
     body:JSON.stringify({phone,amount,message})
   });
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  await res.json();
+
+  document.getElementById("depositStatus").innerHTML = `
+    <p style="color:#22c55e;">
+      ✅ Your request is in progress. You will get results shortly.
+    </p>
+  `;
+
+  btn.innerText = "Add Funds";
+  btn.disabled = false;
 }
 
-/* ================= ADMIN FUNCTIONS ================= */
-
+/* ADMIN */
 async function loadAllUsers(){
-  const res = await fetch(API+"/admin/users",{
-    headers:{Authorization:"Bearer "+token}
-  });
+  const res = await fetch(API+"/admin/users",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
   document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
 }
 
 async function loadAllDeposits(){
-  const res = await fetch(API+"/admin/deposits",{
-    headers:{Authorization:"Bearer "+token}
-  });
+  const res = await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
   document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
 }
 
 async function loadAllOrders(){
-  const res = await fetch(API+"/admin/orders",{
-    headers:{Authorization:"Bearer "+token}
-  });
+  const res = await fetch(API+"/admin/orders",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
   document.getElementById("adminData").innerText = JSON.stringify(data,null,2);
 }
@@ -408,4 +415,4 @@ loadServices();
 </script>
 
 </body>
-</html>
+  </html>
