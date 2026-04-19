@@ -24,10 +24,6 @@ body {
   padding: 20px;
 }
 
-.sidebar h2 {
-  color: white;
-}
-
 .sidebar a {
   display: block;
   padding: 10px;
@@ -62,19 +58,12 @@ body {
   margin-bottom: 20px;
 }
 
-.list-item {
+.list-item, .service {
   background: #334155;
   padding: 10px;
   margin-bottom: 8px;
   border-radius: 8px;
   cursor: pointer;
-}
-
-.service {
-  background: #334155;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
 }
 
 input, textarea {
@@ -97,8 +86,23 @@ button {
   cursor: pointer;
 }
 
-small {
-  color: #94a3b8;
+/* ================= POPUP ================= */
+#orderModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-box {
+  background: #1e293b;
+  padding: 20px;
+  width: 350px;
+  border-radius: 10px;
 }
 </style>
 </head>
@@ -115,94 +119,68 @@ small {
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
-
-  <a onclick="logout()">Logout</a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-<!-- TOP BAR -->
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
   <div>💰 Balance: <span id="balance">0</span></div>
 </div>
 
-<!-- HOME -->
-<div id="home" class="page">
-
-<div class="card">
-<h3>Quick Order</h3>
-
-<div id="platformList"></div>
-<div id="categoryList"></div>
-<div id="serviceList"></div>
-
-<input id="serviceId" placeholder="Service ID" readonly>
-<input id="link" placeholder="Link">
-<input id="quantity" type="number" placeholder="Quantity">
-
-<p>Total: <b id="total">0</b></p>
-
-<button onclick="placeOrder()">Create Order</button>
+<!-- SERVICES PAGE -->
+<div id="services" class="page">
+  <div class="card">
+    <h3>Services</h3>
+    <div id="servicesList"></div>
+  </div>
 </div>
 
-</div>
-
-<!-- SERVICES -->
-<div id="services" class="page" style="display:none;">
-<div class="card">
-<h3>All Services (Grouped)</h3>
-<div id="allServices"></div>
-</div>
-</div>
-
-<!-- ORDERS -->
+<!-- ORDERS PAGE -->
 <div id="orders" class="page" style="display:none;">
-<div class="card">
-<h3>Orders</h3>
-<ul id="ordersList"></ul>
-</div>
+  <div class="card">
+    <h3>Orders</h3>
+    <ul id="ordersList"></ul>
+  </div>
 </div>
 
-<!-- ================= ADD FUNDS (FIXED FULL SECTION) ================= -->
+<!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
-<div class="card">
+  <div class="card">
+    <h3>Add Funds</h3>
 
-<h3>💰 Add Funds</h3>
+    <p>
+      Send money to: <b>0715509440</b><br>
+      Name: <b>FAITH CHERUIYOT</b>
+    </p>
 
-<p><b>STEP 1:</b> Send money to this number</p>
-<p style="font-size:18px;color:#22c55e">
-0715509440
-</p>
+    <input id="depPhone" placeholder="Your phone">
+    <input id="depAmount" placeholder="Amount">
+    <textarea id="depMessage" placeholder="Paste M-Pesa message"></textarea>
 
-<p><b>Account Name:</b> FAITH CHERUIYOT</p>
-
-<hr>
-
-<p><b>STEP 2:</b> Fill details below</p>
-
-<input id="depPhone" placeholder="Your M-Pesa Phone Number (2547...)">
-<input id="depAmount" placeholder="Amount in KSH">
-
-<p><b>STEP 3:</b> Paste FULL M-Pesa Message</p>
-
-<textarea id="depMessage" rows="5"
-placeholder="Example:
-You have received Ksh 1000 from John Doe..."></textarea>
-
-<button onclick="submitDeposit()">Add Funds</button>
-
-<br><br>
-
-<small>
-⚠️ IMPORTANT: Make sure message is FULL M-Pesa confirmation SMS
-</small>
+    <button onclick="submitDeposit()">Add Funds</button>
+  </div>
+</div>
 
 </div>
 </div>
 
-</div>
+<!-- ================= ORDER POPUP ================= -->
+<div id="orderModal">
+  <div class="modal-box">
+    <h3>Place Order</h3>
+
+    <p><b>Service:</b> <span id="mService"></span></p>
+
+    <input id="mLink" placeholder="Enter Link">
+    <input id="mQty" type="number" placeholder="Quantity">
+
+    <p>Total: <b id="mTotal">0</b></p>
+
+    <button onclick="placeOrder()">Confirm Order</button>
+    <button onclick="closeModal()" style="background:red;">Cancel</button>
+  </div>
 </div>
 
 <script>
@@ -210,18 +188,15 @@ You have received Ksh 1000 from John Doe..."></textarea>
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
-let servicesData = {};
-let selectedRate = 0;
+let selectedService = null;
 
 /* AUTH */
 if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
-  try {
-    const decoded = JSON.parse(atob(token.split(".")[1]));
-    document.getElementById("userEmail").innerText = decoded.email;
-  } catch {}
+  const d = JSON.parse(atob(token.split(".")[1]));
+  document.getElementById("userEmail").innerText = d.email;
 }
 
 /* BALANCE */
@@ -229,6 +204,7 @@ async function loadBalance(){
   const res = await fetch(API+"/me",{
     headers:{Authorization:"Bearer "+token}
   });
+
   const data = await res.json();
   document.getElementById("balance").innerText = data.balance || 0;
 }
@@ -238,102 +214,68 @@ async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
 
-  servicesData = json.data || {};
+  const services = json.data || {};
 
-  renderPlatforms();
-  renderAllServices();
-}
+  const container = document.getElementById("servicesList");
+  container.innerHTML = "";
 
-/* PLATFORM LIST */
-function renderPlatforms(){
-  const c = document.getElementById("platformList");
-  c.innerHTML = "";
+  Object.keys(services).forEach(platform => {
 
-  Object.keys(servicesData).forEach(p=>{
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = p;
-    div.onclick = ()=>selectPlatform(p);
-    c.appendChild(div);
-  });
-}
+    const title = document.createElement("h4");
+    title.innerText = platform;
+    container.appendChild(title);
 
-/* CATEGORY */
-function selectPlatform(p){
-  const c = document.getElementById("categoryList");
-  c.innerHTML = "";
+    services[platform].forEach(s => {
+      const div = document.createElement("div");
+      div.className = "service";
 
-  Object.keys(servicesData[p] || {}).forEach(t=>{
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = t;
-    div.onclick = ()=>showServices(p,t);
-    c.appendChild(div);
-  });
-}
+      div.innerHTML = `
+        <b>${s.name}</b><br>
+        KSH ${s.rate}
+      `;
 
-/* SERVICES */
-function showServices(p,t){
-  const c = document.getElementById("serviceList");
-  c.innerHTML = "";
+      // ✅ CLICK = OPEN ORDER POPUP
+      div.onclick = () => openOrder(s);
 
-  (servicesData[p][t] || []).forEach(s=>{
-    const div = document.createElement("div");
-    div.className = "service";
-
-    div.innerHTML = `
-      <b>${s.name}</b><br>
-      KSH ${s.rate}
-    `;
-
-    div.onclick = ()=>{
-      document.getElementById("serviceId").value = s.serviceId;
-      selectedRate = Number(s.rate);
-    };
-
-    c.appendChild(div);
-  });
-}
-
-/* ALL SERVICES */
-function renderAllServices(){
-  const c = document.getElementById("allServices");
-  c.innerHTML = "";
-
-  Object.keys(servicesData).forEach(p=>{
-    const block = document.createElement("div");
-    block.innerHTML = `<h4>${p}</h4>`;
-
-    Object.keys(servicesData[p]).forEach(t=>{
-      const sub = document.createElement("div");
-      sub.innerHTML = `<b>${t}</b>`;
-
-      (servicesData[p][t] || []).forEach(s=>{
-        const item = document.createElement("div");
-        item.className = "service";
-        item.innerText = `${s.name} - KSH ${s.rate}`;
-        sub.appendChild(item);
-      });
-
-      block.appendChild(sub);
+      container.appendChild(div);
     });
-
-    c.appendChild(block);
   });
 }
 
-/* PRICE */
-function calcPrice(){
-  const qty = document.getElementById("quantity").value || 0;
-  document.getElementById("total").innerText =
-    ((selectedRate/1000)*qty).toFixed(2);
+/* ================= OPEN ORDER MODAL ================= */
+function openOrder(service){
+  selectedService = service;
+
+  document.getElementById("mService").innerText = service.name;
+
+  document.getElementById("mLink").value = "";
+  document.getElementById("mQty").value = "";
+  document.getElementById("mTotal").innerText = "0";
+
+  document.getElementById("orderModal").style.display = "flex";
 }
 
-/* ORDER */
+/* CLOSE MODAL */
+function closeModal(){
+  document.getElementById("orderModal").style.display = "none";
+}
+
+/* PRICE CALC */
+document.addEventListener("input", function(e){
+  if(e.target.id === "mQty"){
+    const qty = e.target.value || 0;
+    const rate = selectedService?.rate || 0;
+
+    document.getElementById("mTotal").innerText =
+      ((rate/1000) * qty).toFixed(2);
+  }
+});
+
+/* PLACE ORDER */
 async function placeOrder(){
-  const serviceId = document.getElementById("serviceId").value;
-  const link = document.getElementById("link").value;
-  const quantity = document.getElementById("quantity").value;
+
+  const link = document.getElementById("mLink").value;
+  const quantity = document.getElementById("mQty").value;
 
   const res = await fetch(API+"/order",{
     method:"POST",
@@ -341,16 +283,21 @@ async function placeOrder(){
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({serviceId,link,quantity})
+    body:JSON.stringify({
+      serviceId: selectedService.serviceId,
+      link,
+      quantity
+    })
   });
 
   const data = await res.json();
   alert(data.message || data.error);
 
+  closeModal();
   loadBalance();
 }
 
-/* ================= ADD FUNDS FIX ================= */
+/* DEPOSIT */
 async function submitDeposit(){
   const phone = document.getElementById("depPhone").value;
   const amount = document.getElementById("depAmount").value;
@@ -362,11 +309,7 @@ async function submitDeposit(){
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({
-      phone,
-      amount,
-      message
-    })
+    body:JSON.stringify({ phone, amount, message })
   });
 
   const data = await res.json();
@@ -377,12 +320,6 @@ async function submitDeposit(){
 function showPage(page){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
   document.getElementById(page).style.display="block";
-}
-
-/* LOGOUT */
-function logout(){
-  localStorage.removeItem("token");
-  location.href="index.html";
 }
 
 /* INIT */
