@@ -15,21 +15,19 @@ async function loadServices() {
 
         let services = [];
 
-        /* ================= HANDLE GROUPED FORMAT ================= */
+        /* ================= HANDLE GROUPED RESPONSE ================= */
         if (json?.data && typeof json.data === "object") {
-
             Object.keys(json.data).forEach(platform => {
-                const categories = json.data[platform];
+                const platformData = json.data[platform];
 
-                Object.keys(categories).forEach(type => {
-                    categories[type].forEach(s => {
+                Object.keys(platformData).forEach(type => {
+                    platformData[type].forEach(s => {
                         services.push({
-                            serviceId: String(s.serviceId || ""),
+                            serviceId: String(s.serviceId || s.id || ""),
                             name: cleanText(s.name || "Unnamed Service"),
-
-                            // ✅ USE SELLING PRICE (IMPORTANT)
-                            rate: Number(s.sellingRate || s.rate || 0),
-
+                            rate: Number(
+                                s.sellingRate || s.rate || s.price || 0
+                            ),
                             min: Number(s.min || 1),
                             max: Number(s.max || 10000),
                             category: s.category || type,
@@ -38,19 +36,16 @@ async function loadServices() {
                     });
                 });
             });
+        }
 
-        } else {
-            /* ================= FALLBACK (FLAT FORMAT) ================= */
-            let rawServices = extractServices(json);
-
-            if (!Array.isArray(rawServices) || rawServices.length === 0) {
-                throw new Error("No services found in response");
-            }
-
-            services = rawServices.map(s => ({
-                serviceId: String(s.serviceId || s.id || s.service || ""),
+        /* ================= HANDLE FLAT RESPONSE ================= */
+        else if (Array.isArray(json)) {
+            services = json.map(s => ({
+                serviceId: String(s.serviceId || s.id || ""),
                 name: cleanText(s.name || "Unnamed Service"),
-                rate: Number(s.sellingRate || s.rate || s.price || 0),
+                rate: Number(
+                    s.sellingRate || s.rate || s.price || 0
+                ),
                 min: Number(s.min || 1),
                 max: Number(s.max || 10000),
                 category: s.category || "Other",
@@ -58,7 +53,11 @@ async function loadServices() {
             }));
         }
 
-        /* ================= CLEAN ================= */
+        if (!services.length) {
+            throw new Error("No services found after parsing");
+        }
+
+        /* ================= REMOVE INVALID ================= */
         services = services.filter(s =>
             s.serviceId &&
             s.name &&
@@ -66,19 +65,14 @@ async function loadServices() {
         );
 
         /* ================= REMOVE DUPLICATES ================= */
-        services = [...new Map(
-            services.map(s => [s.serviceId, s])
-        ).values()];
+        services = [
+            ...new Map(services.map(s => [s.serviceId, s])).values()
+        ];
 
         /* ================= SAVE ================= */
         allServices = services;
 
         console.log("✅ CLEAN SERVICES:", allServices);
-
-        if (!allServices.length) {
-            container.innerHTML = "<p style='color:red'>No services available</p>";
-            return;
-        }
 
         /* ================= RENDER ================= */
         renderServices(allServices);
@@ -96,26 +90,25 @@ async function loadServices() {
 
             console.log("🔥 EXTERNAL RESPONSE:", json2);
 
-            let rawServices = extractServices(json2);
+            let services2 = [];
 
-            let services2 = rawServices.map(s => ({
-                serviceId: String(s.serviceId || s.id || s.service || ""),
-                name: cleanText(s.name || "Unnamed Service"),
-                rate: Number(s.sellingRate || s.rate || s.price || 0),
-                min: Number(s.min || 1),
-                max: Number(s.max || 10000),
-                category: s.category || "Other",
-                platform: detectPlatform(s)
-            }));
+            if (Array.isArray(json2)) {
+                services2 = json2.map(s => ({
+                    serviceId: String(s.serviceId || s.id || ""),
+                    name: cleanText(s.name || "Unnamed Service"),
+                    rate: Number(
+                        s.sellingRate || s.rate || s.price || 0
+                    ),
+                    min: Number(s.min || 1),
+                    max: Number(s.max || 10000),
+                    category: s.category || "Other",
+                    platform: detectPlatform(s)
+                }));
+            }
 
             services2 = services2.filter(s => s.serviceId && s.name);
 
             allServices = services2;
-
-            if (!allServices.length) {
-                container.innerHTML = "<p style='color:red'>No fallback services</p>";
-                return;
-            }
 
             renderServices(allServices);
 
