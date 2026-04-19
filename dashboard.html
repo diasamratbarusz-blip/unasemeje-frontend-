@@ -80,11 +80,6 @@ button {
 }
 
 small { color: #94a3b8; }
-
-.support-btn {
-  background: #16a34a;
-  margin-right: 10px;
-}
 </style>
 </head>
 
@@ -100,12 +95,11 @@ small { color: #94a3b8; }
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
+  <a onclick="showPage('referral')">Invite Friends</a>
   <a onclick="showPage('profile')">Profile</a>
-  <a onclick="showPage('support')">Support</a>
 
-  <a id="adminBtn" style="display:none;background:#7c3aed;" onclick="showPage('admin')">
-    Admin Panel
-  </a>
+  <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
+  <a onclick="callSupport()">📞 Call Support</a>
 
   <a onclick="logout()">Logout</a>
 </div>
@@ -120,7 +114,6 @@ small { color: #94a3b8; }
 
 <!-- HOME -->
 <div id="home" class="page">
-
 <div class="card">
 <h3>Quick Order</h3>
 
@@ -160,70 +153,56 @@ small { color: #94a3b8; }
 
 <h3>💰 Add Funds</h3>
 
-<p>Send money to:</p>
-<p style="color:#22c55e;font-size:18px;">0715509440</p>
-
+<p>Send to: <b>0715509440</b></p>
 <p>Name: FAITH CHERUIYOT</p>
 
-<input id="depPhone" placeholder="Phone">
+<input id="depPhone" placeholder="Your Phone">
 <input id="depAmount" placeholder="Amount">
+<textarea id="depMessage" placeholder="Paste M-Pesa message"></textarea>
 
-<textarea id="depMessage" rows="5" placeholder="Paste M-Pesa message"></textarea>
+<button onclick="submitDeposit()">Add Funds</button>
 
-<button onclick="submitDeposit()">Submit Deposit</button>
+<p id="depositStatus" style="color:yellow"></p>
 
-<p id="depositStatus" style="color:yellow;"></p>
+</div>
+</div>
 
+<!-- REFERRAL -->
+<div id="referral" class="page" style="display:none;">
+<div class="card">
+<h3>Invite Friends & Earn 10%</h3>
+
+<p>Your Code:</p>
+<h2 id="refCode"></h2>
+
+<p>Earnings:</p>
+<h3 id="refEarnings"></h3>
+
+<button onclick="copyRef()">Copy Code</button>
 </div>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
+<h3>Profile</h3>
 
-<h3>My Profile</h3>
+<p>Email:</p>
+<p id="profileEmail"></p>
 
-<p>Email: <b id="pEmail"></b></p>
-<p>Phone: <b id="pPhone"></b></p>
-<p>Balance: <b id="pBalance"></b></p>
+<p>API Key:</p>
+<p id="apiKey">Loading...</p>
+
+<button onclick="getApiKey()">Generate API Key</button>
 
 <hr>
 
 <h4>Change Password</h4>
-<input id="oldPassword" type="password" placeholder="Old Password">
-<input id="newPassword" type="password" placeholder="New Password">
+
+<input id="oldPass" placeholder="Old Password">
+<input id="newPass" placeholder="New Password">
 <button onclick="changePassword()">Update Password</button>
 
-<p id="passMsg"></p>
-
-<hr>
-
-<h4>API KEY</h4>
-<button onclick="getApiKey()">Generate API Key</button>
-<p id="apiKeyBox" style="color:#22c55e;"></p>
-
-</div>
-</div>
-
-<!-- SUPPORT -->
-<div id="support" class="page" style="display:none;">
-<div class="card">
-
-<h3>Customer Support</h3>
-
-<button class="support-btn" onclick="openWhatsApp()">💬 WhatsApp</button>
-<button class="support-btn" onclick="callAdmin()">📞 Call</button>
-
-<p>We reply instantly on WhatsApp.</p>
-
-</div>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="page" style="display:none;">
-<div class="card">
-<h3>Admin Panel</h3>
-<p>Only admin can access this.</p>
 </div>
 </div>
 
@@ -235,47 +214,30 @@ small { color: #94a3b8; }
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
-const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
-const ADMIN_PHONE = "0715509440";
-
 let servicesData = {};
 let selectedRate = 0;
 
-/* AUTH */
 if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
   const decoded = JSON.parse(atob(token.split(".")[1]));
   document.getElementById("userEmail").innerText = decoded.email;
-
-  if(decoded.email === ADMIN_EMAIL){
-    document.getElementById("adminBtn").style.display = "block";
-  }
+  document.getElementById("profileEmail").innerText = decoded.email;
 }
 
 /* BALANCE */
 async function loadBalance(){
-  const res = await fetch(API+"/me",{
-    headers:{Authorization:"Bearer "+token}
-  });
-
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
-
   document.getElementById("balance").innerText = data.balance || 0;
-
-  document.getElementById("pEmail").innerText = data.email;
-  document.getElementById("pPhone").innerText = data.phone;
-  document.getElementById("pBalance").innerText = data.balance;
 }
 
 /* SERVICES */
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
-
   servicesData = json.data || {};
-
   renderPlatforms();
   renderAllServices();
 }
@@ -284,85 +246,100 @@ async function loadServices(){
 function renderPlatforms(){
   const c = document.getElementById("platformList");
   c.innerHTML = "";
-
   Object.keys(servicesData).forEach(p=>{
     const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = p;
-    div.onclick = ()=>selectPlatform(p);
+    div.className="list-item";
+    div.innerText=p;
+    div.onclick=()=>selectPlatform(p);
     c.appendChild(div);
   });
 }
 
 /* CATEGORY */
 function selectPlatform(p){
-  const c = document.getElementById("categoryList");
-  c.innerHTML = "";
-
-  Object.keys(servicesData[p] || {}).forEach(t=>{
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = t;
-    div.onclick = ()=>showServices(p,t);
+  const c=document.getElementById("categoryList");
+  c.innerHTML="";
+  Object.keys(servicesData[p]||{}).forEach(t=>{
+    const div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=t;
+    div.onclick=()=>showServices(p,t);
     c.appendChild(div);
   });
 }
 
-/* SERVICES */
+/* SERVICES FIXED PRICE */
 function showServices(p,t){
-  const c = document.getElementById("serviceList");
-  c.innerHTML = "";
-
-  (servicesData[p][t] || []).forEach(s=>{
-    const price = Number(s.rate || 0);
-
-    const div = document.createElement("div");
-    div.className = "service";
-
-    div.innerHTML = `<b>${s.name}</b><br>KSH ${price}`;
-
-    div.onclick = ()=>{
-      document.getElementById("serviceId").value = s.serviceId;
-      selectedRate = price;
+  const c=document.getElementById("serviceList");
+  c.innerHTML="";
+  (servicesData[p][t]||[]).forEach(s=>{
+    const price=Number(s.rate||0);
+    const div=document.createElement("div");
+    div.className="service";
+    div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
+    div.onclick=()=>{
+      document.getElementById("serviceId").value=s.serviceId;
+      selectedRate=price;
     };
-
     c.appendChild(div);
+  });
+}
+
+/* ALL SERVICES */
+function renderAllServices(){
+  const c=document.getElementById("allServices");
+  c.innerHTML="";
+  Object.keys(servicesData).forEach(p=>{
+    const block=document.createElement("div");
+    block.innerHTML=`<h4>${p}</h4>`;
+    Object.keys(servicesData[p]).forEach(t=>{
+      const sub=document.createElement("div");
+      sub.innerHTML=`<b>${t}</b>`;
+      (servicesData[p][t]||[]).forEach(s=>{
+        const price=Number(s.rate||0);
+        const item=document.createElement("div");
+        item.className="service";
+        item.innerText=`${s.name} - KSH ${price}`;
+        sub.appendChild(item);
+      });
+      block.appendChild(sub);
+    });
+    c.appendChild(block);
   });
 }
 
 /* PRICE */
 function calcPrice(){
-  const qty = document.getElementById("quantity").value || 0;
-  document.getElementById("total").innerText =
-    ((selectedRate/1000)*qty).toFixed(2);
+  const qty=document.getElementById("quantity").value||0;
+  document.getElementById("total").innerText=((selectedRate/1000)*qty).toFixed(2);
 }
 
 /* ORDER */
 async function placeOrder(){
-  const res = await fetch(API+"/order",{
+  const serviceId=document.getElementById("serviceId").value;
+  const link=document.getElementById("link").value;
+  const quantity=document.getElementById("quantity").value;
+
+  const res=await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({
-      serviceId: serviceId.value,
-      link: link.value,
-      quantity: quantity.value
-    })
+    body:JSON.stringify({serviceId,link,quantity})
   });
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  const data=await res.json();
+  alert(data.message||data.error);
   loadBalance();
 }
 
 /* DEPOSIT */
 async function submitDeposit(){
   document.getElementById("depositStatus").innerText =
-    "⏳ Your request is in progress...";
+  "⏳ Your request is in progress... you will get results shortly";
 
-  const res = await fetch(API+"/deposit",{
+  await fetch(API+"/deposit",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
@@ -374,38 +351,41 @@ async function submitDeposit(){
       message:depMessage.value
     })
   });
-
-  const data = await res.json();
-  document.getElementById("depositStatus").innerText =
-    data.message || data.error;
 }
 
-/* PASSWORD */
+/* REFERRAL */
+async function loadReferral(){
+  const res=await fetch(API+"/referral",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+  document.getElementById("refCode").innerText=data.referralCode;
+  document.getElementById("refEarnings").innerText=data.referralEarnings;
+}
+
+function copyRef(){
+  navigator.clipboard.writeText(document.getElementById("refCode").innerText);
+  alert("Copied!");
+}
+
+/* PROFILE */
+async function getApiKey(){
+  const res=await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+  document.getElementById("apiKey").innerText=data.apiKey;
+}
+
 async function changePassword(){
-  const res = await fetch(API+"/change-password",{
+  await fetch(API+"/change-password",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
     body:JSON.stringify({
-      oldPassword:oldPassword.value,
-      newPassword:newPassword.value
+      oldPassword:oldPass.value,
+      newPassword:newPass.value
     })
   });
-
-  const data = await res.json();
-  passMsg.innerText = data.message || data.error;
-}
-
-/* API KEY */
-async function getApiKey(){
-  const res = await fetch(API+"/api-key",{
-    headers:{Authorization:"Bearer "+token}
-  });
-
-  const data = await res.json();
-  apiKeyBox.innerText = data.apiKey || data.error;
+  alert("Password updated");
 }
 
 /* SUPPORT */
@@ -413,8 +393,8 @@ function openWhatsApp(){
   window.open("https://wa.me/254715509440","_blank");
 }
 
-function callAdmin(){
-  window.location.href = "tel:+254715509440";
+function callSupport(){
+  window.location.href="tel:+254715509440";
 }
 
 /* NAV */
@@ -423,7 +403,6 @@ function showPage(p){
   document.getElementById(p).style.display="block";
 }
 
-/* LOGOUT */
 function logout(){
   localStorage.removeItem("token");
   location.href="index.html";
@@ -433,8 +412,9 @@ function logout(){
 loadUser();
 loadBalance();
 loadServices();
+loadReferral();
 
 </script>
 
 </body>
-</html>
+  </html>
