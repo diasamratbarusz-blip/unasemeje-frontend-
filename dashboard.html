@@ -81,11 +81,9 @@ button {
 
 small { color: #94a3b8; }
 
-.support-box {
-  background:#0f172a;
-  padding:10px;
-  border-radius:10px;
-  margin-top:10px;
+.support-buttons button{
+  margin-right: 10px;
+  background: #16a34a;
 }
 </style>
 </head>
@@ -102,9 +100,13 @@ small { color: #94a3b8; }
   <a onclick="showPage('services')">Services</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
+  <a onclick="showPage('profile')">Profile</a>
+  <a onclick="openSupport()">Support</a>
 
-  <a onclick="openWhatsApp()">💬 Support WhatsApp</a>
-  <a onclick="callAdmin()">📞 Call Support</a>
+  <!-- ADMIN ONLY -->
+  <a id="adminBtn" style="display:none;background:#7c3aed;" onclick="showPage('admin')">
+    Admin Panel
+  </a>
 
   <a onclick="logout()">Logout</a>
 </div>
@@ -112,6 +114,7 @@ small { color: #94a3b8; }
 <!-- MAIN -->
 <div class="main">
 
+<!-- TOP BAR -->
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
   <div>💰 Balance: <span id="balance">0</span></div>
@@ -119,8 +122,8 @@ small { color: #94a3b8; }
 
 <!-- HOME -->
 <div id="home" class="page">
-<div class="card">
 
+<div class="card">
 <h3>Quick Order</h3>
 
 <div id="platformList"></div>
@@ -134,14 +137,6 @@ small { color: #94a3b8; }
 <p>Total: <b id="total">0</b></p>
 
 <button onclick="placeOrder()">Create Order</button>
-
-<!-- SUPPORT BOX -->
-<div class="support-box">
-  <h4>Need Help?</h4>
-  <button onclick="openWhatsApp()">Chat on WhatsApp</button>
-  <button onclick="callAdmin()">Call Now</button>
-</div>
-
 </div>
 </div>
 
@@ -167,23 +162,68 @@ small { color: #94a3b8; }
 
 <h3>💰 Add Funds</h3>
 
-<p><b>STEP 1:</b> Send money to:</p>
+<p><b>Send money to:</b></p>
 <p style="color:#22c55e;font-size:18px;">0715509440</p>
 
 <p><b>Name:</b> FAITH CHERUIYOT</p>
 
 <hr>
 
-<input id="depPhone" placeholder="Your Phone (2547...)">
+<input id="depPhone" placeholder="Your Phone">
 <input id="depAmount" placeholder="Amount">
 
 <textarea id="depMessage" rows="5"
 placeholder="Paste FULL M-Pesa message"></textarea>
 
-<button onclick="submitDeposit()">Add Funds</button>
+<button onclick="submitDeposit()">Submit Deposit</button>
 
-<br><br>
-<small id="depositStatus">⚠️ Paste FULL SMS message</small>
+<p id="depositStatus" style="color:yellow;"></p>
+
+</div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page" style="display:none;">
+<div class="card">
+<h3>My Profile</h3>
+
+<p>Email: <b id="pEmail"></b></p>
+<p>Phone: <b id="pPhone"></b></p>
+<p>Balance: <b id="pBalance"></b></p>
+</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin" class="page" style="display:none;">
+<div class="card">
+<h3>Admin Panel</h3>
+<p>Only visible to admin</p>
+</div>
+</div>
+
+<!-- SUPPORT -->
+<div id="support" class="page" style="display:none;">
+<div class="card">
+
+<h3>Customer Support</h3>
+
+<div class="support-buttons">
+
+<!-- WhatsApp -->
+<button onclick="openWhatsApp()">
+💬 WhatsApp Chat
+</button>
+
+<!-- Call -->
+<button onclick="callAdmin()">
+📞 Call Now
+</button>
+
+</div>
+
+<p style="margin-top:10px;">
+We are available 24/7 for support.
+</p>
 
 </div>
 </div>
@@ -213,19 +253,25 @@ function loadUser(){
 
     // ADMIN CHECK
     if(decoded.email === ADMIN_EMAIL){
-      console.log("ADMIN LOGGED IN");
+      document.getElementById("adminBtn").style.display = "block";
     }
 
   } catch {}
 }
 
-/* BALANCE */
+/* BALANCE + PROFILE */
 async function loadBalance(){
   const res = await fetch(API+"/me",{
     headers:{Authorization:"Bearer "+token}
   });
+
   const data = await res.json();
+
   document.getElementById("balance").innerText = data.balance || 0;
+
+  document.getElementById("pEmail").innerText = data.email || "";
+  document.getElementById("pPhone").innerText = data.phone || "";
+  document.getElementById("pBalance").innerText = data.balance || 0;
 }
 
 /* SERVICES */
@@ -346,10 +392,10 @@ async function placeOrder(){
   loadBalance();
 }
 
-/* DEPOSIT STATUS */
+/* DEPOSIT + STATUS */
 async function submitDeposit(){
   document.getElementById("depositStatus").innerText =
-    "⏳ Your request is in progress. You will get results shortly...";
+    "⏳ Your request is in progress...";
 
   const phone = document.getElementById("depPhone").value;
   const amount = document.getElementById("depAmount").value;
@@ -372,7 +418,10 @@ async function submitDeposit(){
 
 /* SUPPORT */
 function openWhatsApp(){
-  window.open("https://wa.me/254715509440","_blank");
+  window.open(
+    `https://wa.me/254715509440?text=Hello%20Support%20I%20need%20help`,
+    "_blank"
+  );
 }
 
 function callAdmin(){
