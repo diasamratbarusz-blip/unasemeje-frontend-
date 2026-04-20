@@ -110,14 +110,14 @@ small { color: #94a3b8; }
 
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
-  <div>💰 Balance: <span id="balance">0</span></div>
+  <div>💰 Balance: KSH <span id="balance">0</span></div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
 <div class="card">
 <h3>Welcome</h3>
-<p>Select a service to start order</p>
+<p>Select a service to place order</p>
 </div>
 </div>
 
@@ -133,18 +133,28 @@ small { color: #94a3b8; }
 </div>
 </div>
 
-<!-- ORDER PAGE (IMPORTANT FIX) -->
+<!-- ORDER PAGE -->
 <div id="order" class="page" style="display:none;">
 <div class="card">
+
 <h3>Place Order</h3>
 
+<p><b>Service ID</b></p>
 <input id="orderServiceId" readonly>
-<input id="orderLink" placeholder="Link">
+
+<div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
+<h4>⚠️ Please Read the Description</h4>
+
+<pre id="serviceDescription" style="white-space:pre-wrap;color:#cbd5e1;"></pre>
+</div>
+
+<input id="orderLink" placeholder="Link (Facebook / Instagram / TikTok)">
 <input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
 
-<p>Total: <b id="orderTotal">0</b></p>
+<p>Total: <b>KSH <span id="orderTotal">0</span></b></p>
 
 <button onclick="submitOrder()">Place Order</button>
+
 </div>
 </div>
 
@@ -159,9 +169,11 @@ small { color: #94a3b8; }
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
+
 <h3>Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
+<p>Name: FAITH CHERUIYOT</p>
 
 <input id="depPhone" placeholder="Phone">
 <input id="depAmount" placeholder="Amount">
@@ -177,15 +189,16 @@ small { color: #94a3b8; }
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-<h3>Referral</h3>
 
-<p>Code:</p>
+<h3>Invite Friends & Earn 10%</h3>
+
+<p>Your Code:</p>
 <h2 id="refCode">Loading...</h2>
 
 <p>Earnings:</p>
-<h3 id="refEarnings">0</h3>
+<h3>KSH <span id="refEarnings">0</span></h3>
 
-<button onclick="copyRef()">Copy</button>
+<button onclick="copyRef()">Copy Code</button>
 
 </div>
 </div>
@@ -196,6 +209,7 @@ small { color: #94a3b8; }
 
 <h3>Profile</h3>
 
+<p>Email:</p>
 <p id="profileEmail"></p>
 
 <p>API KEY:</p>
@@ -210,7 +224,7 @@ small { color: #94a3b8; }
 <input id="oldPass" placeholder="Old Password">
 <input id="newPass" placeholder="New Password">
 
-<button onclick="changePassword()">Update</button>
+<button onclick="changePassword()">Update Password</button>
 
 </div>
 </div>
@@ -223,9 +237,9 @@ small { color: #94a3b8; }
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
+let servicesData = {};
 let selectedRate = 0;
 
-/* CHECK LOGIN */
 if (!token) location.href = "index.html";
 
 /* USER */
@@ -243,21 +257,17 @@ async function loadBalance(){
 }
 
 /* SERVICES */
-let servicesData = {};
-
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
-
   servicesData = json.data || {};
-
   renderPlatforms();
 }
 
 /* PLATFORM */
 function renderPlatforms(){
   const c = document.getElementById("platformList");
-  c.innerHTML="";
+  c.innerHTML = "";
 
   Object.keys(servicesData).forEach(p=>{
     const div = document.createElement("div");
@@ -270,7 +280,7 @@ function renderPlatforms(){
 
 /* CATEGORY */
 function renderCategories(p){
-  const c = document.getElementById("categoryList");
+  const c=document.getElementById("categoryList");
   c.innerHTML="";
 
   Object.keys(servicesData[p]||{}).forEach(t=>{
@@ -282,7 +292,7 @@ function renderCategories(p){
   });
 }
 
-/* SERVICES CLICK → ORDER PAGE */
+/* SERVICES */
 function renderServices(p,t){
   const c=document.getElementById("serviceList");
   c.innerHTML="";
@@ -297,6 +307,22 @@ function renderServices(p,t){
     div.onclick=()=>{
       document.getElementById("orderServiceId").value = s.serviceId;
       selectedRate = price;
+
+      document.getElementById("serviceDescription").innerText = `
+Link: Social Media Profile Link
+Location: Worldwide 🌍
+Quality: High Quality Accounts
+Start Time: 0–10 Minutes
+Speed: Fast Delivery 🚀
+Drop Rate: Low Drop
+Refill Time: 30 Days ♻️
+
+Notes:
+- Do not place same link twice
+- Service may delay during high load
+- Contact support if needed
+      `;
+
       showPage("order");
     };
 
@@ -304,14 +330,14 @@ function renderServices(p,t){
   });
 }
 
-/* ORDER TOTAL */
+/* TOTAL */
 function calcTotal(){
   const qty = document.getElementById("orderQty").value || 0;
   document.getElementById("orderTotal").innerText =
     ((selectedRate/1000)*qty).toFixed(2);
 }
 
-/* PLACE ORDER */
+/* ORDER */
 async function submitOrder(){
   const res = await fetch(API+"/order",{
     method:"POST",
@@ -320,9 +346,9 @@ async function submitOrder(){
       Authorization:"Bearer "+token
     },
     body:JSON.stringify({
-      serviceId:document.getElementById("orderServiceId").value,
-      link:document.getElementById("orderLink").value,
-      quantity:document.getElementById("orderQty").value
+      serviceId:orderServiceId.value,
+      link:orderLink.value,
+      quantity:orderQty.value
     })
   });
 
@@ -352,14 +378,14 @@ async function submitDeposit(){
 
 /* REFERRAL */
 function copyRef(){
-  navigator.clipboard.writeText(document.getElementById("refCode").innerText);
+  navigator.clipboard.writeText(refCode.innerText);
 }
 
 /* PROFILE */
 async function getApiKey(){
   const res = await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
-  document.getElementById("apiKey").innerText = data.apiKey;
+  apiKey.innerText = data.apiKey;
 }
 
 async function changePassword(){
@@ -374,7 +400,6 @@ async function changePassword(){
       newPassword:newPass.value
     })
   });
-
   alert("Updated");
 }
 
