@@ -66,7 +66,6 @@
       margin-top:30px;
     }
 
-    /* 🔥 ADDED LOADER STYLE */
     .btn-loader {
       width: 16px;
       height: 16px;
@@ -86,11 +85,18 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
-
   </style>
 </head>
 
 <body>
+
+<script>
+/* ✅ FIX 1: AUTO REDIRECT IF LOGGED IN */
+const tokenCheck = localStorage.getItem("token");
+if (tokenCheck) {
+  window.location.replace("dashboard.html");
+}
+</script>
 
 <!-- HEADER -->
 <div class="section">
@@ -115,11 +121,9 @@
   <p>Do not have an account?</p>
   <button onclick="register()">Sign Up</button>
 
-  <!-- 🔥 ADDED LOADING TEXT -->
   <div id="loadingText" style="display:none; margin-top:10px; color:#38bdf8;">
     ⏳ Processing request...
   </div>
-
 </div>
 
 <!-- SERVICES -->
@@ -147,9 +151,8 @@
 <script src="config.js"></script>
 <script src="auth.js"></script>
 
-<!-- 🔥 SERVICES + ORDER SCRIPT -->
 <script>
-const BASE_URL = "https://your-backend.onrender.com"; // 🔴 CHANGE THIS
+const BASE_URL = "https://your-backend.onrender.com"; // CHANGE THIS
 
 // LOAD SERVICES
 async function loadServices() {
@@ -160,26 +163,31 @@ async function loadServices() {
     const container = document.getElementById("services");
     container.innerHTML = "";
 
-    if (!data || data.length === 0) {
+    if (!data || !data.data) {
       container.innerHTML = "<p>No services available</p>";
       return;
     }
 
-    data.slice(0, 20).forEach(service => {
-      const div = document.createElement("div");
-      div.className = "service-item";
+    // flatten grouped services
+    Object.keys(data.data).forEach(platform => {
+      Object.keys(data.data[platform]).forEach(cat => {
+        data.data[platform][cat].forEach(service => {
 
-      div.innerHTML = `
-        <strong>${service.name}</strong><br>
-        Rate: ${service.rate}<br>
-        Min: ${service.min} | Max: ${service.max}<br><br>
+          const div = document.createElement("div");
+          div.className = "service-item";
 
-        <button onclick="placeOrder(${service.serviceId})">
-          Order
-        </button>
-      `;
+          div.innerHTML = `
+            <strong>${service.name}</strong><br>
+            Rate: ${service.rate} KSH<br><br>
 
-      container.appendChild(div);
+            <button onclick="placeOrder(${service.serviceId})">
+              Order
+            </button>
+          `;
+
+          container.appendChild(div);
+        });
+      });
     });
 
   } catch (err) {
@@ -199,14 +207,14 @@ async function placeOrder(serviceId) {
     return;
   }
 
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
+
   try {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Please login first");
-      return;
-    }
-
     const res = await fetch(BASE_URL + "/api/order", {
       method: "POST",
       headers: {
@@ -237,8 +245,8 @@ async function placeOrder(serviceId) {
 loadServices();
 </script>
 
-<!-- 🔥 ADDED LOADING SCRIPT (NO CHANGES TO YOUR CODE) -->
 <script>
+/* LOADING UI (safe wrapper) */
 function setButtonLoading(buttonText, loading) {
   const buttons = document.querySelectorAll("button");
 
@@ -257,30 +265,6 @@ function setButtonLoading(buttonText, loading) {
 
   document.getElementById("loadingText").style.display = loading ? "block" : "none";
 }
-
-// HOOK LOGIN
-const originalLogin = window.login;
-window.login = async function () {
-  setButtonLoading("Sign In", true);
-  try {
-    await originalLogin();
-  } catch (e) {
-    console.error(e);
-  }
-  setButtonLoading("Sign In", false);
-};
-
-// HOOK REGISTER
-const originalRegister = window.register;
-window.register = async function () {
-  setButtonLoading("Sign Up", true);
-  try {
-    await originalRegister();
-  } catch (e) {
-    console.error(e);
-  }
-  setButtonLoading("Sign Up", false);
-};
 </script>
 
 </body>
