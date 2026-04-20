@@ -79,7 +79,9 @@ button {
   cursor: pointer;
 }
 
-/* FIX MOBILE BACK ISSUE */
+.page { display: none; }
+.page.active { display: block; }
+
 </style>
 </head>
 
@@ -97,7 +99,7 @@ button {
   <a onclick="show('referral')">Invite Friends</a>
   <a onclick="show('profile')">Profile</a>
 
-  <a onclick="openWA()">💬 WhatsApp</a>
+  <a onclick="wa()">💬 WhatsApp</a>
   <a onclick="call()">📞 Call</a>
 
   <a onclick="logout()">Logout</a>
@@ -112,7 +114,7 @@ button {
 </div>
 
 <!-- STEP 1 -->
-<div id="platforms" class="page">
+<div id="platforms" class="page active">
 <div class="card">
 <h3>Select Platform</h3>
 <div id="platformList"></div>
@@ -120,7 +122,7 @@ button {
 </div>
 
 <!-- STEP 2 -->
-<div id="categories" class="page" style="display:none;">
+<div id="categories" class="page">
 <div class="card">
 <h3>Select Category</h3>
 <div id="categoryList"></div>
@@ -128,32 +130,30 @@ button {
 </div>
 
 <!-- STEP 3 -->
-<div id="services" class="page" style="display:none;">
+<div id="services" class="page">
 <div class="card">
 <h3>Select Service</h3>
 <div id="serviceList"></div>
 </div>
 </div>
 
-<!-- STEP 4 -->
-<div id="order" class="page" style="display:none;">
+<!-- ORDER PAGE -->
+<div id="order" class="page">
 <div class="card">
-
 <h3>Place Order</h3>
 
-<input id="serviceId" readonly placeholder="Service ID">
+<input id="serviceId" readonly>
 <input id="link" placeholder="Link">
 <input id="qty" type="number" placeholder="Quantity" oninput="calc()">
 
 <p>Total: KSH <b id="total">0</b></p>
 
-<button onclick="order()">Place Order</button>
-
+<button onclick="placeOrder()">Place Order</button>
 </div>
 </div>
 
-<!-- STEP 5 -->
-<div id="success" class="page" style="display:none;">
+<!-- SUCCESS -->
+<div id="success" class="page">
 <div class="card">
 <h3>✅ Order Placed Successfully</h3>
 <button onclick="show('platforms')">Back</button>
@@ -161,7 +161,7 @@ button {
 </div>
 
 <!-- ORDERS -->
-<div id="orders" class="page" style="display:none;">
+<div id="orders" class="page">
 <div class="card">
 <h3>Orders</h3>
 <div id="orderList"></div>
@@ -169,7 +169,7 @@ button {
 </div>
 
 <!-- DEPOSIT -->
-<div id="deposit" class="page" style="display:none;">
+<div id="deposit" class="page">
 <div class="card">
 <h3>Add Funds</h3>
 
@@ -177,31 +177,30 @@ button {
 
 <input id="phone" placeholder="Phone">
 <input id="amount" placeholder="Amount (KSH)">
-<textarea id="msg" placeholder="M-Pesa message"></textarea>
+<textarea id="msg" placeholder="M-Pesa Message"></textarea>
 
 <button onclick="deposit()">Submit</button>
 
 <p id="status" style="color:yellow"></p>
-
 </div>
 </div>
 
 <!-- REFERRAL -->
-<div id="referral" class="page" style="display:none;">
+<div id="referral" class="page">
 <div class="card">
-<h3>Invite Friends (10%)</h3>
+<h3>Invite Friends & Earn 10%</h3>
 
 <p>Your Code:</p>
-<h2 id="refCode"></h2>
+<h2 id="refCode">ABC123</h2>
 
 <p>Earnings: KSH <span id="earn">0</span></p>
 
-<button onclick="copy()">Copy</button>
+<button onclick="copy()">Copy Code</button>
 </div>
 </div>
 
 <!-- PROFILE -->
-<div id="profile" class="page" style="display:none;">
+<div id="profile" class="page">
 <div class="card">
 <h3>Profile</h3>
 
@@ -210,15 +209,14 @@ button {
 <p>API KEY</p>
 <p id="apiKey">Loading...</p>
 
-<button onclick="genKey()">Generate</button>
+<button onclick="genKey()">Generate API Key</button>
 
 <hr>
 
 <input id="old" placeholder="Old Password">
 <input id="new" placeholder="New Password">
 
-<button onclick="changePass()">Update</button>
-
+<button onclick="changePass()">Update Password</button>
 </div>
 </div>
 
@@ -230,20 +228,21 @@ button {
 const API="https://your-backend.onrender.com/api";
 const token=localStorage.getItem("token");
 
-let data={},rate=0,sel=null;
+let data={},rate=0;
 
-/* FIX BACK BUTTON */
+/* BLOCK BACK BUTTON ISSUE */
 history.pushState(null,null,location.href);
 window.onpopstate=()=>history.pushState(null,null,location.href);
 
+/* CHECK LOGIN */
 if(!token) location.href="index.html";
 
 /* USER */
-const payload=JSON.parse(atob(token.split(".")[1]));
-email.innerText=payload.email;
-userEmail.innerText=payload.email;
+const user=JSON.parse(atob(token.split(".")[1]));
+email.innerText=user.email;
+userEmail.innerText=user.email;
 
-/* LOAD */
+/* LOAD SERVICES */
 async function load(){
  const r=await fetch(API+"/services");
  const j=await r.json();
@@ -252,9 +251,9 @@ async function load(){
 }
 
 /* NAV */
-function show(x){
- document.querySelectorAll(".page").forEach(p=>p.style.display="none");
- document.getElementById(x).style.display="block";
+function show(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
 }
 
 /* STEP 1 */
@@ -290,12 +289,13 @@ function renderServices(p,c){
   let d=document.createElement("div");
   d.className="service";
   d.innerHTML=`<b>${s.name}</b><br>KSH ${s.rate}`;
+
   d.onclick=()=>{
-   sel=s;
    serviceId.value=s.serviceId;
    rate=s.rate;
    show("order");
   };
+
   serviceList.appendChild(d);
  });
 }
@@ -306,7 +306,7 @@ function calc(){
 }
 
 /* ORDER */
-async function order(){
+async function placeOrder(){
  const r=await fetch(API+"/order",{
   method:"POST",
   headers:{
@@ -344,7 +344,7 @@ async function deposit(){
 }
 
 /* SUPPORT */
-function openWA(){window.open("https://wa.me/254715509440")}
+function wa(){window.open("https://wa.me/254715509440")}
 function call(){location.href="tel:+254715509440"}
 
 /* PROFILE */
@@ -370,7 +370,9 @@ async function changePass(){
 }
 
 /* REF */
-function copy(){navigator.clipboard.writeText(refCode.innerText)}
+function copy(){
+ navigator.clipboard.writeText(refCode.innerText);
+}
 
 /* START */
 load();
