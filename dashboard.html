@@ -96,16 +96,14 @@ pre {
 <div class="sidebar">
   <h2>SMM PANEL</h2>
 
-  <a onclick="showPage('home')">Dashboard</a>
-  <a onclick="goStep(1)">Services</a>
-  <a onclick="showPage('orders')">Orders</a>
-  <a onclick="showPage('deposit')">Add Funds</a>
-  <a onclick="showPage('referral')">Invite Friends</a>
-  <a onclick="showPage('profile')">Profile</a>
+  <a onclick="showStep('platforms')">Services</a>
+  <a onclick="showStep('orders')">Orders</a>
+  <a onclick="showStep('deposit')">Add Funds</a>
+  <a onclick="showStep('referral')">Invite Friends</a>
+  <a onclick="showStep('profile')">Profile</a>
 
-  <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
-  <a onclick="callSupport()">📞 Call Support</a>
-
+  <a onclick="openWhatsApp()">💬 WhatsApp</a>
+  <a onclick="callSupport()">📞 Call</a>
   <a onclick="logout()">Logout</a>
 </div>
 
@@ -117,73 +115,41 @@ pre {
   <div>💰 Balance: KSH <span id="balance">0</span></div>
 </div>
 
-<!-- HOME -->
-<div id="home" class="page">
-<div class="card">
-<h3>Welcome</h3>
-<p>Use Services menu to start ordering</p>
-</div>
-</div>
-
 <!-- STEP 1: PLATFORMS -->
-<div id="step1" class="page" style="display:none;">
+<div id="platforms" class="page">
 <div class="card">
-<h3>Step 1: Platforms</h3>
+<h3>Select Platform</h3>
 <div id="platformList"></div>
 </div>
 </div>
 
 <!-- STEP 2: CATEGORIES -->
-<div id="step2" class="page" style="display:none;">
+<div id="categories" class="page" style="display:none;">
 <div class="card">
-<h3>Step 2: Categories</h3>
+<h3>Select Category</h3>
 <div id="categoryList"></div>
 </div>
 </div>
 
-<!-- STEP 3: DESCRIPTION -->
-<div id="step3" class="page" style="display:none;">
+<!-- STEP 3: SERVICES -->
+<div id="services" class="page" style="display:none;">
 <div class="card">
-<h3>Step 3: Service Description</h3>
-
-<pre>
-⚠️ Please Read the Description
-
-Link: Social Media Profile/Page Link
-Location: Worldwide 🌍
-Quality: High Quality Accounts
-Start Time: 0–10 Minutes
-Speed: Fast Delivery 🚀
-Drop Rate: Low Drop
-Refill Time: 30 Days ♻️
-
-Notes:
-- Do not place duplicate orders
-- Service may delay during high traffic
-- Contact support anytime
-</pre>
-
-<button onclick="goStep(4)">Continue</button>
-</div>
-</div>
-
-<!-- STEP 4: SERVICES LIST -->
-<div id="step4" class="page" style="display:none;">
-<div class="card">
-<h3>Step 4: Services List</h3>
+<h3>Select Service</h3>
 <div id="serviceList"></div>
 </div>
 </div>
 
-<!-- STEP 5: ORDER -->
+<!-- STEP 4: ORDER -->
 <div id="order" class="page" style="display:none;">
 <div class="card">
 
-<h3>Step 5: Place Order</h3>
+<h3>Place Order</h3>
 
-<input id="serviceId" readonly placeholder="Service ID">
+<p><b>Service ID</b></p>
+<input id="serviceId" readonly>
+
 <input id="link" placeholder="Enter Link">
-<input id="quantity" type="number" placeholder="Quantity" oninput="calcTotal()">
+<input id="qty" type="number" placeholder="Quantity" oninput="calcPrice()">
 
 <p>Total: KSH <b id="total">0</b></p>
 
@@ -192,18 +158,26 @@ Notes:
 </div>
 </div>
 
+<!-- STEP 5: SUCCESS -->
+<div id="success" class="page" style="display:none;">
+<div class="card">
+<h3>✅ Order Placed Successfully</h3>
+<p>Your order is being processed.</p>
+<button onclick="showStep('platforms')">Back to Services</button>
+</div>
+</div>
+
 <!-- ORDERS -->
 <div id="orders" class="page" style="display:none;">
 <div class="card">
 <h3>Orders</h3>
-<ul id="ordersList"></ul>
+<div id="ordersList"></div>
 </div>
 </div>
 
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
-
 <h3>Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
@@ -211,45 +185,40 @@ Notes:
 
 <input id="depPhone" placeholder="Phone">
 <input id="depAmount" placeholder="Amount (KSH)">
-<textarea id="depMessage" placeholder="M-Pesa Message"></textarea>
+<textarea id="depMsg" placeholder="M-Pesa message"></textarea>
 
-<button onclick="submitDeposit()">Submit</button>
+<button onclick="deposit()">Submit</button>
 
-<p id="depositStatus" style="color:yellow"></p>
-
+<p id="depStatus" style="color:yellow"></p>
 </div>
 </div>
 
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-
-<h3>Invite Friends</h3>
+<h3>Invite Friends (Earn 10%)</h3>
 
 <p>Your Code:</p>
 <h2 id="refCode"></h2>
 
-<p>Earnings:</p>
-<h3>KSH <span id="refEarnings">0</span></h3>
+<p>Earnings: KSH <span id="refEarn">0</span></p>
 
-<button onclick="copyRef()">Copy Code</button>
-
+<button onclick="copyRef()">Copy</button>
 </div>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
-
 <h3>Profile</h3>
 
 <p>Email:</p>
 <p id="profileEmail"></p>
 
-<p>API KEY:</p>
+<p>API Key:</p>
 <p id="apiKey">Loading...</p>
 
-<button onclick="getApiKey()">Generate API Key</button>
+<button onclick="getKey()">Generate API Key</button>
 
 <hr>
 
@@ -258,8 +227,7 @@ Notes:
 <input id="oldPass" placeholder="Old Password">
 <input id="newPass" placeholder="New Password">
 
-<button onclick="changePassword()">Update</button>
-
+<button onclick="changePass()">Update</button>
 </div>
 </div>
 
@@ -268,117 +236,102 @@ Notes:
 
 <script>
 
-const API = "https://unasemeje-backend-3.onrender.com/api";
+const API = "https://your-backend.onrender.com/api";
 const token = localStorage.getItem("token");
 
-let servicesData = {};
+let dataStore = {};
 let selectedRate = 0;
-let selectedPlatform = "";
-let selectedCategory = "";
+let currentService = null;
 
-/* BACK FIX */
-if (!token) window.location.replace("index.html");
+/* BACK BUTTON FIX */
+history.pushState(null, null, location.href);
+window.onpopstate = () => history.pushState(null, null, location.href);
 
-history.pushState(null,null,location.href);
-window.onpopstate=function(){
-  history.pushState(null,null,location.href);
-};
+if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
   const d = JSON.parse(atob(token.split(".")[1]));
-  document.getElementById("userEmail").innerText = d.email;
-  document.getElementById("profileEmail").innerText = d.email;
+  userEmail.innerText = d.email;
+  profileEmail.innerText = d.email;
 }
 
 /* BALANCE */
 async function loadBalance(){
   const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
-  document.getElementById("balance").innerText = data.balance || 0;
+  balance.innerText = data.balance || 0;
 }
 
 /* SERVICES */
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
-  servicesData = json.data || {};
+  dataStore = json.data || {};
   renderPlatforms();
 }
 
-/* STEP NAVIGATION */
-function goStep(step){
+/* STEP NAV */
+function showStep(step){
   document.querySelectorAll(".page").forEach(p=>p.style.display="none");
-  document.getElementById("step"+step).style.display="block";
+  document.getElementById(step).style.display="block";
 }
 
 /* STEP 1 */
 function renderPlatforms(){
-  const c=document.getElementById("platformList");
-  c.innerHTML="";
-
-  Object.keys(servicesData).forEach(p=>{
-    const div=document.createElement("div");
+  platformList.innerHTML = "";
+  Object.keys(dataStore).forEach(p=>{
+    let div = document.createElement("div");
     div.className="list-item";
     div.innerText=p;
-    div.onclick=()=>{
-      selectedPlatform=p;
-      goStep(2);
-      renderCategories(p);
-    };
-    c.appendChild(div);
+    div.onclick=()=>renderCategories(p);
+    platformList.appendChild(div);
   });
 }
 
 /* STEP 2 */
 function renderCategories(p){
-  const c=document.getElementById("categoryList");
-  c.innerHTML="";
+  showStep("categories");
+  categoryList.innerHTML = "";
 
-  Object.keys(servicesData[p]||{}).forEach(t=>{
-    const div=document.createElement("div");
+  Object.keys(dataStore[p]).forEach(c=>{
+    let div=document.createElement("div");
     div.className="list-item";
-    div.innerText=t;
-    div.onclick=()=>{
-      selectedCategory=t;
-      goStep(3);
-    };
-    c.appendChild(div);
+    div.innerText=c;
+    div.onclick=()=>renderServices(p,c);
+    categoryList.appendChild(div);
   });
 }
 
-/* STEP 4 */
-function renderServices(){
-  const c=document.getElementById("serviceList");
-  c.innerHTML="";
+/* STEP 3 */
+function renderServices(p,c){
+  showStep("services");
+  serviceList.innerHTML="";
 
-  const list = servicesData[selectedPlatform][selectedCategory] || [];
-
-  list.forEach(s=>{
-    const div=document.createElement("div");
+  dataStore[p][c].forEach(s=>{
+    let div=document.createElement("div");
     div.className="service";
-
-    div.innerHTML = `<b>${s.name}</b><br>KSH ${s.rate}`;
+    div.innerHTML=`<b>${s.name}</b><br>KSH ${s.rate}`;
 
     div.onclick=()=>{
-      document.getElementById("serviceId").value=s.serviceId;
+      currentService=s;
+      serviceId.value=s.serviceId;
       selectedRate=s.rate;
-      goStep(5);
+      showStep("order");
     };
 
-    c.appendChild(div);
+    serviceList.appendChild(div);
   });
 }
 
 /* PRICE */
-function calcTotal(){
-  const qty=document.getElementById("quantity").value||0;
-  document.getElementById("total").innerText=((selectedRate/1000)*qty).toFixed(2);
+function calcPrice(){
+  total.innerText = ((selectedRate/1000)*(qty.value||0)).toFixed(2);
 }
 
 /* ORDER */
 async function placeOrder(){
-  const res=await fetch(API+"/order",{
+  const res = await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
@@ -387,13 +340,36 @@ async function placeOrder(){
     body:JSON.stringify({
       serviceId:serviceId.value,
       link:link.value,
-      quantity:quantity.value
+      quantity:qty.value
     })
   });
 
-  const data=await res.json();
-  alert(data.message||data.error);
+  const data = await res.json();
+  if(res.ok){
+    showStep("success");
+  } else {
+    alert(data.error);
+  }
+
   loadBalance();
+}
+
+/* DEPOSIT */
+async function deposit(){
+  depStatus.innerText="⏳ Processing...";
+
+  await fetch(API+"/deposit",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      phone:depPhone.value,
+      amount:depAmount.value,
+      message:depMsg.value
+    })
+  });
 }
 
 /* SUPPORT */
@@ -405,10 +381,32 @@ function callSupport(){
   window.location.href="tel:+254715509440";
 }
 
-/* NAV */
-function showPage(p){
-  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-  document.getElementById(p).style.display="block";
+/* PROFILE */
+async function getKey(){
+  const res = await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
+  const d = await res.json();
+  apiKey.innerText = d.apiKey;
+}
+
+async function changePass(){
+  await fetch(API+"/change-password",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      oldPassword:oldPass.value,
+      newPassword:newPass.value
+    })
+  });
+
+  alert("Updated");
+}
+
+/* REF */
+function copyRef(){
+  navigator.clipboard.writeText(refCode.innerText);
 }
 
 /* INIT */
@@ -419,4 +417,4 @@ loadServices();
 </script>
 
 </body>
-  </html>
+</html>
