@@ -80,6 +80,13 @@ button {
 }
 
 small { color: #94a3b8; }
+
+pre {
+  white-space: pre-wrap;
+  background: #0f172a;
+  padding: 10px;
+  border-radius: 8px;
+}
 </style>
 </head>
 
@@ -145,13 +152,26 @@ small { color: #94a3b8; }
 <div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
 <h4>⚠️ Please Read the Description</h4>
 
-<pre id="serviceDescription" style="white-space:pre-wrap;color:#cbd5e1;"></pre>
+<pre>
+Link: Facebook Profile/Page Link
+Location: Worldwide 🌍
+Quality: High Quality Accounts
+Start Time: 0–10 Minutes
+Speed: Fast Delivery 🚀
+Drop Rate: Low Drop
+Refill Time: 30 Days ♻️
+
+Notes:
+- Do not place same link twice
+- Wait for completion before next order
+- Contact support if needed
+</pre>
 </div>
 
 <input id="orderLink" placeholder="Link (Facebook / Instagram / TikTok)">
 <input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
 
-<p>Total: <b>KSH <span id="orderTotal">0</span></b></p>
+<p>Total: KSH <b id="orderTotal">0</b></p>
 
 <button onclick="submitOrder()">Place Order</button>
 
@@ -176,7 +196,7 @@ small { color: #94a3b8; }
 <p>Name: FAITH CHERUIYOT</p>
 
 <input id="depPhone" placeholder="Phone">
-<input id="depAmount" placeholder="Amount">
+<input id="depAmount" placeholder="Amount (KSH)">
 <textarea id="depMessage" placeholder="M-Pesa message"></textarea>
 
 <button onclick="submitDeposit()">Submit</button>
@@ -223,7 +243,6 @@ small { color: #94a3b8; }
 
 <input id="oldPass" placeholder="Old Password">
 <input id="newPass" placeholder="New Password">
-
 <button onclick="changePassword()">Update Password</button>
 
 </div>
@@ -239,6 +258,12 @@ const token = localStorage.getItem("token");
 
 let servicesData = {};
 let selectedRate = 0;
+
+/* BLOCK BACK BUTTON */
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+  history.pushState(null, null, location.href);
+};
 
 if (!token) location.href = "index.html";
 
@@ -266,11 +291,10 @@ async function loadServices(){
 
 /* PLATFORM */
 function renderPlatforms(){
-  const c = document.getElementById("platformList");
-  c.innerHTML = "";
-
+  const c=document.getElementById("platformList");
+  c.innerHTML="";
   Object.keys(servicesData).forEach(p=>{
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="list-item";
     div.innerText=p;
     div.onclick=()=>renderCategories(p);
@@ -282,7 +306,6 @@ function renderPlatforms(){
 function renderCategories(p){
   const c=document.getElementById("categoryList");
   c.innerHTML="";
-
   Object.keys(servicesData[p]||{}).forEach(t=>{
     const div=document.createElement("div");
     div.className="list-item";
@@ -292,13 +315,13 @@ function renderCategories(p){
   });
 }
 
-/* SERVICES */
+/* SERVICES → CLICK OPENS ORDER PAGE */
 function renderServices(p,t){
   const c=document.getElementById("serviceList");
   c.innerHTML="";
 
   (servicesData[p][t]||[]).forEach(s=>{
-    const price = Number(s.rate||0);
+    const price=Number(s.rate||0);
 
     const div=document.createElement("div");
     div.className="service";
@@ -307,22 +330,6 @@ function renderServices(p,t){
     div.onclick=()=>{
       document.getElementById("orderServiceId").value = s.serviceId;
       selectedRate = price;
-
-      document.getElementById("serviceDescription").innerText = `
-Link: Social Media Profile Link
-Location: Worldwide 🌍
-Quality: High Quality Accounts
-Start Time: 0–10 Minutes
-Speed: Fast Delivery 🚀
-Drop Rate: Low Drop
-Refill Time: 30 Days ♻️
-
-Notes:
-- Do not place same link twice
-- Service may delay during high load
-- Contact support if needed
-      `;
-
       showPage("order");
     };
 
@@ -332,14 +339,14 @@ Notes:
 
 /* TOTAL */
 function calcTotal(){
-  const qty = document.getElementById("orderQty").value || 0;
+  const qty=document.getElementById("orderQty").value||0;
   document.getElementById("orderTotal").innerText =
     ((selectedRate/1000)*qty).toFixed(2);
 }
 
 /* ORDER */
 async function submitOrder(){
-  const res = await fetch(API+"/order",{
+  const res=await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
@@ -352,15 +359,15 @@ async function submitOrder(){
     })
   });
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  const data=await res.json();
+  alert(data.message||data.error);
   loadBalance();
 }
 
 /* DEPOSIT */
 async function submitDeposit(){
   document.getElementById("depositStatus").innerText =
-  "⏳ Your request is in progress...";
+  "⏳ Your request is in progress... you will get results shortly";
 
   await fetch(API+"/deposit",{
     method:"POST",
@@ -374,33 +381,6 @@ async function submitDeposit(){
       message:depMessage.value
     })
   });
-}
-
-/* REFERRAL */
-function copyRef(){
-  navigator.clipboard.writeText(refCode.innerText);
-}
-
-/* PROFILE */
-async function getApiKey(){
-  const res = await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  apiKey.innerText = data.apiKey;
-}
-
-async function changePassword(){
-  await fetch(API+"/change-password",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({
-      oldPassword:oldPass.value,
-      newPassword:newPass.value
-    })
-  });
-  alert("Updated");
 }
 
 /* SUPPORT */
@@ -418,6 +398,34 @@ function showPage(p){
   document.getElementById(p).style.display="block";
 }
 
+/* REFRESH */
+function copyRef(){
+  navigator.clipboard.writeText(refCode.innerText);
+}
+
+/* PROFILE */
+async function getApiKey(){
+  const res=await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+  apiKey.innerText=data.apiKey;
+}
+
+async function changePassword(){
+  await fetch(API+"/change-password",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      oldPassword:oldPass.value,
+      newPassword:newPass.value
+    })
+  });
+  alert("Updated");
+}
+
+/* LOGOUT */
 function logout(){
   localStorage.removeItem("token");
   location.href="index.html";
@@ -431,4 +439,4 @@ loadServices();
 </script>
 
 </body>
-  </html>
+</html>
