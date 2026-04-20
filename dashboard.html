@@ -59,6 +59,10 @@ body {
   cursor: pointer;
 }
 
+.service.active {
+  background: #7c3aed;
+}
+
 input, textarea {
   width: 100%;
   padding: 10px;
@@ -173,10 +177,10 @@ small { color: #94a3b8; }
 <h3>Invite Friends & Earn 10%</h3>
 
 <p>Your Code:</p>
-<h2 id="refCode"></h2>
+<h2 id="refCode">Loading...</h2>
 
 <p>Earnings:</p>
-<h3 id="refEarnings"></h3>
+<h3 id="refEarnings">0</h3>
 
 <button onclick="copyRef()">Copy Code</button>
 </div>
@@ -237,7 +241,9 @@ async function loadBalance(){
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
+
   servicesData = json.data || {};
+
   renderPlatforms();
   renderAllServices();
 }
@@ -246,6 +252,7 @@ async function loadServices(){
 function renderPlatforms(){
   const c = document.getElementById("platformList");
   c.innerHTML = "";
+
   Object.keys(servicesData).forEach(p=>{
     const div = document.createElement("div");
     div.className="list-item";
@@ -259,6 +266,7 @@ function renderPlatforms(){
 function selectPlatform(p){
   const c=document.getElementById("categoryList");
   c.innerHTML="";
+
   Object.keys(servicesData[p]||{}).forEach(t=>{
     const div=document.createElement("div");
     div.className="list-item";
@@ -268,19 +276,32 @@ function selectPlatform(p){
   });
 }
 
-/* SERVICES FIXED PRICE */
+/* SERVICES CLICK FLOW FIXED */
 function showServices(p,t){
   const c=document.getElementById("serviceList");
   c.innerHTML="";
+
   (servicesData[p][t]||[]).forEach(s=>{
     const price=Number(s.rate||0);
+
     const div=document.createElement("div");
     div.className="service";
+
     div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
+
     div.onclick=()=>{
+
+      // remove active class
+      document.querySelectorAll(".service").forEach(x=>x.classList.remove("active"));
+
+      div.classList.add("active");
+
       document.getElementById("serviceId").value=s.serviceId;
       selectedRate=price;
+
+      calcPrice();
     };
+
     c.appendChild(div);
   });
 }
@@ -289,21 +310,28 @@ function showServices(p,t){
 function renderAllServices(){
   const c=document.getElementById("allServices");
   c.innerHTML="";
+
   Object.keys(servicesData).forEach(p=>{
     const block=document.createElement("div");
     block.innerHTML=`<h4>${p}</h4>`;
+
     Object.keys(servicesData[p]).forEach(t=>{
       const sub=document.createElement("div");
       sub.innerHTML=`<b>${t}</b>`;
+
       (servicesData[p][t]||[]).forEach(s=>{
         const price=Number(s.rate||0);
+
         const item=document.createElement("div");
         item.className="service";
         item.innerText=`${s.name} - KSH ${price}`;
+
         sub.appendChild(item);
       });
+
       block.appendChild(sub);
     });
+
     c.appendChild(block);
   });
 }
@@ -334,8 +362,9 @@ async function placeOrder(){
   loadBalance();
 }
 
-/* DEPOSIT */
+/* DEPOSIT FIXED */
 async function submitDeposit(){
+
   document.getElementById("depositStatus").innerText =
   "⏳ Your request is in progress... you will get results shortly";
 
@@ -357,8 +386,9 @@ async function submitDeposit(){
 async function loadReferral(){
   const res=await fetch(API+"/referral",{headers:{Authorization:"Bearer "+token}});
   const data=await res.json();
-  document.getElementById("refCode").innerText=data.referralCode;
-  document.getElementById("refEarnings").innerText=data.referralEarnings;
+
+  document.getElementById("refCode").innerText=data.referralCode||"N/A";
+  document.getElementById("refEarnings").innerText=data.referralEarnings||0;
 }
 
 function copyRef(){
@@ -385,6 +415,7 @@ async function changePassword(){
       newPassword:newPass.value
     })
   });
+
   alert("Password updated");
 }
 
@@ -417,4 +448,4 @@ loadReferral();
 </script>
 
 </body>
-  </html>
+</html>
