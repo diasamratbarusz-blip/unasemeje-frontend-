@@ -80,6 +80,13 @@ button {
 }
 
 small { color: #94a3b8; }
+
+pre {
+  white-space: pre-wrap;
+  background: #0f172a;
+  padding: 10px;
+  border-radius: 8px;
+}
 </style>
 </head>
 
@@ -93,7 +100,6 @@ small { color: #94a3b8; }
 
   <a onclick="showPage('home')">Dashboard</a>
   <a onclick="showPage('services')">Services</a>
-  <a onclick="showPage('order')">Place Order</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
   <a onclick="showPage('referral')">Invite Friends</a>
@@ -116,45 +122,27 @@ small { color: #94a3b8; }
 <!-- HOME -->
 <div id="home" class="page">
 <div class="card">
-<h3>Welcome</h3>
-<p>Select a service to place order</p>
+<h3>Quick Order</h3>
+
+<div id="platformList"></div>
+<div id="categoryList"></div>
+<div id="serviceList"></div>
+
+<input id="serviceId" placeholder="Service ID" readonly>
+<input id="link" placeholder="Link">
+<input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
+
+<p>Total: KSH <b id="total">0</b></p>
+
+<button onclick="placeOrder()">Create Order</button>
 </div>
 </div>
 
 <!-- SERVICES -->
 <div id="services" class="page" style="display:none;">
 <div class="card">
-<h3>Services</h3>
-
-<div id="platformList"></div>
-<div id="categoryList"></div>
-<div id="serviceList"></div>
-
-</div>
-</div>
-
-<!-- ORDER PAGE -->
-<div id="order" class="page" style="display:none;">
-<div class="card">
-
-<h3>Place Order</h3>
-
-<p><b>Service ID</b></p>
-<input id="orderServiceId" readonly>
-
-<div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
-<h4>⚠️ Please Read the Description</h4>
-
-<pre id="serviceDescription" style="white-space:pre-wrap;color:#cbd5e1;"></pre>
-</div>
-
-<input id="orderLink" placeholder="Link (Facebook / Instagram / TikTok)">
-<input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
-
-<p>Total: <b>KSH <span id="orderTotal">0</span></b></p>
-
-<button onclick="submitOrder()">Place Order</button>
-
+<h3>All Services</h3>
+<div id="allServices"></div>
 </div>
 </div>
 
@@ -170,16 +158,16 @@ small { color: #94a3b8; }
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
 
-<h3>Add Funds</h3>
+<h3>💰 Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
 <p>Name: FAITH CHERUIYOT</p>
 
-<input id="depPhone" placeholder="Phone">
-<input id="depAmount" placeholder="Amount">
-<textarea id="depMessage" placeholder="M-Pesa message"></textarea>
+<input id="depPhone" placeholder="Your Phone">
+<input id="depAmount" placeholder="Amount (KSH)">
+<textarea id="depMessage" placeholder="Paste M-Pesa message"></textarea>
 
-<button onclick="submitDeposit()">Submit</button>
+<button onclick="submitDeposit()">Add Funds</button>
 
 <p id="depositStatus" style="color:yellow"></p>
 
@@ -189,17 +177,15 @@ small { color: #94a3b8; }
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-
 <h3>Invite Friends & Earn 10%</h3>
 
 <p>Your Code:</p>
-<h2 id="refCode">Loading...</h2>
+<h2 id="refCode"></h2>
 
 <p>Earnings:</p>
-<h3>KSH <span id="refEarnings">0</span></h3>
+<h3>KSH <span id="refEarnings"></span></h3>
 
 <button onclick="copyRef()">Copy Code</button>
-
 </div>
 </div>
 
@@ -212,7 +198,7 @@ small { color: #94a3b8; }
 <p>Email:</p>
 <p id="profileEmail"></p>
 
-<p>API KEY:</p>
+<p>API Key:</p>
 <p id="apiKey">Loading...</p>
 
 <button onclick="getApiKey()">Generate API Key</button>
@@ -223,12 +209,21 @@ small { color: #94a3b8; }
 
 <input id="oldPass" placeholder="Old Password">
 <input id="newPass" placeholder="New Password">
-
 <button onclick="changePassword()">Update Password</button>
 
 </div>
 </div>
 
+</div>
+</div>
+
+<!-- SERVICE DESCRIPTION MODAL -->
+<div id="serviceModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000cc;">
+<div style="background:#1e293b;margin:10% auto;padding:20px;width:90%;border-radius:10px;">
+<h3>Service Description</h3>
+<pre id="serviceDesc"></pre>
+
+<button onclick="closeModal()">Close</button>
 </div>
 </div>
 
@@ -239,14 +234,23 @@ const token = localStorage.getItem("token");
 
 let servicesData = {};
 let selectedRate = 0;
+let selectedService = null;
 
-if (!token) location.href = "index.html";
+/* BACK FIX */
+if (!token) {
+  window.location.replace("index.html");
+}
+
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+  history.pushState(null, null, location.href);
+};
 
 /* USER */
 function loadUser(){
-  const d = JSON.parse(atob(token.split(".")[1]));
-  document.getElementById("userEmail").innerText = d.email;
-  document.getElementById("profileEmail").innerText = d.email;
+  const decoded = JSON.parse(atob(token.split(".")[1]));
+  document.getElementById("userEmail").innerText = decoded.email;
+  document.getElementById("profileEmail").innerText = decoded.email;
 }
 
 /* BALANCE */
@@ -262,105 +266,115 @@ async function loadServices(){
   const json = await res.json();
   servicesData = json.data || {};
   renderPlatforms();
+  renderAllServices();
 }
 
 /* PLATFORM */
 function renderPlatforms(){
-  const c = document.getElementById("platformList");
-  c.innerHTML = "";
-
+  const c=document.getElementById("platformList");
+  c.innerHTML="";
   Object.keys(servicesData).forEach(p=>{
-    const div = document.createElement("div");
+    const div=document.createElement("div");
     div.className="list-item";
     div.innerText=p;
-    div.onclick=()=>renderCategories(p);
+    div.onclick=()=>selectPlatform(p);
     c.appendChild(div);
   });
 }
 
 /* CATEGORY */
-function renderCategories(p){
+function selectPlatform(p){
   const c=document.getElementById("categoryList");
   c.innerHTML="";
-
   Object.keys(servicesData[p]||{}).forEach(t=>{
     const div=document.createElement("div");
     div.className="list-item";
     div.innerText=t;
-    div.onclick=()=>renderServices(p,t);
+    div.onclick=()=>showServices(p,t);
     c.appendChild(div);
   });
 }
 
 /* SERVICES */
-function renderServices(p,t){
+function showServices(p,t){
   const c=document.getElementById("serviceList");
   c.innerHTML="";
-
   (servicesData[p][t]||[]).forEach(s=>{
-    const price = Number(s.rate||0);
+    const price=Number(s.rate||0);
 
     const div=document.createElement("div");
     div.className="service";
     div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
 
     div.onclick=()=>{
-      document.getElementById("orderServiceId").value = s.serviceId;
-      selectedRate = price;
+      selectedService=s;
 
-      document.getElementById("serviceDescription").innerText = `
-Link: Social Media Profile Link
+      document.getElementById("serviceId").value=s.serviceId;
+      selectedRate=price;
+
+      document.getElementById("serviceDesc").innerHTML=`
+⚠️ Please Read the Description
+
+Link: Facebook Profile/Page Link
+
 Location: Worldwide 🌍
+
 Quality: High Quality Accounts
+
 Start Time: 0–10 Minutes
-Speed: Fast Delivery 🚀
+
+Speed: Day 50K 🚀
+
 Drop Rate: Low Drop
+
 Refill Time: 30 Days ♻️
 
 Notes:
-- Do not place same link twice
-- Service may delay during high load
-- Contact support if needed
+- No double orders
+- Contact support if issues
       `;
 
-      showPage("order");
+      document.getElementById("serviceModal").style.display="block";
     };
 
     c.appendChild(div);
   });
 }
 
-/* TOTAL */
-function calcTotal(){
-  const qty = document.getElementById("orderQty").value || 0;
-  document.getElementById("orderTotal").innerText =
-    ((selectedRate/1000)*qty).toFixed(2);
+function closeModal(){
+  document.getElementById("serviceModal").style.display="none";
+}
+
+/* PRICE */
+function calcPrice(){
+  const qty=document.getElementById("quantity").value||0;
+  document.getElementById("total").innerText=((selectedRate/1000)*qty).toFixed(2);
 }
 
 /* ORDER */
-async function submitOrder(){
-  const res = await fetch(API+"/order",{
+async function placeOrder(){
+  const res=await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
     body:JSON.stringify({
-      serviceId:orderServiceId.value,
-      link:orderLink.value,
-      quantity:orderQty.value
+      serviceId:document.getElementById("serviceId").value,
+      link:document.getElementById("link").value,
+      quantity:document.getElementById("quantity").value
     })
   });
 
-  const data = await res.json();
-  alert(data.message || data.error);
+  const data=await res.json();
+  alert(data.message||data.error);
   loadBalance();
 }
 
 /* DEPOSIT */
 async function submitDeposit(){
   document.getElementById("depositStatus").innerText =
-  "⏳ Your request is in progress...";
+  "⏳ Your request is in progress... you will get results shortly";
 
   await fetch(API+"/deposit",{
     method:"POST",
@@ -374,33 +388,6 @@ async function submitDeposit(){
       message:depMessage.value
     })
   });
-}
-
-/* REFERRAL */
-function copyRef(){
-  navigator.clipboard.writeText(refCode.innerText);
-}
-
-/* PROFILE */
-async function getApiKey(){
-  const res = await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  apiKey.innerText = data.apiKey;
-}
-
-async function changePassword(){
-  await fetch(API+"/change-password",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({
-      oldPassword:oldPass.value,
-      newPassword:newPass.value
-    })
-  });
-  alert("Updated");
 }
 
 /* SUPPORT */
@@ -420,7 +407,7 @@ function showPage(p){
 
 function logout(){
   localStorage.removeItem("token");
-  location.href="index.html";
+  window.location.replace("index.html");
 }
 
 /* INIT */
@@ -431,4 +418,4 @@ loadServices();
 </script>
 
 </body>
-  </html>
+</html>
