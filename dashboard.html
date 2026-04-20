@@ -59,10 +59,6 @@ body {
   cursor: pointer;
 }
 
-.service.active {
-  background: #7c3aed;
-}
-
 input, textarea {
   width: 100%;
   padding: 10px;
@@ -97,6 +93,7 @@ small { color: #94a3b8; }
 
   <a onclick="showPage('home')">Dashboard</a>
   <a onclick="showPage('services')">Services</a>
+  <a onclick="showPage('order')">Place Order</a>
   <a onclick="showPage('orders')">Orders</a>
   <a onclick="showPage('deposit')">Add Funds</a>
   <a onclick="showPage('referral')">Invite Friends</a>
@@ -119,27 +116,35 @@ small { color: #94a3b8; }
 <!-- HOME -->
 <div id="home" class="page">
 <div class="card">
-<h3>Quick Order</h3>
-
-<div id="platformList"></div>
-<div id="categoryList"></div>
-<div id="serviceList"></div>
-
-<input id="serviceId" placeholder="Service ID" readonly>
-<input id="link" placeholder="Link">
-<input id="quantity" type="number" placeholder="Quantity" oninput="calcPrice()">
-
-<p>Total: <b id="total">0</b></p>
-
-<button onclick="placeOrder()">Create Order</button>
+<h3>Welcome</h3>
+<p>Select a service to start order</p>
 </div>
 </div>
 
 <!-- SERVICES -->
 <div id="services" class="page" style="display:none;">
 <div class="card">
-<h3>All Services</h3>
-<div id="allServices"></div>
+<h3>Services</h3>
+
+<div id="platformList"></div>
+<div id="categoryList"></div>
+<div id="serviceList"></div>
+
+</div>
+</div>
+
+<!-- ORDER PAGE (IMPORTANT FIX) -->
+<div id="order" class="page" style="display:none;">
+<div class="card">
+<h3>Place Order</h3>
+
+<input id="orderServiceId" readonly>
+<input id="orderLink" placeholder="Link">
+<input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
+
+<p>Total: <b id="orderTotal">0</b></p>
+
+<button onclick="submitOrder()">Place Order</button>
 </div>
 </div>
 
@@ -154,17 +159,15 @@ small { color: #94a3b8; }
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
-
-<h3>💰 Add Funds</h3>
+<h3>Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
-<p>Name: FAITH CHERUIYOT</p>
 
-<input id="depPhone" placeholder="Your Phone">
+<input id="depPhone" placeholder="Phone">
 <input id="depAmount" placeholder="Amount">
-<textarea id="depMessage" placeholder="Paste M-Pesa message"></textarea>
+<textarea id="depMessage" placeholder="M-Pesa message"></textarea>
 
-<button onclick="submitDeposit()">Add Funds</button>
+<button onclick="submitDeposit()">Submit</button>
 
 <p id="depositStatus" style="color:yellow"></p>
 
@@ -174,27 +177,28 @@ small { color: #94a3b8; }
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-<h3>Invite Friends & Earn 10%</h3>
+<h3>Referral</h3>
 
-<p>Your Code:</p>
+<p>Code:</p>
 <h2 id="refCode">Loading...</h2>
 
 <p>Earnings:</p>
 <h3 id="refEarnings">0</h3>
 
-<button onclick="copyRef()">Copy Code</button>
+<button onclick="copyRef()">Copy</button>
+
 </div>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
+
 <h3>Profile</h3>
 
-<p>Email:</p>
 <p id="profileEmail"></p>
 
-<p>API Key:</p>
+<p>API KEY:</p>
 <p id="apiKey">Loading...</p>
 
 <button onclick="getApiKey()">Generate API Key</button>
@@ -205,7 +209,8 @@ small { color: #94a3b8; }
 
 <input id="oldPass" placeholder="Old Password">
 <input id="newPass" placeholder="New Password">
-<button onclick="changePassword()">Update Password</button>
+
+<button onclick="changePassword()">Update</button>
 
 </div>
 </div>
@@ -218,16 +223,16 @@ small { color: #94a3b8; }
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
-let servicesData = {};
 let selectedRate = 0;
 
+/* CHECK LOGIN */
 if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
-  const decoded = JSON.parse(atob(token.split(".")[1]));
-  document.getElementById("userEmail").innerText = decoded.email;
-  document.getElementById("profileEmail").innerText = decoded.email;
+  const d = JSON.parse(atob(token.split(".")[1]));
+  document.getElementById("userEmail").innerText = d.email;
+  document.getElementById("profileEmail").innerText = d.email;
 }
 
 /* BALANCE */
@@ -238,6 +243,8 @@ async function loadBalance(){
 }
 
 /* SERVICES */
+let servicesData = {};
+
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
@@ -245,128 +252,89 @@ async function loadServices(){
   servicesData = json.data || {};
 
   renderPlatforms();
-  renderAllServices();
 }
 
 /* PLATFORM */
 function renderPlatforms(){
   const c = document.getElementById("platformList");
-  c.innerHTML = "";
+  c.innerHTML="";
 
   Object.keys(servicesData).forEach(p=>{
     const div = document.createElement("div");
     div.className="list-item";
     div.innerText=p;
-    div.onclick=()=>selectPlatform(p);
+    div.onclick=()=>renderCategories(p);
     c.appendChild(div);
   });
 }
 
 /* CATEGORY */
-function selectPlatform(p){
-  const c=document.getElementById("categoryList");
+function renderCategories(p){
+  const c = document.getElementById("categoryList");
   c.innerHTML="";
 
   Object.keys(servicesData[p]||{}).forEach(t=>{
     const div=document.createElement("div");
     div.className="list-item";
     div.innerText=t;
-    div.onclick=()=>showServices(p,t);
+    div.onclick=()=>renderServices(p,t);
     c.appendChild(div);
   });
 }
 
-/* SERVICES CLICK FLOW FIXED */
-function showServices(p,t){
+/* SERVICES CLICK → ORDER PAGE */
+function renderServices(p,t){
   const c=document.getElementById("serviceList");
   c.innerHTML="";
 
   (servicesData[p][t]||[]).forEach(s=>{
-    const price=Number(s.rate||0);
+    const price = Number(s.rate||0);
 
     const div=document.createElement("div");
     div.className="service";
-
     div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
 
     div.onclick=()=>{
-
-      // remove active class
-      document.querySelectorAll(".service").forEach(x=>x.classList.remove("active"));
-
-      div.classList.add("active");
-
-      document.getElementById("serviceId").value=s.serviceId;
-      selectedRate=price;
-
-      calcPrice();
+      document.getElementById("orderServiceId").value = s.serviceId;
+      selectedRate = price;
+      showPage("order");
     };
 
     c.appendChild(div);
   });
 }
 
-/* ALL SERVICES */
-function renderAllServices(){
-  const c=document.getElementById("allServices");
-  c.innerHTML="";
-
-  Object.keys(servicesData).forEach(p=>{
-    const block=document.createElement("div");
-    block.innerHTML=`<h4>${p}</h4>`;
-
-    Object.keys(servicesData[p]).forEach(t=>{
-      const sub=document.createElement("div");
-      sub.innerHTML=`<b>${t}</b>`;
-
-      (servicesData[p][t]||[]).forEach(s=>{
-        const price=Number(s.rate||0);
-
-        const item=document.createElement("div");
-        item.className="service";
-        item.innerText=`${s.name} - KSH ${price}`;
-
-        sub.appendChild(item);
-      });
-
-      block.appendChild(sub);
-    });
-
-    c.appendChild(block);
-  });
+/* ORDER TOTAL */
+function calcTotal(){
+  const qty = document.getElementById("orderQty").value || 0;
+  document.getElementById("orderTotal").innerText =
+    ((selectedRate/1000)*qty).toFixed(2);
 }
 
-/* PRICE */
-function calcPrice(){
-  const qty=document.getElementById("quantity").value||0;
-  document.getElementById("total").innerText=((selectedRate/1000)*qty).toFixed(2);
-}
-
-/* ORDER */
-async function placeOrder(){
-  const serviceId=document.getElementById("serviceId").value;
-  const link=document.getElementById("link").value;
-  const quantity=document.getElementById("quantity").value;
-
-  const res=await fetch(API+"/order",{
+/* PLACE ORDER */
+async function submitOrder(){
+  const res = await fetch(API+"/order",{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
       Authorization:"Bearer "+token
     },
-    body:JSON.stringify({serviceId,link,quantity})
+    body:JSON.stringify({
+      serviceId:document.getElementById("orderServiceId").value,
+      link:document.getElementById("orderLink").value,
+      quantity:document.getElementById("orderQty").value
+    })
   });
 
-  const data=await res.json();
-  alert(data.message||data.error);
+  const data = await res.json();
+  alert(data.message || data.error);
   loadBalance();
 }
 
-/* DEPOSIT FIXED */
+/* DEPOSIT */
 async function submitDeposit(){
-
   document.getElementById("depositStatus").innerText =
-  "⏳ Your request is in progress... you will get results shortly";
+  "⏳ Your request is in progress...";
 
   await fetch(API+"/deposit",{
     method:"POST",
@@ -383,24 +351,15 @@ async function submitDeposit(){
 }
 
 /* REFERRAL */
-async function loadReferral(){
-  const res=await fetch(API+"/referral",{headers:{Authorization:"Bearer "+token}});
-  const data=await res.json();
-
-  document.getElementById("refCode").innerText=data.referralCode||"N/A";
-  document.getElementById("refEarnings").innerText=data.referralEarnings||0;
-}
-
 function copyRef(){
   navigator.clipboard.writeText(document.getElementById("refCode").innerText);
-  alert("Copied!");
 }
 
 /* PROFILE */
 async function getApiKey(){
-  const res=await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
-  const data=await res.json();
-  document.getElementById("apiKey").innerText=data.apiKey;
+  const res = await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+  document.getElementById("apiKey").innerText = data.apiKey;
 }
 
 async function changePassword(){
@@ -416,7 +375,7 @@ async function changePassword(){
     })
   });
 
-  alert("Password updated");
+  alert("Updated");
 }
 
 /* SUPPORT */
@@ -443,9 +402,8 @@ function logout(){
 loadUser();
 loadBalance();
 loadServices();
-loadReferral();
 
 </script>
 
 </body>
-</html>
+  </html>
