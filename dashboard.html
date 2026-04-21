@@ -18,6 +18,7 @@ body { margin:0; font-family:Arial; background:#0f172a; color:white; }
 input,textarea { width:100%; padding:10px; margin-top:10px; border-radius:6px; border:none; background:#0f172a; color:white; }
 button { margin-top:10px; padding:10px; background:#7c3aed; color:white; border:none; border-radius:6px; cursor:pointer; }
 pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px; }
+small { color:#94a3b8; }
 </style>
 </head>
 
@@ -49,7 +50,7 @@ pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px;
 
 <div class="navbar">
 <div>👤 <b id="userEmail">Loading...</b></div>
-<div>💰 KSH <span id="balance">0</span></div>
+<div>💰 Balance: KSH <span id="balance">0</span></div>
 </div>
 
 <!-- HOME -->
@@ -75,7 +76,7 @@ pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px;
 <div class="card">
 <h3>Place Order</h3>
 
-<input id="orderServiceId" readonly>
+<input id="orderServiceId" readonly placeholder="Service ID">
 <input id="orderLink" placeholder="Link">
 <input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
 
@@ -106,14 +107,15 @@ pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px;
 
 <button onclick="submitDeposit()">Submit</button>
 <p id="depositStatus"></p>
+
 </div>
 </div>
 
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-<h3>Referral</h3>
-<h2 id="refCode"></h2>
+<h3>Invite Friends & Earn 10%</h3>
+<h2 id="refCode">...</h2>
 <h3>KSH <span id="refEarnings">0</span></h3>
 </div>
 </div>
@@ -122,24 +124,28 @@ pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px;
 <div id="profile" class="page" style="display:none;">
 <div class="card">
 <h3>Profile</h3>
-<p id="profileEmail"></p>
-<p id="apiKey"></p>
+
+<p>Email: <span id="profileEmail"></span></p>
+<p>API KEY: <span id="apiKey">Not generated</span></p>
+
 <button onclick="getApiKey()">Generate API Key</button>
+
 </div>
 </div>
 
 <!-- ADMIN -->
 <div id="admin" class="page" style="display:none;">
 <div class="card">
-<h3>Admin Panel</h3>
 
-<h4>Deposits</h4>
+<h3>⚙️ Admin Panel</h3>
+
+<h4>Pending Deposits</h4>
 <div id="adminDeposits"></div>
 
-<h4>Users</h4>
+<h4>All Users</h4>
 <div id="adminUsers"></div>
 
-<h4>Orders</h4>
+<h4>All Orders</h4>
 <div id="adminOrders"></div>
 
 </div>
@@ -150,161 +156,207 @@ pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px;
 
 <script>
 
-const API="https://unasemeje-backend-3.onrender.com/api";
-const token=localStorage.getItem("token");
-const ADMIN_EMAIL="diasamratbarusz@gmail.com";
+const API = "https://unasemeje-backend-3.onrender.com/api";
+const token = localStorage.getItem("token");
 
-let servicesData={}, selectedRate=0;
+const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
 
-if(!token) location.href="index.html";
+let servicesData = {};
+let selectedRate = 0;
+
+if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
-const d=JSON.parse(atob(token.split(".")[1]));
-userEmail.innerText=d.email;
-profileEmail.innerText=d.email;
+  const d = JSON.parse(atob(token.split(".")[1]));
 
-if(d.email===ADMIN_EMAIL){
-document.getElementById("adminBtn").style.display="block";
-loadAdmin();
-}
+  userEmail.innerText = d.email;
+  profileEmail.innerText = d.email;
+
+  if (d.email === ADMIN_EMAIL){
+    adminBtn.style.display = "block";
+    loadAdmin();
+  }
 }
 
 /* BALANCE */
 async function loadBalance(){
-const r=await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-const d=await r.json();
-balance.innerText=d.balance||0;
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+  balance.innerText = data.balance || 0;
 }
 
 /* SERVICES */
 async function loadServices(){
-const r=await fetch(API+"/services");
-const j=await r.json();
-servicesData=j.data||{};
-renderPlatforms();
+  const res = await fetch(API+"/services");
+  const json = await res.json();
+  servicesData = json.data || {};
+  renderPlatforms();
 }
 
 function renderPlatforms(){
-platformList.innerHTML="";
-Object.keys(servicesData).forEach(p=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerText=p;
-div.onclick=()=>renderCategories(p);
-platformList.appendChild(div);
-});
+  platformList.innerHTML="";
+  Object.keys(servicesData).forEach(p=>{
+    let div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=p;
+    div.onclick=()=>renderCategories(p);
+    platformList.appendChild(div);
+  });
 }
 
 function renderCategories(p){
-categoryList.innerHTML="";
-Object.keys(servicesData[p]||{}).forEach(c=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerText=c;
-div.onclick=()=>renderServices(p,c);
-categoryList.appendChild(div);
-});
+  categoryList.innerHTML="";
+  Object.keys(servicesData[p]||{}).forEach(c=>{
+    let div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=c;
+    div.onclick=()=>renderServices(p,c);
+    categoryList.appendChild(div);
+  });
 }
 
 function renderServices(p,c){
-serviceList.innerHTML="";
-(servicesData[p][c]||[]).forEach(s=>{
-let price=Number(s.rate||0);
+  serviceList.innerHTML="";
+  (servicesData[p][c]||[]).forEach(s=>{
+    let price=Number(s.rate||0);
 
-let div=document.createElement("div");
-div.className="service";
-div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
+    let div=document.createElement("div");
+    div.className="service";
+    div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
 
-div.onclick=()=>{
-orderServiceId.value=s.serviceId;
-selectedRate=price;
-showPage("order");
-};
+    div.onclick=()=>{
+      orderServiceId.value=s.serviceId;
+      selectedRate=price;
+      showPage("order");
+    };
 
-serviceList.appendChild(div);
-});
+    serviceList.appendChild(div);
+  });
 }
 
 /* TOTAL */
 function calcTotal(){
-let q=orderQty.value||0;
-orderTotal.innerText=((selectedRate/1000)*q).toFixed(2);
+  let q=orderQty.value||0;
+  orderTotal.innerText=((selectedRate/1000)*q).toFixed(2);
 }
 
 /* ORDER */
 async function submitOrder(){
-const r=await fetch(API+"/order",{
-method:"POST",
-headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-body:JSON.stringify({
-serviceId:orderServiceId.value,
-link:orderLink.value,
-quantity:orderQty.value
-})
-});
-const d=await r.json();
-alert(d.message||d.error);
-loadBalance();
+  const res=await fetch(API+"/order",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      serviceId:orderServiceId.value,
+      link:orderLink.value,
+      quantity:orderQty.value
+    })
+  });
+
+  const data=await res.json();
+  alert(data.message||data.error);
+  loadBalance();
+  loadOrders();
+}
+
+/* ORDERS */
+async function loadOrders(){
+  const res = await fetch(API+"/orders",{headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+
+  ordersList.innerHTML="";
+  data.forEach(o=>{
+    let li=document.createElement("li");
+    li.innerText=`${o.service} | ${o.quantity} | KSH ${o.cost}`;
+    ordersList.appendChild(li);
+  });
 }
 
 /* DEPOSIT */
 async function submitDeposit(){
-depositStatus.innerText="Processing...";
-await fetch(API+"/deposit",{
-method:"POST",
-headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-body:JSON.stringify({
-phone:depPhone.value,
-amount:depAmount.value,
-message:depMessage.value
-})
-});
+  depositStatus.innerText="Processing...";
+  await fetch(API+"/deposit",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      phone:depPhone.value,
+      amount:depAmount.value,
+      message:depMessage.value
+    })
+  });
+  depositStatus.innerText="Submitted. Wait for approval.";
+}
+
+/* REFERRAL */
+async function loadReferral(){
+  const res = await fetch(API+"/referral",{headers:{Authorization:"Bearer "+token}});
+  const d = await res.json();
+
+  refCode.innerText = d.referralCode;
+  refEarnings.innerText = d.earnings;
+}
+
+/* API KEY */
+async function getApiKey(){
+  const res=await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
+  const d=await res.json();
+  apiKey.innerText=d.apiKey;
 }
 
 /* ADMIN */
 async function loadAdmin(){
-const d=await (await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}})).json();
-adminDeposits.innerHTML="";
-d.forEach(x=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerHTML=`${x.phone} - ${x.amount} <button onclick="approve('${x._id}')">Approve</button>`;
-adminDeposits.appendChild(div);
-});
 
-const u=await (await fetch(API+"/admin/users",{headers:{Authorization:"Bearer "+token}})).json();
-adminUsers.innerHTML="";
-u.forEach(x=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerText=`${x.email} - ${x.balance}`;
-adminUsers.appendChild(div);
-});
+  const deps = await (await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}})).json();
+  adminDeposits.innerHTML="";
+  deps.forEach(d=>{
+    let div=document.createElement("div");
+    div.className="list-item";
+    div.innerHTML=`${d.phone} - ${d.amount}
+    <button onclick="approve('${d._id}')">Approve</button>`;
+    adminDeposits.appendChild(div);
+  });
 
-const o=await (await fetch(API+"/admin/orders",{headers:{Authorization:"Bearer "+token}})).json();
-adminOrders.innerHTML="";
-o.forEach(x=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerText=`${x.service} - ${x.quantity}`;
-adminOrders.appendChild(div);
-});
+  const users = await (await fetch(API+"/admin/users",{headers:{Authorization:"Bearer "+token}})).json();
+  adminUsers.innerHTML="";
+  users.forEach(u=>{
+    let div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=`${u.email} - ${u.balance}`;
+    adminUsers.appendChild(div);
+  });
+
+  const orders = await (await fetch(API+"/admin/orders",{headers:{Authorization:"Bearer "+token}})).json();
+  adminOrders.innerHTML="";
+  orders.forEach(o=>{
+    let div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=`${o.service} - ${o.quantity}`;
+    adminOrders.appendChild(div);
+  });
 }
 
 async function approve(id){
-await fetch(API+"/admin/approve-deposit/"+id,{
-method:"POST",
-headers:{Authorization:"Bearer "+token}
-});
-alert("Approved");
-loadAdmin();
+  await fetch(API+"/admin/approve-deposit/"+id,{
+    method:"POST",
+    headers:{Authorization:"Bearer "+token}
+  });
+  alert("Approved");
+  loadAdmin();
 }
 
 /* NAV */
 function showPage(p){
-document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-document.getElementById(p).style.display="block";
+  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
+  document.getElementById(p).style.display="block";
+
+  if(p==="orders") loadOrders();
+  if(p==="referral") loadReferral();
 }
 
 /* SUPPORT */
@@ -312,7 +364,10 @@ function openWhatsApp(){window.open("https://wa.me/254715509440");}
 function callSupport(){location.href="tel:+254715509440";}
 
 /* LOGOUT */
-function logout(){localStorage.removeItem("token");location.href="index.html";}
+function logout(){
+  localStorage.removeItem("token");
+  location.href="index.html";
+}
 
 /* INIT */
 loadUser();
