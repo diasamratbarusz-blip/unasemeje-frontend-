@@ -14,17 +14,27 @@
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --danger: #ef4444;
+            --whatsapp: #25d366;
+            --phone: #3b82f6;
         }
 
         body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
         .dashboard { display: flex; min-height: 100vh; }
 
         /* SIDEBAR */
-        .sidebar { width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; position: sticky; top: 0; height: 100vh; box-sizing: border-box; }
+        .sidebar { width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; position: sticky; top: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .sidebar h2 { color: var(--primary); font-size: 22px; margin-bottom: 30px; text-align: center; letter-spacing: 1px; }
+        .sidebar-nav { flex-grow: 1; }
         .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); cursor: pointer; border-radius: 10px; text-decoration: none; margin-bottom: 8px; transition: 0.3s; }
         .sidebar a i { margin-right: 12px; width: 20px; }
         .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; transform: translateX(5px); }
+        
+        /* Support Buttons Styling */
+        .sidebar a.whatsapp-btn { color: var(--whatsapp); border: 1px solid rgba(37, 211, 102, 0.2); }
+        .sidebar a.whatsapp-btn:hover { background: var(--whatsapp); color: white; }
+        .sidebar a.phone-btn { color: var(--phone); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .sidebar a.phone-btn:hover { background: var(--phone); color: white; }
+
         #adminBtn { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 20px; }
         #adminBtn:hover { background: var(--danger); color: white; }
 
@@ -74,15 +84,22 @@
 <div class="dashboard">
     <div class="sidebar">
         <h2>UNASEMEJE</h2>
-        <a onclick="showPage('home')" id="nav-home"><i class="fas fa-home"></i> Home</a>
-        <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> New Order</a>
-        <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> My Orders</a>
-        <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> Add Funds</a>
-        <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> Referrals</a>
-        <a onclick="showPage('profile')" id="nav-profile"><i class="fas fa-user-cog"></i> Profile</a>
-        <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Admin Panel</a>
-        <hr style="border: 0.5px solid #1f2937; margin: 20px 0;">
-        <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <div class="sidebar-nav">
+            <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> Home</a>
+            <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> New Order</a>
+            <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> My Orders</a>
+            <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> Add Funds</a>
+            <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> Referrals</a>
+            <a onclick="showPage('profile')" id="nav-profile"><i class="fas fa-user-cog"></i> Profile</a>
+            <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Admin Panel</a>
+        </div>
+        
+        <div class="sidebar-support">
+            <hr style="border: 0.5px solid #1f2937; margin: 15px 0;">
+            <a href="https://wa.me/254715509440" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> WhatsApp Support</a>
+            <a href="tel:+254715509440" class="phone-btn"><i class="fas fa-phone-alt"></i> Call Support</a>
+            <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
     </div>
 
     <div class="main">
@@ -384,7 +401,7 @@
     // UI NAVIGATION
     function showPage(p) {
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
-        document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
+        document.querySelectorAll(".sidebar .sidebar-nav a").forEach(x => x.classList.remove("active"));
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
         if(p === 'orders') loadOrders();
