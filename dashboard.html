@@ -6,50 +6,86 @@
 <title>SMM Dashboard</title>
 
 <style>
-body { margin:0; font-family:Arial; background:#0f172a; color:white; }
-.dashboard { display:flex; }
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
+
+.dashboard { display: flex; }
 
 .sidebar {
-  width:230px; background:#111827; min-height:100vh; padding:20px;
+  width: 230px;
+  background: #111827;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .sidebar a {
-  display:block; padding:10px; color:#cbd5e1; cursor:pointer;
-  margin-top:5px; border-radius:6px;
+  display: block;
+  padding: 10px;
+  color: #cbd5e1;
+  cursor: pointer;
+  margin-top: 5px;
+  border-radius: 6px;
 }
 
-.sidebar a:hover { background:#1f2937; }
+.sidebar a:hover { background: #1f2937; }
 
-.main { flex:1; padding:20px; }
+.main { flex: 1; padding: 20px; }
 
 .navbar {
-  display:flex; justify-content:space-between;
-  background:#1e293b; padding:10px;
-  border-radius:10px; margin-bottom:20px;
+  display: flex;
+  justify-content: space-between;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 .card {
-  background:#1e293b; padding:20px;
-  border-radius:12px; margin-bottom:20px;
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
 
-.list-item,.service {
-  background:#334155; padding:10px;
-  margin-bottom:8px; border-radius:8px;
-  cursor:pointer;
+.list-item, .service {
+  background: #334155;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-input,textarea {
-  width:100%; padding:10px; margin-top:10px;
-  border-radius:6px; border:none;
-  background:#0f172a; color:white;
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: none;
+  background: #0f172a;
+  color: white;
 }
 
 button {
-  margin-top:10px; padding:10px;
-  background:#7c3aed; color:white;
-  border:none; border-radius:6px;
-  cursor:pointer;
+  margin-top: 10px;
+  padding: 10px;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+small { color: #94a3b8; }
+
+pre {
+  white-space: pre-wrap;
+  background: #0f172a;
+  padding: 10px;
+  border-radius: 8px;
 }
 </style>
 </head>
@@ -70,8 +106,8 @@ button {
   <a onclick="showPage('referral')">Invite Friends</a>
   <a onclick="showPage('profile')">Profile</a>
 
-  <a onclick="openWhatsApp()">💬 WhatsApp</a>
-  <a onclick="callSupport()">📞 Call</a>
+  <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
+  <a onclick="callSupport()">📞 Call Support</a>
 
   <a onclick="logout()">Logout</a>
 </div>
@@ -81,14 +117,14 @@ button {
 
 <div class="navbar">
   <div>👤 <b id="userEmail">Loading...</b></div>
-  <div>💰 KSH <span id="balance">0</span></div>
+  <div>💰 Balance: KSH <span id="balance">0</span></div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
 <div class="card">
 <h3>Welcome</h3>
-<p>Choose service and place order</p>
+<p>Select a service to place order</p>
 </div>
 </div>
 
@@ -96,19 +132,38 @@ button {
 <div id="services" class="page" style="display:none;">
 <div class="card">
 <h3>Services</h3>
+
 <div id="platformList"></div>
 <div id="categoryList"></div>
 <div id="serviceList"></div>
+
 </div>
 </div>
 
-<!-- ORDER -->
+<!-- ORDER PAGE -->
 <div id="order" class="page" style="display:none;">
 <div class="card">
 
 <h3>Place Order</h3>
 
-<input id="orderServiceId" readonly placeholder="Service ID">
+<p><b>Service ID</b></p>
+<input id="orderServiceId" readonly>
+
+<div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
+<h4>⚠️ Please Read the Description</h4>
+
+<pre>
+Link: Social Media Link
+Start Time: 0–10 Minutes
+Speed: Fast 🚀
+Refill: 30 Days
+
+Notes:
+- Do not place same link twice
+- Wait before re-order
+</pre>
+</div>
+
 <input id="orderLink" placeholder="Link">
 <input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
 
@@ -134,13 +189,15 @@ button {
 <h3>Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
+<p>Name: FAITH CHERUIYOT</p>
 
 <input id="depPhone" placeholder="Phone">
-<input id="depAmount" placeholder="Amount">
+<input id="depAmount" placeholder="Amount (KSH)">
 <textarea id="depMessage" placeholder="M-Pesa message"></textarea>
 
 <button onclick="submitDeposit()">Submit</button>
-<p id="depositStatus"></p>
+
+<p id="depositStatus" style="color:yellow"></p>
 
 </div>
 </div>
@@ -148,12 +205,16 @@ button {
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-<h3>Referral</h3>
 
-<p>Code: <b id="refCode"></b></p>
-<p>Earnings: KSH <span id="refEarnings">0</span></p>
+<h3>Invite Friends & Earn 10%</h3>
 
-<button onclick="copyRef()">Copy</button>
+<p>Your Code:</p>
+<h2 id="refCode">Loading...</h2>
+
+<p>Earnings:</p>
+<h3>KSH <span id="refEarnings">0</span></h3>
+
+<button onclick="copyRef()">Copy Code</button>
 
 </div>
 </div>
@@ -164,12 +225,13 @@ button {
 
 <h3>Profile</h3>
 
+<p>Email:</p>
 <p id="profileEmail"></p>
 
 <p>API KEY:</p>
-<p id="apiKey"></p>
+<p id="apiKey">Loading...</p>
 
-<button onclick="getApiKey()">Generate API</button>
+<button onclick="getApiKey()">Generate API Key</button>
 
 </div>
 </div>
@@ -179,45 +241,44 @@ button {
 
 <script>
 
-const API="https://unasemeje-backend-3.onrender.com/api";
-const token=localStorage.getItem("token");
+const API = "https://unasemeje-backend-3.onrender.com/api";
+const token = localStorage.getItem("token");
 
-let servicesData={};
-let selectedRate=0;
-let isAdmin=false;
+let servicesData = {};
+let selectedRate = 0;
 
-/* AUTH CHECK */
-if(!token) location.href="index.html";
+/* BLOCK BACK BUTTON */
+history.pushState(null, null, location.href);
+window.onpopstate = () => history.pushState(null, null, location.href);
+
+if (!token) location.href = "index.html";
 
 /* USER */
 function loadUser(){
-  const d=JSON.parse(atob(token.split(".")[1]));
-  userEmail.innerText=d.email;
-  profileEmail.innerText=d.email;
+  const d = JSON.parse(atob(token.split(".")[1]));
+  userEmail.innerText = d.email;
+  profileEmail.innerText = d.email;
 
-  // ADMIN CHECK
   if(d.email==="diasamratbarusz@gmail.com"){
-    isAdmin=true;
     alert("👑 Admin Access Enabled");
   }
 }
 
 /* BALANCE */
 async function loadBalance(){
-  const res=await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-  const data=await res.json();
-  balance.innerText=data.balance||0;
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+  balance.innerText = data.balance || 0;
 }
 
 /* SERVICES */
 async function loadServices(){
-  const res=await fetch(API+"/services");
-  const json=await res.json();
-  servicesData=json.data||{};
+  const res = await fetch(API+"/services");
+  const json = await res.json();
+  servicesData = json.data || {};
   renderPlatforms();
 }
 
-/* PLATFORM */
 function renderPlatforms(){
   platformList.innerHTML="";
   Object.keys(servicesData).forEach(p=>{
@@ -229,7 +290,6 @@ function renderPlatforms(){
   });
 }
 
-/* CATEGORY */
 function renderCategories(p){
   categoryList.innerHTML="";
   Object.keys(servicesData[p]||{}).forEach(c=>{
@@ -241,20 +301,17 @@ function renderCategories(p){
   });
 }
 
-/* SERVICES */
 function renderServices(p,c){
   serviceList.innerHTML="";
   (servicesData[p][c]||[]).forEach(s=>{
     const div=document.createElement("div");
     div.className="service";
     div.innerHTML=`<b>${s.name}</b><br>KSH ${Number(s.rate).toFixed(2)}`;
-
     div.onclick=()=>{
       orderServiceId.value=s.serviceId;
       selectedRate=Number(s.rate);
       showPage("order");
     };
-
     serviceList.appendChild(div);
   });
 }
@@ -267,7 +324,7 @@ function calcTotal(){
 
 /* ORDER */
 async function submitOrder(){
-  if(!orderServiceId.value || !orderLink.value || !orderQty.value){
+  if(!orderServiceId.value||!orderLink.value||!orderQty.value){
     return alert("Fill all fields");
   }
 
@@ -342,13 +399,8 @@ async function getApiKey(){
 }
 
 /* SUPPORT */
-function openWhatsApp(){
-  window.open("https://wa.me/254715509440");
-}
-
-function callSupport(){
-  window.location.href="tel:+254715509440";
-}
+function openWhatsApp(){ window.open("https://wa.me/254715509440"); }
+function callSupport(){ window.location.href="tel:+254715509440"; }
 
 /* NAV */
 function showPage(p){
