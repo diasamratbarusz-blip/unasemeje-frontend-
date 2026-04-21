@@ -1,145 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Place Order</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order | Unasemeje SMM</title>
+    <style>
+        /* ===== MODERN SMM STYLE ===== */
+        body {
+            background: #0b1220;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-<style>
-/* ===== ORDER PAGE MODERN STYLE ===== */
-body {
-    background: #0b1220;
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
+        .order-card {
+            width: 100%;
+            max-width: 450px;
+            background: #111827;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border: 1px solid #1f2937;
+        }
 
-.order-card {
-    width: 100%;
-    max-width: 520px;
-    background: #111827;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    animation: fadeIn 0.4s ease;
-}
+        h2 { margin-top: 0; color: #38bdf8; font-size: 1.5rem; }
 
-h2 {
-    margin-bottom: 10px;
-    color: #38bdf8;
-}
+        .service-info {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #38bdf8;
+        }
 
-.service-box {
-    background: #0f172a;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #1f2937;
-}
+        .service-info h3 { margin: 0; font-size: 14px; color: #94a3b8; }
+        .service-info p { margin: 5px 0 0 0; font-weight: bold; color: #f8fafc; }
 
-label {
-    font-size: 13px;
-    color: #94a3b8;
-}
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    border: 1px solid #1f2937;
-    background: #0b1220;
-    color: white;
-}
+        input {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #1f2937;
+            background: #0b1220;
+            color: white;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
 
-.amount-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 15px;
-}
+        input:focus { border-color: #38bdf8; outline: none; }
 
-.amount-grid button {
-    background: #1f2937;
-    color: white;
-    padding: 10px;
-    border: 1px solid #334155;
-    border-radius: 10px;
-    cursor: pointer;
-}
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-.amount-grid button:hover {
-    background: #38bdf8;
-    color: black;
-}
+        .amount-grid button {
+            background: #1f2937;
+            color: #94a3b8;
+            padding: 10px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-.price-box {
-    background: #0f172a;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #1f2937;
-    font-weight: bold;
-}
+        .amount-grid button:hover { background: #334155; color: white; }
 
-button.order-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #38bdf8, #22c55e);
-    border: none;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    color: black;
-    transition: 0.3s;
-}
+        .price-box {
+            background: rgba(56, 189, 248, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-button.order-btn:hover {
-    transform: scale(1.03);
-}
+        .price-label { color: #38bdf8; font-weight: bold; }
+        .price-value { font-size: 1.2rem; color: #22c55e; font-weight: 800; }
 
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(10px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-</style>
+        .order-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #38bdf8, #22c55e);
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #0b1220;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
 
+        .order-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
 </head>
 <body>
 
 <div class="order-card">
-
     <h2>Place Order</h2>
 
-    <div class="service-box" id="serviceInfo">
-        Loading service...
+    <div class="service-info">
+        <h3>Selected Service</h3>
+        <p id="serviceName">Loading service details...</p>
     </div>
 
-    <label>Link</label>
-    <input type="text" id="link" placeholder="https://">
+    <label for="link">Target Link</label>
+    <input type="text" id="link" placeholder="https://www.instagram.com/p/..." autocomplete="off">
 
-    <label>Quantity</label>
-    <input type="number" id="quantity" placeholder="Enter quantity">
+    <label for="quantity">Quantity</label>
+    <input type="number" id="quantity" placeholder="Min: 100" oninput="updatePrice()">
 
     <div class="amount-grid">
-        <button onclick="setQty(100)">100</button>
-        <button onclick="setQty(500)">500</button>
-        <button onclick="setQty(1000)">1000</button>
+        <button type="button" onclick="setQty(100)">100</button>
+        <button type="button" onclick="setQty(500)">500</button>
+        <button type="button" onclick="setQty(1000)">1000</button>
     </div>
 
     <div class="price-box">
-        Total Price: <span id="price">0</span> KSH
+        <span class="price-label">Total Cost:</span>
+        <span class="price-value"><span id="priceDisplay">0.00</span> KES</span>
     </div>
 
-    <button class="order-btn" onclick="placeOrder()">Place Order</button>
-
+    <button class="order-btn" id="submitBtn" onclick="placeOrder()">Confirm Order</button>
 </div>
 
-<script src="script.js"></script>
+<script>
+    // These would typically come from the URL or local storage
+    const urlParams = new URLSearchParams(window.location.search);
+    const serviceId = urlParams.get('id') || "101"; // Default for testing
+    const serviceRate = parseFloat(urlParams.get('rate')) || 0.50; // Rate per 1000
+    const name = urlParams.get('name') || "Followers Standard";
+
+    // Initialize Page
+    document.getElementById('serviceName').innerText = name;
+
+    function setQty(val) {
+        document.getElementById('quantity').value = val;
+        updatePrice();
+    }
+
+    function updatePrice() {
+        const qty = document.getElementById('quantity').value || 0;
+        const total = (serviceRate / 1000) * qty;
+        document.getElementById('priceDisplay').innerText = total.toFixed(2);
+    }
+
+    async function placeOrder() {
+        const link = document.getElementById('link').value;
+        const quantity = document.getElementById('quantity').value;
+        const btn = document.getElementById('submitBtn');
+
+        if (!link || !quantity || quantity <= 0) {
+            alert("Please provide a valid link and quantity.");
+            return;
+        }
+
+        // Disable button to prevent double-spending
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+
+        try {
+            const response = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: "USER_ID_HERE", // Replace with actual logged-in User ID
+                    serviceId: serviceId,
+                    link: link,
+                    quantity: parseInt(quantity),
+                    rate: serviceRate,
+                    serviceName: name
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert("Order Placed Successfully! Order ID: " + result.orderId);
+                window.location.href = "/history.html"; // Redirect to orders list
+            } else {
+                alert("Error: " + result.message);
+                btn.disabled = false;
+                btn.innerText = "Confirm Order";
+            }
+        } catch (error) {
+            console.error("Order failed:", error);
+            alert("Network error. Please check your connection.");
+            btn.disabled = false;
+            btn.innerText = "Confirm Order";
+        }
+    }
+</script>
 
 </body>
 </html>
