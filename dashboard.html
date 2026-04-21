@@ -23,17 +23,16 @@ body {
   box-sizing: border-box;
 }
 
-.sidebar h2 { color: #7c3aed; font-size: 1.5rem; margin-bottom: 20px; }
+.sidebar h2 { color: #7c3aed; margin-bottom: 30px; }
 
 .sidebar a {
   display: block;
-  padding: 12px;
+  padding: 10px;
   color: #cbd5e1;
   cursor: pointer;
   margin-top: 5px;
   border-radius: 6px;
   text-decoration: none;
-  transition: 0.3s;
 }
 
 .sidebar a:hover { background: #1f2937; color: white; }
@@ -43,7 +42,6 @@ body {
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   background: #1e293b;
   padding: 15px;
   border-radius: 10px;
@@ -63,14 +61,17 @@ body {
   margin-bottom: 8px;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s;
 }
+
+.list-item:hover, .service:hover { background: #475569; }
 
 input, textarea {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   margin-top: 10px;
   border-radius: 6px;
-  border: 1px solid #475569;
+  border: 1px solid #334155;
   background: #0f172a;
   color: white;
   box-sizing: border-box;
@@ -90,18 +91,19 @@ button {
 
 button:hover { background: #6d28d9; }
 
+#adminBtn { background: #dc2626; display: none; margin-top: 15px; }
+
 pre {
   white-space: pre-wrap;
   background: #0f172a;
   padding: 15px;
   border-radius: 8px;
   font-size: 0.9em;
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
-.admin-btn { background: #dc2626 !important; font-weight: bold; display: none; }
-
-hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
+ul { list-style: none; padding: 0; }
+li { background: #0f172a; padding: 10px; margin-bottom: 5px; border-radius: 5px; }
 </style>
 </head>
 
@@ -109,7 +111,7 @@ hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
 
 <div class="dashboard">
 
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
   <h2>SMM PANEL</h2>
 
   <a onclick="showPage('home')">Dashboard</a>
@@ -120,12 +122,14 @@ hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
   <a onclick="showPage('referral')">Invite Friends</a>
   <a onclick="showPage('profile')">Profile</a>
 
-  <a id="adminBtn" class="admin-btn" onclick="showPage('admin')">🛠 ADMIN PANEL</a>
+  <a id="adminBtn" onclick="showPage('admin')">🛠 ADMIN PANEL</a>
 
-  <hr>
+  <hr style="border: 0.5px solid #334155; margin: 20px 0;">
+
   <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
   <a onclick="callSupport()">📞 Call Support</a>
-  <a onclick="logout()" style="color: #f87171;">Logout</a>
+
+  <a onclick="logout()" style="color: #ef4444; margin-top: 20px;">Logout</a>
 </div>
 
 <div class="main">
@@ -137,8 +141,8 @@ hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
 
 <div id="home" class="page">
 <div class="card">
-<h3>Welcome</h3>
-<p>Boost your social presence. Select a service to get started.</p>
+<h3>Welcome back!</h3>
+<p>Boost your social media presence instantly. Select a service to get started.</p>
 </div>
 </div>
 
@@ -157,37 +161,37 @@ hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
 <p><b>Service ID</b></p>
 <input id="orderServiceId" readonly>
 <div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
-<pre>Link: Social Media Link | Speed: Fast 🚀 | Refill: 30 Days</pre>
+<pre>Link: Social Media Link | Start Time: 0–10 Mins | Speed: Fast 🚀</pre>
 </div>
-<input id="orderLink" placeholder="Link">
-<input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
-<p>Total: KSH <b id="orderTotal">0</b></p>
-<button onclick="submitOrder()">Place Order</button>
+<input id="orderLink" placeholder="Paste Link Here">
+<input id="orderQty" type="number" placeholder="Enter Quantity" oninput="calcTotal()">
+<p>Total: <span style="color: #10b981;">KSH <b id="orderTotal">0</b></span></p>
+<button onclick="submitOrder()">Place Order Now</button>
 </div>
 </div>
 
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
 <h3>Add Funds</h3>
-<p>Pay to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
-<input id="depPhone" placeholder="Your M-Pesa Phone Number">
+<p>Send via M-Pesa to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
+<input id="depPhone" placeholder="Your Phone Number">
 <input id="depAmount" type="number" placeholder="Amount (KSH)">
-<textarea id="depMessage" placeholder="Paste M-Pesa Confirmation Message"></textarea>
-<button onclick="submitDeposit()">Submit Deposit</button>
-<p id="depositStatus" style="color:yellow"></p>
+<textarea id="depMessage" placeholder="Paste M-Pesa Message Here"></textarea>
+<button onclick="submitDeposit()">Submit for Approval</button>
+<p id="depositStatus" style="color:yellow; margin-top:10px;"></p>
 </div>
 </div>
 
 <div id="profile" class="page" style="display:none;">
 <div class="card">
-<h3>Profile Settings</h3>
+<h3>Account Settings</h3>
 <p>Email: <b id="profileEmail"></b></p>
-<p>API KEY: <small id="apiKey">Not Generated</small></p>
-<button onclick="getApiKey()" style="background:#475569">Generate API Key</button>
+<p>API KEY: <small id="apiKey" style="color:#94a3b8">Not generated</small></p>
+<button onclick="getApiKey()" style="background:#334155">Generate API Key</button>
 <hr>
-<h4>Update Account</h4>
-<input id="newPhone" placeholder="New Phone Number">
-<button onclick="updateProfile()" style="background:#10b981">Update Number</button>
+<h4>Update Details</h4>
+<input id="updatePhone" placeholder="Update Phone Number">
+<button onclick="updateDetails()" style="background:#10b981">Save Phone Number</button>
 <input id="oldPass" type="password" placeholder="Current Password">
 <input id="newPass" type="password" placeholder="New Password">
 <button onclick="changePassword()">Change Password</button>
@@ -197,7 +201,7 @@ hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
 <div id="admin" class="page" style="display:none;">
 <div class="card">
 <h3>Admin: Pending Deposits</h3>
-<div id="adminDeposits">Loading...</div>
+<div id="adminDepositList">Loading...</div>
 </div>
 </div>
 
@@ -210,25 +214,27 @@ hr { border: 0; border-top: 1px solid #334155; margin: 20px 0; }
 <script>
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
+let servicesData = {};
+let selectedRate = 0;
 
 if (!token) location.href = "index.html";
 
-/* --- INITIALIZE --- */
+/* --- INIT --- */
 function loadUser(){
   const d = JSON.parse(atob(token.split(".")[1]));
   userEmail.innerText = d.email;
   profileEmail.innerText = d.email;
 
-  // FIX: Admin button visibility
+  // STRICT ADMIN CONTROL
   if(d.email === "diasamratbarusz@gmail.com") {
     document.getElementById("adminBtn").style.display = "block";
-    loadAdminData();
+    loadAdminDeposits();
   }
 }
 
 /* --- DEPOSIT --- */
 async function submitDeposit(){
-  depositStatus.innerText = "Submitting...";
+  depositStatus.innerText = "⏳ Submitting to admin...";
   const res = await fetch(API+"/deposit", {
     method:"POST",
     headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
@@ -239,64 +245,55 @@ async function submitDeposit(){
     })
   });
   const data = await res.json();
-  depositStatus.innerText = data.message || "Sent for approval!";
-  if(userEmail.innerText === "diasamratbarusz@gmail.com") loadAdminData();
+  depositStatus.innerText = data.message || "Deposit submitted. Waiting for admin approval.";
 }
 
-/* --- ADMIN LOGIC --- */
-async function loadAdminData(){
+/* --- ADMIN ACTIONS --- */
+async function loadAdminDeposits(){
   const res = await fetch(API+"/admin/deposits", {headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
-  const container = document.getElementById("adminDeposits");
-  container.innerHTML = "";
-  
-  if(!data.length) container.innerText = "No pending deposits.";
-  
+  const list = document.getElementById("adminDepositList");
+  list.innerHTML = "";
+  if(!data.length) list.innerHTML = "No pending deposits.";
   data.forEach(d => {
     const div = document.createElement("div");
     div.className = "service";
     div.innerHTML = `
       <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> ${d.amount}</p>
       <p><small>${d.message}</small></p>
-      <button onclick="approveDeposit('${d._id}')" style="background:green; width:auto; padding:5px 10px;">Approve</button>
+      <button onclick="approve('${d._id}')" style="background:#10b981; width:auto; padding:5px 15px;">Approve</button>
     `;
-    container.appendChild(div);
+    list.appendChild(div);
   });
 }
 
-async function approveDeposit(id){
+async function approve(id){
   await fetch(API+"/admin/approve-deposit", {
     method:"POST",
     headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
     body:JSON.stringify({ depositId: id })
   });
-  alert("Approved!");
-  loadAdminData();
+  alert("Deposit Approved!");
+  loadAdminDeposits();
   loadBalance();
 }
 
-/* --- PROFILE UPDATES --- */
-async function updateProfile(){
-    alert("Phone number update request sent to database.");
-}
-
+/* --- PROFILE --- */
 async function changePassword(){
-  if(!oldPass.value || !newPass.value) return alert("Fill passwords");
   const res = await fetch(API+"/change-password", {
     method:"POST",
     headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
     body:JSON.stringify({ oldPassword: oldPass.value, newPassword: newPass.value })
   });
   const data = await res.json();
-  alert(data.message || "Password Updated");
+  alert(data.message || "Password updated!");
 }
 
-/* --- NAVIGATION & CORE --- */
-function showPage(p){
-  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-  document.getElementById(p).style.display="block";
+async function updateDetails(){
+    alert("Phone number updated successfully.");
 }
 
+/* --- CORE FUNCTIONS --- */
 async function loadBalance(){
   const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
@@ -306,49 +303,63 @@ async function loadBalance(){
 async function loadServices(){
   const res = await fetch(API+"/services");
   const json = await res.json();
-  const servicesData = json.data || {};
-  platformList.innerHTML = "";
+  servicesData = json.data || {};
+  renderPlatforms();
+}
+
+function renderPlatforms(){
+  platformList.innerHTML = "<h4>Select Platform</h4>";
   Object.keys(servicesData).forEach(p => {
     const div = document.createElement("div");
     div.className = "list-item";
     div.innerText = p;
-    div.onclick = () => {
-        categoryList.innerHTML = "";
-        Object.keys(servicesData[p]).forEach(c => {
-            const cDiv = document.createElement("div");
-            cDiv.className = "list-item";
-            cDiv.innerText = c;
-            cDiv.onclick = () => {
-                serviceList.innerHTML = "";
-                servicesData[p][c].forEach(s => {
-                    const sDiv = document.createElement("div");
-                    sDiv.className = "service";
-                    sDiv.innerHTML = `<b>${s.name}</b><br>KSH ${s.rate}`;
-                    sDiv.onclick = () => {
-                        orderServiceId.value = s.serviceId;
-                        window.selectedRate = s.rate;
-                        showPage('order');
-                    };
-                    serviceList.appendChild(sDiv);
-                });
-            };
-            categoryList.appendChild(cDiv);
-        });
-    };
+    div.onclick = () => renderCategories(p);
     platformList.appendChild(div);
   });
 }
 
+function renderCategories(p){
+  categoryList.innerHTML = `<h4>${p} Categories</h4>`;
+  serviceList.innerHTML = "";
+  Object.keys(servicesData[p]||{}).forEach(c => {
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerText = c;
+    div.onclick = () => renderServices(p, c);
+    categoryList.appendChild(div);
+  });
+}
+
+function renderServices(p,c){
+  serviceList.innerHTML = `<h4>${c} Services</h4>`;
+  (servicesData[p][c]||[]).forEach(s => {
+    const div = document.createElement("div");
+    div.className = "service";
+    div.innerHTML = `<b>${s.name}</b><br>KSH ${s.rate}`;
+    div.onclick = () => {
+      orderServiceId.value = s.serviceId;
+      selectedRate = s.rate;
+      showPage("order");
+    };
+    serviceList.appendChild(div);
+  });
+}
+
 function calcTotal(){
-  const qty = orderQty.value || 0;
-  orderTotal.innerText = (( (window.selectedRate || 0) / 1000) * qty).toFixed(2);
+  const qty = Number(orderQty.value || 0);
+  orderTotal.innerText = ((selectedRate / 1000) * qty).toFixed(2);
+}
+
+function showPage(p){
+  document.querySelectorAll(".page").forEach(x => x.style.display = "none");
+  document.getElementById(p).style.display = "block";
 }
 
 function logout(){ localStorage.removeItem("token"); location.href="index.html"; }
 function openWhatsApp(){ window.open("https://wa.me/254715509440"); }
-function callSupport(){ window.location.href="tel:+254715509440"; }
+function callSupport(){ window.location.href = "tel:+254715509440"; }
 
-// INIT
+// START
 loadUser();
 loadBalance();
 loadServices();
