@@ -160,7 +160,15 @@
                 <h3>My Orders</h3>
                 <div style="overflow-x: auto;">
                     <table>
-                        <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Target Link</th>
+                                <th>Qty</th>
+                                <th>Cost</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
                         <tbody id="ordersList"></tbody>
                     </table>
                 </div>
@@ -329,8 +337,8 @@
             serviceId: document.getElementById("orderServiceId").value,
             link: document.getElementById("orderLink").value,
             quantity: document.getElementById("orderQty").value,
-            serviceName: document.getElementById("displayServiceName").innerText, // Added for record keeping
-            rate: selectedRate // Added rate
+            serviceName: document.getElementById("displayServiceName").innerText,
+            rate: selectedRate
         };
         if(!payload.link || !payload.quantity) return alert("Please fill all fields");
 
@@ -346,7 +354,6 @@
         const data = await res.json();
         if(data.success || data.message?.includes("placed")) {
             document.getElementById("successOverlay").style.display = "flex";
-            // Clear inputs for next order
             document.getElementById("orderLink").value = "";
             document.getElementById("orderQty").value = "";
             syncData();
@@ -357,10 +364,10 @@
         btn.innerText = "Place Order Now";
     }
 
-    // UPDATED LOAD ORDERS FUNCTION (FIXED VERSION)
+    // UPDATED LOAD ORDERS FUNCTION
     async function loadOrders() {
         const ordersList = document.getElementById("ordersList");
-        ordersList.innerHTML = "<tr><td colspan='4'>Updating statuses...</td></tr>";
+        ordersList.innerHTML = "<tr><td colspan='5'>Updating statuses...</td></tr>";
 
         try {
             const res = await fetch(`${API}/sync-orders`, { 
@@ -371,16 +378,18 @@
             ordersList.innerHTML = orders.map(o => {
                 const statusLower = (o.status || 'pending').toLowerCase().replace(/\s+/g, '');
                 
-                // FIX: Try to find the service name in common fields
-                const serviceDisplay = o.serviceName || o.service_name || o.name || `Service #${o.serviceId || o.service || '???'}`;
-                
-                // FIX: Try to find the cost in common fields (charge vs cost)
+                // DATA FALLBACKS: If one name fails, try the other
+                const serviceDisplay = o.serviceName || o.service_name || o.service || `Service #${o.serviceId}`;
                 const orderCost = o.cost || o.charge || 0;
+                const targetLink = o.link || o.target || '---';
 
                 return `
                     <tr>
                         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${serviceDisplay}">
                             ${serviceDisplay}
+                        </td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <a href="${targetLink}" target="_blank" style="color:var(--primary); text-decoration:none;">${targetLink}</a>
                         </td>
                         <td>${o.quantity || 0}</td>
                         <td>KES ${parseFloat(orderCost).toFixed(2)}</td>
@@ -392,10 +401,10 @@
                         </td>
                     </tr>
                 `;
-            }).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+            }).join('') || "<tr><td colspan='5'>No orders found.</td></tr>";
         } catch (error) {
             console.error("Order Load Error:", error);
-            ordersList.innerHTML = "<tr><td colspan='4' style='color:var(--danger)'>Error loading orders. Check console.</td></tr>";
+            ordersList.innerHTML = "<tr><td colspan='5' style='color:var(--danger)'>Error loading orders. Check console.</td></tr>";
         }
     }
 
