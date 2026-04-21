@@ -6,87 +6,18 @@
 <title>SMM Dashboard</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-}
-
-.dashboard { display: flex; }
-
-.sidebar {
-  width: 230px;
-  background: #111827;
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.sidebar a {
-  display: block;
-  padding: 10px;
-  color: #cbd5e1;
-  cursor: pointer;
-  margin-top: 5px;
-  border-radius: 6px;
-}
-
-.sidebar a:hover { background: #1f2937; }
-
-.main { flex: 1; padding: 20px; }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  background: #1e293b;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.card {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.list-item, .service {
-  background: #334155;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: none;
-  background: #0f172a;
-  color: white;
-}
-
-button {
-  margin-top: 10px;
-  padding: 10px;
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-small { color: #94a3b8; }
-
-pre {
-  white-space: pre-wrap;
-  background: #0f172a;
-  padding: 10px;
-  border-radius: 8px;
-}
+body { margin:0; font-family:Arial; background:#0f172a; color:white; }
+.dashboard { display:flex; }
+.sidebar { width:230px; background:#111827; min-height:100vh; padding:20px; }
+.sidebar a { display:block; padding:10px; color:#cbd5e1; cursor:pointer; margin-top:5px; border-radius:6px; }
+.sidebar a:hover { background:#1f2937; }
+.main { flex:1; padding:20px; }
+.navbar { display:flex; justify-content:space-between; background:#1e293b; padding:10px; border-radius:10px; margin-bottom:20px; }
+.card { background:#1e293b; padding:20px; border-radius:12px; margin-bottom:20px; }
+.list-item,.service { background:#334155; padding:10px; margin-bottom:8px; border-radius:8px; cursor:pointer; }
+input,textarea { width:100%; padding:10px; margin-top:10px; border-radius:6px; border:none; background:#0f172a; color:white; }
+button { margin-top:10px; padding:10px; background:#7c3aed; color:white; border:none; border-radius:6px; cursor:pointer; }
+pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px; }
 </style>
 </head>
 
@@ -96,28 +27,29 @@ pre {
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-  <h2>SMM PANEL</h2>
+<h2>SMM PANEL</h2>
 
-  <a onclick="showPage('home')">Dashboard</a>
-  <a onclick="showPage('services')">Services</a>
-  <a onclick="showPage('order')">Place Order</a>
-  <a onclick="showPage('orders')">Orders</a>
-  <a onclick="showPage('deposit')">Add Funds</a>
-  <a onclick="showPage('referral')">Invite Friends</a>
-  <a onclick="showPage('profile')">Profile</a>
+<a onclick="showPage('home')">Dashboard</a>
+<a onclick="showPage('services')">Services</a>
+<a onclick="showPage('order')">Place Order</a>
+<a onclick="showPage('orders')">Orders</a>
+<a onclick="showPage('deposit')">Add Funds</a>
+<a onclick="showPage('referral')">Invite Friends</a>
+<a onclick="showPage('profile')">Profile</a>
 
-  <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
-  <a onclick="callSupport()">📞 Call Support</a>
+<a id="adminBtn" onclick="showPage('admin')" style="display:none;">⚙️ Admin Panel</a>
 
-  <a onclick="logout()">Logout</a>
+<a onclick="openWhatsApp()">💬 WhatsApp</a>
+<a onclick="callSupport()">📞 Call</a>
+<a onclick="logout()">Logout</a>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
 <div class="navbar">
-  <div>👤 <b id="userEmail">Loading...</b></div>
-  <div>💰 Balance: KSH <span id="balance">0</span></div>
+<div>👤 <b id="userEmail">Loading...</b></div>
+<div>💰 KSH <span id="balance">0</span></div>
 </div>
 
 <!-- HOME -->
@@ -132,49 +64,24 @@ pre {
 <div id="services" class="page" style="display:none;">
 <div class="card">
 <h3>Services</h3>
-
 <div id="platformList"></div>
 <div id="categoryList"></div>
 <div id="serviceList"></div>
-
 </div>
 </div>
 
-<!-- ORDER PAGE -->
+<!-- ORDER -->
 <div id="order" class="page" style="display:none;">
 <div class="card">
-
 <h3>Place Order</h3>
 
-<p><b>Service ID</b></p>
 <input id="orderServiceId" readonly>
-
-<div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
-<h4>⚠️ Please Read the Description</h4>
-
-<pre>
-Link: Facebook Profile/Page Link
-Location: Worldwide 🌍
-Quality: High Quality Accounts
-Start Time: 0–10 Minutes
-Speed: Fast Delivery 🚀
-Drop Rate: Low Drop
-Refill Time: 30 Days ♻️
-
-Notes:
-- Do not place same link twice
-- Wait for completion before next order
-- Contact support if needed
-</pre>
-</div>
-
-<input id="orderLink" placeholder="Link (Facebook / Instagram / TikTok)">
+<input id="orderLink" placeholder="Link">
 <input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
 
 <p>Total: KSH <b id="orderTotal">0</b></p>
 
 <button onclick="submitOrder()">Place Order</button>
-
 </div>
 </div>
 
@@ -189,61 +96,51 @@ Notes:
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
-
 <h3>Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
-<p>Name: FAITH CHERUIYOT</p>
 
 <input id="depPhone" placeholder="Phone">
-<input id="depAmount" placeholder="Amount (KSH)">
+<input id="depAmount" placeholder="Amount">
 <textarea id="depMessage" placeholder="M-Pesa message"></textarea>
 
 <button onclick="submitDeposit()">Submit</button>
-
-<p id="depositStatus" style="color:yellow"></p>
-
+<p id="depositStatus"></p>
 </div>
 </div>
 
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-
-<h3>Invite Friends & Earn 10%</h3>
-
-<p>Your Code:</p>
-<h2 id="refCode">Loading...</h2>
-
-<p>Earnings:</p>
+<h3>Referral</h3>
+<h2 id="refCode"></h2>
 <h3>KSH <span id="refEarnings">0</span></h3>
-
-<button onclick="copyRef()">Copy Code</button>
-
 </div>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
-
 <h3>Profile</h3>
-
-<p>Email:</p>
 <p id="profileEmail"></p>
-
-<p>API KEY:</p>
-<p id="apiKey">Loading...</p>
-
+<p id="apiKey"></p>
 <button onclick="getApiKey()">Generate API Key</button>
+</div>
+</div>
 
-<hr>
+<!-- ADMIN -->
+<div id="admin" class="page" style="display:none;">
+<div class="card">
+<h3>Admin Panel</h3>
 
-<h4>Change Password</h4>
+<h4>Deposits</h4>
+<div id="adminDeposits"></div>
 
-<input id="oldPass" placeholder="Old Password">
-<input id="newPass" placeholder="New Password">
-<button onclick="changePassword()">Update Password</button>
+<h4>Users</h4>
+<div id="adminUsers"></div>
+
+<h4>Orders</h4>
+<div id="adminOrders"></div>
 
 </div>
 </div>
@@ -253,183 +150,169 @@ Notes:
 
 <script>
 
-const API = "https://unasemeje-backend-3.onrender.com/api";
-const token = localStorage.getItem("token");
+const API="https://unasemeje-backend-3.onrender.com/api";
+const token=localStorage.getItem("token");
+const ADMIN_EMAIL="diasamratbarusz@gmail.com";
 
-let servicesData = {};
-let selectedRate = 0;
+let servicesData={}, selectedRate=0;
 
-/* BLOCK BACK BUTTON */
-history.pushState(null, null, location.href);
-window.onpopstate = function () {
-  history.pushState(null, null, location.href);
-};
-
-if (!token) location.href = "index.html";
+if(!token) location.href="index.html";
 
 /* USER */
 function loadUser(){
-  const d = JSON.parse(atob(token.split(".")[1]));
-  document.getElementById("userEmail").innerText = d.email;
-  document.getElementById("profileEmail").innerText = d.email;
+const d=JSON.parse(atob(token.split(".")[1]));
+userEmail.innerText=d.email;
+profileEmail.innerText=d.email;
+
+if(d.email===ADMIN_EMAIL){
+document.getElementById("adminBtn").style.display="block";
+loadAdmin();
+}
 }
 
 /* BALANCE */
 async function loadBalance(){
-  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  document.getElementById("balance").innerText = data.balance || 0;
+const r=await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
+const d=await r.json();
+balance.innerText=d.balance||0;
 }
 
 /* SERVICES */
 async function loadServices(){
-  const res = await fetch(API+"/services");
-  const json = await res.json();
-  servicesData = json.data || {};
-  renderPlatforms();
+const r=await fetch(API+"/services");
+const j=await r.json();
+servicesData=j.data||{};
+renderPlatforms();
 }
 
-/* PLATFORM */
 function renderPlatforms(){
-  const c=document.getElementById("platformList");
-  c.innerHTML="";
-  Object.keys(servicesData).forEach(p=>{
-    const div=document.createElement("div");
-    div.className="list-item";
-    div.innerText=p;
-    div.onclick=()=>renderCategories(p);
-    c.appendChild(div);
-  });
+platformList.innerHTML="";
+Object.keys(servicesData).forEach(p=>{
+let div=document.createElement("div");
+div.className="list-item";
+div.innerText=p;
+div.onclick=()=>renderCategories(p);
+platformList.appendChild(div);
+});
 }
 
-/* CATEGORY */
 function renderCategories(p){
-  const c=document.getElementById("categoryList");
-  c.innerHTML="";
-  Object.keys(servicesData[p]||{}).forEach(t=>{
-    const div=document.createElement("div");
-    div.className="list-item";
-    div.innerText=t;
-    div.onclick=()=>renderServices(p,t);
-    c.appendChild(div);
-  });
+categoryList.innerHTML="";
+Object.keys(servicesData[p]||{}).forEach(c=>{
+let div=document.createElement("div");
+div.className="list-item";
+div.innerText=c;
+div.onclick=()=>renderServices(p,c);
+categoryList.appendChild(div);
+});
 }
 
-/* SERVICES → CLICK OPENS ORDER PAGE */
-function renderServices(p,t){
-  const c=document.getElementById("serviceList");
-  c.innerHTML="";
+function renderServices(p,c){
+serviceList.innerHTML="";
+(servicesData[p][c]||[]).forEach(s=>{
+let price=Number(s.rate||0);
 
-  (servicesData[p][t]||[]).forEach(s=>{
-    const price=Number(s.rate||0);
+let div=document.createElement("div");
+div.className="service";
+div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
 
-    const div=document.createElement("div");
-    div.className="service";
-    div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
+div.onclick=()=>{
+orderServiceId.value=s.serviceId;
+selectedRate=price;
+showPage("order");
+};
 
-    div.onclick=()=>{
-      document.getElementById("orderServiceId").value = s.serviceId;
-      selectedRate = price;
-      showPage("order");
-    };
-
-    c.appendChild(div);
-  });
+serviceList.appendChild(div);
+});
 }
 
 /* TOTAL */
 function calcTotal(){
-  const qty=document.getElementById("orderQty").value||0;
-  document.getElementById("orderTotal").innerText =
-    ((selectedRate/1000)*qty).toFixed(2);
+let q=orderQty.value||0;
+orderTotal.innerText=((selectedRate/1000)*q).toFixed(2);
 }
 
 /* ORDER */
 async function submitOrder(){
-  const res=await fetch(API+"/order",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({
-      serviceId:orderServiceId.value,
-      link:orderLink.value,
-      quantity:orderQty.value
-    })
-  });
-
-  const data=await res.json();
-  alert(data.message||data.error);
-  loadBalance();
+const r=await fetch(API+"/order",{
+method:"POST",
+headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
+body:JSON.stringify({
+serviceId:orderServiceId.value,
+link:orderLink.value,
+quantity:orderQty.value
+})
+});
+const d=await r.json();
+alert(d.message||d.error);
+loadBalance();
 }
 
 /* DEPOSIT */
 async function submitDeposit(){
-  document.getElementById("depositStatus").innerText =
-  "⏳ Your request is in progress... you will get results shortly";
-
-  await fetch(API+"/deposit",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({
-      phone:depPhone.value,
-      amount:depAmount.value,
-      message:depMessage.value
-    })
-  });
+depositStatus.innerText="Processing...";
+await fetch(API+"/deposit",{
+method:"POST",
+headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
+body:JSON.stringify({
+phone:depPhone.value,
+amount:depAmount.value,
+message:depMessage.value
+})
+});
 }
 
-/* SUPPORT */
-function openWhatsApp(){
-  window.open("https://wa.me/254715509440","_blank");
+/* ADMIN */
+async function loadAdmin(){
+const d=await (await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}})).json();
+adminDeposits.innerHTML="";
+d.forEach(x=>{
+let div=document.createElement("div");
+div.className="list-item";
+div.innerHTML=`${x.phone} - ${x.amount} <button onclick="approve('${x._id}')">Approve</button>`;
+adminDeposits.appendChild(div);
+});
+
+const u=await (await fetch(API+"/admin/users",{headers:{Authorization:"Bearer "+token}})).json();
+adminUsers.innerHTML="";
+u.forEach(x=>{
+let div=document.createElement("div");
+div.className="list-item";
+div.innerText=`${x.email} - ${x.balance}`;
+adminUsers.appendChild(div);
+});
+
+const o=await (await fetch(API+"/admin/orders",{headers:{Authorization:"Bearer "+token}})).json();
+adminOrders.innerHTML="";
+o.forEach(x=>{
+let div=document.createElement("div");
+div.className="list-item";
+div.innerText=`${x.service} - ${x.quantity}`;
+adminOrders.appendChild(div);
+});
 }
 
-function callSupport(){
-  window.location.href="tel:+254715509440";
+async function approve(id){
+await fetch(API+"/admin/approve-deposit/"+id,{
+method:"POST",
+headers:{Authorization:"Bearer "+token}
+});
+alert("Approved");
+loadAdmin();
 }
 
 /* NAV */
 function showPage(p){
-  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-  document.getElementById(p).style.display="block";
+document.querySelectorAll(".page").forEach(x=>x.style.display="none");
+document.getElementById(p).style.display="block";
 }
 
-/* REFRESH */
-function copyRef(){
-  navigator.clipboard.writeText(refCode.innerText);
-}
-
-/* PROFILE */
-async function getApiKey(){
-  const res=await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
-  const data=await res.json();
-  apiKey.innerText=data.apiKey;
-}
-
-async function changePassword(){
-  await fetch(API+"/change-password",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      Authorization:"Bearer "+token
-    },
-    body:JSON.stringify({
-      oldPassword:oldPass.value,
-      newPassword:newPass.value
-    })
-  });
-  alert("Updated");
-}
+/* SUPPORT */
+function openWhatsApp(){window.open("https://wa.me/254715509440");}
+function callSupport(){location.href="tel:+254715509440";}
 
 /* LOGOUT */
-function logout(){
-  localStorage.removeItem("token");
-  location.href="index.html";
-}
+function logout(){localStorage.removeItem("token");location.href="index.html";}
 
 /* INIT */
 loadUser();
