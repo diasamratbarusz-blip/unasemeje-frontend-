@@ -62,6 +62,7 @@
         .status { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-pending { background: #d97706; color: white; }
         .status-completed { background: var(--secondary); color: white; }
+        .status-processing, .status-inprogress { background: #3b82f6; color: white; }
 
         /* SUCCESS OVERLAY */
         #successOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; }
@@ -336,26 +337,39 @@
         btn.innerText = "Place Order Now";
     }
 
+    // UPDATED LOAD ORDERS FUNCTION
     async function loadOrders() {
-        const res = await fetch(`${API}/orders`, { headers: { Authorization: `Bearer ${token}` }});
-        const orders = await res.json();
-        
-        document.getElementById("ordersList").innerHTML = orders.map(o => `
-            <tr>
-                <td>${o.service || 'SMM Service'}</td>
-                <td>${o.quantity}</td>
-                <td>KES ${o.cost.toFixed(2)}</td>
-                <td>
-                    <span class="status status-${o.status}">${o.status}</span>
-                    ${o.status === 'Completed' || o.status === 'completed' ? 
-                        `<button onclick="requestRefill('${o._id}')" style="margin-top:5px; padding:4px 8px; font-size:10px; width:auto; background:var(--secondary)">Refill</button>` 
-                        : ''}
-                </td>
-            </tr>
-        `).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+        const ordersList = document.getElementById("ordersList");
+        ordersList.innerHTML = "<tr><td colspan='4'>Updating statuses...</td></tr>";
+
+        try {
+            // Call the sync route to fetch fresh data from provider
+            const res = await fetch(`${API}/sync-orders`, { 
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const orders = await res.json();
+            
+            ordersList.innerHTML = orders.map(o => {
+                const statusLower = o.status.toLowerCase().replace(/\s+/g, '');
+                return `
+                    <tr>
+                        <td>${o.service || 'SMM Service'}</td>
+                        <td>${o.quantity}</td>
+                        <td>KES ${o.cost.toFixed(2)}</td>
+                        <td>
+                            <span class="status status-${statusLower}">${o.status}</span>
+                            ${(statusLower === 'completed') ? 
+                                `<button onclick="requestRefill('${o._id}')" style="margin-top:5px; padding:4px 8px; font-size:10px; width:auto; background:var(--secondary)">Refill</button>` 
+                                : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+        } catch (error) {
+            ordersList.innerHTML = "<tr><td colspan='4' style='color:var(--danger)'>Error loading orders.</td></tr>";
+        }
     }
 
-    // Add this new function to handle the click
     async function requestRefill(orderId) {
         const res = await fetch(`${API}/refill`, {
             method: "POST",
