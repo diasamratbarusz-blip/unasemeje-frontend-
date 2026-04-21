@@ -130,14 +130,27 @@
 
         <div id="order" class="page">
             <div class="card">
+                <button onclick="showPage('services')" style="width:auto; padding:5px 10px; margin-bottom:15px; background: #334155;">← Change Service</button>
                 <h3>Confirm Order</h3>
-                <label>Service ID</label>
-                <input id="orderServiceId" readonly style="background:#0f172a; border-style:dashed;">
+                
+                <label>Selected Service</label>
+                <div id="displayServiceName" style="background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; color: var(--secondary); font-weight: bold;">-</div>
+                
+                <input id="orderServiceId" type="hidden">
+                
                 <label>Target Link</label>
                 <input id="orderLink" placeholder="Post, Profile, or Channel link">
+                
                 <label>Quantity</label>
                 <input id="orderQty" type="number" placeholder="Min: 100" oninput="calcTotal()">
-                <div style="margin-top:20px; font-size: 1.2rem;">Total Cost: <span style="color: var(--secondary); font-weight: 800;">KES <span id="orderTotal">0.00</span></span></div>
+                
+                <div style="margin-top:20px; background: rgba(124, 58, 237, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--text-dim);">Estimated Cost:</span>
+                        <span style="color: var(--secondary); font-weight: 800; font-size: 1.4rem;">KES <span id="orderTotal">0.00</span></span>
+                    </div>
+                </div>
+                
                 <button id="orderSubmitBtn" onclick="submitOrder()">Place Order Now</button>
             </div>
         </div>
@@ -288,7 +301,9 @@
             div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate} per 1k</span>`;
             div.onclick = () => {
                 document.getElementById("orderServiceId").value = s.serviceId;
+                document.getElementById("displayServiceName").innerText = s.name;
                 selectedRate = s.rate;
+                calcTotal(); // Reset total based on new rate
                 showPage('order');
             };
             list.appendChild(div);
@@ -313,7 +328,9 @@
         const payload = {
             serviceId: document.getElementById("orderServiceId").value,
             link: document.getElementById("orderLink").value,
-            quantity: document.getElementById("orderQty").value
+            quantity: document.getElementById("orderQty").value,
+            serviceName: document.getElementById("displayServiceName").innerText, // Added for record keeping
+            rate: selectedRate // Added rate
         };
         if(!payload.link || !payload.quantity) return alert("Please fill all fields");
 
@@ -329,6 +346,9 @@
         const data = await res.json();
         if(data.success || data.message?.includes("placed")) {
             document.getElementById("successOverlay").style.display = "flex";
+            // Clear inputs for next order
+            document.getElementById("orderLink").value = "";
+            document.getElementById("orderQty").value = "";
             syncData();
         } else {
             alert(data.error || "Order Failed. Insufficient balance?");
@@ -343,7 +363,6 @@
         ordersList.innerHTML = "<tr><td colspan='4'>Updating statuses...</td></tr>";
 
         try {
-            // Call the sync route to fetch fresh data from provider
             const res = await fetch(`${API}/sync-orders`, { 
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -353,13 +372,13 @@
                 const statusLower = o.status.toLowerCase().replace(/\s+/g, '');
                 return `
                     <tr>
-                        <td>${o.service || 'SMM Service'}</td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${o.serviceName || o.service || 'SMM Service'}</td>
                         <td>${o.quantity}</td>
-                        <td>KES ${o.cost.toFixed(2)}</td>
+                        <td>KES ${(o.cost || 0).toFixed(2)}</td>
                         <td>
                             <span class="status status-${statusLower}">${o.status}</span>
                             ${(statusLower === 'completed') ? 
-                                `<button onclick="requestRefill('${o._id}')" style="margin-top:5px; padding:4px 8px; font-size:10px; width:auto; background:var(--secondary)">Refill</button>` 
+                                `<button onclick="requestRefill('${o.providerOrderId || o._id}')" style="margin-top:5px; padding:4px 8px; font-size:10px; width:auto; background:var(--secondary)">Refill</button>` 
                                 : ''}
                         </td>
                     </tr>
@@ -399,14 +418,12 @@
 
     // ADMIN LOGIC
     async function loadAdminData() {
-        // Users
         const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
         const users = await uRes.json();
         document.getElementById("adminUserList").innerHTML = users.map(u => `
             <tr><td>${u.email}</td><td>${u.phone}</td><td>KES ${u.balance}</td></tr>
         `).join('');
 
-        // Pending Deposits
         const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
         const deposits = await dRes.json();
         document.getElementById("adminDepositList").innerHTML = deposits.filter(d => d.status === 'pending').map(d => `
@@ -446,7 +463,6 @@
 
     function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-    // BOOTSTRAP
     syncData();
     loadServices();
 </script>
