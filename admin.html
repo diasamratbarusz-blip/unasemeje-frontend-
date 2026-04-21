@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard</title>
+<title>Admin Dashboard | SMM Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #0f172a;
   color: white;
 }
@@ -20,21 +20,27 @@ body {
   position: fixed;
   background: #020617;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .sidebar h2 {
   color: #38bdf8;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 10px;
 }
 
 .sidebar a {
   display: block;
-  margin: 12px 0;
+  margin: 15px 0;
   cursor: pointer;
   color: #cbd5f5;
+  text-decoration: none;
+  font-size: 0.95rem;
 }
 
 .sidebar a:hover {
-  color: #fff;
+  color: #38bdf8;
 }
 
 /* MAIN */
@@ -48,32 +54,64 @@ body {
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 15px;
+  border: 1px solid #1f2937;
 }
 
 /* TABLE */
+.table-container {
+  overflow-x: auto;
+  background: #111827;
+  border-radius: 10px;
+  padding: 10px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
 }
 
-th, td {
-  padding: 10px;
+th {
+  text-align: left;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  padding: 12px;
+  border-bottom: 2px solid #1f2937;
+}
+
+td {
+  padding: 12px;
   border-bottom: 1px solid #1f2937;
+  font-size: 0.9rem;
 }
 
+/* BUTTONS */
 button {
-  padding: 6px 10px;
+  padding: 8px 12px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  background: #22c55e;
-  color: black;
   font-weight: bold;
+  transition: 0.2s;
 }
 
-.danger {
-  background: #ef4444;
+.btn-approve { background: #22c55e; color: #052e16; }
+.btn-view { background: #38bdf8; color: #082f49; margin-right: 5px; }
+.btn-edit { background: #f59e0b; color: #451a03; }
+.danger { background: #ef4444; color: white; }
+
+button:hover { opacity: 0.8; }
+
+.status-pending { color: #f59e0b; font-weight: bold; }
+.status-approved { color: #22c55e; font-weight: bold; }
+
+input {
+  background: #0f172a;
+  border: 1px solid #334155;
   color: white;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 </style>
 </head>
@@ -82,19 +120,19 @@ button {
 
 <div class="sidebar">
   <h2>ADMIN PANEL</h2>
-
-  <a onclick="loadUsers()">👤 Users</a>
-  <a onclick="loadDeposits()">💰 Deposits</a>
-  <a onclick="logout()">🚪 Logout</a>
+  <a onclick="loadUsers()">👤 All Users</a>
+  <a onclick="loadDeposits()">💰 Pending Deposits</a>
+  <a onclick="loadAllOrders()">📦 All Orders</a>
+  <hr style="border: 0; border-top: 1px solid #1e293b;">
+  <a onclick="logout()" style="color: #ef4444;">🚪 Logout</a>
 </div>
 
 <div class="main">
-  <h1>Admin Dashboard</h1>
+  <h1 id="pageTitle">Admin Dashboard</h1>
   <div id="content"></div>
 </div>
 
 <script>
-
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
@@ -107,151 +145,164 @@ function checkAdmin() {
 
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-
-    const isAdmin =
-      payload.email === "diasamratbarusz@gmail.com" ||
-      payload.phone === "0715509440";
+    // STRICT CONTROL: Email and Phone match
+    const isAdmin = payload.email === "diasamratbarusz@gmail.com" || payload.phone === "0715509440";
 
     if (!isAdmin) {
-      alert("Access denied");
+      alert("Unauthorized Access. This incident has been logged.");
       location.href = "dashboard.html";
     }
-
-  } catch {
+  } catch (e) {
     location.href = "index.html";
   }
 }
 
 checkAdmin();
 
-/* ================= FETCH SAFE ================= */
-async function safeFetch(url, options = {}) {
+/* ================= UTILITIES ================= */
+async function apiReq(endpoint, method = "GET", body = null) {
+  const options = {
+    method,
+    headers: { 
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+    }
+  };
+  if (body) options.body = JSON.stringify(body);
+
   try {
-    const res = await fetch(url, options);
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.error || "Request failed");
-
-    return data;
+    const res = await fetch(API + endpoint, options);
+    return await res.json();
   } catch (err) {
     console.error(err);
     return null;
   }
 }
 
-/* ================= USERS ================= */
+/* ================= LOAD USERS ================= */
 async function loadUsers() {
+  document.getElementById("pageTitle").innerText = "User Management";
+  document.getElementById("content").innerHTML = "<p>Fetching users...</p>";
 
-  document.getElementById("content").innerHTML =
-    "<p>Loading users...</p>";
+  const users = await apiReq("/admin/users");
+  if (!users) return;
 
-  const data = await safeFetch(API + "/admin/users", {
-    headers: { Authorization: "Bearer " + token }
-  });
-
-  if (!data) {
-    document.getElementById("content").innerHTML =
-      "<p style='color:red'>Failed to load users</p>";
-    return;
-  }
-
-  let html = `<h2>Users</h2>`;
-
-  data.forEach(u => {
-    html += `
-      <div class="card">
-        <b>Email:</b> ${u.email}<br>
-        <b>Phone:</b> ${u.phone || "N/A"}<br>
-        <b>Balance:</b> KES ${u.balance}
-      </div>
-    `;
-  });
-
-  document.getElementById("content").innerHTML = html;
-}
-
-/* ================= DEPOSITS ================= */
-async function loadDeposits() {
-
-  document.getElementById("content").innerHTML =
-    "<p>Loading deposits...</p>";
-
-  const data = await safeFetch(API + "/admin/deposits", {
-    headers: { Authorization: "Bearer " + token }
-  });
-
-  if (!data) {
-    document.getElementById("content").innerHTML =
-      "<p style='color:red'>Failed to load deposits</p>";
-    return;
-  }
-
-  let html = `<h2>Deposits</h2>`;
-
-  html += `
-  <table>
-    <tr>
-      <th>Phone</th>
-      <th>Amount</th>
-      <th>Transaction</th>
-      <th>Status</th>
-      <th>Action</th>
-    </tr>
+  let html = `
+    <div class="table-container">
+      <table>
+        <tr>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Balance (KES)</th>
+          <th>Actions</th>
+        </tr>
   `;
 
-  data.forEach(d => {
+  users.forEach(u => {
     html += `
       <tr>
-        <td>${d.phone}</td>
-        <td>KES ${d.amount}</td>
-        <td>${d.transactionCode || "N/A"}</td>
-        <td>${d.status}</td>
+        <td>${u.email}</td>
+        <td>${u.phone || 'N/A'}</td>
+        <td><b>${u.balance}</b></td>
         <td>
-          ${d.status !== "approved"
-            ? `<button onclick="approveDeposit('${d._id}')">Approve</button>`
-            : "✔ Done"}
+          <button class="btn-edit" onclick="manualBalance('${u._id}', '${u.email}')">+/- Balance</button>
         </td>
       </tr>
     `;
   });
 
-  html += `</table>`;
-
+  html += `</table></div>`;
   document.getElementById("content").innerHTML = html;
 }
 
-/* ================= APPROVE DEPOSIT ================= */
-async function approveDeposit(id) {
+/* ================= LOAD DEPOSITS ================= */
+async function loadDeposits() {
+  document.getElementById("pageTitle").innerText = "Pending Deposits";
+  document.getElementById("content").innerHTML = "<p>Fetching deposits...</p>";
 
-  if (!confirm("Approve this deposit?")) return;
+  const deposits = await apiReq("/admin/deposits");
+  if (!deposits) return;
 
-  const res = await safeFetch(API + "/admin/approve", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    },
-    body: JSON.stringify({ id })
+  let html = `<div class="table-container"><table>
+    <tr>
+      <th>User Phone</th>
+      <th>Amount</th>
+      <th>M-Pesa Msg/Code</th>
+      <th>Action</th>
+    </tr>`;
+
+  deposits.filter(d => d.status !== "approved").forEach(d => {
+    html += `
+      <tr>
+        <td>${d.phone}</td>
+        <td>KES ${d.amount}</td>
+        <td><small>${d.message || d.transactionCode}</small></td>
+        <td><button class="btn-approve" onclick="approveDeposit('${d._id}')">Approve</button></td>
+      </tr>
+    `;
   });
 
-  if (!res) {
-    alert("Failed");
-    return;
-  }
-
-  alert("Approved ✅");
-  loadDeposits();
+  html += `</table></div>`;
+  document.getElementById("content").innerHTML = deposits.length ? html : "<p>No pending deposits.</p>";
 }
 
-/* ================= LOGOUT ================= */
+/* ================= LOAD ALL ORDERS ================= */
+async function loadAllOrders() {
+    document.getElementById("pageTitle").innerText = "Platform Orders";
+    document.getElementById("content").innerHTML = "<p>Fetching all system orders...</p>";
+
+    const orders = await apiReq("/admin/orders"); // Assuming backend has this endpoint
+    if (!orders) {
+        document.getElementById("content").innerHTML = "<p>No orders found in system.</p>";
+        return;
+    }
+
+    let html = `<div class="table-container"><table>
+        <tr>
+            <th>User</th>
+            <th>Service ID</th>
+            <th>Link</th>
+            <th>Qty</th>
+            <th>Status</th>
+        </tr>`;
+
+    orders.forEach(o => {
+        html += `
+            <tr>
+                <td>${o.userEmail || 'User'}</td>
+                <td>${o.serviceId}</td>
+                <td><a href="${o.link}" target="_blank" style="color:#38bdf8">Link</a></td>
+                <td>${o.quantity}</td>
+                <td><span class="status-pending">${o.status || 'Pending'}</span></td>
+            </tr>
+        `;
+    });
+    html += `</table></div>`;
+    document.getElementById("content").innerHTML = html;
+}
+
+/* ================= ACTIONS ================= */
+async function approveDeposit(id) {
+  if (!confirm("Confirm this payment and add funds to user balance?")) return;
+  const res = await apiReq("/admin/approve", "POST", { id });
+  if (res) { alert("Approved Successfully ✅"); loadDeposits(); }
+}
+
+async function manualBalance(userId, email) {
+    const amt = prompt(`Enter amount to add to ${email} (Use minus sign to subtract, e.g., -500):`);
+    if (!amt || isNaN(amt)) return;
+
+    const res = await apiReq("/admin/update-balance", "POST", { userId, amount: parseFloat(amt) });
+    if (res) { alert("Balance Updated ✅"); loadUsers(); }
+}
+
 function logout() {
   localStorage.removeItem("token");
   location.href = "index.html";
 }
 
-/* ================= DEFAULT ================= */
+// Default view
 loadUsers();
-
 </script>
 
 </body>
