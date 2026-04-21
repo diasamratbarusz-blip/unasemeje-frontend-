@@ -1,417 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMM Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMM Dashboard | Unasemeje</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: white; }
+        .dashboard { display: flex; min-height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background: #111827; padding: 25px; box-sizing: border-box; border-right: 1px solid #1f2937; }
+        .sidebar h2 { color: #7c3aed; font-size: 20px; margin-bottom: 30px; letter-spacing: 1px; }
+        .sidebar a { display: block; padding: 12px; color: #cbd5e1; cursor: pointer; margin-top: 5px; border-radius: 8px; text-decoration: none; transition: 0.3s; }
+        .sidebar a:hover { background: #1f2937; color: #7c3aed; }
+        .sidebar .active { background: #7c3aed; color: white; }
+        
+        /* Main Area */
+        .main { flex: 1; padding: 30px; background: radial-gradient(circle at top right, #1e293b, #0f172a); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 15px 25px; border-radius: 15px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        
+        /* Cards & UI Elements */
+        .card { background: #1e293b; padding: 25px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #334155; }
+        .list-item, .service { background: #334155; padding: 15px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .list-item:hover, .service:hover { background: #475569; border-color: #7c3aed; }
+        
+        input, textarea { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 14px; width: 100%; background: #7c3aed; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.3s; }
+        button:hover { background: #6d28d9; transform: translateY(-2px); }
+        
+        #adminBtn { background: #dc2626; display: none; margin-top: 15px; }
+        .status-badge { padding: 4px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        .pending { background: #b45309; }
+        .completed { background: #059669; }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
-}
-
-.dashboard { display: flex; }
-
-.sidebar {
-  width: 230px;
-  background: #111827;
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.sidebar h2 { color: #7c3aed; margin-bottom: 30px; }
-
-.sidebar a {
-  display: block;
-  padding: 10px;
-  color: #cbd5e1;
-  cursor: pointer;
-  margin-top: 5px;
-  border-radius: 6px;
-  text-decoration: none;
-}
-
-.sidebar a:hover { background: #1f2937; color: white; }
-
-.main { flex: 1; padding: 20px; }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  background: #1e293b;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.card {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.list-item, .service {
-  background: #334155;
-  padding: 12px;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.list-item:hover, .service:hover { background: #475569; }
-
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: 1px solid #334155;
-  background: #0f172a;
-  color: white;
-  box-sizing: border-box;
-}
-
-button {
-  margin-top: 15px;
-  padding: 12px;
-  width: 100%;
-  background: #7c3aed;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover { background: #6d28d9; }
-
-#adminBtn { background: #dc2626; display: none; margin-top: 15px; }
-
-.admin-section {
-  border-bottom: 1px solid #475569;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-}
-
-pre {
-  white-space: pre-wrap;
-  background: #0f172a;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 0.85em;
-  color: #cbd5e1;
-}
-
-ul { list-style: none; padding: 0; }
-li { background: #0f172a; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 0.9em; }
-
-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85em; }
-th, td { text-align: left; padding: 10px; border-bottom: 1px solid #334155; }
-th { color: #94a3b8; }
-</style>
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; }
+        th { color: #94a3b8; font-size: 13px; text-transform: uppercase; }
+        pre { white-space: pre-wrap; background: #0b1120; padding: 15px; border-radius: 10px; border: 1px solid #1e293b; color: #38bdf8; font-family: monospace; }
+    </style>
 </head>
-
 <body>
 
 <div class="dashboard">
+    <div class="sidebar">
+        <h2>UNASEMEJE SMM</h2>
+        <a onclick="showPage('home')">🏠 Dashboard</a>
+        <a onclick="showPage('services')">🛒 Services</a>
+        <a onclick="showPage('orders')">📊 Order History</a>
+        <a onclick="showPage('deposit')">💰 Add Funds</a>
+        <a onclick="showPage('referral')">👥 Referrals</a>
+        <a onclick="showPage('profile')">👤 Profile</a>
+        <a id="adminBtn" onclick="showPage('admin')">🛠 ADMIN PANEL</a>
+        <hr style="border: 0.5px solid #334155; margin: 20px 0;">
+        <a onclick="openWhatsApp()">💬 WhatsApp Help</a>
+        <a onclick="logout()" style="color: #ef4444;">🚪 Logout</a>
+    </div>
 
-<div class="sidebar">
-  <h2>SMM PANEL</h2>
+    <div class="main">
+        <div class="navbar">
+            <div>👤 <b id="userEmail">User</b></div>
+            <div>💰 Wallet: <span style="color: #10b981; font-weight: 800;">KSH <span id="balance">0</span></span></div>
+        </div>
 
-  <a onclick="showPage('home')">Dashboard</a>
-  <a onclick="showPage('services')">Services</a>
-  <a onclick="showPage('order')">Place Order</a>
-  <a onclick="showPage('orders')">Orders</a>
-  <a onclick="showPage('deposit')">Add Funds</a>
-  <a onclick="showPage('referral')">Invite Friends</a>
-  <a onclick="showPage('profile')">Profile</a>
+        <div id="home" class="page">
+            <div class="card">
+                <h3>Welcome back!</h3>
+                <p>Select a service from the menu to boost your social media presence instantly.</p>
+                <button onclick="showPage('services')">Browse Services</button>
+            </div>
+        </div>
 
-  <a id="adminBtn" onclick="showPage('admin')">🛠 ADMIN PANEL</a>
+        <div id="services" class="page" style="display:none;">
+            <div class="card">
+                <h3>Select a Platform</h3>
+                <div id="platformList"></div>
+                <div id="categoryList"></div>
+                <div id="serviceList"></div>
+            </div>
+        </div>
 
-  <hr style="border: 0.5px solid #334155; margin: 20px 0;">
+        <div id="order" class="page" style="display:none;">
+            <div class="card">
+                <h3>Place Order</h3>
+                <label>Service ID</label>
+                <input id="orderServiceId" readonly>
+                <div style="margin-top:15px;"><pre>Link: Valid URL | Start: Instant | Quality: High</pre></div>
+                <input id="orderLink" placeholder="Paste Post/Profile Link Here">
+                <input id="orderQty" type="number" placeholder="Enter Quantity" oninput="calcTotal()">
+                <p>Total Cost: <span style="color: #10b981; font-size: 1.2em;">KSH <b id="orderTotal">0</b></span></p>
+                <button id="orderSubmitBtn" onclick="submitOrder()">Confirm & Pay</button>
+            </div>
+        </div>
 
-  <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
-  <a onclick="callSupport()">📞 Call Support</a>
+        <div id="orders" class="page" style="display:none;">
+            <div class="card">
+                <h3>Order History</h3>
+                <table>
+                    <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
+                    <tbody id="ordersList"></tbody>
+                </table>
+            </div>
+        </div>
 
-  <a onclick="logout()" style="color: #ef4444; margin-top: 20px;">Logout</a>
-</div>
+        <div id="deposit" class="page" style="display:none;">
+            <div class="card">
+                <h3>Add Funds (M-Pesa)</h3>
+                <p>Pay to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
+                <input id="depPhone" placeholder="Your M-Pesa Phone Number">
+                <input id="depAmount" type="number" placeholder="Amount Sent">
+                <textarea id="depMessage" placeholder="Paste full M-Pesa SMS here"></textarea>
+                <button onclick="submitDeposit()">Submit Payment</button>
+                <p id="depositStatus" style="color: #38bdf8; margin-top: 10px;"></p>
+            </div>
+        </div>
 
-<div class="main">
-
-<div class="navbar">
-  <div>👤 <b id="userEmail">Loading...</b></div>
-  <div>💰 Balance: KSH <span id="balance">0</span></div>
-</div>
-
-<div id="home" class="page">
-<div class="card">
-<h3>Welcome back!</h3>
-<p>Boost your social media presence instantly. Select a service to get started.</p>
-</div>
-</div>
-
-<div id="services" class="page" style="display:none;">
-<div class="card">
-<h3>Services</h3>
-<div id="platformList"></div>
-<div id="categoryList"></div>
-<div id="serviceList"></div>
-</div>
-</div>
-
-<div id="order" class="page" style="display:none;">
-<div class="card">
-<h3>Place Order</h3>
-<p><b>Service ID</b></p>
-<input id="orderServiceId" readonly>
-<div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
-<pre>Link: Social Media Link | Start Time: 0–10 Mins | Speed: Fast 🚀</pre>
-</div>
-<input id="orderLink" placeholder="Paste Link Here">
-<input id="orderQty" type="number" placeholder="Enter Quantity" oninput="calcTotal()">
-<p>Total: <span style="color: #10b981;">KSH <b id="orderTotal">0</b></span></p>
-<button onclick="submitOrder()">Place Order Now</button>
-</div>
-</div>
-
-<div id="deposit" class="page" style="display:none;">
-<div class="card">
-<h3>Add Funds</h3>
-<p>Send via M-Pesa to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
-<input id="depPhone" placeholder="Your Phone Number">
-<input id="depAmount" type="number" placeholder="Amount (KSH)">
-<textarea id="depMessage" placeholder="Paste M-Pesa Message Here"></textarea>
-<button onclick="submitDeposit()">Submit for Approval</button>
-<p id="depositStatus" style="color:yellow; margin-top:10px;"></p>
-</div>
-</div>
-
-<div id="profile" class="page" style="display:none;">
-<div class="card">
-<h3>Account Settings</h3>
-<p>Email: <b id="profileEmail"></b></p>
-<p>API KEY: <small id="apiKey" style="color:#94a3b8">Not generated</small></p>
-<button onclick="getApiKey()" style="background:#334155">Generate API Key</button>
-<hr>
-<h4>Update Details</h4>
-<input id="updatePhone" placeholder="Update Phone Number">
-<button onclick="updateDetails()" style="background:#10b981">Save Phone Number</button>
-<input id="oldPass" type="password" placeholder="Current Password">
-<input id="newPass" type="password" placeholder="New Password">
-<button onclick="changePassword()">Change Password</button>
-</div>
-</div>
-
-<div id="admin" class="page" style="display:none;">
-<div class="card">
-  <h2>Admin Control Center</h2>
-  
-  <div class="admin-section">
-    <h3>📥 Pending Deposits</h3>
-    <div id="adminDepositList">Loading...</div>
-  </div>
-
-  <div class="admin-section">
-    <h3>👥 User Management & Orders</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th>Balance</th>
-          <th>Total Orders</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="adminUserList"></tbody>
-    </table>
-  </div>
-</div>
-</div>
-
-<div id="orders" class="page" style="display:none;"><div class="card"><h3>Orders</h3><ul id="ordersList"></ul></div></div>
-<div id="referral" class="page" style="display:none;"><div class="card"><h3>Referrals</h3><p>Code: <b id="refCode"></b></p><p>Earnings: KSH <span id="refEarnings">0</span></p><button onclick="copyRef()">Copy</button></div></div>
-
-</div>
+        <div id="admin" class="page" style="display:none;">
+            <div class="card">
+                <h2>Admin Control</h2>
+                <h3>Pending Deposits</h3>
+                <div id="adminDepositList"></div>
+                <h3>Users</h3>
+                <table id="adminUserTable">
+                    <thead><tr><th>User</th><th>Balance</th><th>Actions</th></tr></thead>
+                    <tbody id="adminUserList"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-const API = "https://unasemeje-backend-3.onrender.com/api";
-const token = localStorage.getItem("token");
-let servicesData = {};
-let selectedRate = 0;
+    const API = "https://unasemeje-backend-3.onrender.com/api";
+    const token = localStorage.getItem("token");
+    let servicesData = {};
+    let selectedRate = 0;
 
-if (!token) location.href = "index.html";
+    if (!token) window.location.href = "index.html";
 
-/* --- INIT --- */
-function loadUser(){
-  try {
-    const d = JSON.parse(atob(token.split(".")[1]));
-    userEmail.innerText = d.email;
-    profileEmail.innerText = d.email;
+    // Setup user info from JWT
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        document.getElementById("userEmail").innerText = payload.email;
+        if(payload.email === "diasamratbarusz@gmail.com") {
+            document.getElementById("adminBtn").style.display = "block";
+        }
+    } catch(e) { logout(); }
 
-    if(d.email === "diasamratbarusz@gmail.com") {
-      document.getElementById("adminBtn").style.display = "block";
-      loadAdminData();
+    async function loadBalance() {
+        const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+        const data = await res.json();
+        document.getElementById("balance").innerText = data.balance.toFixed(2);
     }
-  } catch(e) { console.error(e); }
-}
 
-/* --- DEPOSIT & ADMIN --- */
-async function submitDeposit(){
-  depositStatus.innerText = "⏳ Submitting...";
-  const res = await fetch(API+"/deposit", {
-    method:"POST",
-    headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
-    body:JSON.stringify({
-      phone: depPhone.value,
-      amount: depAmount.value,
-      message: depMessage.value
-    })
-  });
-  const data = await res.json();
-  depositStatus.innerText = data.message || "Submitted for verification.";
-  if(userEmail.innerText === "diasamratbarusz@gmail.com") loadAdminData();
-}
+    async function loadServices() {
+        const res = await fetch(`${API}/services`);
+        const json = await res.json();
+        servicesData = json.data || {};
+        renderPlatforms();
+    }
 
-async function loadAdminData(){
-  // Load Pending Deposits
-  const depRes = await fetch(API+"/admin/deposits", {headers:{Authorization:"Bearer "+token}});
-  const deposits = await depRes.json();
-  const depContainer = document.getElementById("adminDepositList");
-  depContainer.innerHTML = "";
-  if(!deposits.length) depContainer.innerText = "No pending approvals.";
-  deposits.forEach(d => {
-    const div = document.createElement("div");
-    div.className = "service";
-    div.innerHTML = `
-      <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> ${d.amount}</p>
-      <p><small>${d.message}</small></p>
-      <button onclick="approve('${d._id}')" style="background:#10b981; width:auto; padding:5px 15px;">Verify & Approve</button>
-    `;
-    depContainer.appendChild(div);
-  });
+    function renderPlatforms() {
+        const list = document.getElementById("platformList");
+        list.innerHTML = "<h4>Platforms</h4>";
+        Object.keys(servicesData).forEach(p => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerText = p;
+            div.onclick = () => renderCategories(p);
+            list.appendChild(div);
+        });
+    }
 
-  // Load Users and Orders
-  const userRes = await fetch(API+"/admin/users", {headers:{Authorization:"Bearer "+token}});
-  const users = await userRes.json();
-  const userTable = document.getElementById("adminUserList");
-  userTable.innerHTML = "";
-  users.forEach(u => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${u.email}</td>
-      <td>KSH ${u.balance}</td>
-      <td>${u.orderCount || 0}</td>
-      <td><button onclick="viewUserOrders('${u.email}')" style="background:#334155; margin:0; padding:5px;">View Logs</button></td>
-    `;
-    userTable.appendChild(tr);
-  });
-}
+    function renderCategories(p) {
+        document.getElementById("platformList").style.display = "none";
+        const list = document.getElementById("categoryList");
+        list.innerHTML = `<button onclick="resetServices()" style="width:auto; padding:5px 10px; margin-bottom:10px;">← Back</button><h4>${p} Categories</h4>`;
+        Object.keys(servicesData[p]).forEach(c => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerText = c;
+            div.onclick = () => renderServicesList(p, c);
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
 
-async function approve(id){
-  await fetch(API+"/admin/approve-deposit", {
-    method:"POST",
-    headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
-    body:JSON.stringify({ depositId: id })
-  });
-  alert("Balance Updated!");
-  loadAdminData();
-  loadBalance();
-}
+    function renderServicesList(p, c) {
+        document.getElementById("categoryList").style.display = "none";
+        const list = document.getElementById("serviceList");
+        list.innerHTML = `<button onclick="renderCategories('${p}')" style="width:auto; padding:5px 10px; margin-bottom:10px;">← Back</button><h4>${c}</h4>`;
+        servicesData[p][c].forEach(s => {
+            const div = document.createElement("div");
+            div.className = "service";
+            div.innerHTML = `<b>${s.name}</b><br><span style="color:#10b981">KSH ${s.rate} per 1k</span>`;
+            div.onclick = () => {
+                document.getElementById("orderServiceId").value = s.serviceId;
+                selectedRate = s.rate;
+                showPage("order");
+            };
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
 
-async function viewUserOrders(email){
-    alert("Displaying activity logs for: " + email + "\n(Check browser console for detailed JSON logs during development)");
-    // Implementation would fetch API/admin/user-orders?email=...
-}
+    function resetServices() {
+        document.getElementById("platformList").style.display = "block";
+        document.getElementById("categoryList").style.display = "none";
+        document.getElementById("serviceList").style.display = "none";
+    }
 
-/* --- PROFILE & CORE --- */
-async function changePassword(){
-  const res = await fetch(API+"/change-password", {
-    method:"POST",
-    headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
-    body:JSON.stringify({ oldPassword: oldPass.value, newPassword: newPass.value })
-  });
-  const data = await res.json();
-  alert(data.message || "Updated!");
-}
+    function calcTotal() {
+        const qty = document.getElementById("orderQty").value || 0;
+        document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
+    }
 
-async function updateDetails(){ alert("Profile info synced."); }
+    async function submitOrder() {
+        const btn = document.getElementById("orderSubmitBtn");
+        const payload = {
+            serviceId: document.getElementById("orderServiceId").value,
+            link: document.getElementById("orderLink").value,
+            quantity: document.getElementById("orderQty").value
+        };
 
-async function loadBalance(){
-  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  balance.innerText = data.balance || 0;
-}
+        if(!payload.link || !payload.quantity) return alert("Please fill all fields");
 
-async function loadServices(){
-  const res = await fetch(API+"/services");
-  const json = await res.json();
-  servicesData = json.data || {};
-  renderPlatforms();
-}
+        btn.disabled = true;
+        btn.innerText = "Processing...";
 
-function renderPlatforms(){
-  platformList.innerHTML = "<h4>Select Platform</h4>";
-  Object.keys(servicesData).forEach(p => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = p;
-    div.onclick = () => renderCategories(p);
-    platformList.appendChild(div);
-  });
-}
+        const res = await fetch(`${API}/order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
 
-function renderCategories(p){
-  categoryList.innerHTML = `<h4>${p} Categories</h4>`;
-  serviceList.innerHTML = "";
-  Object.keys(servicesData[p]||{}).forEach(c => {
-    const div = document.createElement("div");
-    div.className = "list-item";
-    div.innerText = c;
-    div.onclick = () => renderServices(p, c);
-    categoryList.appendChild(div);
-  });
-}
+        const data = await res.json();
+        if(data.success) {
+            alert("Order placed successfully!");
+            loadBalance();
+            showPage("orders");
+        } else {
+            alert(data.error || "Order failed");
+        }
+        btn.disabled = false;
+        btn.innerText = "Confirm & Pay";
+    }
 
-function renderServices(p,c){
-  serviceList.innerHTML = `<h4>${c} Services</h4>`;
-  (servicesData[p][c]||[]).forEach(s => {
-    const div = document.createElement("div");
-    div.className = "service";
-    div.innerHTML = `<b>${s.name}</b><br>KSH ${s.rate}`;
-    div.onclick = () => {
-      orderServiceId.value = s.serviceId;
-      selectedRate = s.rate;
-      showPage("order");
-    };
-    serviceList.appendChild(div);
-  });
-}
+    async function loadOrders() {
+        const res = await fetch(`${API}/orders`, { headers: { Authorization: `Bearer ${token}` }});
+        const orders = await res.json();
+        const list = document.getElementById("ordersList");
+        list.innerHTML = orders.map(o => `
+            <tr>
+                <td>${o.service.substring(0,20)}...</td>
+                <td>${o.quantity}</td>
+                <td>KSH ${o.cost}</td>
+                <td><span class="status-badge pending">${o.status}</span></td>
+            </tr>
+        `).join('');
+    }
 
-function calcTotal(){
-  const qty = Number(orderQty.value || 0);
-  orderTotal.innerText = ((selectedRate / 1000) * qty).toFixed(2);
-}
+    async function submitDeposit() {
+        const res = await fetch(`${API}/deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({
+                phone: document.getElementById("depPhone").value,
+                amount: document.getElementById("depAmount").value,
+                message: document.getElementById("depMessage").value
+            })
+        });
+        const data = await res.json();
+        document.getElementById("depositStatus").innerText = data.message;
+    }
 
-function showPage(p){
-  document.querySelectorAll(".page").forEach(x => x.style.display = "none");
-  document.getElementById(p).style.display = "block";
-}
+    function showPage(p) {
+        document.querySelectorAll(".page").forEach(x => x.style.display = "none");
+        document.getElementById(p).style.display = "block";
+        if(p === 'orders') loadOrders();
+        if(p === 'services') resetServices();
+    }
 
-function logout(){ localStorage.removeItem("token"); location.href="index.html"; }
-function openWhatsApp(){ window.open("https://wa.me/254715509440"); }
-function callSupport(){ window.location.href = "tel:+254715509440"; }
+    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    function openWhatsApp() { window.open("https://wa.me/254715509440"); }
 
-// START
-loadUser();
-loadBalance();
-loadServices();
+    // Start
+    loadBalance();
+    loadServices();
 </script>
+
 </body>
 </html>
