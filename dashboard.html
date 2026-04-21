@@ -3,164 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unasemeje | Dashboard</title>
+    <title>Unasemeje SMM | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary: #7c3aed;
             --secondary: #10b981;
-            --bg-dark: #0b1222;
+            --bg-dark: #0f172a;
             --card-bg: #1e293b;
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --danger: #ef4444;
         }
 
-        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-main); }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
         .dashboard { display: flex; min-height: 100vh; }
 
-        /* --- SIDEBAR --- */
-        .sidebar { width: 260px; background: #0f172a; padding: 25px; border-right: 1px solid #1f2937; position: sticky; top: 0; height: 100vh; box-sizing: border-box; }
-        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; letter-spacing: 2px; text-align: center; }
-        .sidebar a { display: block; padding: 12px; color: var(--text-dim); cursor: pointer; border-radius: 10px; text-decoration: none; margin-bottom: 8px; transition: 0.3s; }
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; position: sticky; top: 0; height: 100vh; box-sizing: border-box; }
+        .sidebar h2 { color: var(--primary); font-size: 22px; margin-bottom: 30px; text-align: center; letter-spacing: 1px; }
+        .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); cursor: pointer; border-radius: 10px; text-decoration: none; margin-bottom: 8px; transition: 0.3s; }
+        .sidebar a i { margin-right: 12px; width: 20px; }
         .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; transform: translateX(5px); }
         #adminBtn { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 20px; }
         #adminBtn:hover { background: var(--danger); color: white; }
 
-        /* --- MAIN CONTENT --- */
-        .main { flex: 1; padding: 30px; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 25px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .balance-box { background: rgba(16, 185, 129, 0.1); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--secondary); color: var(--secondary); font-weight: bold; }
+        /* MAIN CONTENT */
+        .main { flex: 1; padding: 30px; max-width: 1200px; margin: 0 auto; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 25px; border-radius: 16px; margin-bottom: 30px; border: 1px solid #334155; }
+        .balance-badge { background: rgba(16, 185, 129, 0.1); padding: 10px 18px; border-radius: 10px; border: 1px solid var(--secondary); color: var(--secondary); font-weight: 800; font-size: 1.1rem; }
 
-        .card { background: var(--card-bg); padding: 25px; border-radius: 15px; margin-bottom: 25px; border: 1px solid #334155; }
-        .page { animation: fadeIn 0.3s ease-in-out; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #334155; animation: slideUp 0.4s ease-out; }
+        .page { display: none; }
+        .page.active { display: block; }
 
-        /* --- FORMS & TABLES --- */
-        input, textarea { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #334155; background: var(--bg-dark); color: white; box-sizing: border-box; font-size: 14px; }
-        button { margin-top: 20px; padding: 14px; width: 100%; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { opacity: 0.9; transform: translateY(-2px); }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { text-align: left; color: var(--text-dim); padding: 12px; border-bottom: 1px solid #334155; font-size: 13px; }
-        td { padding: 12px; border-bottom: 1px solid #334155; font-size: 14px; }
+        /* INTERACTIVE ELEMENTS */
+        .list-item, .service-item { background: #334155; padding: 16px; margin-bottom: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .list-item:hover, .service-item:hover { background: #475569; border-color: var(--primary); }
 
-        .status { padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        input, textarea, select { width: 100%; padding: 14px; margin-top: 10px; border-radius: 10px; border: 1px solid #334155; background: var(--bg-dark); color: white; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 15px; width: 100%; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        /* TABLES */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(15, 23, 42, 0.5); border-radius: 12px; overflow: hidden; }
+        th { text-align: left; color: var(--text-dim); padding: 15px; border-bottom: 1px solid #334155; font-size: 13px; text-transform: uppercase; }
+        td { padding: 15px; border-bottom: 1px solid #334155; font-size: 14px; }
+        .status { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
         .status-pending { background: #d97706; color: white; }
         .status-completed { background: var(--secondary); color: white; }
 
-        /* --- SUCCESS OVERLAY --- */
-        #confirmOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .success-card { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border: 2px solid var(--secondary); max-width: 350px; }
+        /* SUCCESS OVERLAY */
+        #successOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .success-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border: 2px solid var(--secondary); max-width: 400px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<div id="confirmOverlay">
-    <div class="success-card">
-        <div style="font-size: 50px; color: var(--secondary); margin-bottom: 15px;">✔</div>
-        <h2>Order Received!</h2>
-        <p>Your balance has been deducted. The order is now pending and will start shortly.</p>
-        <button onclick="closeConfirm()" style="background: var(--secondary);">View History</button>
+<div id="successOverlay">
+    <div class="success-box">
+        <i class="fas fa-check-circle" style="font-size: 60px; color: var(--secondary); margin-bottom: 20px;"></i>
+        <h2>Order Successful!</h2>
+        <p>Your order has been placed. Check the "My Orders" tab for status updates.</p>
+        <button onclick="closeSuccess()" style="background: var(--secondary);">Awesome, Let's go!</button>
     </div>
 </div>
 
 <div class="dashboard">
     <div class="sidebar">
         <h2>UNASEMEJE</h2>
-        <a onclick="showPage('home')" id="link-home" class="active">🏠 Home</a>
-        <a onclick="showPage('services')" id="link-services">🛒 Services & Order</a>
-        <a onclick="showPage('orders')" id="link-orders">📊 My Orders</a>
-        <a onclick="showPage('deposit')" id="link-deposit">💰 Add Funds</a>
-        <a onclick="showPage('referral')" id="link-referral">👥 Referrals</a>
-        <a onclick="showPage('profile')" id="link-profile">👤 Profile Settings</a>
-        <a id="adminBtn" onclick="showPage('admin')">🛠 ADMIN PANEL</a>
+        <a onclick="showPage('home')" id="nav-home"><i class="fas fa-home"></i> Home</a>
+        <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> New Order</a>
+        <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> My Orders</a>
+        <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> Add Funds</a>
+        <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> Referrals</a>
+        <a onclick="showPage('profile')" id="nav-profile"><i class="fas fa-user-cog"></i> Profile</a>
+        <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Admin Panel</a>
         <hr style="border: 0.5px solid #1f2937; margin: 20px 0;">
-        <a onclick="logout()" style="color: var(--danger);">🚪 Logout</a>
+        <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <div class="main">
         <div class="navbar">
-            <div>User: <b id="navEmail">Loading...</b></div>
-            <div class="balance-box">KES <span id="balance">0.00</span></div>
+            <div><i class="fas fa-user"></i> <span id="userEmail">Loading...</span></div>
+            <div class="balance-badge">KES <span id="balance">0.00</span></div>
         </div>
 
-        <div id="home" class="page">
+        <div id="home" class="page active">
             <div class="card">
-                <h3>Welcome Back</h3>
-                <p>Ready to grow your social media? Browse our services to get started instantly.</p>
+                <h3>Hello!</h3>
+                <p>Welcome to your personal dashboard. Use the sidebar to navigate through our SMM services.</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                    <div class="list-item" onclick="showPage('services')"><b>Place New Order</b></div>
+                    <div class="list-item" onclick="showPage('deposit')"><b>Deposit Funds</b></div>
+                </div>
             </div>
         </div>
 
-        <div id="services" class="page" style="display:none;">
+        <div id="services" class="page">
             <div class="card">
-                <div id="platformList"></div>
+                <div id="platformList"><h3>Select Platform</h3></div>
                 <div id="categoryList" style="display:none;"></div>
                 <div id="serviceList" style="display:none;"></div>
             </div>
         </div>
 
-        <div id="order" class="page" style="display:none;">
+        <div id="order" class="page">
             <div class="card">
                 <h3>Confirm Order</h3>
-                <label>Selected Service ID</label>
-                <input id="orderServiceId" readonly>
+                <label>Service ID</label>
+                <input id="orderServiceId" readonly style="background:#0f172a; border-style:dashed;">
                 <label>Target Link</label>
-                <input id="orderLink" placeholder="e.g. https://www.instagram.com/p/...">
+                <input id="orderLink" placeholder="Post, Profile, or Channel link">
                 <label>Quantity</label>
-                <input id="orderQty" type="number" placeholder="Enter amount" oninput="calcTotal()">
-                <div style="margin-top:15px; font-weight: bold;">Total Price: <span style="color: var(--secondary);">KES <span id="orderTotal">0.00</span></span></div>
+                <input id="orderQty" type="number" placeholder="Min: 100" oninput="calcTotal()">
+                <div style="margin-top:20px; font-size: 1.2rem;">Total Cost: <span style="color: var(--secondary); font-weight: 800;">KES <span id="orderTotal">0.00</span></span></div>
                 <button id="orderSubmitBtn" onclick="submitOrder()">Place Order Now</button>
             </div>
         </div>
 
-        <div id="orders" class="page" style="display:none;">
+        <div id="orders" class="page">
             <div class="card">
-                <h3>Order History</h3>
-                <table>
-                    <thead><tr><th>Service Name</th><th>Quantity</th><th>Cost</th><th>Status</th></tr></thead>
-                    <tbody id="ordersList"></tbody>
-                </table>
+                <h3>My Orders</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
+                        <tbody id="ordersList"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <div id="referral" class="page" style="display:none;">
+        <div id="referral" class="page">
             <div class="card">
-                <h3>Invite & Earn 10%</h3>
-                <p>Earn commissions every time your friends add funds and place orders!</p>
-                <div style="background: #0f172a; padding: 20px; border-radius: 10px; border: 1px dashed var(--primary);">
-                    <p>Your Referral Code: <b id="refCode" style="color: var(--primary);">...</b></p>
+                <h3>Invite Friends & Earn</h3>
+                <p>Earn 10% commission on every purchase your friends make.</p>
+                <div style="background: #0f172a; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px dashed var(--primary);">
+                    <p>Referral Code: <b id="refCode" style="color: var(--primary);">...</b></p>
                     <p>Invite Link: <br><small id="refLink" style="color: var(--text-dim);"></small></p>
                 </div>
-                <h4 style="margin-top:20px;">Earnings: <span style="color: var(--secondary);">KES <span id="refEarnings">0.00</span></span></h4>
+                <h4>Earnings: <span style="color: var(--secondary);">KES <span id="refEarnings">0.00</span></span></h4>
             </div>
         </div>
 
-        <div id="profile" class="page" style="display:none;">
+        <div id="profile" class="page">
             <div class="card">
-                <h3>Profile Information</h3>
+                <h3>Profile Settings</h3>
                 <p>Email: <b id="profEmail">...</b></p>
                 <p>Phone: <b id="profPhone">...</b></p>
                 <hr style="border-color: #334155;">
                 <h4>Developer API</h4>
-                <p><small>Use this key to automate orders via your own scripts.</small></p>
-                <div style="background: #0b1222; padding: 10px; border-radius: 5px; font-family: monospace; color: var(--primary);">
-                    API_KEY: <span id="apiKey">USM-7712-XXXX-9901</span>
+                <div style="background: #0f172a; padding: 15px; border-radius: 8px; font-family: monospace; color: var(--secondary);">
+                    KEY: <span id="profApiKey">USM-7712-44X-9122</span>
                 </div>
                 <hr style="border-color: #334155;">
                 <h4>Security</h4>
+                <input type="password" id="oldPass" placeholder="Current Password">
                 <input type="password" id="newPass" placeholder="New Password">
-                <button onclick="alert('Password updated locally.')" style="width: auto; padding: 10px 20px;">Update Password</button>
+                <button style="width: auto; padding: 10px 20px;">Update Password</button>
             </div>
         </div>
 
-        <div id="admin" class="page" style="display:none;">
+        <div id="deposit" class="page">
             <div class="card">
-                <h2>Admin: Pending Deposits</h2>
+                <h3>Add Funds (M-Pesa)</h3>
+                <p>Send funds to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
+                <input id="depPhone" placeholder="M-Pesa Phone Number">
+                <input id="depAmount" type="number" placeholder="Amount (KES)">
+                <textarea id="depMessage" rows="3" placeholder="Paste full M-Pesa SMS here"></textarea>
+                <button onclick="submitDeposit()">Submit Deposit</button>
+                <p id="depStatus" style="text-align: center; color: var(--secondary); margin-top:10px;"></p>
+            </div>
+        </div>
+
+        <div id="admin" class="page">
+            <div class="card">
+                <h2>Admin Management</h2>
+                <h3>Pending Deposits</h3>
                 <div id="adminDepositList"></div>
             </div>
             <div class="card">
-                <h2>Admin: User Registry</h2>
+                <h3>All Users</h3>
                 <table>
                     <thead><tr><th>Email</th><th>Phone</th><th>Balance</th></tr></thead>
                     <tbody id="adminUserList"></tbody>
@@ -178,77 +203,91 @@
 
     if (!token) window.location.href = "index.html";
 
-    // Initial Data Sync
-    async function syncAccount() {
+    // CORE: Fetch User Data
+    async function syncData() {
         const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
         const user = await res.json();
         
-        document.getElementById("navEmail").innerText = user.email;
-        document.getElementById("balance").innerText = user.balance.toFixed(2);
+        document.getElementById("userEmail").innerText = user.email;
+        document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
         
-        // Referral Page
+        // Profile
+        document.getElementById("profEmail").innerText = user.email;
+        document.getElementById("profPhone").innerText = user.phone || "Not Set";
+        
+        // Referrals
         document.getElementById("refCode").innerText = user.referralCode || "N/A";
         document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
         document.getElementById("refLink").innerText = `${window.location.origin}/register.html?ref=${user.referralCode}`;
 
-        // Profile Page
-        document.getElementById("profEmail").innerText = user.email;
-        document.getElementById("profPhone").innerText = user.phone || "None";
-
         if(user.email === "diasamratbarusz@gmail.com") {
-            document.getElementById("adminBtn").style.display = "block";
+            document.getElementById("adminBtn").style.display = "flex";
             loadAdminData();
         }
     }
 
-    async function loadOrders() {
-        const res = await fetch(`${API}/orders`, { headers: { Authorization: `Bearer ${token}` }});
-        const orders = await res.json();
-        const list = document.getElementById("ordersList");
-        
-        // FIX: Using o.service (the name saved in your DB) instead of undefined variables
-        list.innerHTML = orders.map(o => `
-            <tr>
-                <td>${o.service || 'SMM Service'}</td>
-                <td>${o.quantity}</td>
-                <td>KES ${o.cost.toFixed(2)}</td>
-                <td><span class="status status-${o.status}">${o.status}</span></td>
-            </tr>
-        `).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+    // SERVICES LOGIC
+    async function loadServices() {
+        const res = await fetch(`${API}/services`);
+        const json = await res.json();
+        servicesData = json.data || {};
+        renderPlatforms();
     }
 
-    async function loadAdminData() {
-        // Users List
-        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
-        const users = await uRes.json();
-        document.getElementById("adminUserList").innerHTML = users.map(u => `
-            <tr><td>${u.email}</td><td>${u.phone}</td><td>KES ${u.balance}</td></tr>
-        `).join('');
-
-        // Deposits
-        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
-        const deposits = await dRes.json();
-        const depCont = document.getElementById("adminDepositList");
-        const pending = deposits.filter(d => d.status === 'pending');
-        
-        depCont.innerHTML = pending.map(d => `
-            <div class="card" style="border-left: 4px solid #fbbf24;">
-                <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
-                <p><small>${d.message}</small></p>
-                <button onclick="approveDep('${d._id}')" style="background:var(--secondary); width:auto; padding:8px 15px;">Approve & Add Funds</button>
-            </div>
-        `).join('') || "No pending deposits.";
-    }
-
-    async function approveDep(id) {
-        const res = await fetch(`${API}/admin/approve-deposit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ depositId: id })
+    function renderPlatforms() {
+        const list = document.getElementById("platformList");
+        list.innerHTML = "<h3>Select Platform</h3>";
+        Object.keys(servicesData).forEach(p => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerText = p;
+            div.onclick = () => renderCategories(p);
+            list.appendChild(div);
         });
-        alert("Success: User balance updated.");
-        loadAdminData();
-        syncAccount();
+    }
+
+    function renderCategories(p) {
+        document.getElementById("platformList").style.display = "none";
+        const list = document.getElementById("categoryList");
+        list.innerHTML = `<button onclick="resetServices()" style="width:auto; padding:5px 10px; margin-bottom:15px;">← Back</button><h3>${p} Categories</h3>`;
+        Object.keys(servicesData[p]).forEach(c => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerText = c;
+            div.onclick = () => renderServicesList(p, c);
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
+
+    function renderServicesList(p, c) {
+        document.getElementById("categoryList").style.display = "none";
+        const list = document.getElementById("serviceList");
+        list.innerHTML = `<button onclick="renderCategories('${p}')" style="width:auto; padding:5px 10px; margin-bottom:15px;">← Back</button><h3>${c}</h3>`;
+        servicesData[p][c].forEach(s => {
+            const div = document.createElement("div");
+            div.className = "service-item";
+            div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate} per 1k</span>`;
+            div.onclick = () => {
+                document.getElementById("orderServiceId").value = s.serviceId;
+                selectedRate = s.rate;
+                showPage('order');
+            };
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
+
+    function resetServices() {
+        document.getElementById("platformList").style.display = "block";
+        document.getElementById("categoryList").style.display = "none";
+        document.getElementById("serviceList").style.display = "none";
+    }
+
+    // ORDER LOGIC
+    function calcTotal() {
+        const qty = document.getElementById("orderQty").value || 0;
+        document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
     }
 
     async function submitOrder() {
@@ -258,8 +297,7 @@
             link: document.getElementById("orderLink").value,
             quantity: document.getElementById("orderQty").value
         };
-
-        if(!payload.link || !payload.quantity) return alert("Fill all fields");
+        if(!payload.link || !payload.quantity) return alert("Please fill all fields");
 
         btn.disabled = true;
         btn.innerText = "Processing...";
@@ -271,39 +309,98 @@
         });
 
         const data = await res.json();
-        if(data.message.includes("success")) {
-            document.getElementById("confirmOverlay").style.display = "flex";
+        if(data.success || data.message?.includes("placed")) {
+            document.getElementById("successOverlay").style.display = "flex";
+            syncData();
         } else {
-            alert(data.error || "Order Failed");
+            alert(data.error || "Order Failed. Insufficient balance?");
         }
         btn.disabled = false;
         btn.innerText = "Place Order Now";
     }
 
+    async function loadOrders() {
+        const res = await fetch(`${API}/orders`, { headers: { Authorization: `Bearer ${token}` }});
+        const orders = await res.json();
+        document.getElementById("ordersList").innerHTML = orders.map(o => `
+            <tr>
+                <td>${o.service || 'SMM Service'}</td>
+                <td>${o.quantity}</td>
+                <td>KES ${o.cost.toFixed(2)}</td>
+                <td><span class="status status-${o.status}">${o.status}</span></td>
+            </tr>
+        `).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+    }
+
+    // DEPOSIT LOGIC
+    async function submitDeposit() {
+        const status = document.getElementById("depStatus");
+        status.innerText = "Submitting...";
+        const res = await fetch(`${API}/deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({
+                phone: document.getElementById("depPhone").value,
+                amount: document.getElementById("depAmount").value,
+                message: document.getElementById("depMessage").value
+            })
+        });
+        const data = await res.json();
+        status.innerText = data.message;
+    }
+
+    // ADMIN LOGIC
+    async function loadAdminData() {
+        // Users
+        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+        const users = await uRes.json();
+        document.getElementById("adminUserList").innerHTML = users.map(u => `
+            <tr><td>${u.email}</td><td>${u.phone}</td><td>KES ${u.balance}</td></tr>
+        `).join('');
+
+        // Pending Deposits
+        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+        const deposits = await dRes.json();
+        document.getElementById("adminDepositList").innerHTML = deposits.filter(d => d.status === 'pending').map(d => `
+            <div class="card" style="border-left: 5px solid yellow;">
+                <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
+                <p><small>${d.message}</small></p>
+                <button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Verify & Approve</button>
+            </div>
+        `).join('') || "No pending approvals.";
+    }
+
+    async function approveDep(id) {
+        await fetch(`${API}/admin/approve-deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ depositId: id })
+        });
+        alert("Approved!");
+        loadAdminData();
+        syncData();
+    }
+
+    // UI NAVIGATION
     function showPage(p) {
-        document.querySelectorAll(".page").forEach(x => x.style.display = "none");
+        document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
         document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
-        document.getElementById(p).style.display = "block";
-        document.getElementById(`link-${p}`)?.classList.add("active");
+        document.getElementById(p).classList.add("active");
+        document.getElementById(`nav-${p}`)?.classList.add("active");
         if(p === 'orders') loadOrders();
-        syncAccount();
+        if(p === 'services') resetServices();
     }
 
-    function closeConfirm() {
-        document.getElementById("confirmOverlay").style.display = "none";
+    function closeSuccess() {
+        document.getElementById("successOverlay").style.display = "none";
         showPage('orders');
-    }
-
-    function calcTotal() {
-        const qty = document.getElementById("orderQty").value || 0;
-        document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
     }
 
     function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-    // Start
-    syncAccount();
-    // loadServices() logic remains the same as previous functional versions.
+    // BOOTSTRAP
+    syncData();
+    loadServices();
 </script>
 </body>
 </html>
