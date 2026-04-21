@@ -8,17 +8,49 @@
 <style>
 body { margin:0; font-family:Arial; background:#0f172a; color:white; }
 .dashboard { display:flex; }
-.sidebar { width:230px; background:#111827; min-height:100vh; padding:20px; }
-.sidebar a { display:block; padding:10px; color:#cbd5e1; cursor:pointer; margin-top:5px; border-radius:6px; }
+
+.sidebar {
+  width:230px; background:#111827; min-height:100vh; padding:20px;
+}
+
+.sidebar a {
+  display:block; padding:10px; color:#cbd5e1; cursor:pointer;
+  margin-top:5px; border-radius:6px;
+}
+
 .sidebar a:hover { background:#1f2937; }
+
 .main { flex:1; padding:20px; }
-.navbar { display:flex; justify-content:space-between; background:#1e293b; padding:10px; border-radius:10px; margin-bottom:20px; }
-.card { background:#1e293b; padding:20px; border-radius:12px; margin-bottom:20px; }
-.list-item,.service { background:#334155; padding:10px; margin-bottom:8px; border-radius:8px; cursor:pointer; }
-input,textarea { width:100%; padding:10px; margin-top:10px; border-radius:6px; border:none; background:#0f172a; color:white; }
-button { margin-top:10px; padding:10px; background:#7c3aed; color:white; border:none; border-radius:6px; cursor:pointer; }
-pre { white-space:pre-wrap; background:#0f172a; padding:10px; border-radius:8px; }
-small { color:#94a3b8; }
+
+.navbar {
+  display:flex; justify-content:space-between;
+  background:#1e293b; padding:10px;
+  border-radius:10px; margin-bottom:20px;
+}
+
+.card {
+  background:#1e293b; padding:20px;
+  border-radius:12px; margin-bottom:20px;
+}
+
+.list-item,.service {
+  background:#334155; padding:10px;
+  margin-bottom:8px; border-radius:8px;
+  cursor:pointer;
+}
+
+input,textarea {
+  width:100%; padding:10px; margin-top:10px;
+  border-radius:6px; border:none;
+  background:#0f172a; color:white;
+}
+
+button {
+  margin-top:10px; padding:10px;
+  background:#7c3aed; color:white;
+  border:none; border-radius:6px;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -26,36 +58,37 @@ small { color:#94a3b8; }
 
 <div class="dashboard">
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-<h2>SMM PANEL</h2>
+  <h2>SMM PANEL</h2>
 
-<a onclick="showPage('home')">Dashboard</a>
-<a onclick="showPage('services')">Services</a>
-<a onclick="showPage('order')">Place Order</a>
-<a onclick="showPage('orders')">Orders</a>
-<a onclick="showPage('deposit')">Add Funds</a>
-<a onclick="showPage('referral')">Invite Friends</a>
-<a onclick="showPage('profile')">Profile</a>
+  <a onclick="showPage('home')">Dashboard</a>
+  <a onclick="showPage('services')">Services</a>
+  <a onclick="showPage('order')">Place Order</a>
+  <a onclick="showPage('orders')">Orders</a>
+  <a onclick="showPage('deposit')">Add Funds</a>
+  <a onclick="showPage('referral')">Invite Friends</a>
+  <a onclick="showPage('profile')">Profile</a>
 
-<a id="adminBtn" onclick="showPage('admin')" style="display:none;">⚙️ Admin Panel</a>
+  <a onclick="openWhatsApp()">💬 WhatsApp</a>
+  <a onclick="callSupport()">📞 Call</a>
 
-<a onclick="openWhatsApp()">💬 WhatsApp</a>
-<a onclick="callSupport()">📞 Call</a>
-<a onclick="logout()">Logout</a>
+  <a onclick="logout()">Logout</a>
 </div>
 
+<!-- MAIN -->
 <div class="main">
 
 <div class="navbar">
-<div>👤 <b id="userEmail">Loading...</b></div>
-<div>💰 Balance: KSH <span id="balance">0</span></div>
+  <div>👤 <b id="userEmail">Loading...</b></div>
+  <div>💰 KSH <span id="balance">0</span></div>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page">
 <div class="card">
 <h3>Welcome</h3>
-<p>Select a service to place order</p>
+<p>Choose service and place order</p>
 </div>
 </div>
 
@@ -72,15 +105,17 @@ small { color:#94a3b8; }
 <!-- ORDER -->
 <div id="order" class="page" style="display:none;">
 <div class="card">
+
 <h3>Place Order</h3>
 
-<input id="orderServiceId" readonly>
+<input id="orderServiceId" readonly placeholder="Service ID">
 <input id="orderLink" placeholder="Link">
 <input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
 
 <p>Total: KSH <b id="orderTotal">0</b></p>
 
 <button onclick="submitOrder()">Place Order</button>
+
 </div>
 </div>
 
@@ -95,10 +130,10 @@ small { color:#94a3b8; }
 <!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
+
 <h3>Add Funds</h3>
 
 <p>Send to: <b>0715509440</b></p>
-<p>Name: FAITH CHERUIYOT</p>
 
 <input id="depPhone" placeholder="Phone">
 <input id="depAmount" placeholder="Amount">
@@ -113,35 +148,28 @@ small { color:#94a3b8; }
 <!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-<h3>Invite Friends & Earn 10%</h3>
-<h2 id="refCode"></h2>
-<h3>KSH <span id="refEarnings">0</span></h3>
+<h3>Referral</h3>
+
+<p>Code: <b id="refCode"></b></p>
+<p>Earnings: KSH <span id="refEarnings">0</span></p>
+
+<button onclick="copyRef()">Copy</button>
+
 </div>
 </div>
 
 <!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
+
 <h3>Profile</h3>
+
 <p id="profileEmail"></p>
+
+<p>API KEY:</p>
 <p id="apiKey"></p>
-<button onclick="getApiKey()">Generate API Key</button>
-</div>
-</div>
 
-<!-- ADMIN -->
-<div id="admin" class="page" style="display:none;">
-<div class="card">
-<h3>Admin Panel</h3>
-
-<h4>Deposits</h4>
-<div id="adminDeposits"></div>
-
-<h4>Users</h4>
-<div id="adminUsers"></div>
-
-<h4>Orders</h4>
-<div id="adminOrders"></div>
+<button onclick="getApiKey()">Generate API</button>
 
 </div>
 </div>
@@ -153,183 +181,199 @@ small { color:#94a3b8; }
 
 const API="https://unasemeje-backend-3.onrender.com/api";
 const token=localStorage.getItem("token");
-const ADMIN_EMAIL="diasamratbarusz@gmail.com";
 
-let servicesData={}, selectedRate=0;
+let servicesData={};
+let selectedRate=0;
+let isAdmin=false;
 
+/* AUTH CHECK */
 if(!token) location.href="index.html";
 
 /* USER */
 function loadUser(){
-const d=JSON.parse(atob(token.split(".")[1]));
-userEmail.innerText=d.email;
-profileEmail.innerText=d.email;
+  const d=JSON.parse(atob(token.split(".")[1]));
+  userEmail.innerText=d.email;
+  profileEmail.innerText=d.email;
 
-if(d.email===ADMIN_EMAIL){
-adminBtn.style.display="block";
-loadAdmin();
-}
+  // ADMIN CHECK
+  if(d.email==="diasamratbarusz@gmail.com"){
+    isAdmin=true;
+    alert("👑 Admin Access Enabled");
+  }
 }
 
 /* BALANCE */
 async function loadBalance(){
-const r=await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-const d=await r.json();
-balance.innerText=d.balance||0;
+  const res=await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+  balance.innerText=data.balance||0;
 }
 
 /* SERVICES */
 async function loadServices(){
-const r=await fetch(API+"/services");
-const j=await r.json();
-servicesData=j.data||{};
-renderPlatforms();
+  const res=await fetch(API+"/services");
+  const json=await res.json();
+  servicesData=json.data||{};
+  renderPlatforms();
 }
 
+/* PLATFORM */
 function renderPlatforms(){
-platformList.innerHTML="";
-Object.keys(servicesData).forEach(p=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerText=p;
-div.onclick=()=>renderCategories(p);
-platformList.appendChild(div);
-});
+  platformList.innerHTML="";
+  Object.keys(servicesData).forEach(p=>{
+    const div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=p;
+    div.onclick=()=>renderCategories(p);
+    platformList.appendChild(div);
+  });
 }
 
+/* CATEGORY */
 function renderCategories(p){
-categoryList.innerHTML="";
-Object.keys(servicesData[p]||{}).forEach(c=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerText=c;
-div.onclick=()=>renderServices(p,c);
-categoryList.appendChild(div);
-});
+  categoryList.innerHTML="";
+  Object.keys(servicesData[p]||{}).forEach(c=>{
+    const div=document.createElement("div");
+    div.className="list-item";
+    div.innerText=c;
+    div.onclick=()=>renderServices(p,c);
+    categoryList.appendChild(div);
+  });
 }
 
+/* SERVICES */
 function renderServices(p,c){
-serviceList.innerHTML="";
-(servicesData[p][c]||[]).forEach(s=>{
-let price=Number(s.rate||0);
+  serviceList.innerHTML="";
+  (servicesData[p][c]||[]).forEach(s=>{
+    const div=document.createElement("div");
+    div.className="service";
+    div.innerHTML=`<b>${s.name}</b><br>KSH ${Number(s.rate).toFixed(2)}`;
 
-let div=document.createElement("div");
-div.className="service";
-div.innerHTML=`<b>${s.name}</b><br>KSH ${price}`;
+    div.onclick=()=>{
+      orderServiceId.value=s.serviceId;
+      selectedRate=Number(s.rate);
+      showPage("order");
+    };
 
-div.onclick=()=>{
-orderServiceId.value=s.serviceId;
-selectedRate=price;
-showPage("order");
-};
-
-serviceList.appendChild(div);
-});
+    serviceList.appendChild(div);
+  });
 }
 
 /* TOTAL */
 function calcTotal(){
-let q=orderQty.value||0;
-orderTotal.innerText=((selectedRate/1000)*q).toFixed(2);
+  const qty=Number(orderQty.value||0);
+  orderTotal.innerText=((selectedRate/1000)*qty).toFixed(2);
 }
 
 /* ORDER */
 async function submitOrder(){
-const r=await fetch(API+"/order",{
-method:"POST",
-headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-body:JSON.stringify({
-serviceId:orderServiceId.value,
-link:orderLink.value,
-quantity:orderQty.value
-})
-});
-const d=await r.json();
-alert(d.message||d.error);
-loadBalance();
-loadOrders();
+  if(!orderServiceId.value || !orderLink.value || !orderQty.value){
+    return alert("Fill all fields");
+  }
+
+  const res=await fetch(API+"/order",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      serviceId:orderServiceId.value,
+      link:orderLink.value,
+      quantity:orderQty.value
+    })
+  });
+
+  const data=await res.json();
+  alert(data.message||data.error);
+
+  loadBalance();
+  loadOrders();
 }
 
 /* ORDERS */
 async function loadOrders(){
-const r=await fetch(API+"/orders",{headers:{Authorization:"Bearer "+token}});
-const d=await r.json();
-ordersList.innerHTML="";
-d.forEach(o=>{
-let li=document.createElement("li");
-li.innerText=`${o.service} | ${o.quantity} | KSH ${o.cost}`;
-ordersList.appendChild(li);
-});
+  const res=await fetch(API+"/orders",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+
+  ordersList.innerHTML="";
+  data.forEach(o=>{
+    const li=document.createElement("li");
+    li.innerText=`${o.service} | ${o.quantity} | KSH ${o.cost}`;
+    ordersList.appendChild(li);
+  });
 }
 
 /* DEPOSIT */
 async function submitDeposit(){
-depositStatus.innerText="Processing...";
-await fetch(API+"/deposit",{
-method:"POST",
-headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-body:JSON.stringify({
-phone:depPhone.value,
-amount:depAmount.value,
-message:depMessage.value
-})
-});
-depositStatus.innerText="Submitted. Waiting approval.";
+  depositStatus.innerText="Processing...";
+
+  const res=await fetch(API+"/deposit",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:"Bearer "+token
+    },
+    body:JSON.stringify({
+      phone:depPhone.value,
+      amount:depAmount.value,
+      message:depMessage.value
+    })
+  });
+
+  const data=await res.json();
+  depositStatus.innerText=data.message||data.error;
 }
 
 /* REFERRAL */
 async function loadReferral(){
-const r=await fetch(API+"/referral",{headers:{Authorization:"Bearer "+token}});
-const d=await r.json();
-refCode.innerText=d.referralCode;
-refEarnings.innerText=d.earnings;
+  const res=await fetch(API+"/referral",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+
+  refCode.innerText=data.referralCode;
+  refEarnings.innerText=data.earnings;
 }
 
-/* ADMIN */
-async function loadAdmin(){
-const deps=await (await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}})).json();
-adminDeposits.innerHTML="";
-deps.forEach(x=>{
-let div=document.createElement("div");
-div.className="list-item";
-div.innerHTML=`${x.phone} - ${x.amount}
-<button onclick="approve('${x._id}')">Approve</button>`;
-adminDeposits.appendChild(div);
-});
+/* API KEY */
+async function getApiKey(){
+  const res=await fetch(API+"/api-key",{headers:{Authorization:"Bearer "+token}});
+  const data=await res.json();
+  apiKey.innerText=data.apiKey;
 }
 
-async function approve(id){
-await fetch(API+"/admin/approve-deposit/"+id,{
-method:"POST",
-headers:{Authorization:"Bearer "+token}
-});
-alert("Approved");
-loadAdmin();
+/* SUPPORT */
+function openWhatsApp(){
+  window.open("https://wa.me/254715509440");
+}
+
+function callSupport(){
+  window.location.href="tel:+254715509440";
 }
 
 /* NAV */
 function showPage(p){
-document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-document.getElementById(p).style.display="block";
-
-if(p==="orders") loadOrders();
-if(p==="referral") loadReferral();
+  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
+  document.getElementById(p).style.display="block";
 }
 
-/* SUPPORT */
-function openWhatsApp(){window.open("https://wa.me/254715509440");}
-function callSupport(){location.href="tel:+254715509440";}
+/* COPY */
+function copyRef(){
+  navigator.clipboard.writeText(refCode.innerText);
+  alert("Copied");
+}
 
 /* LOGOUT */
 function logout(){
-localStorage.removeItem("token");
-location.href="index.html";
+  localStorage.removeItem("token");
+  location.href="index.html";
 }
 
 /* INIT */
 loadUser();
 loadBalance();
 loadServices();
+loadOrders();
+loadReferral();
 
 </script>
 
