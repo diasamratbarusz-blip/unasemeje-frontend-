@@ -357,7 +357,7 @@
         btn.innerText = "Place Order Now";
     }
 
-    // UPDATED LOAD ORDERS FUNCTION
+    // UPDATED LOAD ORDERS FUNCTION (FIXED VERSION)
     async function loadOrders() {
         const ordersList = document.getElementById("ordersList");
         ordersList.innerHTML = "<tr><td colspan='4'>Updating statuses...</td></tr>";
@@ -369,14 +369,23 @@
             const orders = await res.json();
             
             ordersList.innerHTML = orders.map(o => {
-                const statusLower = o.status.toLowerCase().replace(/\s+/g, '');
+                const statusLower = (o.status || 'pending').toLowerCase().replace(/\s+/g, '');
+                
+                // FIX: Try to find the service name in common fields
+                const serviceDisplay = o.serviceName || o.service_name || o.name || `Service #${o.serviceId || o.service || '???'}`;
+                
+                // FIX: Try to find the cost in common fields (charge vs cost)
+                const orderCost = o.cost || o.charge || 0;
+
                 return `
                     <tr>
-                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${o.serviceName || o.service || 'SMM Service'}</td>
-                        <td>${o.quantity}</td>
-                        <td>KES ${(o.cost || 0).toFixed(2)}</td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${serviceDisplay}">
+                            ${serviceDisplay}
+                        </td>
+                        <td>${o.quantity || 0}</td>
+                        <td>KES ${parseFloat(orderCost).toFixed(2)}</td>
                         <td>
-                            <span class="status status-${statusLower}">${o.status}</span>
+                            <span class="status status-${statusLower}">${o.status || 'Pending'}</span>
                             ${(statusLower === 'completed') ? 
                                 `<button onclick="requestRefill('${o.providerOrderId || o._id}')" style="margin-top:5px; padding:4px 8px; font-size:10px; width:auto; background:var(--secondary)">Refill</button>` 
                                 : ''}
@@ -385,7 +394,8 @@
                 `;
             }).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
         } catch (error) {
-            ordersList.innerHTML = "<tr><td colspan='4' style='color:var(--danger)'>Error loading orders.</td></tr>";
+            console.error("Order Load Error:", error);
+            ordersList.innerHTML = "<tr><td colspan='4' style='color:var(--danger)'>Error loading orders. Check console.</td></tr>";
         }
     }
 
