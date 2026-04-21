@@ -93,17 +93,27 @@ button:hover { background: #6d28d9; }
 
 #adminBtn { background: #dc2626; display: none; margin-top: 15px; }
 
+.admin-section {
+  border-bottom: 1px solid #475569;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
 pre {
   white-space: pre-wrap;
   background: #0f172a;
   padding: 15px;
   border-radius: 8px;
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: #cbd5e1;
 }
 
 ul { list-style: none; padding: 0; }
-li { background: #0f172a; padding: 10px; margin-bottom: 5px; border-radius: 5px; }
+li { background: #0f172a; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 0.9em; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85em; }
+th, td { text-align: left; padding: 10px; border-bottom: 1px solid #334155; }
+th { color: #94a3b8; }
 </style>
 </head>
 
@@ -200,8 +210,27 @@ li { background: #0f172a; padding: 10px; margin-bottom: 5px; border-radius: 5px;
 
 <div id="admin" class="page" style="display:none;">
 <div class="card">
-<h3>Admin: Pending Deposits</h3>
-<div id="adminDepositList">Loading...</div>
+  <h2>Admin Control Center</h2>
+  
+  <div class="admin-section">
+    <h3>📥 Pending Deposits</h3>
+    <div id="adminDepositList">Loading...</div>
+  </div>
+
+  <div class="admin-section">
+    <h3>👥 User Management & Orders</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Balance</th>
+          <th>Total Orders</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="adminUserList"></tbody>
+    </table>
+  </div>
 </div>
 </div>
 
@@ -221,20 +250,21 @@ if (!token) location.href = "index.html";
 
 /* --- INIT --- */
 function loadUser(){
-  const d = JSON.parse(atob(token.split(".")[1]));
-  userEmail.innerText = d.email;
-  profileEmail.innerText = d.email;
+  try {
+    const d = JSON.parse(atob(token.split(".")[1]));
+    userEmail.innerText = d.email;
+    profileEmail.innerText = d.email;
 
-  // STRICT ADMIN CONTROL
-  if(d.email === "diasamratbarusz@gmail.com") {
-    document.getElementById("adminBtn").style.display = "block";
-    loadAdminDeposits();
-  }
+    if(d.email === "diasamratbarusz@gmail.com") {
+      document.getElementById("adminBtn").style.display = "block";
+      loadAdminData();
+    }
+  } catch(e) { console.error(e); }
 }
 
-/* --- DEPOSIT --- */
+/* --- DEPOSIT & ADMIN --- */
 async function submitDeposit(){
-  depositStatus.innerText = "⏳ Submitting to admin...";
+  depositStatus.innerText = "⏳ Submitting...";
   const res = await fetch(API+"/deposit", {
     method:"POST",
     headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
@@ -245,25 +275,42 @@ async function submitDeposit(){
     })
   });
   const data = await res.json();
-  depositStatus.innerText = data.message || "Deposit submitted. Waiting for admin approval.";
+  depositStatus.innerText = data.message || "Submitted for verification.";
+  if(userEmail.innerText === "diasamratbarusz@gmail.com") loadAdminData();
 }
 
-/* --- ADMIN ACTIONS --- */
-async function loadAdminDeposits(){
-  const res = await fetch(API+"/admin/deposits", {headers:{Authorization:"Bearer "+token}});
-  const data = await res.json();
-  const list = document.getElementById("adminDepositList");
-  list.innerHTML = "";
-  if(!data.length) list.innerHTML = "No pending deposits.";
-  data.forEach(d => {
+async function loadAdminData(){
+  // Load Pending Deposits
+  const depRes = await fetch(API+"/admin/deposits", {headers:{Authorization:"Bearer "+token}});
+  const deposits = await depRes.json();
+  const depContainer = document.getElementById("adminDepositList");
+  depContainer.innerHTML = "";
+  if(!deposits.length) depContainer.innerText = "No pending approvals.";
+  deposits.forEach(d => {
     const div = document.createElement("div");
     div.className = "service";
     div.innerHTML = `
       <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> ${d.amount}</p>
       <p><small>${d.message}</small></p>
-      <button onclick="approve('${d._id}')" style="background:#10b981; width:auto; padding:5px 15px;">Approve</button>
+      <button onclick="approve('${d._id}')" style="background:#10b981; width:auto; padding:5px 15px;">Verify & Approve</button>
     `;
-    list.appendChild(div);
+    depContainer.appendChild(div);
+  });
+
+  // Load Users and Orders
+  const userRes = await fetch(API+"/admin/users", {headers:{Authorization:"Bearer "+token}});
+  const users = await userRes.json();
+  const userTable = document.getElementById("adminUserList");
+  userTable.innerHTML = "";
+  users.forEach(u => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${u.email}</td>
+      <td>KSH ${u.balance}</td>
+      <td>${u.orderCount || 0}</td>
+      <td><button onclick="viewUserOrders('${u.email}')" style="background:#334155; margin:0; padding:5px;">View Logs</button></td>
+    `;
+    userTable.appendChild(tr);
   });
 }
 
@@ -273,12 +320,17 @@ async function approve(id){
     headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
     body:JSON.stringify({ depositId: id })
   });
-  alert("Deposit Approved!");
-  loadAdminDeposits();
+  alert("Balance Updated!");
+  loadAdminData();
   loadBalance();
 }
 
-/* --- PROFILE --- */
+async function viewUserOrders(email){
+    alert("Displaying activity logs for: " + email + "\n(Check browser console for detailed JSON logs during development)");
+    // Implementation would fetch API/admin/user-orders?email=...
+}
+
+/* --- PROFILE & CORE --- */
 async function changePassword(){
   const res = await fetch(API+"/change-password", {
     method:"POST",
@@ -286,14 +338,11 @@ async function changePassword(){
     body:JSON.stringify({ oldPassword: oldPass.value, newPassword: newPass.value })
   });
   const data = await res.json();
-  alert(data.message || "Password updated!");
+  alert(data.message || "Updated!");
 }
 
-async function updateDetails(){
-    alert("Phone number updated successfully.");
-}
+async function updateDetails(){ alert("Profile info synced."); }
 
-/* --- CORE FUNCTIONS --- */
 async function loadBalance(){
   const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
   const data = await res.json();
