@@ -6,47 +6,113 @@
 <title>SMM Dashboard</title>
 
 <style>
-body { margin:0; font-family:Arial; background:#0f172a; color:white; }
-.dashboard { display:flex; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+.dashboard { display: flex; }
 
 .sidebar {
-  width:230px; background:#111827; min-height:100vh; padding:20px;
+  width: 230px;
+  background: #111827;
+  min-height: 100vh;
+  padding: 20px;
 }
-.sidebar a {
-  display:block; padding:10px; color:#cbd5e1; cursor:pointer;
-  margin-top:5px; border-radius:6px;
-}
-.sidebar a:hover { background:#1f2937; }
 
-.main { flex:1; padding:20px; }
+.sidebar h2 {
+  color: #7c3aed;
+  margin-bottom: 30px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 10px;
+  color: #cbd5e1;
+  cursor: pointer;
+  margin-top: 5px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.sidebar a:hover { background: #1f2937; color: white; }
+
+.main { flex: 1; padding: 20px; }
 
 .navbar {
-  display:flex; justify-content:space-between;
-  background:#1e293b; padding:10px; border-radius:10px;
-  margin-bottom:20px;
+  display: flex;
+  justify-content: space-between;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
 }
 
 .card {
-  background:#1e293b; padding:20px;
-  border-radius:12px; margin-bottom:20px;
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
 }
 
 .list-item, .service {
-  background:#334155; padding:10px;
-  margin-bottom:8px; border-radius:8px; cursor:pointer;
+  background: #334155;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.list-item:hover, .service:hover {
+  background: #475569;
 }
 
 input, textarea {
-  width:100%; padding:10px; margin-top:10px;
-  border-radius:6px; border:none;
-  background:#0f172a; color:white;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: white;
+  box-sizing: border-box;
 }
 
 button {
-  margin-top:10px; padding:10px;
-  background:#7c3aed; color:white;
-  border:none; border-radius:6px;
-  cursor:pointer;
+  margin-top: 15px;
+  padding: 12px;
+  width: 100%;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover { background: #6d28d9; }
+
+small { color: #94a3b8; }
+
+pre {
+  white-space: pre-wrap;
+  background: #0f172a;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  color: #cbd5e1;
+}
+
+ul { list-style: none; padding: 0; }
+li {
+  background: #0f172a;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  font-size: 0.9em;
 }
 </style>
 </head>
@@ -55,106 +121,136 @@ button {
 
 <div class="dashboard">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-<h2>SMM PANEL</h2>
+  <h2>SMM PANEL</h2>
 
-<a onclick="showPage('home')">Dashboard</a>
-<a onclick="showPage('services')">Services</a>
-<a onclick="showPage('order')">Place Order</a>
-<a onclick="showPage('orders')">Orders</a>
-<a onclick="showPage('deposit')">Add Funds</a>
-<a onclick="showPage('referral')">Referral</a>
-<a onclick="showPage('profile')">Profile</a>
+  <a onclick="showPage('home')">Dashboard</a>
+  <a onclick="showPage('services')">Services</a>
+  <a onclick="showPage('order')">Place Order</a>
+  <a onclick="showPage('orders')">Orders</a>
+  <a onclick="showPage('deposit')">Add Funds</a>
+  <a onclick="showPage('referral')">Invite Friends</a>
+  <a onclick="showPage('profile')">Profile</a>
 
-<!-- ADMIN BUTTON -->
-<a id="adminBtn" onclick="showPage('admin')" style="display:none;">Admin Panel</a>
+  <hr style="border: 0.5px solid #334155; margin: 20px 0;">
 
-<a onclick="openWhatsApp()">WhatsApp</a>
-<a onclick="callSupport()">Call</a>
-<a onclick="logout()">Logout</a>
+  <a onclick="openWhatsApp()">💬 WhatsApp Support</a>
+  <a onclick="callSupport()">📞 Call Support</a>
+
+  <a onclick="logout()" style="color: #ef4444; margin-top: 20px;">Logout</a>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
 <div class="navbar">
-<div><b id="userEmail"></b></div>
-<div>Balance: KSH <span id="balance">0</span></div>
+  <div>👤 <b id="userEmail">Loading...</b></div>
+  <div>💰 Balance: KSH <span id="balance">0</span></div>
 </div>
 
-<!-- HOME -->
 <div id="home" class="page">
-<div class="card">Welcome to your dashboard</div>
+<div class="card">
+<h3>Welcome back!</h3>
+<p>Boost your social media presence instantly. Select a service to get started.</p>
+</div>
 </div>
 
-<!-- SERVICES -->
 <div id="services" class="page" style="display:none;">
 <div class="card">
+<h3>Services</h3>
 <div id="platformList"></div>
 <div id="categoryList"></div>
 <div id="serviceList"></div>
 </div>
 </div>
 
-<!-- ORDER -->
 <div id="order" class="page" style="display:none;">
 <div class="card">
+
+<h3>Place Order</h3>
+
+<p><b>Service ID</b></p>
 <input id="orderServiceId" readonly>
-<input id="orderLink" placeholder="Link">
-<input id="orderQty" type="number" placeholder="Quantity" oninput="calcTotal()">
-<p>Total: KSH <b id="orderTotal">0</b></p>
-<button onclick="submitOrder()">Order</button>
+
+<div style="background:#0f172a;padding:12px;border-radius:8px;margin-top:10px;">
+<h4>⚠️ Please Read the Description</h4>
+<pre id="descriptionText">
+Link: Social Media Link
+Start Time: 0–10 Minutes
+Speed: Fast 🚀
+Refill: 30 Days
+
+Notes:
+- Do not place same link twice
+- Wait before re-order
+</pre>
+</div>
+
+<input id="orderLink" placeholder="Paste Link Here">
+<input id="orderQty" type="number" placeholder="Enter Quantity" oninput="calcTotal()">
+
+<div style="margin-top: 15px; font-size: 1.1em;">
+  Total: <span style="color: #10b981;">KSH <b id="orderTotal">0</b></span>
+</div>
+
+<button onclick="submitOrder()">Place Order Now</button>
+
 </div>
 </div>
 
-<!-- ORDERS -->
 <div id="orders" class="page" style="display:none;">
 <div class="card">
+<h3>Order History</h3>
 <ul id="ordersList"></ul>
 </div>
 </div>
 
-<!-- DEPOSIT -->
 <div id="deposit" class="page" style="display:none;">
 <div class="card">
-<p>Send to 0715509440</p>
-<textarea id="depMessage"></textarea>
-<button onclick="submitDeposit()">Submit</button>
+
+<h3>Add Funds</h3>
+<p>Send funds via M-Pesa to the details below:</p>
+
+<div style="background:#0f172a; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+    <p>Send to: <b>0715509440</b></p>
+    <p>Name: <b>FAITH CHERUIYOT</b></p>
+</div>
+
+<input id="depPhone" placeholder="Your M-Pesa Phone Number">
+<input id="depAmount" type="number" placeholder="Amount (KSH)">
+<textarea id="depMessage" placeholder="Paste the full M-Pesa confirmation message here..."></textarea>
+
+<button onclick="submitDeposit()">Submit Deposit</button>
+
+<p id="depositStatus" style="color:yellow; margin-top: 10px;"></p>
+
 </div>
 </div>
 
-<!-- REFERRAL -->
 <div id="referral" class="page" style="display:none;">
 <div class="card">
-Code: <b id="refCode"></b><br>
-Earnings: <span id="refEarnings"></span>
+
+<h3>Invite Friends & Earn 10%</h3>
+<p>Share your code and earn a commission on every deposit your friends make.</p>
+
+<p>Your Referral Code:</p>
+<h2 id="refCode" style="color: #7c3aed;">Loading...</h2>
+
+<p>Total Earnings:</p>
+<h3 style="color: #10b981;">KSH <span id="refEarnings">0</span></h3>
+
+<button onclick="copyRef()">Copy Referral Code</button>
+
 </div>
 </div>
 
-<!-- PROFILE -->
 <div id="profile" class="page" style="display:none;">
 <div class="card">
-<p>Email: <span id="profileEmail"></span></p>
 
-<input id="newPhone" placeholder="New Phone">
-<button onclick="updatePhone()">Update Phone</button>
+<h3>Profile</h3>
+<p><b>Email:</b> <span id="profileEmail"></span></p>
+<p><b>API KEY:</b> <span id="apiKey" style="word-break: break-all; color: #94a3b8;">Click generate to view</span></p>
 
-<input id="oldPass" placeholder="Old Password">
-<input id="newPass" placeholder="New Password">
-<button onclick="changePassword()">Change Password</button>
-</div>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="page" style="display:none;">
-<div class="card">
-
-<h3>Deposits</h3>
-<div id="adminDeposits"></div>
-
-<h3>Users</h3>
-<div id="adminUsers"></div>
+<button onclick="getApiKey()" style="background: #334155;">Generate/Refresh API Key</button>
 
 </div>
 </div>
@@ -163,181 +259,196 @@ Earnings: <span id="refEarnings"></span>
 </div>
 
 <script>
-const API="https://unasemeje-backend-3.onrender.com/api";
-const token=localStorage.getItem("token");
+const API = "https://unasemeje-backend-3.onrender.com/api";
+const token = localStorage.getItem("token");
 
-let servicesData={},selectedRate=0;
+let servicesData = {};
+let selectedRate = 0;
 
-if(!token) location.href="index.html";
+// Security: Prevent Back Button
+history.pushState(null, null, location.href);
+window.onpopstate = () => history.pushState(null, null, location.href);
 
-/* USER */
+if (!token) location.href = "index.html";
+
+/* --- INITIALIZATION --- */
 function loadUser(){
-  const d=JSON.parse(atob(token.split(".")[1]));
-  userEmail.innerText=d.email;
-  profileEmail.innerText=d.email;
+  try {
+    const d = JSON.parse(atob(token.split(".")[1]));
+    userEmail.innerText = d.email;
+    profileEmail.innerText = d.email;
 
-  // ADMIN CHECK
-  if(d.email==="diasamratbarusz@gmail.com"){
-    adminBtn.style.display="block";
-    loadAdmin();
+    if(d.email === "diasamratbarusz@gmail.com"){
+      alert("👑 Admin Access Enabled");
+    }
+  } catch(e) {
+    console.error("Token error", e);
   }
 }
 
-/* BALANCE */
 async function loadBalance(){
-  const r=await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
-  const d=await r.json();
-  balance.innerText=d.balance||0;
+  const res = await fetch(API+"/me",{headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+  balance.innerText = data.balance || 0;
 }
 
-/* SERVICES */
+/* --- SERVICES LOGIC --- */
 async function loadServices(){
-  const r=await fetch(API+"/services");
-  const d=await r.json();
-  servicesData=d.data||{};
+  const res = await fetch(API+"/services");
+  const json = await res.json();
+  servicesData = json.data || {};
   renderPlatforms();
 }
 
 function renderPlatforms(){
-  platformList.innerHTML="";
+  platformList.innerHTML = "<h4>Select Platform</h4>";
   Object.keys(servicesData).forEach(p=>{
-    let div=document.createElement("div");
-    div.className="list-item";
-    div.innerText=p;
-    div.onclick=()=>renderCategories(p);
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerText = p;
+    div.onclick = () => {
+        renderCategories(p);
+        categoryList.scrollIntoView({behavior: 'smooth'});
+    };
     platformList.appendChild(div);
   });
 }
 
 function renderCategories(p){
-  categoryList.innerHTML="";
+  categoryList.innerHTML = `<h4>${p} Categories</h4>`;
+  serviceList.innerHTML = "";
   Object.keys(servicesData[p]||{}).forEach(c=>{
-    let div=document.createElement("div");
-    div.className="list-item";
-    div.innerText=c;
-    div.onclick=()=>renderServices(p,c);
+    const div = document.createElement("div");
+    div.className = "list-item";
+    div.innerText = c;
+    div.onclick = () => renderServices(p, c);
     categoryList.appendChild(div);
   });
 }
 
 function renderServices(p,c){
-  serviceList.innerHTML="";
-  servicesData[p][c].forEach(s=>{
-    let div=document.createElement("div");
-    div.className="service";
-    div.innerHTML=s.name+"<br>KSH "+s.rate;
-    div.onclick=()=>{
-      orderServiceId.value=s.serviceId;
-      selectedRate=s.rate;
+  serviceList.innerHTML = `<h4>${c} Services</h4>`;
+  (servicesData[p][c]||[]).forEach(s=>{
+    const div = document.createElement("div");
+    div.className = "service";
+    div.innerHTML = `<b>${s.name}</b><br><span style="color:#10b981">KSH ${Number(s.rate).toFixed(2)} per 1k</span>`;
+    div.onclick = () => {
+      orderServiceId.value = s.serviceId;
+      selectedRate = Number(s.rate);
+      calcTotal();
       showPage("order");
     };
     serviceList.appendChild(div);
   });
 }
 
-/* ORDER */
+/* --- ORDER LOGIC --- */
 function calcTotal(){
-  orderTotal.innerText=((selectedRate/1000)*(orderQty.value||0)).toFixed(2);
+  const qty = Number(orderQty.value || 0);
+  orderTotal.innerText = ((selectedRate / 1000) * qty).toFixed(2);
 }
 
 async function submitOrder(){
-  const r=await fetch(API+"/order",{
-    method:"POST",
-    headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-    body:JSON.stringify({
-      serviceId:orderServiceId.value,
-      link:orderLink.value,
-      quantity:orderQty.value
+  if(!orderServiceId.value || !orderLink.value || !orderQty.value){
+    return alert("Please fill all fields before ordering.");
+  }
+
+  const res = await fetch(API+"/order", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
+    },
+    body: JSON.stringify({
+      serviceId: orderServiceId.value,
+      link: orderLink.value,
+      quantity: orderQty.value
     })
   });
-  alert((await r.json()).message);
+
+  const data = await res.json();
+  alert(data.message || data.error);
+
   loadBalance();
+  loadOrders();
 }
 
-/* ORDERS */
 async function loadOrders(){
-  const r=await fetch(API+"/orders",{headers:{Authorization:"Bearer "+token}});
-  const d=await r.json();
-  ordersList.innerHTML="";
-  d.forEach(o=>{
-    let li=document.createElement("li");
-    li.innerText=o.service+" - "+o.quantity+" - "+o.cost;
+  const res = await fetch(API+"/orders", {headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+
+  ordersList.innerHTML = "";
+  if(data.length === 0) {
+      ordersList.innerHTML = "<li>No orders placed yet.</li>";
+      return;
+  }
+  data.forEach(o => {
+    const li = document.createElement("li");
+    li.innerText = `${o.service || 'Order'} | Qty: ${o.quantity} | KSH ${o.cost}`;
     ordersList.appendChild(li);
   });
 }
 
-/* DEPOSIT */
+/* --- OTHER FEATURES --- */
 async function submitDeposit(){
-  await fetch(API+"/deposit",{
-    method:"POST",
-    headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-    body:JSON.stringify({message:depMessage.value})
+  depositStatus.innerText = "⏳ Processing your request...";
+  
+  const res = await fetch(API+"/deposit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token
+    },
+    body: JSON.stringify({
+      phone: depPhone.value,
+      amount: depAmount.value,
+      message: depMessage.value
+    })
   });
-  alert("Submitted");
+
+  const data = await res.json();
+  depositStatus.innerText = data.message || data.error;
 }
 
-/* PROFILE */
-async function changePassword(){
-  await fetch(API+"/change-password",{
-    method:"POST",
-    headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-    body:JSON.stringify({oldPassword:oldPass.value,newPassword:newPass.value})
-  });
-  alert("Updated");
+async function loadReferral(){
+  const res = await fetch(API+"/referral", {headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+  refCode.innerText = data.referralCode || "N/A";
+  refEarnings.innerText = data.earnings || 0;
 }
 
-async function updatePhone(){
-  await fetch(API+"/update-phone",{
-    method:"POST",
-    headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-    body:JSON.stringify({phone:newPhone.value})
-  });
-  alert("Phone Updated");
+async function getApiKey(){
+  const res = await fetch(API+"/api-key", {headers:{Authorization:"Bearer "+token}});
+  const data = await res.json();
+  apiKey.innerText = data.apiKey;
 }
 
-/* ADMIN */
-async function loadAdmin(){
-  const r=await fetch(API+"/admin/deposits",{headers:{Authorization:"Bearer "+token}});
-  const d=await r.json();
-
-  adminDeposits.innerHTML="";
-  d.forEach(dep=>{
-    let div=document.createElement("div");
-    div.innerHTML=dep.message+" <button onclick='approve(\""+dep._id+"\")'>Approve</button>";
-    adminDeposits.appendChild(div);
-  });
-}
-
-async function approve(id){
-  await fetch(API+"/admin/approve",{
-    method:"POST",
-    headers:{'Content-Type':'application/json',Authorization:"Bearer "+token},
-    body:JSON.stringify({id})
-  });
-  loadAdmin();
-}
-
-/* NAV */
+/* --- NAVIGATION & HELPERS --- */
 function showPage(p){
-  document.querySelectorAll(".page").forEach(x=>x.style.display="none");
-  document.getElementById(p).style.display="block";
-  if(p==="orders") loadOrders();
+  document.querySelectorAll(".page").forEach(x => x.style.display = "none");
+  document.getElementById(p).style.display = "block";
 }
 
-/* SUPPORT */
-function openWhatsApp(){ window.open("https://wa.me/254715509440"); }
-function callSupport(){ window.location="tel:+254715509440"; }
+function openWhatsApp(){ window.open("https://wa.me/254715509440", "_blank"); }
+function callSupport(){ window.location.href = "tel:+254715509440"; }
 
-/* LOGOUT */
+function copyRef(){
+  navigator.clipboard.writeText(refCode.innerText);
+  alert("Referral code copied to clipboard!");
+}
+
 function logout(){
   localStorage.removeItem("token");
-  location.href="index.html";
+  location.href = "index.html";
 }
 
-/* INIT */
+/* --- BOOTSTRAP --- */
 loadUser();
 loadBalance();
 loadServices();
+loadOrders();
+loadReferral();
+
 </script>
 
 </body>
