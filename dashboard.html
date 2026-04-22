@@ -212,7 +212,7 @@
                 <input id="depPhone" placeholder="M-Pesa Phone Number">
                 <input id="depAmount" type="number" placeholder="Amount (KES)">
                 <textarea id="depMessage" rows="3" placeholder="Paste full M-Pesa SMS here"></textarea>
-                <button onclick="submitDeposit()">Submit Deposit</button>
+                <button id="depSubmitBtn" onclick="submitDeposit()">Submit Deposit</button>
                 <p id="depStatus" style="text-align: center; color: var(--secondary); margin-top:10px;"></p>
             </div>
         </div>
@@ -244,33 +244,35 @@
 
     // CORE: Fetch User Data
     async function syncData() {
-        const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
-        const user = await res.json();
-        
-        document.getElementById("userEmail").innerText = user.email;
-        document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
-        
-        // Profile
-        document.getElementById("profEmail").innerText = user.email;
-        document.getElementById("profPhone").innerText = user.phone || "Not Set";
-        
-        // Referrals
-        document.getElementById("refCode").innerText = user.referralCode || "N/A";
-        document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
-        document.getElementById("refLink").innerText = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+        try {
+            const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+            const user = await res.json();
+            
+            document.getElementById("userEmail").innerText = user.email;
+            document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
+            
+            document.getElementById("profEmail").innerText = user.email;
+            document.getElementById("profPhone").innerText = user.phone || "Not Set";
+            
+            document.getElementById("refCode").innerText = user.referralCode || "N/A";
+            document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
+            document.getElementById("refLink").innerText = `${window.location.origin}/register.html?ref=${user.referralCode}`;
 
-        if(user.email === "diasamratbarusz@gmail.com") {
-            document.getElementById("adminBtn").style.display = "flex";
-            loadAdminData();
-        }
+            if(user.email === "diasamratbarusz@gmail.com") {
+                document.getElementById("adminBtn").style.display = "flex";
+                loadAdminData();
+            }
+        } catch (err) { console.error("Sync Error", err); }
     }
 
     // SERVICES LOGIC
     async function loadServices() {
-        const res = await fetch(`${API}/services`);
-        const json = await res.json();
-        servicesData = json.data || {};
-        renderPlatforms();
+        try {
+            const res = await fetch(`${API}/services`);
+            const json = await res.json();
+            servicesData = json.data || {};
+            renderPlatforms();
+        } catch (err) { console.error("Load Services Error", err); }
     }
 
     function renderPlatforms() {
@@ -311,7 +313,7 @@
                 document.getElementById("orderServiceId").value = s.serviceId;
                 document.getElementById("displayServiceName").innerText = s.name;
                 selectedRate = s.rate;
-                calcTotal(); // Reset total based on new rate
+                calcTotal();
                 showPage('order');
             };
             list.appendChild(div);
@@ -336,38 +338,37 @@
         const payload = {
             serviceId: document.getElementById("orderServiceId").value,
             link: document.getElementById("orderLink").value,
-            quantity: document.getElementById("orderQty").value,
-            serviceName: document.getElementById("displayServiceName").innerText,
-            rate: selectedRate
+            quantity: document.getElementById("orderQty").value
         };
         if(!payload.link || !payload.quantity) return alert("Please fill all fields");
 
         btn.disabled = true;
         btn.innerText = "Processing...";
 
-        const res = await fetch(`${API}/order`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify(payload)
-        });
+        try {
+            const res = await fetch(`${API}/order`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
 
-        const data = await res.json();
-        if(data.success || data.message?.includes("placed")) {
-            document.getElementById("successOverlay").style.display = "flex";
-            document.getElementById("orderLink").value = "";
-            document.getElementById("orderQty").value = "";
-            syncData();
-        } else {
-            alert(data.error || "Order Failed. Insufficient balance?");
-        }
+            const data = await res.json();
+            if(data.success) {
+                document.getElementById("successOverlay").style.display = "flex";
+                document.getElementById("orderLink").value = "";
+                document.getElementById("orderQty").value = "";
+                syncData();
+            } else {
+                alert(data.error || "Order Failed");
+            }
+        } catch (err) { alert("Server connection error"); }
         btn.disabled = false;
         btn.innerText = "Place Order Now";
     }
 
-    // UPDATED LOAD ORDERS FUNCTION: Shows Service, Link, and Cost
     async function loadOrders() {
         const ordersList = document.getElementById("ordersList");
-        ordersList.innerHTML = "<tr><td colspan='5'>Updating statuses...</td></tr>";
+        ordersList.innerHTML = "<tr><td colspan='5'>Syncing orders...</td></tr>";
 
         try {
             const res = await fetch(`${API}/sync-orders`, { 
@@ -377,90 +378,88 @@
             
             ordersList.innerHTML = orders.map(o => {
                 const statusLower = (o.status || 'pending').toLowerCase().replace(/\s+/g, '');
-                
-                // Fetch service name, target link, and cost from the order object
-                const serviceDisplay = o.serviceName || o.service_name || `Service #${o.serviceId}`;
-                const targetLink = o.link || o.target || '---';
-                const orderCost = o.cost || o.charge || 0;
-
                 return `
                     <tr>
-                        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${serviceDisplay}">
-                            <strong>${serviceDisplay}</strong>
-                        </td>
-                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            <a href="${targetLink}" target="_blank" style="color:var(--primary); text-decoration:none;">${targetLink}</a>
-                        </td>
-                        <td>${o.quantity || 0}</td>
-                        <td style="color:var(--secondary); font-weight:bold;">KES ${parseFloat(orderCost).toFixed(2)}</td>
-                        <td>
-                            <span class="status status-${statusLower}">${o.status || 'Pending'}</span>
-                            ${(statusLower === 'completed') ? 
-                                `<button onclick="requestRefill('${o.providerOrderId || o._id}')" style="margin-top:5px; padding:4px 8px; font-size:10px; width:auto; background:var(--secondary)">Refill</button>` 
-                                : ''}
-                        </td>
+                        <td><strong>${o.serviceName || 'Service'}</strong></td>
+                        <td><small>${o.link}</small></td>
+                        <td>${o.quantity}</td>
+                        <td style="color:var(--secondary);">KES ${parseFloat(o.cost).toFixed(2)}</td>
+                        <td><span class="status status-${statusLower}">${o.status}</span></td>
                     </tr>
                 `;
             }).join('') || "<tr><td colspan='5'>No orders found.</td></tr>";
-        } catch (error) {
-            console.error("Order Load Error:", error);
-            ordersList.innerHTML = "<tr><td colspan='5' style='color:var(--danger)'>Error loading orders.</td></tr>";
-        }
+        } catch (error) { ordersList.innerHTML = "<tr><td colspan='5'>Error loading orders.</td></tr>"; }
     }
 
-    async function requestRefill(orderId) {
-        const res = await fetch(`${API}/refill`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ orderId: orderId })
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-    }
-
-    // DEPOSIT LOGIC
+    // DEPOSIT LOGIC - FIXED UNDEFINED ERROR
     async function submitDeposit() {
         const status = document.getElementById("depStatus");
+        const btn = document.getElementById("depSubmitBtn");
+        
+        const phone = document.getElementById("depPhone").value;
+        const amount = document.getElementById("depAmount").value;
+        const message = document.getElementById("depMessage").value;
+
+        if(!amount || !message) return alert("Please enter amount and paste the SMS");
+
         status.innerText = "Submitting...";
-        const res = await fetch(`${API}/deposit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({
-                phone: document.getElementById("depPhone").value,
-                amount: document.getElementById("depAmount").value,
-                message: document.getElementById("depMessage").value
-            })
-        });
-        const data = await res.json();
-        status.innerText = data.message;
+        status.style.color = "var(--text-dim)";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${API}/deposit`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ phone, amount, message })
+            });
+            const data = await res.json();
+            
+            if(res.ok) {
+                status.innerText = data.message || "Deposit submitted!";
+                status.style.color = "var(--secondary)";
+                // Clear fields
+                document.getElementById("depAmount").value = "";
+                document.getElementById("depMessage").value = "";
+            } else {
+                status.innerText = data.error || "Submission failed";
+                status.style.color = "var(--danger)";
+            }
+        } catch (err) { 
+            status.innerText = "Connection error";
+            status.style.color = "var(--danger)";
+        }
+        btn.disabled = false;
     }
 
     // ADMIN LOGIC
     async function loadAdminData() {
-        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
-        const users = await uRes.json();
-        document.getElementById("adminUserList").innerHTML = users.map(u => `
-            <tr><td>${u.email}</td><td>${u.phone}</td><td>KES ${u.balance}</td></tr>
-        `).join('');
+        try {
+            const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+            const users = await uRes.json();
+            document.getElementById("adminUserList").innerHTML = users.map(u => `
+                <tr><td>${u.email}</td><td>${u.phone}</td><td>KES ${u.balance.toFixed(2)}</td></tr>
+            `).join('');
 
-        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
-        const deposits = await dRes.json();
-        document.getElementById("adminDepositList").innerHTML = deposits.filter(d => d.status === 'pending').map(d => `
-            <div class="card" style="border-left: 5px solid yellow;">
-                <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
-                <p><small>${d.message}</small></p>
-                <button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Verify & Approve</button>
-            </div>
-        `).join('') || "No pending approvals.";
+            const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+            const deposits = await dRes.json();
+            document.getElementById("adminDepositList").innerHTML = deposits.map(d => `
+                <div class="card" style="border-left: 5px solid ${d.status === 'pending' ? 'yellow' : 'green'};">
+                    <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
+                    <p><small>${d.message}</small></p>
+                    ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Approve Now</button>` : '<b>APPROVED</b>'}
+                </div>
+            `).join('') || "No deposits found.";
+        } catch (err) { console.error("Admin Load Error", err); }
     }
 
     async function approveDep(id) {
-        await fetch(`${API}/admin/approve-deposit`, {
+        const res = await fetch(`${API}/admin/approve-deposit`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ depositId: id })
         });
-        alert("Approved!");
+        const data = await res.json();
+        alert(data.message || data.error);
         loadAdminData();
         syncData();
     }
@@ -468,11 +467,11 @@
     // UI NAVIGATION
     function showPage(p) {
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
-        document.querySelectorAll(".sidebar .sidebar-nav a").forEach(x => x.classList.remove("active"));
+        document.querySelectorAll(".sidebar-nav a").forEach(x => x.classList.remove("active"));
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
         if(p === 'orders') loadOrders();
-        if(p === 'services') resetServices();
+        if(p === 'admin') loadAdminData();
     }
 
     function closeSuccess() {
