@@ -391,7 +391,7 @@
         } catch (error) { ordersList.innerHTML = "<tr><td colspan='5'>Error loading orders.</td></tr>"; }
     }
 
-    // DEPOSIT LOGIC - FIXED UNDEFINED ERROR
+    // DEPOSIT LOGIC - FULL SYNC WITH SERVER.JS
     async function submitDeposit() {
         const status = document.getElementById("depStatus");
         const btn = document.getElementById("depSubmitBtn");
@@ -402,7 +402,7 @@
 
         if(!amount || !message) return alert("Please enter amount and paste the SMS");
 
-        status.innerText = "Submitting...";
+        status.innerText = "Verifying Code...";
         status.style.color = "var(--text-dim)";
         btn.disabled = true;
 
@@ -417,15 +417,16 @@
             if(res.ok) {
                 status.innerText = data.message || "Deposit submitted!";
                 status.style.color = "var(--secondary)";
-                // Clear fields
+                // Clear inputs on success
                 document.getElementById("depAmount").value = "";
                 document.getElementById("depMessage").value = "";
             } else {
+                // This handles the E11000 and other backend errors
                 status.innerText = data.error || "Submission failed";
                 status.style.color = "var(--danger)";
             }
         } catch (err) { 
-            status.innerText = "Connection error";
+            status.innerText = "Connection error. Check your internet.";
             status.style.color = "var(--danger)";
         }
         btn.disabled = false;
@@ -443,12 +444,12 @@
             const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
             const deposits = await dRes.json();
             document.getElementById("adminDepositList").innerHTML = deposits.map(d => `
-                <div class="card" style="border-left: 5px solid ${d.status === 'pending' ? 'yellow' : 'green'};">
+                <div class="card" style="border-left: 5px solid ${d.status === 'pending' ? '#d97706' : '#10b981'};">
                     <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
                     <p><small>${d.message}</small></p>
-                    ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Approve Now</button>` : '<b>APPROVED</b>'}
+                    ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Approve Now</button>` : '<b style="color:var(--secondary)">ALREADY APPROVED</b>'}
                 </div>
-            `).join('') || "No deposits found.";
+            `).join('') || "No pending deposits.";
         } catch (err) { console.error("Admin Load Error", err); }
     }
 
@@ -481,6 +482,7 @@
 
     function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
+    // Initial Load
     syncData();
     loadServices();
 </script>
