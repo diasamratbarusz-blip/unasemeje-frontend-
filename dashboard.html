@@ -162,10 +162,10 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Service</th>
+                                <th>Service Name</th>
                                 <th>Target Link</th>
-                                <th>Qty</th>
-                                <th>Cost</th>
+                                <th>Quantity</th>
+                                <th>Total Cost</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -364,7 +364,7 @@
         btn.innerText = "Place Order Now";
     }
 
-    // UPDATED LOAD ORDERS FUNCTION
+    // UPDATED LOAD ORDERS FUNCTION: Shows Service, Link, and Cost
     async function loadOrders() {
         const ordersList = document.getElementById("ordersList");
         ordersList.innerHTML = "<tr><td colspan='5'>Updating statuses...</td></tr>";
@@ -378,21 +378,21 @@
             ordersList.innerHTML = orders.map(o => {
                 const statusLower = (o.status || 'pending').toLowerCase().replace(/\s+/g, '');
                 
-                // DATA FALLBACKS: If one name fails, try the other
-                const serviceDisplay = o.serviceName || o.service_name || o.service || `Service #${o.serviceId}`;
-                const orderCost = o.cost || o.charge || 0;
+                // Fetch service name, target link, and cost from the order object
+                const serviceDisplay = o.serviceName || o.service_name || `Service #${o.serviceId}`;
                 const targetLink = o.link || o.target || '---';
+                const orderCost = o.cost || o.charge || 0;
 
                 return `
                     <tr>
-                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${serviceDisplay}">
-                            ${serviceDisplay}
+                        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${serviceDisplay}">
+                            <strong>${serviceDisplay}</strong>
                         </td>
                         <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                             <a href="${targetLink}" target="_blank" style="color:var(--primary); text-decoration:none;">${targetLink}</a>
                         </td>
                         <td>${o.quantity || 0}</td>
-                        <td>KES ${parseFloat(orderCost).toFixed(2)}</td>
+                        <td style="color:var(--secondary); font-weight:bold;">KES ${parseFloat(orderCost).toFixed(2)}</td>
                         <td>
                             <span class="status status-${statusLower}">${o.status || 'Pending'}</span>
                             ${(statusLower === 'completed') ? 
@@ -404,7 +404,7 @@
             }).join('') || "<tr><td colspan='5'>No orders found.</td></tr>";
         } catch (error) {
             console.error("Order Load Error:", error);
-            ordersList.innerHTML = "<tr><td colspan='5' style='color:var(--danger)'>Error loading orders. Check console.</td></tr>";
+            ordersList.innerHTML = "<tr><td colspan='5' style='color:var(--danger)'>Error loading orders.</td></tr>";
         }
     }
 
