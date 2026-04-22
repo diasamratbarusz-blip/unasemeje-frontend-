@@ -1,90 +1,184 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>unasemeje ø dia smm-panel</title>
   <link rel="stylesheet" href="style.css">
 
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --primary: #3b82f6;
+      --accent: #00df9a; /* Kenyan Energy Green */
+      --bg: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.7);
+    }
+
     body {
-      margin:0;
-      font-family: Arial;
-      background:#0f172a;
-      color:white;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top right, #1e293b, #0f172a);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
+    h1, h2, h3 {
+      font-family: 'Archivo', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    /* HEADER UPGRADE */
+    .section-header {
+      padding: 60px 20px 20px;
+      text-align: center;
+    }
+
+    .section-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #3b82f6, #00df9a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .section-header p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+
+    /* GLASSMORPHISM CONTAINER */
     .container {
-      max-width:400px;
-      margin:40px auto;
-      background:#1e293b;
-      padding:20px;
-      border-radius:10px;
-      text-align:center;
+      max-width: 420px;
+      margin: 20px auto;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      text-align: center;
     }
 
+    .container h2 {
+      margin-bottom: 30px;
+      font-weight: 800;
+    }
+
+    /* PROFESSIONAL INPUTS */
     input {
-      width:100%;
-      padding:10px;
-      margin:8px 0;
-      border:none;
-      border-radius:5px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px 16px;
+      margin: 12px 0;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      background: #020617;
+      color: white;
+      font-size: 16px; /* Prevents auto-zoom on iPhone */
+      transition: all 0.3s ease;
     }
 
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    }
+
+    /* M-PESA LOGO INDICATOR (Trust Signal) */
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 223, 154, 0.1);
+      padding: 6px 12px;
+      border-radius: 50px;
+      color: #00df9a;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    /* BUTTONS */
     button {
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      background:#3b82f6;
-      border:none;
-      color:white;
-      font-size:14px;
-      border-radius:5px;
-      cursor:pointer;
+      width: 100%;
+      padding: 16px;
+      margin-top: 15px;
+      background: var(--primary);
+      border: none;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    .section {
-      padding:20px;
-      text-align:center;
+    button:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
     }
 
-    .services-box {
-      max-width:800px;
-      margin:auto;
-      text-align:left;
+    button.secondary {
+      background: transparent;
+      border: 1px solid #334155;
+      margin-top: 20px;
     }
 
-    .service-item {
-      background:#020617;
-      padding:12px;
-      margin:10px 0;
-      border-radius:6px;
+    button.secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    footer {
-      background:#020617;
-      padding:20px;
-      text-align:center;
-      margin-top:30px;
+    .remember-me {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 14px;
+      color: #94a3b8;
+      margin-top: 5px;
     }
 
-    /* 🔥 ADDED LOADER STYLE */
+    .remember-me input {
+      width: auto;
+      margin-right: 10px;
+    }
+
+    /* LOADER */
     .btn-loader {
-      width: 16px;
-      height: 16px;
-      border: 2px solid white;
-      border-top: 2px solid transparent;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid white;
       border-radius: 50%;
       display: inline-block;
-      animation: spin 0.7s linear infinite;
-      margin-left: 8px;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-left: 10px;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    footer {
+      background: #020617;
+      padding: 40px 20px;
+      text-align: center;
+      margin-top: auto;
+      border-top: 1px solid #1e293b;
+    }
+
+    footer p {
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    #loadingText {
+      font-size: 14px;
+      font-weight: 600;
     }
 
   </style>
@@ -92,54 +186,43 @@
 
 <body>
 
-<!-- HEADER -->
-<div class="section">
-  <h1>unasemeje ø dia smm-panel</h1>
-  <p>Best SMM Panel in Africa & Kenya for Fast Social Media Growth</p>
+<div class="section-header">
+  <h1>unasemeje ø dia</h1>
+  <p>The #1 SMM Destination for Kenyan Creators</p>
 </div>
 
-<!-- LOGIN / REGISTER -->
 <div class="container">
-  <h2>Login / Register</h2>
+  <div class="trust-badge">✓ SECURED VIA M-PESA & ENCRYPTION</div>
+  <h2>Welcome Back</h2>
 
   <input id="email" placeholder="Email Address">
-  <input id="phone" placeholder="Phone Number">
+  <input id="phone" placeholder="Phone Number (254...)">
   <input id="password" type="password" placeholder="Password">
 
-  <label>
-    <input type="checkbox"> Remember me
+  <label class="remember-me">
+    <input type="checkbox"> Remember my session
   </label>
 
-  <button onclick="login()">Sign In</button>
+  <button onclick="login()">Sign In Now</button>
 
-  <p>Do not have an account?</p>
-  <button onclick="register()">Sign Up</button>
+  <p style="margin-top: 30px; color: #64748b; font-size: 14px;">New to the platform?</p>
+  <button class="secondary" onclick="register()">Create Account</button>
 
-  <!-- 🔥 ADDED LOADING TEXT -->
-  <div id="loadingText" style="display:none; margin-top:10px; color:#38bdf8;">
-    ⏳ Processing request...
-  </div>
-
-</div>
-
-<!-- SERVICES -->
-<div class="section">
-  <h2>Our Services</h2>
-  <div id="services" class="services-box">
-    <p>Loading services...</p>
+  <div id="loadingText" style="display:none; margin-top:15px; color:#38bdf8;">
+    Connecting to server...
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <h3>unasemeje ø dia smm-panel</h3>
-  <p>Grow faster across Africa</p>
+  <p>Helping you scale across Africa and beyond.</p>
 
-  <p><b>Phone:</b> 0715509440</p>
-  <p><b>Email:</b> support@unasemeje-dia.com</p>
-  <p><b>Location:</b> Nairobi, Kenya</p>
+  <div style="margin: 20px 0; font-size: 14px;">
+    <p><b>Support:</b> support@unasemeje-dia.com | 0715509440</p>
+    <p><b>HQ:</b> Nairobi, Kenya</p>
+  </div>
 
-  <p>© 2026 All Rights Reserved</p>
+  <p style="font-size: 12px; opacity: 0.5;">© 2026 unasemeje ø dia. All Rights Reserved.</p>
 </footer>
 
 <div id="toast"></div>
@@ -147,97 +230,6 @@
 <script src="config.js"></script>
 <script src="auth.js"></script>
 
-<!-- 🔥 SERVICES + ORDER SCRIPT -->
-<script>
-const BASE_URL = "https://your-backend.onrender.com"; // 🔴 CHANGE THIS
-
-// LOAD SERVICES
-async function loadServices() {
-  try {
-    const res = await fetch(BASE_URL + "/api/services");
-    const data = await res.json();
-
-    const container = document.getElementById("services");
-    container.innerHTML = "";
-
-    if (!data || data.length === 0) {
-      container.innerHTML = "<p>No services available</p>";
-      return;
-    }
-
-    data.slice(0, 20).forEach(service => {
-      const div = document.createElement("div");
-      div.className = "service-item";
-
-      div.innerHTML = `
-        <strong>${service.name}</strong><br>
-        Rate: ${service.rate}<br>
-        Min: ${service.min} | Max: ${service.max}<br><br>
-
-        <button onclick="placeOrder(${service.serviceId})">
-          Order
-        </button>
-      `;
-
-      container.appendChild(div);
-    });
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById("services").innerHTML =
-      "<p>Failed to load services</p>";
-  }
-}
-
-// PLACE ORDER
-async function placeOrder(serviceId) {
-  const link = prompt("Enter link:");
-  const quantity = prompt("Enter quantity:");
-
-  if (!link || !quantity) {
-    alert("All fields required");
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Please login first");
-      return;
-    }
-
-    const res = await fetch(BASE_URL + "/api/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({
-        serviceId,
-        link,
-        quantity
-      })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      alert("✅ Order placed successfully");
-    } else {
-      alert("❌ " + data.error);
-    }
-
-  } catch (err) {
-    console.error(err);
-    alert("Order failed");
-  }
-}
-
-loadServices();
-</script>
-
-<!-- 🔥 ADDED LOADING SCRIPT (NO CHANGES TO YOUR CODE) -->
 <script>
 function setButtonLoading(buttonText, loading) {
   const buttons = document.querySelectorAll("button");
@@ -246,11 +238,11 @@ function setButtonLoading(buttonText, loading) {
     if (btn.innerText.includes(buttonText)) {
       if (loading) {
         btn.disabled = true;
-        btn.dataset.original = btn.innerHTML;
-        btn.innerHTML = buttonText + ' <span class="btn-loader"></span>';
+        if (!btn.dataset.original) btn.dataset.original = btn.innerHTML;
+        btn.innerHTML = 'Processing <span class="btn-loader"></span>';
       } else {
         btn.disabled = false;
-        btn.innerHTML = btn.dataset.original;
+        btn.innerHTML = btn.dataset.original || buttonText;
       }
     }
   });
@@ -258,28 +250,28 @@ function setButtonLoading(buttonText, loading) {
   document.getElementById("loadingText").style.display = loading ? "block" : "none";
 }
 
-// HOOK LOGIN
+// HOOK LOGIN (Preserves your auth.js logic)
 const originalLogin = window.login;
 window.login = async function () {
   setButtonLoading("Sign In", true);
   try {
-    await originalLogin();
+    if (typeof originalLogin === "function") await originalLogin();
   } catch (e) {
     console.error(e);
   }
   setButtonLoading("Sign In", false);
 };
 
-// HOOK REGISTER
+// HOOK REGISTER (Preserves your auth.js logic)
 const originalRegister = window.register;
 window.register = async function () {
-  setButtonLoading("Sign Up", true);
+  setButtonLoading("Create Account", true);
   try {
-    await originalRegister();
+    if (typeof originalRegister === "function") await originalRegister();
   } catch (e) {
     console.error(e);
   }
-  setButtonLoading("Sign Up", false);
+  setButtonLoading("Create Account", false);
 };
 </script>
 
