@@ -29,7 +29,6 @@
         .sidebar a i { margin-right: 12px; width: 20px; }
         .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; transform: translateX(5px); }
         
-        /* Support Buttons Styling */
         .sidebar a.whatsapp-btn { color: var(--whatsapp); border: 1px solid rgba(37, 211, 102, 0.2); }
         .sidebar a.whatsapp-btn:hover { background: var(--whatsapp); color: white; }
         .sidebar a.phone-btn { color: var(--phone); border: 1px solid rgba(59, 130, 246, 0.2); }
@@ -54,15 +53,18 @@
         input, textarea, select { width: 100%; padding: 14px; margin-top: 10px; border-radius: 10px; border: 1px solid #334155; background: var(--bg-dark); color: white; box-sizing: border-box; }
         button { margin-top: 20px; padding: 15px; width: 100%; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
         button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         /* TABLES */
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(15, 23, 42, 0.5); border-radius: 12px; overflow: hidden; }
         th { text-align: left; color: var(--text-dim); padding: 15px; border-bottom: 1px solid #334155; font-size: 13px; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid #334155; font-size: 14px; }
-        .status { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .status { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .status-pending { background: #d97706; color: white; }
         .status-completed { background: var(--secondary); color: white; }
-        .status-processing, .status-inprogress { background: #3b82f6; color: white; }
+        .status-processing, .status-inprogress, .status-inprogress { background: #3b82f6; color: white; }
+        .status-partial { background: #6366f1; color: white; }
+        .status-canceled, .status-error { background: var(--danger); color: white; }
 
         /* SUCCESS OVERLAY */
         #successOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; }
@@ -77,7 +79,7 @@
     <div class="success-box">
         <i class="fas fa-check-circle" style="font-size: 60px; color: var(--secondary); margin-bottom: 20px;"></i>
         <h2>Order Successful!</h2>
-        <p>Your order has been placed. Check the "My Orders" tab for status updates.</p>
+        <p>Your order has been placed. Check "My Orders" for real-time status tracking.</p>
         <button onclick="closeSuccess()" style="background: var(--secondary);">Awesome, Let's go!</button>
     </div>
 </div>
@@ -111,11 +113,15 @@
 
         <div id="home" class="page active">
             <div class="card">
-                <h3>Hello!</h3>
-                <p>Welcome to your personal dashboard. Use the sidebar to navigate through our SMM services.</p>
+                <h3>Welcome back!</h3>
+                <p>Ready to boost your social presence? Select a service to get started.</p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                    <div class="list-item" onclick="showPage('services')"><b>Place New Order</b></div>
-                    <div class="list-item" onclick="showPage('deposit')"><b>Deposit Funds</b></div>
+                    <div class="list-item" onclick="showPage('services')">
+                        <i class="fas fa-plus-circle"></i> <b>New Order</b>
+                    </div>
+                    <div class="list-item" onclick="showPage('deposit')">
+                        <i class="fas fa-money-bill-wave"></i> <b>Add Balance</b>
+                    </div>
                 </div>
             </div>
         </div>
@@ -137,16 +143,17 @@
                 <div id="displayServiceName" style="background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; color: var(--secondary); font-weight: bold;">-</div>
                 
                 <input id="orderServiceId" type="hidden">
+                <input id="orderProvider" type="hidden">
                 
                 <label>Target Link</label>
-                <input id="orderLink" placeholder="Post, Profile, or Channel link">
+                <input id="orderLink" placeholder="Link (e.g. https://tiktok.com/@user/video/...)">
                 
                 <label>Quantity</label>
-                <input id="orderQty" type="number" placeholder="Min: 100" oninput="calcTotal()">
+                <input id="orderQty" type="number" placeholder="Enter quantity" oninput="calcTotal()">
                 
                 <div style="margin-top:20px; background: rgba(124, 58, 237, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--primary);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--text-dim);">Estimated Cost:</span>
+                        <span style="color: var(--text-dim);">Total Cost:</span>
                         <span style="color: var(--secondary); font-weight: 800; font-size: 1.4rem;">KES <span id="orderTotal">0.00</span></span>
                     </div>
                 </div>
@@ -157,16 +164,19 @@
 
         <div id="orders" class="page">
             <div class="card">
-                <h3>My Orders</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>My Orders</h3>
+                    <button onclick="loadOrders()" style="width: auto; padding: 8px 15px; font-size: 12px; margin: 0;"><i class="fas fa-sync"></i> Refresh Status</button>
+                </div>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
                             <tr>
-                                <th>Service Name</th>
-                                <th>Target Link</th>
+                                <th>Service</th>
                                 <th>Quantity</th>
-                                <th>Total Cost</th>
+                                <th>Cost</th>
                                 <th>Status</th>
+                                <th>Progress</th>
                             </tr>
                         </thead>
                         <tbody id="ordersList"></tbody>
@@ -177,28 +187,23 @@
 
         <div id="referral" class="page">
             <div class="card">
-                <h3>Invite Friends & Earn</h3>
-                <p>Earn 10% commission on every purchase your friends make.</p>
+                <h3>Earn 10% Referral Bonus</h3>
+                <p>Share your code and get paid when your friends top up and order.</p>
                 <div style="background: #0f172a; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px dashed var(--primary);">
                     <p>Referral Code: <b id="refCode" style="color: var(--primary);">...</b></p>
                     <p>Invite Link: <br><small id="refLink" style="color: var(--text-dim);"></small></p>
                 </div>
-                <h4>Earnings: <span style="color: var(--secondary);">KES <span id="refEarnings">0.00</span></span></h4>
+                <h4>Total Earned: <span style="color: var(--secondary);">KES <span id="refEarnings">0.00</span></span></h4>
             </div>
         </div>
 
         <div id="profile" class="page">
             <div class="card">
-                <h3>Profile Settings</h3>
+                <h3>Account Information</h3>
                 <p>Email: <b id="profEmail">...</b></p>
                 <p>Phone: <b id="profPhone">...</b></p>
                 <hr style="border-color: #334155;">
-                <h4>Developer API</h4>
-                <div style="background: #0f172a; padding: 15px; border-radius: 8px; font-family: monospace; color: var(--secondary);">
-                    KEY: <span id="profApiKey">USM-7712-44X-9122</span>
-                </div>
-                <hr style="border-color: #334155;">
-                <h4>Security</h4>
+                <h4>Security Update</h4>
                 <input type="password" id="oldPass" placeholder="Current Password">
                 <input type="password" id="newPass" placeholder="New Password">
                 <button style="width: auto; padding: 10px 20px;">Update Password</button>
@@ -207,13 +212,14 @@
 
         <div id="deposit" class="page">
             <div class="card">
-                <h3>Add Funds (M-Pesa)</h3>
-                <p>Send funds to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
-                <input id="depPhone" placeholder="M-Pesa Phone Number">
-                <input id="depAmount" type="number" placeholder="Amount (KES)">
-                <textarea id="depMessage" rows="3" placeholder="Paste full M-Pesa SMS here"></textarea>
-                <button id="depSubmitBtn" onclick="submitDeposit()">Submit Deposit</button>
-                <p id="depStatus" style="text-align: center; color: var(--secondary); margin-top:10px;"></p>
+                <h3>Add Funds via M-Pesa</h3>
+                <p>1. Send funds to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
+                <p>2. Paste the <b>FULL M-Pesa SMS</b> message below:</p>
+                <input id="depPhone" placeholder="Your M-Pesa Number">
+                <input id="depAmount" type="number" placeholder="Exact Amount Sent">
+                <textarea id="depMessage" rows="5" placeholder="Example: RL456TY789 Confirmed. KES 500.00 sent to FAITH CHERUIYOT..."></textarea>
+                <button id="depSubmitBtn" onclick="submitDeposit()">Submit for Approval</button>
+                <p id="depStatus" style="text-align: center; margin-top:10px; font-weight: bold;"></p>
             </div>
         </div>
 
@@ -224,11 +230,13 @@
                 <div id="adminDepositList"></div>
             </div>
             <div class="card">
-                <h3>All Users</h3>
-                <table>
-                    <thead><tr><th>Email</th><th>Phone</th><th>Balance</th></tr></thead>
-                    <tbody id="adminUserList"></tbody>
-                </table>
+                <h3>All Platform Users</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead><tr><th>Email</th><th>Phone</th><th>Balance</th></tr></thead>
+                        <tbody id="adminUserList"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -242,37 +250,35 @@
 
     if (!token) window.location.href = "index.html";
 
-    // CORE: Fetch User Data
+    // CORE: Sync User Data
     async function syncData() {
         try {
             const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+            if (!res.ok) throw new Error();
             const user = await res.json();
             
             document.getElementById("userEmail").innerText = user.email;
             document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
-            
             document.getElementById("profEmail").innerText = user.email;
             document.getElementById("profPhone").innerText = user.phone || "Not Set";
-            
             document.getElementById("refCode").innerText = user.referralCode || "N/A";
             document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
             document.getElementById("refLink").innerText = `${window.location.origin}/register.html?ref=${user.referralCode}`;
 
             if(user.email === "diasamratbarusz@gmail.com") {
                 document.getElementById("adminBtn").style.display = "flex";
-                loadAdminData();
             }
-        } catch (err) { console.error("Sync Error", err); }
+        } catch (err) { logout(); }
     }
 
-    // SERVICES LOGIC
+    // SERVICES NAVIGATION
     async function loadServices() {
         try {
             const res = await fetch(`${API}/services`);
             const json = await res.json();
             servicesData = json.data || {};
             renderPlatforms();
-        } catch (err) { console.error("Load Services Error", err); }
+        } catch (err) { console.error("Services Error", err); }
     }
 
     function renderPlatforms() {
@@ -281,7 +287,7 @@
         Object.keys(servicesData).forEach(p => {
             const div = document.createElement("div");
             div.className = "list-item";
-            div.innerText = p;
+            div.innerHTML = `<i class="fas fa-chevron-right"></i> ${p}`;
             div.onclick = () => renderCategories(p);
             list.appendChild(div);
         });
@@ -290,7 +296,7 @@
     function renderCategories(p) {
         document.getElementById("platformList").style.display = "none";
         const list = document.getElementById("categoryList");
-        list.innerHTML = `<button onclick="resetServices()" style="width:auto; padding:5px 10px; margin-bottom:15px;">← Back</button><h3>${p} Categories</h3>`;
+        list.innerHTML = `<button onclick="resetServices()" style="width:auto; padding:5px 10px; margin-bottom:15px; background:#334155;">← Back to Platforms</button><h3>${p} Categories</h3>`;
         Object.keys(servicesData[p]).forEach(c => {
             const div = document.createElement("div");
             div.className = "list-item";
@@ -304,13 +310,18 @@
     function renderServicesList(p, c) {
         document.getElementById("categoryList").style.display = "none";
         const list = document.getElementById("serviceList");
-        list.innerHTML = `<button onclick="renderCategories('${p}')" style="width:auto; padding:5px 10px; margin-bottom:15px;">← Back</button><h3>${c}</h3>`;
+        list.innerHTML = `<button onclick="renderCategories('${p}')" style="width:auto; padding:5px 10px; margin-bottom:15px; background:#334155;">← Back to Categories</button><h3>${c}</h3>`;
         servicesData[p][c].forEach(s => {
             const div = document.createElement("div");
             div.className = "service-item";
-            div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate} per 1k</span>`;
+            div.innerHTML = `
+                <b>${s.name}</b><br>
+                <span style="color:var(--secondary)">KES ${s.rate} per 1,000</span><br>
+                <small style="color:var(--text-dim)">Min: ${s.min} | Max: ${s.max}</small>
+            `;
             div.onclick = () => {
                 document.getElementById("orderServiceId").value = s.serviceId;
+                document.getElementById("orderProvider").value = s.provider; // Capture Provider
                 document.getElementById("displayServiceName").innerText = s.name;
                 selectedRate = s.rate;
                 calcTotal();
@@ -327,7 +338,7 @@
         document.getElementById("serviceList").style.display = "none";
     }
 
-    // ORDER LOGIC
+    // ORDER PROCESSING
     function calcTotal() {
         const qty = document.getElementById("orderQty").value || 0;
         document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
@@ -337,13 +348,15 @@
         const btn = document.getElementById("orderSubmitBtn");
         const payload = {
             serviceId: document.getElementById("orderServiceId").value,
+            provider: document.getElementById("orderProvider").value,
             link: document.getElementById("orderLink").value,
             quantity: document.getElementById("orderQty").value
         };
-        if(!payload.link || !payload.quantity) return alert("Please fill all fields");
+
+        if(!payload.link || !payload.quantity) return alert("Please provide a link and quantity");
 
         btn.disabled = true;
-        btn.innerText = "Processing...";
+        btn.innerText = "Connecting to Provider...";
 
         try {
             const res = await fetch(`${API}/order`, {
@@ -359,80 +372,77 @@
                 document.getElementById("orderQty").value = "";
                 syncData();
             } else {
-                alert(data.error || "Order Failed");
+                alert(data.error || "Order Failed. Check your balance.");
             }
-        } catch (err) { alert("Server connection error"); }
+        } catch (err) { alert("Server connection lost"); }
         btn.disabled = false;
         btn.innerText = "Place Order Now";
     }
 
     async function loadOrders() {
-        const ordersList = document.getElementById("ordersList");
-        ordersList.innerHTML = "<tr><td colspan='5'>Syncing orders...</td></tr>";
+        const list = document.getElementById("ordersList");
+        list.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Updating status from providers...</td></tr>";
 
         try {
-            const res = await fetch(`${API}/sync-orders`, { 
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
             const orders = await res.json();
             
-            ordersList.innerHTML = orders.map(o => {
-                const statusLower = (o.status || 'pending').toLowerCase().replace(/\s+/g, '');
+            list.innerHTML = orders.map(o => {
+                const s = (o.status || 'pending').toLowerCase().replace(/\s/g, '');
                 return `
                     <tr>
-                        <td><strong>${o.serviceName || 'Service'}</strong></td>
-                        <td><small>${o.link}</small></td>
+                        <td><strong>${o.serviceName}</strong><br><small style="color:var(--text-dim)">${o.link.substring(0,25)}...</small></td>
                         <td>${o.quantity}</td>
-                        <td style="color:var(--secondary);">KES ${parseFloat(o.cost).toFixed(2)}</td>
-                        <td><span class="status status-${statusLower}">${o.status}</span></td>
+                        <td style="color:var(--secondary)">KES ${parseFloat(o.cost).toFixed(2)}</td>
+                        <td><span class="status status-${s}">${o.status}</span></td>
+                        <td>${o.remains !== undefined ? `<small>${o.remains} left</small>` : '--'}</td>
                     </tr>
                 `;
-            }).join('') || "<tr><td colspan='5'>No orders found.</td></tr>";
-        } catch (error) { ordersList.innerHTML = "<tr><td colspan='5'>Error loading orders.</td></tr>"; }
+            }).join('') || "<tr><td colspan='5'>You haven't placed any orders yet.</td></tr>";
+        } catch (error) { list.innerHTML = "<tr><td colspan='5'>Error loading history.</td></tr>"; }
     }
 
-    // DEPOSIT LOGIC - FULL SYNC WITH SERVER.JS
+    // DEPOSIT MANAGEMENT
     async function submitDeposit() {
         const status = document.getElementById("depStatus");
         const btn = document.getElementById("depSubmitBtn");
-        
-        const phone = document.getElementById("depPhone").value;
-        const amount = document.getElementById("depAmount").value;
-        const message = document.getElementById("depMessage").value;
+        const payload = {
+            phone: document.getElementById("depPhone").value,
+            amount: document.getElementById("depAmount").value,
+            message: document.getElementById("depMessage").value
+        };
 
-        if(!amount || !message) return alert("Please enter amount and paste the SMS");
+        if(!payload.amount || !payload.message) return alert("Enter amount and paste M-Pesa message.");
 
-        status.innerText = "Verifying Code...";
-        status.style.color = "var(--text-dim)";
         btn.disabled = true;
+        status.innerText = "Analyzing transaction code...";
+        status.style.color = "var(--text-dim)";
 
         try {
             const res = await fetch(`${API}/deposit`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ phone, amount, message })
+                body: JSON.stringify(payload)
             });
             const data = await res.json();
             
             if(res.ok) {
-                status.innerText = data.message || "Deposit submitted!";
+                status.innerText = "✅ Submitted! Admin will verify and credit your balance.";
                 status.style.color = "var(--secondary)";
-                // Clear inputs on success
                 document.getElementById("depAmount").value = "";
                 document.getElementById("depMessage").value = "";
             } else {
-                // This handles the E11000 and other backend errors
-                status.innerText = data.error || "Submission failed";
+                status.innerText = "❌ " + (data.error || "Submission failed");
                 status.style.color = "var(--danger)";
             }
         } catch (err) { 
-            status.innerText = "Connection error. Check your internet.";
+            status.innerText = "Connection error. Please try again.";
             status.style.color = "var(--danger)";
         }
         btn.disabled = false;
     }
 
-    // ADMIN LOGIC
+    // ADMIN CONTROLS
     async function loadAdminData() {
         try {
             const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
@@ -446,14 +456,15 @@
             document.getElementById("adminDepositList").innerHTML = deposits.map(d => `
                 <div class="card" style="border-left: 5px solid ${d.status === 'pending' ? '#d97706' : '#10b981'};">
                     <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
-                    <p><small>${d.message}</small></p>
-                    ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Approve Now</button>` : '<b style="color:var(--secondary)">ALREADY APPROVED</b>'}
+                    <p style="font-size: 12px; background: #0f172a; padding: 10px; border-radius: 5px;">${d.message}</p>
+                    ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Approve & Credit Balance</button>` : '<b style="color:var(--secondary)">APPROVED</b>'}
                 </div>
-            `).join('') || "No pending deposits.";
-        } catch (err) { console.error("Admin Load Error", err); }
+            `).join('') || "No pending deposits to show.";
+        } catch (err) { console.error("Admin error", err); }
     }
 
     async function approveDep(id) {
+        if(!confirm("Are you sure you want to approve this deposit?")) return;
         const res = await fetch(`${API}/admin/approve-deposit`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -465,7 +476,7 @@
         syncData();
     }
 
-    // UI NAVIGATION
+    // NAVIGATION SYSTEM
     function showPage(p) {
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
         document.querySelectorAll(".sidebar-nav a").forEach(x => x.classList.remove("active"));
@@ -482,7 +493,7 @@
 
     function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-    // Initial Load
+    // Init
     syncData();
     loadServices();
 </script>
