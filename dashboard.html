@@ -66,14 +66,20 @@
         .status-completed, .bg-success { background: var(--secondary); color: white; }
         .status-pending, .bg-warning { background: var(--warning); color: white; }
         .status-canceled, .bg-danger { background: var(--danger); color: white; }
+        .online-dot { height: 8px; width: 8px; background: var(--secondary); border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .offline-dot { height: 8px; width: 8px; background: #64748b; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
         /* INPUTS & BUTTONS */
         input, textarea, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #334155; background: var(--bg-dark); color: white; outline: none; }
         input:focus { border-color: var(--primary); }
         .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
         .btn-primary:hover { opacity: 0.9; transform: scale(0.98); }
+        .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; }
+        .btn-approve { background: var(--secondary); color: white; }
+        .btn-cancel { background: var(--danger); color: white; }
         
-        .message-bubble { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); border: 1px solid #334155; }
+        .list-item { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); border: 1px solid #334155; cursor: pointer; transition: 0.2s; }
+        .list-item:hover { border-color: var(--primary); background: #334155; }
 
         /* MOBILE BOTTOM NAV */
         @media (max-width: 768px) {
@@ -91,9 +97,9 @@
 <div id="successOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999;">
     <div class="card" style="text-align: center; max-width: 350px;">
         <i class="fas fa-check-circle" style="font-size: 50px; color: var(--secondary); margin-bottom: 15px;"></i>
-        <h2>Order Received!</h2>
-        <p>Your request is being processed. Check "My Orders" for tracking.</p>
-        <button onclick="closeSuccess()" class="btn-primary" style="background: var(--secondary);">Back to Panel</button>
+        <h2>Order Placed!</h2>
+        <p>Your request has been received and is being processed.</p>
+        <button onclick="closeSuccess()" class="btn-primary" style="background: var(--secondary);">Awesome!</button>
     </div>
 </div>
 
@@ -103,51 +109,46 @@
         <h2>UNASEMEJE</h2>
         <div class="sidebar-nav">
             <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a onclick="showPage('services')" id="nav-services"><i class="fas fa-cart-plus"></i> <span>Services</span></a>
-            <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-list-ul"></i> <span>Orders</span></a>
-            <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> <span>Add Cash</span></a>
-            <a onclick="showPage('messages')" id="nav-messages"><i class="fas fa-comment-dots"></i> <span>Messages</span></a>
-            <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-share-alt"></i> <span>Referral</span></a>
-            <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-shield-alt"></i> <span>Admin</span></a>
+            <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> <span>New Order</span></a>
+            <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> <span>Admin</span></a>
         </div>
         
-        <div class="sidebar-support" style="margin-top: 10px; border-top: 1px solid #1f2937; padding-top: 10px;">
+        <div class="sidebar-support">
             <a href="https://wa.me/254715509440" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> <span>Support</span></a>
-            <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-power-off"></i> <span>Logout</span></a>
+            <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
         </div>
     </div>
 
     <!-- MAIN -->
     <div class="main">
         <div class="navbar">
-            <div><i class="fas fa-user"></i> <span id="userEmail">Loading...</span></div>
+            <div><i class="fas fa-user-circle"></i> <span id="userEmail">Loading...</span></div>
             <div class="balance-badge">KES <span id="balance">0.00</span></div>
         </div>
 
         <!-- HOME -->
         <div id="home" class="page active">
-            <div class="card" style="background: linear-gradient(to right, var(--primary), #5b21b6);">
-                <h3>Welcome to Unasemeje SMM 🇰🇪</h3>
-                <p>The #1 SMM provider for the Kenyan market. Fast, cheap, and reliable.</p>
+            <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95);">
+                <h3>Habari! 🇰🇪</h3>
+                <p>Welcome to Unasemeje Ø DIA. Use the menu to start growing your social media presence.</p>
             </div>
             
             <div class="card">
-                <h3><i class="fas fa-bullhorn" style="color:var(--warning)"></i> Announcements</h3>
-                <div class="message-bubble">
-                    <small style="color:var(--primary)">System</small>
-                    <p>Refer friends and get 10% bonus on every deposit they make!</p>
-                </div>
-                <div class="message-bubble">
-                    <small style="color:var(--secondary)">Update</small>
-                    <p>New Kenyan TikTok Followers services are now LIVE.</p>
+                <h3><i class="fas fa-bullhorn" style="color:var(--warning)"></i> Updates</h3>
+                <div class="list-item" style="cursor: default; border-left-color: var(--secondary);">
+                    <small style="color:var(--secondary)">Announcement</small>
+                    <p style="margin:5px 0 0;">M-Pesa deposits are processed within 5-30 minutes. Please paste the full SMS.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SERVICES -->
+        <!-- SERVICES SELECTION -->
         <div id="services" class="page">
             <div class="card">
-                <div id="platformList"><h3>Select Social Platform</h3></div>
+                <div id="platformList"><h3>Select Platform</h3></div>
                 <div id="categoryList" style="display:none;"></div>
                 <div id="serviceList" style="display:none;"></div>
             </div>
@@ -156,14 +157,14 @@
         <!-- ORDER FORM -->
         <div id="order" class="page">
             <div class="card">
-                <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Change Service</button>
+                <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button>
                 <h3 id="displayServiceName" style="margin-top:15px; color:var(--primary)">-</h3>
                 
                 <input id="orderServiceId" type="hidden">
                 <input id="orderProvider" type="hidden">
                 
-                <label>Target Link (URL)</label>
-                <input id="orderLink" placeholder="https://...">
+                <label>Target Link</label>
+                <input id="orderLink" placeholder="Paste link here...">
                 
                 <label>Quantity</label>
                 <input id="orderQty" type="number" placeholder="Enter amount" oninput="calcTotal()">
@@ -182,7 +183,7 @@
         <!-- MY ORDERS -->
         <div id="orders" class="page">
             <div class="card">
-                <h3><i class="fas fa-history"></i> My Order History</h3>
+                <h3>My Orders</h3>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -197,70 +198,71 @@
         <!-- ADD FUNDS -->
         <div id="deposit" class="page">
             <div class="card">
-                <h3>M-Pesa Automatic Deposit</h3>
+                <h3>Add Funds (M-Pesa)</h3>
                 <div style="background: #111827; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--primary);">
-                    <p style="margin:0">Send money to: <b>0715509440</b></p>
+                    <p style="margin:0">Send to: <b>0715509440</b></p>
                     <p style="margin:5px 0 0">Name: <b>FAITH CHERUIYOT</b></p>
                 </div>
-                <input id="depAmount" type="number" placeholder="Amount Paid (KES)">
-                <textarea id="depMessage" rows="5" placeholder="Paste the FULL M-Pesa SMS message here..."></textarea>
-                <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Verify Payment</button>
-                <p id="depStatus" style="text-align: center; margin-top:10px;"></p>
-            </div>
-        </div>
-
-        <!-- MESSAGES -->
-        <div id="messages" class="page">
-            <div class="card">
-                <h3><i class="fas fa-envelope"></i> Support & Inbox</h3>
-                <div id="inboxList">
-                    <div class="message-bubble">
-                        <small>Support Team</small>
-                        <p>Welcome to Unasemeje! If you have any issues with your orders, please send your Order ID here.</p>
-                    </div>
-                </div>
-                <textarea id="supportMsg" placeholder="Type your message to admin..."></textarea>
-                <button class="btn-primary" onclick="alert('Message sent! Support will respond shortly.')">Send Message</button>
+                <input id="depAmount" type="number" placeholder="KES Amount Sent">
+                <textarea id="depMessage" rows="5" placeholder="Paste the FULL M-Pesa SMS here..."></textarea>
+                <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit for Verification</button>
+                <p id="depStatus" style="text-align: center; margin-top:10px; font-weight:bold;"></p>
             </div>
         </div>
 
         <!-- REFERRAL -->
         <div id="referral" class="page">
             <div class="card">
-                <h3>Earn 10% Commission</h3>
-                <p>Share your link and earn money every time your friends add funds.</p>
+                <h3>Refer & Earn 10%</h3>
+                <p>Earn commissions on every deposit made by your friends.</p>
                 <div style="background: #0f172a; padding: 20px; border-radius: 12px; text-align: center; border: 1px solid var(--primary);">
-                    <p style="color:var(--text-dim); margin-bottom: 10px;">Your Referral Link</p>
-                    <h4 id="refLink" style="color: var(--primary); margin-bottom: 15px;">https://unasemeje.com/register?ref=...</h4>
-                    <button class="btn-sm" style="background:var(--primary); border:none; color:white; padding:10px 20px; border-radius:5px; cursor:pointer;" onclick="copyRef()">Copy Link</button>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                    <div class="stat-item" style="background:#111827; padding:15px; border-radius:10px;">
-                        <small>Total Earnings</small>
-                        <p id="refEarnings" style="color:var(--secondary); font-weight:800; margin:5px 0 0;">KES 0.00</p>
-                    </div>
-                    <div class="stat-item" style="background:#111827; padding:15px; border-radius:10px;">
-                        <small>Active Referrals</small>
-                        <p style="color:var(--primary); font-weight:800; margin:5px 0 0;">0</p>
-                    </div>
+                    <p style="color:var(--text-dim); margin-bottom: 10px;">Your Referral Code</p>
+                    <h4 id="refCode" style="color: var(--primary); margin-bottom: 15px;">...</h4>
+                    <p>Earnings: <span style="color: var(--secondary); font-weight: 800;">KES <span id="refEarnings">0.00</span></span></p>
                 </div>
             </div>
         </div>
 
         <!-- ADMIN PANEL -->
         <div id="admin" class="page">
-            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                <div class="card" style="margin:0"><h4>Users</h4><p id="adm-total-users">0</p></div>
-                <div class="card" style="margin:0"><h4>Cash</h4><p id="adm-total-bal">0.00</p></div>
-                <div class="card" style="margin:0"><h4>Pending</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div class="card" style="margin:0"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
+                <div class="card" style="margin:0"><h4>Total Bal</h4><p id="adm-total-bal">0.00</p></div>
+                <div class="card" style="margin:0"><h4>Pending Dep</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
             </div>
 
             <div class="card">
-                <h3>Deposit Verification</h3>
+                <h3>User Management</h3>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>User</th><th>Amount</th><th>Message</th><th>Action</th></tr></thead>
+                        <thead>
+                            <tr><th>Email</th><th>Balance</th><th>Last Activity</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="adminUserTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Deposit Requests</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>User</th><th>Amount</th><th>Message</th><th>Action</th></tr>
+                        </thead>
                         <tbody id="adminDepositTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Platform Orders</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>User</th><th>Service</th><th>Qty</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="adminOrderTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -277,20 +279,18 @@
     if (!token) window.location.href = "index.html";
 
     async function syncData() {
-        try {
-            const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
-            if (!res.ok) logout();
-            const user = await res.json();
-            
-            document.getElementById("userEmail").innerText = user.email;
-            document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
-            document.getElementById("refEarnings").innerText = "KES " + (user.referralEarnings || 0).toFixed(2);
-            document.getElementById("refLink").innerText = `https://unasemeje.com/register?ref=${user.referralCode || 'USER'}`;
+        const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+        if (!res.ok) logout();
+        const user = await res.json();
+        
+        document.getElementById("userEmail").innerText = user.email;
+        document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
+        document.getElementById("refCode").innerText = user.referralCode || "N/A";
+        document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
 
-            if(user.email === "diasamratbarusz@gmail.com") {
-                document.getElementById("adminBtn").style.display = "flex";
-            }
-        } catch (e) { logout(); }
+        if(user.email === "diasamratbarusz@gmail.com") {
+            document.getElementById("adminBtn").style.display = "flex";
+        }
     }
 
     async function loadServices() {
@@ -302,11 +302,10 @@
 
     function renderPlatforms() {
         const list = document.getElementById("platformList");
-        list.innerHTML = "<h3>Select Social Platform</h3>";
+        list.innerHTML = "<h3>Select Platform</h3>";
         Object.keys(servicesData).forEach(p => {
             const div = document.createElement("div");
-            div.className = "message-bubble";
-            div.style.cursor = "pointer";
+            div.className = "list-item";
             div.innerHTML = `<i class="fas fa-chevron-right" style="float:right"></i> ${p}`;
             div.onclick = () => renderCategories(p);
             list.appendChild(div);
@@ -316,11 +315,10 @@
     function renderCategories(p) {
         document.getElementById("platformList").style.display = "none";
         const list = document.getElementById("categoryList");
-        list.innerHTML = `<button onclick="resetServices()" style="margin-bottom:15px; background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button><h3>${p}</h3>`;
+        list.innerHTML = `<button onclick="resetServices()" style="margin-bottom:10px; background:#334155; border:none; color:white; border-radius:5px; cursor:pointer; padding:5px 10px;">← Back</button><h3>${p}</h3>`;
         Object.keys(servicesData[p]).forEach(c => {
             const div = document.createElement("div");
-            div.className = "message-bubble";
-            div.style.cursor = "pointer";
+            div.className = "list-item";
             div.innerText = c;
             div.onclick = () => renderServicesList(p, c);
             list.appendChild(div);
@@ -331,11 +329,10 @@
     function renderServicesList(p, c) {
         document.getElementById("categoryList").style.display = "none";
         const list = document.getElementById("serviceList");
-        list.innerHTML = `<button onclick="renderCategories('${p}')" style="margin-bottom:15px; background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button><h3>${c}</h3>`;
+        list.innerHTML = `<button onclick="renderCategories('${p}')" style="margin-bottom:10px; background:#334155; border:none; color:white; border-radius:5px; cursor:pointer; padding:5px 10px;">← Back</button><h3>${c}</h3>`;
         servicesData[p][c].forEach(s => {
             const div = document.createElement("div");
-            div.className = "message-bubble";
-            div.style.cursor = "pointer";
+            div.className = "list-item";
             div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate}/1k</span>`;
             div.onclick = () => {
                 document.getElementById("orderServiceId").value = s.serviceId;
@@ -369,8 +366,8 @@
             link: document.getElementById("orderLink").value,
             quantity: document.getElementById("orderQty").value
         };
-        if(!payload.link || !payload.quantity) return alert("Please fill all details");
-        btn.disabled = true; btn.innerText = "Processing...";
+        if(!payload.link || !payload.quantity) return alert("Fill all details");
+        btn.disabled = true;
         const res = await fetch(`${API}/order`, {
             method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify(payload)
@@ -378,7 +375,7 @@
         const data = await res.json();
         if(data.success) { document.getElementById("successOverlay").style.display = "flex"; syncData(); }
         else alert(data.error);
-        btn.disabled = false; btn.innerText = "Place Order Now";
+        btn.disabled = false;
     }
 
     async function loadOrders() {
@@ -396,13 +393,50 @@
             method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ amount: document.getElementById("depAmount").value, message: document.getElementById("depMessage").value })
         });
-        if(res.ok) { status.innerText = "Submitted! We are verifying the SMS. Wait 5 mins."; status.style.color = "var(--secondary)"; }
+        if(res.ok) { status.innerText = "Submitted! Wait for admin approval."; status.style.color = "var(--secondary)"; }
     }
 
-    function copyRef() {
-        const link = document.getElementById("refLink").innerText;
-        navigator.clipboard.writeText(link);
-        alert("Referral link copied!");
+    // --- ADMIN ---
+    async function loadAdminPanel() {
+        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+        const users = await uRes.json();
+        let totalB = 0;
+        document.getElementById("adminUserTable").innerHTML = users.map(u => {
+            totalB += u.balance;
+            const isOnline = (new Date() - new Date(u.lastSeen)) < 300000;
+            return `<tr><td>${u.email}</td><td>KES ${u.balance.toFixed(2)}</td><td>${new Date(u.lastSeen || Date.now()).toLocaleString()}</td>
+            <td>${isOnline ? '<span class="online-dot"></span>Online' : '<span class="offline-dot"></span>Offline'}</td></tr>`;
+        }).join('');
+        document.getElementById("adm-total-users").innerText = users.length;
+        document.getElementById("adm-total-bal").innerText = totalB.toFixed(2);
+
+        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+        const deposits = await dRes.json();
+        document.getElementById("adm-pending-dep").innerText = deposits.filter(d => d.status === 'pending').length;
+        document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
+            <tr><td>${d.userEmail}</td><td>KES ${d.amount}</td><td><small>${d.message.substring(0,30)}...</small></td>
+            <td>${d.status === 'pending' ? `<button class="btn-sm btn-approve" onclick="approveDep('${d._id}')">Approve</button>
+            <button class="btn-sm btn-cancel" onclick="cancelDep('${d._id}')">X</button>` : `<span class="status status-completed">${d.status}</span>`}</td></tr>
+        `).join('');
+
+        const oRes = await fetch(`${API}/admin/all-orders`, { headers: { Authorization: `Bearer ${token}` }});
+        const allO = await oRes.json();
+        document.getElementById("adminOrderTable").innerHTML = allO.map(o => `
+            <tr><td>${o.userEmail}</td><td>${o.serviceName.substring(0,15)}</td><td>${o.quantity}</td>
+            <td><span class="status status-pending">${o.status}</span></td></tr>
+        `).join('');
+    }
+
+    async function approveDep(id) {
+        if(!confirm("Credit balance?")) return;
+        await fetch(`${API}/admin/approve-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id })});
+        loadAdminPanel(); syncData();
+    }
+
+    async function cancelDep(id) {
+        if(!confirm("Cancel request?")) return;
+        await fetch(`${API}/admin/cancel-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id })});
+        loadAdminPanel();
     }
 
     function showPage(p) {
@@ -411,7 +445,7 @@
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
         if(p === 'orders') loadOrders();
-        if(p === 'home') syncData();
+        if(p === 'admin') loadAdminPanel();
     }
 
     function closeSuccess() { document.getElementById("successOverlay").style.display = "none"; showPage('orders'); }
