@@ -16,7 +16,17 @@
       --wa-green: #25D366;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* GLOBAL FIXES FOR RESPONSIVENESS */
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+
+    html, body {
+        width: 100%;
+        overflow-x: hidden; /* Prevents side-scrolling on small phones */
+    }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -27,7 +37,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 15px; /* Reduced padding for mobile space */
     }
 
     h1, h2, h3 {
@@ -36,7 +46,7 @@
       letter-spacing: -1px;
     }
 
-    /* BACKGROUND DECORATION (Like High-End Panels) */
+    /* BACKGROUND DECORATION */
     .bg-glow {
       position: absolute;
       width: 400px;
@@ -46,16 +56,18 @@
       opacity: 0.15;
       z-index: -1;
       border-radius: 50%;
+      max-width: 100%; /* Ensure glow doesn't push screen width */
     }
 
     /* LOGO SECTION */
     .brand-header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
+      padding: 0 10px;
     }
 
     .brand-header h1 {
-      font-size: 2.8rem;
+      font-size: clamp(2rem, 8vw, 2.8rem); /* Scales based on screen width */
       background: linear-gradient(to right, #3b82f6, #00df9a);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -64,14 +76,14 @@
 
     .brand-header p {
       color: #94a3b8;
-      font-size: 1.1rem;
+      font-size: clamp(0.9rem, 4vw, 1.1rem);
       font-weight: 400;
     }
 
-    /* CENTRAL PROFESSIONAL CONTAINER */
+    /* CENTRAL CONTAINER - RESPONSIVE FIX */
     .main-wrapper {
-      max-width: 500px;
-      width: 100%;
+      max-width: 500px; /* Desktop limit */
+      width: 100%; /* Mobile full-width */
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       border-radius: 24px;
@@ -81,7 +93,7 @@
     }
 
     .form-container {
-      padding: 40px;
+      padding: clamp(20px, 5vw, 40px); /* Smaller padding on phones */
     }
 
     .trust-badge {
@@ -91,10 +103,11 @@
       padding: 6px 16px;
       border-radius: 50px;
       color: var(--accent);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       letter-spacing: 1px;
+      text-align: center;
     }
 
     /* INPUT STYLING */
@@ -118,7 +131,7 @@
       border-radius: 12px;
       background: #020617;
       color: white;
-      font-size: 16px;
+      font-size: 16px; /* 16px prevents iOS auto-zoom */
       transition: all 0.3s ease;
     }
 
@@ -155,6 +168,7 @@
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
+      touch-action: manipulation; /* Optimizes for mobile taps */
     }
 
     button:hover {
@@ -168,14 +182,10 @@
       margin-top: 15px;
     }
 
-    button.secondary:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    /* INSTRUCTIONS & ADS SECTION */
+    /* INSTRUCTIONS & ADS SECTION - GRID FIX */
     .info-footer {
         background: rgba(0, 0, 0, 0.3);
-        padding: 30px 40px;
+        padding: clamp(20px, 5vw, 30px) clamp(20px, 5vw, 40px);
         border-top: 1px solid rgba(255, 255, 255, 0.05);
         text-align: left;
     }
@@ -188,7 +198,7 @@
 
     .ad-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adaptive columns */
         gap: 10px;
         margin-bottom: 20px;
     }
@@ -199,6 +209,7 @@
         padding: 8px;
         border-radius: 8px;
         color: #cbd5e1;
+        text-align: center;
     }
 
     /* WHATSAPP SUPPORT */
@@ -218,10 +229,6 @@
       transition: 0.3s;
     }
 
-    .whatsapp-btn:hover {
-      background: rgba(37, 211, 102, 0.1);
-    }
-
     /* LOADER */
     .btn-loader {
       width: 18px;
@@ -238,21 +245,25 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     footer {
-      padding: 40px 20px;
+      padding: 30px 15px;
       text-align: center;
       width: 100%;
     }
 
     footer p {
       color: #64748b;
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.6;
     }
 
-    #loadingText {
-      font-size: 13px;
-      color: #38bdf8;
-      margin-top: 15px;
+    /* RESPONSIVE TABLET/MOBILE TWEAKS */
+    @media (max-width: 480px) {
+        .main-wrapper {
+            border-radius: 16px; /* Slightly sharper corners on small phones */
+        }
+        .form-container {
+            padding: 25px 20px;
+        }
     }
 
   </style>
@@ -296,7 +307,7 @@
 
     <button onclick="login()">Sign In to Dashboard</button>
 
-    <div id="loadingText" style="display:none; text-align:center;">
+    <div id="loadingText" style="display:none; text-align:center; font-size: 13px; color: #38bdf8; margin-top: 15px;">
       Connecting ...
     </div>
 
