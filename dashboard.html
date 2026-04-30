@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNASEMEJE SMM | User Dashboard</title>
+    <title>UNASEMEJE Ø DIA | Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -27,10 +27,9 @@
             overflow-x: hidden;
         }
 
-        /* LAYOUT */
         .dashboard-container { display: flex; min-height: 100vh; }
 
-        /* SIDEBAR (Desktop) */
+        /* SIDEBAR */
         .sidebar { 
             width: 260px; 
             background: #111827; 
@@ -44,7 +43,7 @@
             transition: 0.3s;
         }
 
-        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 35px; text-align: center; font-weight: 800; }
+        .sidebar h2 { color: var(--primary); font-size: 18px; margin-bottom: 35px; text-align: center; font-weight: 800; }
         
         .nav-links { flex-grow: 1; }
         .nav-links a { 
@@ -54,7 +53,7 @@
             color: var(--text-dim); 
             text-decoration: none; 
             border-radius: 12px; 
-            margin-bottom: 10px; 
+            margin-bottom: 8px; 
             transition: 0.2s; 
             cursor: pointer;
             font-weight: 500;
@@ -62,9 +61,7 @@
         .nav-links a i { margin-right: 15px; width: 20px; text-align: center; font-size: 18px; }
         .nav-links a:hover, .nav-links a.active { background: var(--primary); color: white; }
 
-        .sidebar-footer { border-top: 1px solid #1f2937; padding-top: 20px; }
-        .support-btn { border: 1px solid #334155; margin-bottom: 8px !important; }
-        .support-btn.wa { color: var(--whatsapp); }
+        #admin-link { border: 1px solid var(--danger); color: var(--danger); display: none; }
 
         /* MAIN CONTENT */
         .main-content { flex: 1; padding: 25px; max-width: 1200px; margin: 0 auto; width: 100%; }
@@ -89,10 +86,9 @@
             font-weight: 800; 
         }
 
-        /* PAGES */
+        /* PAGES & CARDS */
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .card { 
@@ -106,47 +102,25 @@
         /* FORMS */
         label { display: block; margin-top: 15px; color: var(--text-dim); font-size: 14px; }
         input, select, textarea { 
-            width: 100%; 
-            padding: 14px; 
-            margin-top: 8px; 
-            border-radius: 12px; 
-            border: 1px solid #334155; 
-            background: #0f172a; 
-            color: white; 
-            font-size: 16px; 
+            width: 100%; padding: 14px; margin-top: 8px; border-radius: 12px; 
+            border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; 
         }
 
         .btn-primary { 
-            width: 100%; 
-            padding: 16px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            margin-top: 25px; 
-            cursor: pointer; 
-            transition: 0.2s;
+            width: 100%; padding: 16px; background: var(--primary); color: white; border: none; 
+            border-radius: 12px; font-weight: 700; margin-top: 25px; cursor: pointer; transition: 0.2s;
         }
-        .btn-primary:active { transform: scale(0.98); }
 
-        /* LIST ITEMS (SERVICES) */
         .item-row { 
-            background: #334155; 
-            padding: 16px; 
-            border-radius: 12px; 
-            margin-bottom: 10px; 
-            cursor: pointer; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+            background: #334155; padding: 16px; border-radius: 12px; margin-bottom: 10px; 
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center; 
         }
-        .item-row:hover { background: #475569; }
+        .item-row:hover { background: #475569; border-color: var(--primary); }
 
         /* TABLE */
         .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 500px; }
-        th { text-align: left; padding: 12px; color: var(--text-dim); border-bottom: 1px solid #334155; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; padding: 12px; color: var(--text-dim); border-bottom: 1px solid #334155; }
         td { padding: 15px 12px; border-bottom: 1px solid #334155; font-size: 14px; }
 
         .status-pill { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
@@ -154,122 +128,130 @@
         .status-pending { background: #f59e0b; color: white; }
         .status-canceled { background: var(--danger); color: white; }
 
+        /* SUCCESS OVERLAY */
+        #success-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+            display: none; flex-direction: column; justify-content: center; 
+            align-items: center; z-index: 2000; text-align: center; padding: 20px;
+        }
+
         /* MOBILE BOTTOM NAVIGATION */
         @media (max-width: 768px) {
             .sidebar { 
-                position: fixed; 
-                bottom: 0; 
-                top: auto; 
-                height: 70px; 
-                width: 100%; 
-                flex-direction: row; 
-                padding: 0; 
-                z-index: 1000;
+                position: fixed; bottom: 0; top: auto; height: 70px; width: 100%; 
+                flex-direction: row; padding: 0; z-index: 1000;
             }
-            .sidebar h2, .sidebar-footer { display: none; }
+            .sidebar h2, .sidebar-footer, #admin-link span { display: none; }
             .nav-links { display: flex; width: 100%; justify-content: space-around; align-items: center; }
             .nav-links a { flex-direction: column; padding: 10px; margin: 0; font-size: 10px; border-radius: 0; background: none !important; }
             .nav-links a i { margin: 0 0 5px 0; font-size: 20px; }
             .nav-links a.active { color: var(--primary); }
-            
             .main-content { padding: 15px 15px 100px 15px; }
-            .top-bar { padding: 12px; font-size: 13px; }
         }
     </style>
 </head>
 <body>
 
+<div id="success-overlay">
+    <div class="card" style="max-width: 400px;">
+        <i class="fas fa-check-circle" style="font-size: 50px; color: var(--secondary); margin-bottom: 15px;"></i>
+        <h2>Order Received!</h2>
+        <p>Your request is being processed. You can track progress in the History tab.</p>
+        <button class="btn-primary" onclick="closeSuccess()">View My Orders</button>
+    </div>
+</div>
+
 <div class="dashboard-container">
-    <!-- Sidebar / Navigation -->
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2>UNASEMEJE Ø DIA</h2>
         <div class="nav-links">
-            <a onclick="showPage('home')" id="link-home" class="active"><i class="fas fa-th-large"></i><span>Home</span></a>
-            <a onclick="showPage('shop')" id="link-shop"><i class="fas fa-shopping-cart"></i><span>Order</span></a>
-            <a onclick="showPage('history')" id="link-history"><i class="fas fa-list-ul"></i><span>History</span></a>
+            <a onclick="showPage('home')" id="link-home" class="active"><i class="fas fa-home"></i><span>Home</span></a>
+            <a onclick="showPage('shop')" id="link-shop"><i class="fas fa-plus-circle"></i><span>Order</span></a>
+            <a onclick="showPage('history')" id="link-history"><i class="fas fa-history"></i><span>History</span></a>
             <a onclick="showPage('wallet')" id="link-wallet"><i class="fas fa-wallet"></i><span>Wallet</span></a>
-            <a onclick="showPage('profile')" id="link-profile"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+            <a onclick="showPage('admin')" id="admin-link"><i class="fas fa-user-shield"></i><span>Admin</span></a>
         </div>
-        <div class="sidebar-footer">
-            <a href="https://wa.me/254715509440" class="nav-links a support-btn wa"><i class="fab fa-whatsapp"></i> Support</a>
-            <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <div class="sidebar-footer" style="padding: 20px; border-top: 1px solid #1f2937;">
+            <a href="https://wa.me/254715509440" style="color: var(--whatsapp); text-decoration: none; display: block; margin-bottom: 15px;"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a onclick="logout()" style="color: var(--danger); cursor: pointer;"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
         <div class="top-bar">
-            <div><i class="fas fa-user-circle"></i> <span id="display-email">User</span></div>
+            <div><i class="fas fa-user-circle"></i> <span id="display-email">Loading...</span></div>
             <div class="balance-card">KES <span id="display-balance">0.00</span></div>
         </div>
 
-        <!-- HOME PAGE -->
+        <!-- HOME -->
         <div id="page-home" class="page active">
             <div class="card">
-                <h1>Jambo! 🇰🇪</h1>
-                <p style="color: var(--text-dim)">Welcome to Unasemeje Ø Dia SMM. Ready to grow your social presence?</p>
+                <h1>Sasa, <span id="welcome-name">User</span>! 🇰🇪</h1>
+                <p style="color: var(--text-dim)">Ready to go viral today?</p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                    <div class="item-row" onclick="showPage('shop')"><b>New Order</b> <i class="fas fa-plus"></i></div>
-                    <div class="item-row" onclick="showPage('wallet')"><b>Add Funds</b> <i class="fas fa-money-bill"></i></div>
+                    <div class="item-row" onclick="showPage('shop')"><b>New Order</b> <i class="fas fa-bolt"></i></div>
+                    <div class="item-row" onclick="showPage('wallet')"><b>Add Cash</b> <i class="fas fa-plus"></i></div>
+                </div>
+            </div>
+            <div class="card" style="background: rgba(124, 58, 237, 0.1); border-color: var(--primary);">
+                <h3><i class="fas fa-gift"></i> Refer & Earn</h3>
+                <p>Get 10% commission on every deposit your friends make!</p>
+                <div style="background: #0f172a; padding: 10px; border-radius: 8px; font-size: 12px; border: 1px dashed var(--primary);">
+                    Link: <span id="ref-link">loading...</span>
                 </div>
             </div>
         </div>
 
-        <!-- SHOP / NEW ORDER -->
+        <!-- SHOP -->
         <div id="page-shop" class="page">
             <div class="card" id="step-platforms">
-                <h3>Select Platform</h3>
+                <h3>1. Select Platform</h3>
                 <div id="platform-list"></div>
             </div>
 
             <div class="card" id="step-categories" style="display:none">
-                <button onclick="backTo('platforms')" style="background:none; color:var(--primary); border:none; cursor:pointer;">← Back</button>
+                <button onclick="backTo('platforms')" style="background:none; color:var(--primary); border:none; cursor:pointer; margin-bottom:10px;">← Back</button>
                 <h3 id="selected-platform-name">Categories</h3>
                 <div id="category-list"></div>
             </div>
 
             <div class="card" id="step-services" style="display:none">
-                <button onclick="backTo('categories')" style="background:none; color:var(--primary); border:none; cursor:pointer;">← Back</button>
+                <button onclick="backTo('categories')" style="background:none; color:var(--primary); border:none; cursor:pointer; margin-bottom:10px;">← Back</button>
                 <h3 id="selected-category-name">Services</h3>
                 <div id="service-list"></div>
             </div>
 
             <div class="card" id="step-confirm" style="display:none">
-                <button onclick="backTo('services')" style="background:none; color:var(--primary); border:none; cursor:pointer;">← Back</button>
-                <h3>Order Details</h3>
-                <div id="confirm-service-name" style="padding:15px; background:#0f172a; border-radius:10px; margin:10px 0; border:1px solid var(--primary);"></div>
+                <button onclick="backTo('services')" style="background:none; color:var(--primary); border:none; cursor:pointer; margin-bottom:10px;">← Back</button>
+                <h3>Finalize Order</h3>
+                <div id="confirm-service-name" style="padding:15px; background:#0f172a; border-radius:10px; border:1px solid var(--primary); font-weight: bold; color: var(--secondary);"></div>
                 
-                <label>Target Link (Profile/Post)</label>
-                <input type="text" id="order-link" placeholder="https://instagram.com/...">
+                <label>Target Link</label>
+                <input type="text" id="order-link" placeholder="Paste link here...">
                 
                 <label>Quantity</label>
                 <input type="number" id="order-qty" placeholder="Min: 100" oninput="calculateCost()">
                 
                 <div style="margin-top:20px; font-size:18px; font-weight:800;">
-                    Total Cost: <span style="color:var(--secondary)">KES <span id="order-cost">0.00</span></span>
+                    Total: <span style="color:var(--secondary)">KES <span id="order-cost">0.00</span></span>
                 </div>
                 
-                <button class="btn-primary" id="btn-submit-order" onclick="placeOrder()">Confirm & Pay</button>
+                <button class="btn-primary" id="btn-submit-order" onclick="placeOrder()">Place Order</button>
             </div>
         </div>
 
         <!-- HISTORY -->
         <div id="page-history" class="page">
             <div class="card">
-                <h3>My Orders</h3>
+                <h3>Order History</h3>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr>
-                                <th>Service</th>
-                                <th>Qty</th>
-                                <th>Status</th>
-                                <th>Remains</th>
-                            </tr>
+                            <tr><th>Service</th><th>Qty</th><th>Status</th></tr>
                         </thead>
-                        <tbody id="history-table-body">
-                            <!-- Rows loaded by JS -->
-                        </tbody>
+                        <tbody id="history-table-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -278,30 +260,31 @@
         <!-- WALLET -->
         <div id="page-wallet" class="page">
             <div class="card">
-                <h3>M-Pesa Deposit</h3>
-                <p style="font-size: 14px; color: var(--text-dim);">1. Pay to <b>0715509440</b> (Faith Cheruiyot)<br>2. Submit details below:</p>
+                <h3>Top Up via M-Pesa</h3>
+                <p>1. Send to <b>0715509440</b> (Faith Cheruiyot)<br>2. Paste the <b>Full SMS</b> below:</p>
                 
-                <label>M-Pesa Phone Number</label>
-                <input type="text" id="dep-phone" placeholder="07...">
+                <input type="text" id="dep-phone" placeholder="M-Pesa Number">
+                <input type="number" id="dep-amount" placeholder="Amount Sent">
+                <textarea id="dep-msg" rows="4" placeholder="Paste full M-Pesa message..."></textarea>
                 
-                <label>Amount Sent</label>
-                <input type="number" id="dep-amount" placeholder="e.g 500">
-                
-                <label>Paste M-Pesa Confirmation SMS</label>
-                <textarea id="dep-msg" rows="4" placeholder="Paste full message here..."></textarea>
-                
-                <button class="btn-primary" onclick="depositFunds()">Verify Payment</button>
+                <button class="btn-primary" onclick="depositFunds()">Submit for Approval</button>
             </div>
         </div>
 
-        <!-- PROFILE -->
-        <div id="page-profile" class="page">
+        <!-- ADMIN -->
+        <div id="page-admin" class="page">
             <div class="card">
-                <h3>My Account</h3>
-                <p>Email: <span id="prof-email">...</span></p>
-                <p>Phone: <span id="prof-phone">...</span></p>
-                <hr style="border:0; border-top:1px solid #334155; margin:20px 0;">
-                <button class="btn-primary" style="background:var(--danger)" onclick="logout()">Logout Account</button>
+                <h3>Pending Deposits</h3>
+                <div id="admin-deposit-list"></div>
+            </div>
+            <div class="card">
+                <h3>Users List</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Email</th><th>Balance</th></tr></thead>
+                        <tbody id="admin-user-list"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -315,50 +298,42 @@
 
     if (!token) window.location.href = "index.html";
 
-    // CORE NAVIGATION
     function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        
         document.getElementById(`page-${pageId}`).classList.add('active');
-        const link = document.getElementById(`link-${pageId}`);
-        if(link) link.classList.add('active');
-
+        document.getElementById(`link-${pageId}`)?.classList.add('active');
+        
         if(pageId === 'history') loadOrderHistory();
+        if(pageId === 'admin') loadAdminData();
     }
 
     function backTo(step) {
-        document.getElementById('step-platforms').style.display = 'none';
-        document.getElementById('step-categories').style.display = 'none';
-        document.getElementById('step-services').style.display = 'none';
-        document.getElementById('step-confirm').style.display = 'none';
-        document.getElementById(`step-${step}`).style.display = 'block';
+        ['platforms', 'categories', 'services', 'confirm'].forEach(s => {
+            document.getElementById(`step-${s}`).style.display = (s === step) ? 'block' : 'none';
+        });
     }
 
-    // USER DATA
     async function loadUser() {
         try {
-            const res = await fetch(`${API_URL}/me`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const res = await fetch(`${API_URL}/me`, { headers: { "Authorization": `Bearer ${token}` } });
             const user = await res.json();
             if(res.ok) {
                 document.getElementById('display-email').innerText = user.email;
                 document.getElementById('display-balance').innerText = user.balance.toFixed(2);
-                document.getElementById('prof-email').innerText = user.email;
-                document.getElementById('prof-phone').innerText = user.phone || "Not linked";
+                document.getElementById('welcome-name').innerText = user.email.split('@')[0];
+                document.getElementById('ref-link').innerText = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+                
+                if(user.email === "diasamratbarusz@gmail.com") document.getElementById('admin-link').style.display = "flex";
             } else { logout(); }
-        } catch (e) { console.error(e); }
+        } catch (e) { logout(); }
     }
 
-    // SERVICES FETCH & RENDER
     async function fetchServices() {
-        try {
-            const res = await fetch(`${API_URL}/services`);
-            const data = await res.json();
-            servicesData = data.data;
-            renderPlatforms();
-        } catch (e) { alert("Failed to load services"); }
+        const res = await fetch(`${API_URL}/services`);
+        const data = await res.json();
+        servicesData = data.data;
+        renderPlatforms();
     }
 
     function renderPlatforms() {
@@ -399,7 +374,7 @@
         servicesData[p][c].forEach(s => {
             const div = document.createElement('div');
             div.className = "item-row";
-            div.innerHTML = `<div><b>${s.name}</b><br><small>KES ${s.rate}/1k</small></div> <i class="fas fa-plus-circle"></i>`;
+            div.innerHTML = `<div><b>${s.name}</b><br><small>KES ${s.rate}/1k</small></div> <i class="fas fa-plus"></i>`;
             div.onclick = () => {
                 selectedService = s;
                 document.getElementById('confirm-service-name').innerText = s.name;
@@ -416,95 +391,92 @@
         document.getElementById('order-cost').innerText = cost.toFixed(2);
     }
 
-    // ORDER ACTION
     async function placeOrder() {
         const link = document.getElementById('order-link').value;
         const qty = document.getElementById('order-qty').value;
+        if(!link || !qty) return alert("Please fill all fields");
+
         const btn = document.getElementById('btn-submit-order');
-
-        if(!link || !qty) return alert("Fill all fields");
-
         btn.disabled = true;
         btn.innerText = "Processing...";
 
         try {
             const res = await fetch(`${API_URL}/order`, {
                 method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}` 
-                },
-                body: JSON.stringify({
-                    serviceId: selectedService.serviceId,
-                    provider: selectedService.provider,
-                    link: link,
-                    quantity: qty
-                })
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ serviceId: selectedService.serviceId, provider: selectedService.provider, link, quantity: qty })
             });
             const data = await res.json();
             if(data.success) {
-                alert("Order Placed Successfully!");
+                document.getElementById("success-overlay").style.display = "flex";
                 loadUser();
-                showPage('history');
-            } else {
-                alert(data.error || "Order Failed");
-            }
+            } else { alert(data.error || "Order Failed"); }
         } catch (e) { alert("Server error"); }
         btn.disabled = false;
-        btn.innerText = "Confirm & Pay";
+        btn.innerText = "Place Order";
     }
 
-    // HISTORY ACTION
     async function loadOrderHistory() {
         const tbody = document.getElementById('history-table-body');
-        tbody.innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
-        try {
-            const res = await fetch(`${API_URL}/sync-orders`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            const orders = await res.json();
-            tbody.innerHTML = orders.map(o => `
-                <tr>
-                    <td>${o.serviceName.substring(0,20)}...</td>
-                    <td>${o.quantity}</td>
-                    <td><span class="status-pill status-${o.status.toLowerCase()}">${o.status}</span></td>
-                    <td>${o.remains}</td>
-                </tr>
-            `).join('') || "<tr><td colspan='4'>No orders found</td></tr>";
-        } catch (e) { tbody.innerHTML = "<tr><td colspan='4'>Error loading history</td></tr>"; }
+        tbody.innerHTML = "<tr><td colspan='3'>Syncing...</td></tr>";
+        const res = await fetch(`${API_URL}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
+        const orders = await res.json();
+        tbody.innerHTML = orders.map(o => `
+            <tr>
+                <td><small>${o.serviceName.substring(0,25)}...</small></td>
+                <td>${o.quantity}</td>
+                <td><span class="status-pill status-${o.status.toLowerCase()}">${o.status}</span></td>
+            </tr>
+        `).join('') || "<tr><td colspan='3'>No orders yet</td></tr>";
     }
 
-    // DEPOSIT ACTION
     async function depositFunds() {
         const phone = document.getElementById('dep-phone').value;
         const amount = document.getElementById('dep-amount').value;
         const msg = document.getElementById('dep-msg').value;
+        if(!phone || !amount || !msg) return alert("Fill all fields");
 
-        if(!phone || !amount || !msg) return alert("All fields are required");
-
-        try {
-            const res = await fetch(`${API_URL}/deposit`, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}` 
-                },
-                body: JSON.stringify({ phone, amount, message: msg })
-            });
-            if(res.ok) alert("Payment submitted! Admin will verify shortly.");
-            else alert("Submission failed");
-        } catch (e) { alert("Error connecting to server"); }
+        const res = await fetch(`${API_URL}/deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ phone, amount, message: msg })
+        });
+        if(res.ok) alert("Request sent! Faith will approve it soon.");
+        else alert("Submission failed");
     }
 
-    function logout() {
-        localStorage.clear();
-        window.location.href = "index.html";
+    async function loadAdminData() {
+        const dList = document.getElementById('admin-deposit-list');
+        const resD = await fetch(`${API_URL}/admin/deposits`, { headers: { "Authorization": `Bearer ${token}` } });
+        const deposits = await resD.json();
+        dList.innerHTML = deposits.map(d => `
+            <div class="item-row" style="flex-direction:column; align-items:flex-start;">
+                <p><b>User:</b> ${d.userEmail} | <b>KES ${d.amount}</b></p>
+                <p style="font-size:11px; color:var(--text-dim)">${d.message}</p>
+                ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary); color:white; border:none; padding:5px 10px; border-radius:5px; margin-top:5px;">Approve</button>` : '<b>APPROVED</b>'}
+            </div>
+        `).join('') || "No pending deposits.";
     }
 
-    // INIT
+    async function approveDep(id) {
+        await fetch(`${API_URL}/admin/approve-deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ depositId: id })
+        });
+        loadAdminData();
+        loadUser();
+    }
+
+    function closeSuccess() {
+        document.getElementById("success-overlay").style.display = "none";
+        showPage('history');
+    }
+
+    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+
     loadUser();
     fetchServices();
 </script>
-
 </body>
 </html>
