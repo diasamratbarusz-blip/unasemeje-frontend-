@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unasemeje SMM | Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNASEMEJE SMM | User Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -15,487 +15,496 @@
             --text-dim: #94a3b8;
             --danger: #ef4444;
             --whatsapp: #25d366;
-            --phone: #3b82f6;
         }
 
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
-        .dashboard { display: flex; min-height: 100vh; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* SIDEBAR */
-        .sidebar { width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; position: sticky; top: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
-        .sidebar h2 { color: var(--primary); font-size: 22px; margin-bottom: 30px; text-align: center; letter-spacing: 1px; }
-        .sidebar-nav { flex-grow: 1; }
-        .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); cursor: pointer; border-radius: 10px; text-decoration: none; margin-bottom: 8px; transition: 0.3s; }
-        .sidebar a i { margin-right: 12px; width: 20px; }
-        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; transform: translateX(5px); }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-dark); 
+            color: var(--text-main); 
+            overflow-x: hidden;
+        }
+
+        /* LAYOUT */
+        .dashboard-container { display: flex; min-height: 100vh; }
+
+        /* SIDEBAR (Desktop) */
+        .sidebar { 
+            width: 260px; 
+            background: #111827; 
+            padding: 25px; 
+            border-right: 1px solid #1f2937; 
+            position: sticky; 
+            top: 0; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            transition: 0.3s;
+        }
+
+        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 35px; text-align: center; font-weight: 800; }
         
-        .sidebar a.whatsapp-btn { color: var(--whatsapp); border: 1px solid rgba(37, 211, 102, 0.2); }
-        .sidebar a.whatsapp-btn:hover { background: var(--whatsapp); color: white; }
-        .sidebar a.phone-btn { color: var(--phone); border: 1px solid rgba(59, 130, 246, 0.2); }
-        .sidebar a.phone-btn:hover { background: var(--phone); color: white; }
+        .nav-links { flex-grow: 1; }
+        .nav-links a { 
+            display: flex; 
+            align-items: center; 
+            padding: 14px 18px; 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            transition: 0.2s; 
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-links a i { margin-right: 15px; width: 20px; text-align: center; font-size: 18px; }
+        .nav-links a:hover, .nav-links a.active { background: var(--primary); color: white; }
 
-        #adminBtn { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 20px; }
-        #adminBtn:hover { background: var(--danger); color: white; }
+        .sidebar-footer { border-top: 1px solid #1f2937; padding-top: 20px; }
+        .support-btn { border: 1px solid #334155; margin-bottom: 8px !important; }
+        .support-btn.wa { color: var(--whatsapp); }
 
         /* MAIN CONTENT */
-        .main { flex: 1; padding: 30px; max-width: 1200px; margin: 0 auto; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 15px 25px; border-radius: 16px; margin-bottom: 30px; border: 1px solid #334155; }
-        .balance-badge { background: rgba(16, 185, 129, 0.1); padding: 10px 18px; border-radius: 10px; border: 1px solid var(--secondary); color: var(--secondary); font-weight: 800; font-size: 1.1rem; }
+        .main-content { flex: 1; padding: 25px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #334155; animation: slideUp 0.4s ease-out; }
-        .page { display: none; }
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--card-bg); 
+            padding: 15px 25px; 
+            border-radius: 16px; 
+            margin-bottom: 30px; 
+            border: 1px solid #334155;
+        }
+
+        .balance-card { 
+            background: rgba(16, 185, 129, 0.1); 
+            padding: 10px 18px; 
+            border-radius: 12px; 
+            border: 1px solid var(--secondary); 
+            color: var(--secondary); 
+            font-weight: 800; 
+        }
+
+        /* PAGES */
+        .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
 
-        /* INTERACTIVE ELEMENTS */
-        .list-item, .service-item { background: #334155; padding: 16px; margin-bottom: 12px; border-radius: 12px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
-        .list-item:hover, .service-item:hover { background: #475569; border-color: var(--primary); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        input, textarea, select { width: 100%; padding: 14px; margin-top: 10px; border-radius: 10px; border: 1px solid #334155; background: var(--bg-dark); color: white; box-sizing: border-box; }
-        button { margin-top: 20px; padding: 15px; width: 100%; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .card { 
+            background: var(--card-bg); 
+            padding: 24px; 
+            border-radius: 20px; 
+            border: 1px solid #334155; 
+            margin-bottom: 20px;
+        }
 
-        /* TABLES */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(15, 23, 42, 0.5); border-radius: 12px; overflow: hidden; }
-        th { text-align: left; color: var(--text-dim); padding: 15px; border-bottom: 1px solid #334155; font-size: 13px; text-transform: uppercase; }
-        td { padding: 15px; border-bottom: 1px solid #334155; font-size: 14px; }
-        .status { padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .status-pending { background: #d97706; color: white; }
+        /* FORMS */
+        label { display: block; margin-top: 15px; color: var(--text-dim); font-size: 14px; }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            margin-top: 8px; 
+            border-radius: 12px; 
+            border: 1px solid #334155; 
+            background: #0f172a; 
+            color: white; 
+            font-size: 16px; 
+        }
+
+        .btn-primary { 
+            width: 100%; 
+            padding: 16px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            margin-top: 25px; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+
+        /* LIST ITEMS (SERVICES) */
+        .item-row { 
+            background: #334155; 
+            padding: 16px; 
+            border-radius: 12px; 
+            margin-bottom: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .item-row:hover { background: #475569; }
+
+        /* TABLE */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 500px; }
+        th { text-align: left; padding: 12px; color: var(--text-dim); border-bottom: 1px solid #334155; font-size: 13px; }
+        td { padding: 15px 12px; border-bottom: 1px solid #334155; font-size: 14px; }
+
+        .status-pill { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .status-completed { background: var(--secondary); color: white; }
-        .status-processing, .status-inprogress, .status-inprogress { background: #3b82f6; color: white; }
-        .status-partial { background: #6366f1; color: white; }
-        .status-canceled, .status-error { background: var(--danger); color: white; }
+        .status-pending { background: #f59e0b; color: white; }
+        .status-canceled { background: var(--danger); color: white; }
 
-        /* SUCCESS OVERLAY */
-        #successOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; }
-        .success-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border: 2px solid var(--secondary); max-width: 400px; }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* MOBILE BOTTOM NAVIGATION */
+        @media (max-width: 768px) {
+            .sidebar { 
+                position: fixed; 
+                bottom: 0; 
+                top: auto; 
+                height: 70px; 
+                width: 100%; 
+                flex-direction: row; 
+                padding: 0; 
+                z-index: 1000;
+            }
+            .sidebar h2, .sidebar-footer { display: none; }
+            .nav-links { display: flex; width: 100%; justify-content: space-around; align-items: center; }
+            .nav-links a { flex-direction: column; padding: 10px; margin: 0; font-size: 10px; border-radius: 0; background: none !important; }
+            .nav-links a i { margin: 0 0 5px 0; font-size: 20px; }
+            .nav-links a.active { color: var(--primary); }
+            
+            .main-content { padding: 15px 15px 100px 15px; }
+            .top-bar { padding: 12px; font-size: 13px; }
+        }
     </style>
 </head>
 <body>
 
-<div id="successOverlay">
-    <div class="success-box">
-        <i class="fas fa-check-circle" style="font-size: 60px; color: var(--secondary); margin-bottom: 20px;"></i>
-        <h2>Order Successful!</h2>
-        <p>Your order has been placed. Check "My Orders" for real-time status tracking.</p>
-        <button onclick="closeSuccess()" style="background: var(--secondary);">Awesome, Let's go!</button>
-    </div>
-</div>
-
-<div class="dashboard">
+<div class="dashboard-container">
+    <!-- Sidebar / Navigation -->
     <div class="sidebar">
-        <h2>UNASEMEJE</h2>
-        <div class="sidebar-nav">
-            <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> Home</a>
-            <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> New Order</a>
-            <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> My Orders</a>
-            <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> Add Funds</a>
-            <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> Referrals</a>
-            <a onclick="showPage('profile')" id="nav-profile"><i class="fas fa-user-cog"></i> Profile</a>
-            <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> Admin Panel</a>
+        <h2>UNASEMEJE Ø DIA</h2>
+        <div class="nav-links">
+            <a onclick="showPage('home')" id="link-home" class="active"><i class="fas fa-th-large"></i><span>Home</span></a>
+            <a onclick="showPage('shop')" id="link-shop"><i class="fas fa-shopping-cart"></i><span>Order</span></a>
+            <a onclick="showPage('history')" id="link-history"><i class="fas fa-list-ul"></i><span>History</span></a>
+            <a onclick="showPage('wallet')" id="link-wallet"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+            <a onclick="showPage('profile')" id="link-profile"><i class="fas fa-user-circle"></i><span>Profile</span></a>
         </div>
-        
-        <div class="sidebar-support">
-            <hr style="border: 0.5px solid #1f2937; margin: 15px 0;">
-            <a href="https://wa.me/254715509440" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> WhatsApp Support</a>
-            <a href="tel:+254715509440" class="phone-btn"><i class="fas fa-phone-alt"></i> Call Support</a>
+        <div class="sidebar-footer">
+            <a href="https://wa.me/254715509440" class="nav-links a support-btn wa"><i class="fab fa-whatsapp"></i> Support</a>
             <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>
 
-    <div class="main">
-        <div class="navbar">
-            <div><i class="fas fa-user"></i> <span id="userEmail">Loading...</span></div>
-            <div class="balance-badge">KES <span id="balance">0.00</span></div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <div><i class="fas fa-user-circle"></i> <span id="display-email">User</span></div>
+            <div class="balance-card">KES <span id="display-balance">0.00</span></div>
         </div>
 
-        <div id="home" class="page active">
+        <!-- HOME PAGE -->
+        <div id="page-home" class="page active">
             <div class="card">
-                <h3>Welcome back!</h3>
-                <p>Ready to boost your social presence? Select a service to get started.</p>
+                <h1>Jambo! 🇰🇪</h1>
+                <p style="color: var(--text-dim)">Welcome to Unasemeje Ø Dia SMM. Ready to grow your social presence?</p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
-                    <div class="list-item" onclick="showPage('services')">
-                        <i class="fas fa-plus-circle"></i> <b>New Order</b>
-                    </div>
-                    <div class="list-item" onclick="showPage('deposit')">
-                        <i class="fas fa-money-bill-wave"></i> <b>Add Balance</b>
-                    </div>
+                    <div class="item-row" onclick="showPage('shop')"><b>New Order</b> <i class="fas fa-plus"></i></div>
+                    <div class="item-row" onclick="showPage('wallet')"><b>Add Funds</b> <i class="fas fa-money-bill"></i></div>
                 </div>
             </div>
         </div>
 
-        <div id="services" class="page">
-            <div class="card">
-                <div id="platformList"><h3>Select Platform</h3></div>
-                <div id="categoryList" style="display:none;"></div>
-                <div id="serviceList" style="display:none;"></div>
+        <!-- SHOP / NEW ORDER -->
+        <div id="page-shop" class="page">
+            <div class="card" id="step-platforms">
+                <h3>Select Platform</h3>
+                <div id="platform-list"></div>
             </div>
-        </div>
 
-        <div id="order" class="page">
-            <div class="card">
-                <button onclick="showPage('services')" style="width:auto; padding:5px 10px; margin-bottom:15px; background: #334155;">← Change Service</button>
-                <h3>Confirm Order</h3>
+            <div class="card" id="step-categories" style="display:none">
+                <button onclick="backTo('platforms')" style="background:none; color:var(--primary); border:none; cursor:pointer;">← Back</button>
+                <h3 id="selected-platform-name">Categories</h3>
+                <div id="category-list"></div>
+            </div>
+
+            <div class="card" id="step-services" style="display:none">
+                <button onclick="backTo('categories')" style="background:none; color:var(--primary); border:none; cursor:pointer;">← Back</button>
+                <h3 id="selected-category-name">Services</h3>
+                <div id="service-list"></div>
+            </div>
+
+            <div class="card" id="step-confirm" style="display:none">
+                <button onclick="backTo('services')" style="background:none; color:var(--primary); border:none; cursor:pointer;">← Back</button>
+                <h3>Order Details</h3>
+                <div id="confirm-service-name" style="padding:15px; background:#0f172a; border-radius:10px; margin:10px 0; border:1px solid var(--primary);"></div>
                 
-                <label>Selected Service</label>
-                <div id="displayServiceName" style="background: #0f172a; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; color: var(--secondary); font-weight: bold;">-</div>
-                
-                <input id="orderServiceId" type="hidden">
-                <input id="orderProvider" type="hidden">
-                
-                <label>Target Link</label>
-                <input id="orderLink" placeholder="Link (e.g. https://tiktok.com/@user/video/...)">
+                <label>Target Link (Profile/Post)</label>
+                <input type="text" id="order-link" placeholder="https://instagram.com/...">
                 
                 <label>Quantity</label>
-                <input id="orderQty" type="number" placeholder="Enter quantity" oninput="calcTotal()">
+                <input type="number" id="order-qty" placeholder="Min: 100" oninput="calculateCost()">
                 
-                <div style="margin-top:20px; background: rgba(124, 58, 237, 0.1); padding: 15px; border-radius: 12px; border: 1px solid var(--primary);">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--text-dim);">Total Cost:</span>
-                        <span style="color: var(--secondary); font-weight: 800; font-size: 1.4rem;">KES <span id="orderTotal">0.00</span></span>
-                    </div>
+                <div style="margin-top:20px; font-size:18px; font-weight:800;">
+                    Total Cost: <span style="color:var(--secondary)">KES <span id="order-cost">0.00</span></span>
                 </div>
                 
-                <button id="orderSubmitBtn" onclick="submitOrder()">Place Order Now</button>
+                <button class="btn-primary" id="btn-submit-order" onclick="placeOrder()">Confirm & Pay</button>
             </div>
         </div>
 
-        <div id="orders" class="page">
+        <!-- HISTORY -->
+        <div id="page-history" class="page">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3>My Orders</h3>
-                    <button onclick="loadOrders()" style="width: auto; padding: 8px 15px; font-size: 12px; margin: 0;"><i class="fas fa-sync"></i> Refresh Status</button>
-                </div>
-                <div style="overflow-x: auto;">
+                <h3>My Orders</h3>
+                <div class="table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>Service</th>
-                                <th>Quantity</th>
-                                <th>Cost</th>
+                                <th>Qty</th>
                                 <th>Status</th>
-                                <th>Progress</th>
+                                <th>Remains</th>
                             </tr>
                         </thead>
-                        <tbody id="ordersList"></tbody>
+                        <tbody id="history-table-body">
+                            <!-- Rows loaded by JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div id="referral" class="page">
+        <!-- WALLET -->
+        <div id="page-wallet" class="page">
             <div class="card">
-                <h3>Earn 10% Referral Bonus</h3>
-                <p>Share your code and get paid when your friends top up and order.</p>
-                <div style="background: #0f172a; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px dashed var(--primary);">
-                    <p>Referral Code: <b id="refCode" style="color: var(--primary);">...</b></p>
-                    <p>Invite Link: <br><small id="refLink" style="color: var(--text-dim);"></small></p>
-                </div>
-                <h4>Total Earned: <span style="color: var(--secondary);">KES <span id="refEarnings">0.00</span></span></h4>
+                <h3>M-Pesa Deposit</h3>
+                <p style="font-size: 14px; color: var(--text-dim);">1. Pay to <b>0715509440</b> (Faith Cheruiyot)<br>2. Submit details below:</p>
+                
+                <label>M-Pesa Phone Number</label>
+                <input type="text" id="dep-phone" placeholder="07...">
+                
+                <label>Amount Sent</label>
+                <input type="number" id="dep-amount" placeholder="e.g 500">
+                
+                <label>Paste M-Pesa Confirmation SMS</label>
+                <textarea id="dep-msg" rows="4" placeholder="Paste full message here..."></textarea>
+                
+                <button class="btn-primary" onclick="depositFunds()">Verify Payment</button>
             </div>
         </div>
 
-        <div id="profile" class="page">
+        <!-- PROFILE -->
+        <div id="page-profile" class="page">
             <div class="card">
-                <h3>Account Information</h3>
-                <p>Email: <b id="profEmail">...</b></p>
-                <p>Phone: <b id="profPhone">...</b></p>
-                <hr style="border-color: #334155;">
-                <h4>Security Update</h4>
-                <input type="password" id="oldPass" placeholder="Current Password">
-                <input type="password" id="newPass" placeholder="New Password">
-                <button style="width: auto; padding: 10px 20px;">Update Password</button>
-            </div>
-        </div>
-
-        <div id="deposit" class="page">
-            <div class="card">
-                <h3>Add Funds via M-Pesa</h3>
-                <p>1. Send funds to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
-                <p>2. Paste the <b>FULL M-Pesa SMS</b> message below:</p>
-                <input id="depPhone" placeholder="Your M-Pesa Number">
-                <input id="depAmount" type="number" placeholder="Exact Amount Sent">
-                <textarea id="depMessage" rows="5" placeholder="Example: RL456TY789 Confirmed. KES 500.00 sent to FAITH CHERUIYOT..."></textarea>
-                <button id="depSubmitBtn" onclick="submitDeposit()">Submit for Approval</button>
-                <p id="depStatus" style="text-align: center; margin-top:10px; font-weight: bold;"></p>
-            </div>
-        </div>
-
-        <div id="admin" class="page">
-            <div class="card">
-                <h2>Admin Management</h2>
-                <h3>Pending Deposits</h3>
-                <div id="adminDepositList"></div>
-            </div>
-            <div class="card">
-                <h3>All Platform Users</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>Email</th><th>Phone</th><th>Balance</th></tr></thead>
-                        <tbody id="adminUserList"></tbody>
-                    </table>
-                </div>
+                <h3>My Account</h3>
+                <p>Email: <span id="prof-email">...</span></p>
+                <p>Phone: <span id="prof-phone">...</span></p>
+                <hr style="border:0; border-top:1px solid #334155; margin:20px 0;">
+                <button class="btn-primary" style="background:var(--danger)" onclick="logout()">Logout Account</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const API = "https://unasemeje-backend-3.onrender.com/api";
+    const API_URL = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
     let servicesData = {};
-    let selectedRate = 0;
+    let selectedService = null;
 
     if (!token) window.location.href = "index.html";
 
-    // CORE: Sync User Data
-    async function syncData() {
-        try {
-            const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
-            if (!res.ok) throw new Error();
-            const user = await res.json();
-            
-            document.getElementById("userEmail").innerText = user.email;
-            document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
-            document.getElementById("profEmail").innerText = user.email;
-            document.getElementById("profPhone").innerText = user.phone || "Not Set";
-            document.getElementById("refCode").innerText = user.referralCode || "N/A";
-            document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
-            document.getElementById("refLink").innerText = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+    // CORE NAVIGATION
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        
+        document.getElementById(`page-${pageId}`).classList.add('active');
+        const link = document.getElementById(`link-${pageId}`);
+        if(link) link.classList.add('active');
 
-            if(user.email === "diasamratbarusz@gmail.com") {
-                document.getElementById("adminBtn").style.display = "flex";
-            }
-        } catch (err) { logout(); }
+        if(pageId === 'history') loadOrderHistory();
     }
 
-    // SERVICES NAVIGATION
-    async function loadServices() {
+    function backTo(step) {
+        document.getElementById('step-platforms').style.display = 'none';
+        document.getElementById('step-categories').style.display = 'none';
+        document.getElementById('step-services').style.display = 'none';
+        document.getElementById('step-confirm').style.display = 'none';
+        document.getElementById(`step-${step}`).style.display = 'block';
+    }
+
+    // USER DATA
+    async function loadUser() {
         try {
-            const res = await fetch(`${API}/services`);
-            const json = await res.json();
-            servicesData = json.data || {};
+            const res = await fetch(`${API_URL}/me`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const user = await res.json();
+            if(res.ok) {
+                document.getElementById('display-email').innerText = user.email;
+                document.getElementById('display-balance').innerText = user.balance.toFixed(2);
+                document.getElementById('prof-email').innerText = user.email;
+                document.getElementById('prof-phone').innerText = user.phone || "Not linked";
+            } else { logout(); }
+        } catch (e) { console.error(e); }
+    }
+
+    // SERVICES FETCH & RENDER
+    async function fetchServices() {
+        try {
+            const res = await fetch(`${API_URL}/services`);
+            const data = await res.json();
+            servicesData = data.data;
             renderPlatforms();
-        } catch (err) { console.error("Services Error", err); }
+        } catch (e) { alert("Failed to load services"); }
     }
 
     function renderPlatforms() {
-        const list = document.getElementById("platformList");
-        list.innerHTML = "<h3>Select Platform</h3>";
+        const container = document.getElementById('platform-list');
+        container.innerHTML = "";
         Object.keys(servicesData).forEach(p => {
-            const div = document.createElement("div");
-            div.className = "list-item";
-            div.innerHTML = `<i class="fas fa-chevron-right"></i> ${p}`;
-            div.onclick = () => renderCategories(p);
-            list.appendChild(div);
+            const div = document.createElement('div');
+            div.className = "item-row";
+            div.innerHTML = `<span>${p}</span> <i class="fas fa-chevron-right"></i>`;
+            div.onclick = () => {
+                document.getElementById('selected-platform-name').innerText = p;
+                renderCategories(p);
+            };
+            container.appendChild(div);
         });
     }
 
     function renderCategories(p) {
-        document.getElementById("platformList").style.display = "none";
-        const list = document.getElementById("categoryList");
-        list.innerHTML = `<button onclick="resetServices()" style="width:auto; padding:5px 10px; margin-bottom:15px; background:#334155;">← Back to Platforms</button><h3>${p} Categories</h3>`;
+        backTo('categories');
+        const container = document.getElementById('category-list');
+        container.innerHTML = "";
         Object.keys(servicesData[p]).forEach(c => {
-            const div = document.createElement("div");
-            div.className = "list-item";
-            div.innerText = c;
-            div.onclick = () => renderServicesList(p, c);
-            list.appendChild(div);
-        });
-        list.style.display = "block";
-    }
-
-    function renderServicesList(p, c) {
-        document.getElementById("categoryList").style.display = "none";
-        const list = document.getElementById("serviceList");
-        list.innerHTML = `<button onclick="renderCategories('${p}')" style="width:auto; padding:5px 10px; margin-bottom:15px; background:#334155;">← Back to Categories</button><h3>${c}</h3>`;
-        servicesData[p][c].forEach(s => {
-            const div = document.createElement("div");
-            div.className = "service-item";
-            div.innerHTML = `
-                <b>${s.name}</b><br>
-                <span style="color:var(--secondary)">KES ${s.rate} per 1,000</span><br>
-                <small style="color:var(--text-dim)">Min: ${s.min} | Max: ${s.max}</small>
-            `;
+            const div = document.createElement('div');
+            div.className = "item-row";
+            div.innerHTML = `<span>${c}</span> <i class="fas fa-chevron-right"></i>`;
             div.onclick = () => {
-                document.getElementById("orderServiceId").value = s.serviceId;
-                document.getElementById("orderProvider").value = s.provider; // Capture Provider
-                document.getElementById("displayServiceName").innerText = s.name;
-                selectedRate = s.rate;
-                calcTotal();
-                showPage('order');
+                document.getElementById('selected-category-name').innerText = c;
+                renderServicesItems(p, c);
             };
-            list.appendChild(div);
+            container.appendChild(div);
         });
-        list.style.display = "block";
     }
 
-    function resetServices() {
-        document.getElementById("platformList").style.display = "block";
-        document.getElementById("categoryList").style.display = "none";
-        document.getElementById("serviceList").style.display = "none";
+    function renderServicesItems(p, c) {
+        backTo('services');
+        const container = document.getElementById('service-list');
+        container.innerHTML = "";
+        servicesData[p][c].forEach(s => {
+            const div = document.createElement('div');
+            div.className = "item-row";
+            div.innerHTML = `<div><b>${s.name}</b><br><small>KES ${s.rate}/1k</small></div> <i class="fas fa-plus-circle"></i>`;
+            div.onclick = () => {
+                selectedService = s;
+                document.getElementById('confirm-service-name').innerText = s.name;
+                backTo('confirm');
+            };
+            container.appendChild(div);
+        });
     }
 
-    // ORDER PROCESSING
-    function calcTotal() {
-        const qty = document.getElementById("orderQty").value || 0;
-        document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
+    function calculateCost() {
+        if(!selectedService) return;
+        const qty = document.getElementById('order-qty').value || 0;
+        const cost = (selectedService.rate / 1000) * qty;
+        document.getElementById('order-cost').innerText = cost.toFixed(2);
     }
 
-    async function submitOrder() {
-        const btn = document.getElementById("orderSubmitBtn");
-        const payload = {
-            serviceId: document.getElementById("orderServiceId").value,
-            provider: document.getElementById("orderProvider").value,
-            link: document.getElementById("orderLink").value,
-            quantity: document.getElementById("orderQty").value
-        };
+    // ORDER ACTION
+    async function placeOrder() {
+        const link = document.getElementById('order-link').value;
+        const qty = document.getElementById('order-qty').value;
+        const btn = document.getElementById('btn-submit-order');
 
-        if(!payload.link || !payload.quantity) return alert("Please provide a link and quantity");
+        if(!link || !qty) return alert("Fill all fields");
 
         btn.disabled = true;
-        btn.innerText = "Connecting to Provider...";
+        btn.innerText = "Processing...";
 
         try {
-            const res = await fetch(`${API}/order`, {
+            const res = await fetch(`${API_URL}/order`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify(payload)
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({
+                    serviceId: selectedService.serviceId,
+                    provider: selectedService.provider,
+                    link: link,
+                    quantity: qty
+                })
             });
-
             const data = await res.json();
             if(data.success) {
-                document.getElementById("successOverlay").style.display = "flex";
-                document.getElementById("orderLink").value = "";
-                document.getElementById("orderQty").value = "";
-                syncData();
+                alert("Order Placed Successfully!");
+                loadUser();
+                showPage('history');
             } else {
-                alert(data.error || "Order Failed. Check your balance.");
+                alert(data.error || "Order Failed");
             }
-        } catch (err) { alert("Server connection lost"); }
+        } catch (e) { alert("Server error"); }
         btn.disabled = false;
-        btn.innerText = "Place Order Now";
+        btn.innerText = "Confirm & Pay";
     }
 
-    async function loadOrders() {
-        const list = document.getElementById("ordersList");
-        list.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Updating status from providers...</td></tr>";
-
+    // HISTORY ACTION
+    async function loadOrderHistory() {
+        const tbody = document.getElementById('history-table-body');
+        tbody.innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
         try {
-            const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
-            const orders = await res.json();
-            
-            list.innerHTML = orders.map(o => {
-                const s = (o.status || 'pending').toLowerCase().replace(/\s/g, '');
-                return `
-                    <tr>
-                        <td><strong>${o.serviceName}</strong><br><small style="color:var(--text-dim)">${o.link.substring(0,25)}...</small></td>
-                        <td>${o.quantity}</td>
-                        <td style="color:var(--secondary)">KES ${parseFloat(o.cost).toFixed(2)}</td>
-                        <td><span class="status status-${s}">${o.status}</span></td>
-                        <td>${o.remains !== undefined ? `<small>${o.remains} left</small>` : '--'}</td>
-                    </tr>
-                `;
-            }).join('') || "<tr><td colspan='5'>You haven't placed any orders yet.</td></tr>";
-        } catch (error) { list.innerHTML = "<tr><td colspan='5'>Error loading history.</td></tr>"; }
-    }
-
-    // DEPOSIT MANAGEMENT
-    async function submitDeposit() {
-        const status = document.getElementById("depStatus");
-        const btn = document.getElementById("depSubmitBtn");
-        const payload = {
-            phone: document.getElementById("depPhone").value,
-            amount: document.getElementById("depAmount").value,
-            message: document.getElementById("depMessage").value
-        };
-
-        if(!payload.amount || !payload.message) return alert("Enter amount and paste M-Pesa message.");
-
-        btn.disabled = true;
-        status.innerText = "Analyzing transaction code...";
-        status.style.color = "var(--text-dim)";
-
-        try {
-            const res = await fetch(`${API}/deposit`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify(payload)
+            const res = await fetch(`${API_URL}/sync-orders`, {
+                headers: { "Authorization": `Bearer ${token}` }
             });
-            const data = await res.json();
-            
-            if(res.ok) {
-                status.innerText = "✅ Submitted! Admin will verify and credit your balance.";
-                status.style.color = "var(--secondary)";
-                document.getElementById("depAmount").value = "";
-                document.getElementById("depMessage").value = "";
-            } else {
-                status.innerText = "❌ " + (data.error || "Submission failed");
-                status.style.color = "var(--danger)";
-            }
-        } catch (err) { 
-            status.innerText = "Connection error. Please try again.";
-            status.style.color = "var(--danger)";
-        }
-        btn.disabled = false;
+            const orders = await res.json();
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td>${o.serviceName.substring(0,20)}...</td>
+                    <td>${o.quantity}</td>
+                    <td><span class="status-pill status-${o.status.toLowerCase()}">${o.status}</span></td>
+                    <td>${o.remains}</td>
+                </tr>
+            `).join('') || "<tr><td colspan='4'>No orders found</td></tr>";
+        } catch (e) { tbody.innerHTML = "<tr><td colspan='4'>Error loading history</td></tr>"; }
     }
 
-    // ADMIN CONTROLS
-    async function loadAdminData() {
+    // DEPOSIT ACTION
+    async function depositFunds() {
+        const phone = document.getElementById('dep-phone').value;
+        const amount = document.getElementById('dep-amount').value;
+        const msg = document.getElementById('dep-msg').value;
+
+        if(!phone || !amount || !msg) return alert("All fields are required");
+
         try {
-            const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
-            const users = await uRes.json();
-            document.getElementById("adminUserList").innerHTML = users.map(u => `
-                <tr><td>${u.email}</td><td>${u.phone}</td><td>KES ${u.balance.toFixed(2)}</td></tr>
-            `).join('');
-
-            const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
-            const deposits = await dRes.json();
-            document.getElementById("adminDepositList").innerHTML = deposits.map(d => `
-                <div class="card" style="border-left: 5px solid ${d.status === 'pending' ? '#d97706' : '#10b981'};">
-                    <p><b>User:</b> ${d.userEmail} | <b>Amount:</b> KES ${d.amount}</p>
-                    <p style="font-size: 12px; background: #0f172a; padding: 10px; border-radius: 5px;">${d.message}</p>
-                    ${d.status === 'pending' ? `<button onclick="approveDep('${d._id}')" style="background:var(--secondary)">Approve & Credit Balance</button>` : '<b style="color:var(--secondary)">APPROVED</b>'}
-                </div>
-            `).join('') || "No pending deposits to show.";
-        } catch (err) { console.error("Admin error", err); }
+            const res = await fetch(`${API_URL}/deposit`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ phone, amount, message: msg })
+            });
+            if(res.ok) alert("Payment submitted! Admin will verify shortly.");
+            else alert("Submission failed");
+        } catch (e) { alert("Error connecting to server"); }
     }
 
-    async function approveDep(id) {
-        if(!confirm("Are you sure you want to approve this deposit?")) return;
-        const res = await fetch(`${API}/admin/approve-deposit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ depositId: id })
-        });
-        const data = await res.json();
-        alert(data.message || data.error);
-        loadAdminData();
-        syncData();
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
     }
 
-    // NAVIGATION SYSTEM
-    function showPage(p) {
-        document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
-        document.querySelectorAll(".sidebar-nav a").forEach(x => x.classList.remove("active"));
-        document.getElementById(p).classList.add("active");
-        document.getElementById(`nav-${p}`)?.classList.add("active");
-        if(p === 'orders') loadOrders();
-        if(p === 'admin') loadAdminData();
-    }
-
-    function closeSuccess() {
-        document.getElementById("successOverlay").style.display = "none";
-        showPage('orders');
-    }
-
-    function logout() { localStorage.clear(); window.location.href = "index.html"; }
-
-    // Init
-    syncData();
-    loadServices();
+    // INIT
+    loadUser();
+    fetchServices();
 </script>
+
 </body>
 </html>
