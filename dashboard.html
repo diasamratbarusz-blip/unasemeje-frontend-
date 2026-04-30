@@ -16,196 +16,257 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --whatsapp: #25d366;
+            --phone: #3b82f6;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
         body { margin: 0; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+        
+        .dashboard { display: flex; min-height: 100vh; }
 
         /* SIDEBAR */
         .sidebar { 
-            width: 260px; background: #111827; padding: 20px; border-right: 1px solid #1f2937; 
+            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
             position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; 
         }
-        .sidebar h2 { color: var(--primary); font-size: 18px; margin-bottom: 30px; text-align: center; font-weight: 800; }
-        .nav-links { flex-grow: 1; }
-        .nav-links a { 
+        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; letter-spacing: 1px; }
+        .sidebar-nav { flex-grow: 1; }
+        .sidebar a { 
             display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
             text-decoration: none; border-radius: 10px; margin-bottom: 5px; cursor: pointer; transition: 0.2s; 
         }
-        .nav-links a:hover, .nav-links a.active { background: var(--primary); color: white; }
-        #admin-link { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 15px; }
+        .sidebar a i { margin-right: 12px; width: 20px; text-align: center; }
+        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
+        
+        #adminBtn { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 15px; }
+
+        .whatsapp-btn { color: var(--whatsapp) !important; border: 1px solid rgba(37, 211, 102, 0.2); margin-top: 10px; }
+        .phone-btn { color: var(--phone) !important; border: 1px solid rgba(59, 130, 246, 0.2); }
 
         /* MAIN CONTENT */
-        .main-content { flex: 1; padding: 20px; max-width: 1400px; margin: 0 auto; width: 100%; }
-        .top-bar { 
+        .main { flex: 1; padding: 25px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .navbar { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: var(--card-bg); padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155;
+            background: var(--card-bg); padding: 12px 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #334155;
         }
-        .balance-card { color: var(--secondary); font-weight: 800; background: rgba(16, 185, 129, 0.1); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--secondary); }
+        .balance-badge { color: var(--secondary); font-weight: 800; background: rgba(16, 185, 129, 0.1); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--secondary); }
 
-        /* CARDS & TABLES */
-        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 20px; }
-        .page { display: none; animation: fadeIn 0.3s ease; }
+        /* CARDS & PAGES */
+        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 20px; animation: fadeIn 0.3s ease; }
+        .page { display: none; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .table-container { overflow-x: auto; background: rgba(15, 23, 42, 0.3); border-radius: 10px; }
+        /* TABLES */
+        .table-container { overflow-x: auto; background: rgba(15, 23, 42, 0.3); border-radius: 10px; margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; min-width: 700px; }
         th { text-align: left; padding: 12px; color: var(--text-dim); border-bottom: 1px solid #334155; font-size: 12px; text-transform: uppercase; }
         td { padding: 12px; border-bottom: 1px solid #1f2937; font-size: 13px; }
 
         /* STATUS BADGES */
-        .badge { padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-        .bg-success { background: var(--secondary); color: white; }
-        .bg-danger { background: var(--danger); color: white; }
-        .bg-warning { background: var(--warning); color: white; }
+        .status { padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .status-completed, .bg-success { background: var(--secondary); color: white; }
+        .status-pending, .bg-warning { background: var(--warning); color: white; }
+        .status-canceled, .bg-danger { background: var(--danger); color: white; }
         .online-dot { height: 8px; width: 8px; background: var(--secondary); border-radius: 50%; display: inline-block; margin-right: 5px; }
         .offline-dot { height: 8px; width: 8px; background: #64748b; border-radius: 50%; display: inline-block; margin-right: 5px; }
 
-        /* BUTTONS */
+        /* INPUTS & BUTTONS */
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #334155; background: var(--bg-dark); color: white; }
+        .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; }
         .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; }
         .btn-approve { background: var(--secondary); color: white; }
         .btn-cancel { background: var(--danger); color: white; }
-        .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
 
-        /* ADMIN STATS GRID */
+        /* ADMIN STATS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-item { background: #111827; padding: 15px; border-radius: 12px; border: 1px solid #334155; }
         .stat-item h4 { margin: 0; color: var(--text-dim); font-size: 12px; }
         .stat-item p { margin: 5px 0 0; font-size: 20px; font-weight: 800; color: var(--primary); }
 
+        .list-item { background: #334155; padding: 15px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .list-item:hover { border-color: var(--primary); background: #475569; }
+
+        #successOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .success-box { background: var(--card-bg); padding: 40px; border-radius: 20px; text-align: center; border: 2px solid var(--secondary); max-width: 400px; }
+
         @media (max-width: 768px) {
             .sidebar { position: fixed; bottom: 0; top: auto; height: 65px; width: 100%; flex-direction: row; padding: 0; z-index: 1000; border-top: 1px solid #1f2937; }
-            .sidebar h2, .sidebar-footer, .nav-links span { display: none; }
-            .nav-links { display: flex; width: 100%; justify-content: space-around; align-items: center; }
-            .nav-links a { flex-direction: column; padding: 10px; margin: 0; font-size: 18px; }
-            #admin-link { border: none; margin: 0; color: var(--danger); }
-            .main-content { padding: 10px 10px 80px 10px; }
-            .top-bar { font-size: 12px; }
+            .sidebar h2, .sidebar-support hr, .sidebar a span { display: none; }
+            .sidebar-nav { display: flex; width: 100%; justify-content: space-around; align-items: center; }
+            .sidebar a { flex-direction: column; padding: 10px; margin: 0; font-size: 18px; }
+            .sidebar-support { display: flex; }
+            .main { padding: 10px 10px 80px 10px; }
+            #adminBtn { border: none; margin: 0; color: var(--danger); }
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard-container">
+<div id="successOverlay">
+    <div class="success-box">
+        <i class="fas fa-check-circle" style="font-size: 50px; color: var(--secondary); margin-bottom: 15px;"></i>
+        <h2>Order Successful!</h2>
+        <p>Your request is being processed. Tracking started.</p>
+        <button onclick="closeSuccess()" class="btn-primary" style="background: var(--secondary);">Awesome!</button>
+    </div>
+</div>
+
+<div class="dashboard">
+    <!-- SIDEBAR -->
     <div class="sidebar">
-        <h2>UNASEMEJE Ø DIA</h2>
-        <div class="nav-links">
-            <a onclick="showPage('home')" id="link-home" class="active"><i class="fas fa-home"></i><span>Home</span></a>
-            <a onclick="showPage('order')" id="link-order"><i class="fas fa-shopping-cart"></i><span>Order</span></a>
-            <a onclick="showPage('history')" id="link-history"><i class="fas fa-history"></i><span>History</span></a>
-            <a onclick="showPage('wallet')" id="link-wallet"><i class="fas fa-wallet"></i><span>Wallet</span></a>
-            <a onclick="showPage('admin')" id="admin-link"><i class="fas fa-user-shield"></i><span>Admin</span></a>
+        <h2>UNASEMEJE</h2>
+        <div class="sidebar-nav">
+            <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> <span>New Order</span></a>
+            <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> <span>Admin</span></a>
         </div>
-        <div class="sidebar-footer" style="padding: 15px; border-top: 1px solid #1f2937;">
-            <a onclick="logout()" style="color: var(--danger); cursor: pointer; text-decoration: none; font-size: 14px;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        
+        <div class="sidebar-support">
+            <a href="https://wa.me/254715509440" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> <span>WhatsApp</span></a>
+            <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="top-bar">
-            <div><i class="fas fa-circle" style="color: var(--secondary); font-size: 8px;"></i> <span id="user-email">...</span></div>
-            <div class="balance-card">KES <span id="user-balance">0.00</span></div>
+    <!-- MAIN -->
+    <div class="main">
+        <div class="navbar">
+            <div><i class="fas fa-user-circle"></i> <span id="userEmail">Loading...</span></div>
+            <div class="balance-badge">KES <span id="balance">0.00</span></div>
         </div>
 
-        <!-- USER PAGES -->
-        <div id="page-home" class="page active">
+        <!-- HOME -->
+        <div id="home" class="page active">
             <div class="card">
                 <h3>Habari! 🇰🇪</h3>
-                <p style="color: var(--text-dim)">Welcome back to your SMM control center.</p>
+                <p style="color: var(--text-dim)">Welcome to the Unasemeje SMM Control Center.</p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                    <div class="stat-item" onclick="showPage('order')" style="cursor:pointer">
+                    <div class="stat-item" onclick="showPage('services')" style="cursor:pointer">
                         <h4>Create</h4><p>New Order</p>
                     </div>
-                    <div class="stat-item" onclick="showPage('wallet')" style="cursor:pointer">
-                        <h4>Deposit</h4><p>Add Funds</p>
+                    <div class="stat-item" onclick="showPage('deposit')" style="cursor:pointer">
+                        <h4>Wallet</h4><p>Add Balance</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="page-order" class="page">
+        <!-- SERVICES SELECTION -->
+        <div id="services" class="page">
             <div class="card">
-                <h3>Place New Order</h3>
-                <label>Service Category</label>
-                <select id="order-category" onchange="loadServiceItems()"></select>
-                
-                <label>Select Service</label>
-                <select id="order-service" onchange="updateRate()"></select>
-                
-                <label>Target Link</label>
-                <input type="text" id="order-link" placeholder="https://www.tiktok.com/@user/video/...">
-                
-                <label>Quantity</label>
-                <input type="number" id="order-qty" placeholder="Min: 100" oninput="calcTotal()">
-                
-                <div style="margin-top:20px; font-weight:800; color:var(--secondary)">Total: KES <span id="total-cost">0.00</span></div>
-                <button class="btn-primary" onclick="submitOrder()" style="margin-top:15px;">Place Order</button>
+                <div id="platformList"><h3>Select Platform</h3></div>
+                <div id="categoryList" style="display:none;"></div>
+                <div id="serviceList" style="display:none;"></div>
             </div>
         </div>
 
-        <div id="page-history" class="page">
+        <!-- ORDER FORM -->
+        <div id="order" class="page">
+            <div class="card">
+                <button onclick="showPage('services')" style="width:auto; padding:5px 10px; background: #334155; border:none; color:white; border-radius:5px; cursor:pointer;">← Back</button>
+                <h3 id="displayServiceName" style="margin-top:15px; color:var(--primary)">-</h3>
+                
+                <input id="orderServiceId" type="hidden">
+                <input id="orderProvider" type="hidden">
+                
+                <label>Target Link</label>
+                <input id="orderLink" placeholder="Paste link here...">
+                
+                <label>Quantity</label>
+                <input id="orderQty" type="number" placeholder="Enter amount" oninput="calcTotal()">
+                
+                <div style="margin-top:20px; padding: 15px; border-radius: 12px; border: 1px solid var(--primary); background: rgba(124, 58, 237, 0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--text-dim);">Total Cost:</span>
+                        <span style="color: var(--secondary); font-weight: 800; font-size: 1.2rem;">KES <span id="orderTotal">0.00</span></span>
+                    </div>
+                </div>
+                
+                <button id="orderSubmitBtn" class="btn-primary" onclick="submitOrder()">Place Order Now</button>
+            </div>
+        </div>
+
+        <!-- MY ORDERS -->
+        <div id="orders" class="page">
             <div class="card">
                 <h3>My Orders</h3>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
-                        <tbody id="user-order-table"></tbody>
+                        <thead>
+                            <tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="ordersList"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <div id="page-wallet" class="page">
+        <!-- ADD FUNDS -->
+        <div id="deposit" class="page">
             <div class="card">
                 <h3>Add Funds (M-Pesa)</h3>
-                <p style="font-size: 13px;">Send to: <b>0715509440</b> (Faith Cheruiyot)</p>
-                <input type="number" id="dep-amount" placeholder="Amount Sent (KES)">
-                <textarea id="dep-msg" rows="4" placeholder="Paste the FULL M-Pesa SMS here..."></textarea>
-                <button class="btn-primary" onclick="submitDeposit()">Submit for Verification</button>
+                <p>Send to: <b>0715509440</b> (FAITH CHERUIYOT)</p>
+                <input id="depAmount" type="number" placeholder="KES Amount Sent">
+                <textarea id="depMessage" rows="4" placeholder="Paste the FULL M-Pesa SMS here..."></textarea>
+                <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit for Approval</button>
+                <p id="depStatus" style="text-align: center; margin-top:10px; font-weight:bold;"></p>
             </div>
         </div>
 
-        <!-- ADMIN PANEL (The "Brain") -->
-        <div id="page-admin" class="page">
+        <!-- REFERRAL -->
+        <div id="referral" class="page">
+            <div class="card">
+                <h3>Refer & Earn 10%</h3>
+                <div style="background: #0f172a; padding: 15px; border-radius: 10px; border: 1px dashed var(--primary); margin: 15px 0;">
+                    <p>Code: <b id="refCode" style="color: var(--primary);">...</b></p>
+                </div>
+                <h4>Earned: <span style="color: var(--secondary);">KES <span id="refEarnings">0.00</span></span></h4>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="admin" class="page">
             <div class="stats-grid">
-                <div class="stat-item"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
-                <div class="stat-item"><h4>Platform Vol.</h4><p id="adm-total-bal">0.00</p></div>
-                <div class="stat-item"><h4>Pending Req.</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
+                <div class="stat-item"><h4>Users</h4><p id="adm-total-users">0</p></div>
+                <div class="stat-item"><h4>Total Balance</h4><p id="adm-total-bal">0.00</p></div>
+                <div class="stat-item"><h4>Pending</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
             </div>
 
             <div class="card">
-                <h3>Manage Users</h3>
+                <h3>User Management</h3>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>User Email</th><th>Balance</th><th>Last Seen</th><th>Status</th></tr>
+                            <tr><th>Email</th><th>Balance</th><th>Last Activity</th><th>Status</th></tr>
                         </thead>
-                        <tbody id="admin-user-table"></tbody>
+                        <tbody id="adminUserTable"></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="card">
-                <h3>Deposit Verification</h3>
+                <h3>Deposit Requests</h3>
                 <div class="table-container">
                     <table>
                         <thead>
-                            <tr><th>User</th><th>Amount</th><th>SMS Message</th><th>Action</th></tr>
+                            <tr><th>User</th><th>Amount</th><th>Message</th><th>Action</th></tr>
                         </thead>
-                        <tbody id="admin-deposit-table"></tbody>
+                        <tbody id="adminDepositTable"></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="card">
-                <h3>Global Orders (Admin View)</h3>
+                <h3>All Platform Orders</h3>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr><th>User</th><th>Service</th><th>Qty</th><th>Status</th></tr>
                         </thead>
-                        <tbody id="admin-order-table"></tbody>
+                        <tbody id="adminOrderTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -217,167 +278,186 @@
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
     let servicesData = {};
+    let selectedRate = 0;
 
     if (!token) window.location.href = "index.html";
 
-    // --- NAVIGATION ---
-    function showPage(id) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        document.getElementById(`page-${id}`).classList.add('active');
-        document.getElementById(`link-${id}`)?.classList.add('active');
-        
-        if(id === 'admin') loadAdminPanel();
-        if(id === 'history') loadUserHistory();
-    }
-
-    // --- USER ACTIONS ---
-    async function init() {
-        const res = await fetch(`${API}/me`, { headers: { "Authorization": `Bearer ${token}` }});
+    async function syncData() {
+        const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+        if (!res.ok) logout();
         const user = await res.json();
-        if(!res.ok) logout();
         
-        document.getElementById('user-email').innerText = user.email;
-        document.getElementById('user-balance').innerText = user.balance.toFixed(2);
-        
+        document.getElementById("userEmail").innerText = user.email;
+        document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
+        document.getElementById("refCode").innerText = user.referralCode || "N/A";
+        document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
+
         if(user.email === "diasamratbarusz@gmail.com") {
-            document.getElementById('admin-link').style.display = "flex";
+            document.getElementById("adminBtn").style.display = "flex";
         }
-        loadServices();
     }
 
+    // --- SERVICES ---
     async function loadServices() {
         const res = await fetch(`${API}/services`);
         const json = await res.json();
         servicesData = json.data;
-        
-        const catSelect = document.getElementById('order-category');
-        catSelect.innerHTML = Object.keys(servicesData).map(cat => `<option value="${cat}">${cat}</option>`).join('');
-        loadServiceItems();
+        renderPlatforms();
     }
 
-    function loadServiceItems() {
-        const cat = document.getElementById('order-category').value;
-        const subItems = [];
-        Object.keys(servicesData[cat]).forEach(subCat => {
-            servicesData[cat][subCat].forEach(s => subItems.push(s));
+    function renderPlatforms() {
+        const list = document.getElementById("platformList");
+        list.innerHTML = "<h3>Select Platform</h3>";
+        Object.keys(servicesData).forEach(p => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerHTML = `<i class="fas fa-chevron-right"></i> ${p}`;
+            div.onclick = () => renderCategories(p);
+            list.appendChild(div);
         });
-        
-        const serSelect = document.getElementById('order-service');
-        serSelect.innerHTML = subItems.map(s => `<option value='${JSON.stringify(s)}'>${s.name} (KES ${s.rate})</option>`).join('');
-        calcTotal();
+    }
+
+    function renderCategories(p) {
+        document.getElementById("platformList").style.display = "none";
+        const list = document.getElementById("categoryList");
+        list.innerHTML = `<button onclick="resetServices()" style="width:auto; padding:5px 10px; background:#334155; border:none; color:white; border-radius:5px; margin-bottom:10px;">← Back</button><h3>${p}</h3>`;
+        Object.keys(servicesData[p]).forEach(c => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerText = c;
+            div.onclick = () => renderServicesList(p, c);
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
+
+    function renderServicesList(p, c) {
+        document.getElementById("categoryList").style.display = "none";
+        const list = document.getElementById("serviceList");
+        list.innerHTML = `<button onclick="renderCategories('${p}')" style="width:auto; padding:5px 10px; background:#334155; border:none; color:white; border-radius:5px; margin-bottom:10px;">← Back</button><h3>${c}</h3>`;
+        servicesData[p][c].forEach(s => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate}/1k</span>`;
+            div.onclick = () => {
+                document.getElementById("orderServiceId").value = s.serviceId;
+                document.getElementById("orderProvider").value = s.provider;
+                document.getElementById("displayServiceName").innerText = s.name;
+                selectedRate = s.rate;
+                calcTotal();
+                showPage('order');
+            };
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
+
+    function resetServices() {
+        document.getElementById("platformList").style.display = "block";
+        document.getElementById("categoryList").style.display = "none";
+        document.getElementById("serviceList").style.display = "none";
     }
 
     function calcTotal() {
-        const s = JSON.parse(document.getElementById('order-service').value);
-        const qty = document.getElementById('order-qty').value || 0;
-        document.getElementById('total-cost').innerText = ((s.rate / 1000) * qty).toFixed(2);
+        const qty = document.getElementById("orderQty").value || 0;
+        document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
     }
 
     async function submitOrder() {
-        const s = JSON.parse(document.getElementById('order-service').value);
+        const btn = document.getElementById("orderSubmitBtn");
+        const payload = {
+            serviceId: document.getElementById("orderServiceId").value,
+            provider: document.getElementById("orderProvider").value,
+            link: document.getElementById("orderLink").value,
+            quantity: document.getElementById("orderQty").value
+        };
+        if(!payload.link || !payload.quantity) return alert("Fill all details");
+        btn.disabled = true;
         const res = await fetch(`${API}/order`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({
-                serviceId: s.serviceId, provider: s.provider,
-                link: document.getElementById('order-link').value,
-                quantity: document.getElementById('order-qty').value
-            })
+            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify(payload)
         });
         const data = await res.json();
-        alert(data.success ? "Order Placed!" : data.error);
-        init();
+        if(data.success) { document.getElementById("successOverlay").style.display = "flex"; syncData(); }
+        else alert(data.error);
+        btn.disabled = false;
+    }
+
+    async function loadOrders() {
+        const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
+        const orders = await res.json();
+        document.getElementById("ordersList").innerHTML = orders.map(o => `
+            <tr><td>${o.serviceName.substring(0,20)}...</td><td>${o.quantity}</td><td>${o.cost}</td>
+            <td><span class="status status-${o.status.toLowerCase()}">${o.status}</span></td></tr>
+        `).join('') || "<tr><td colspan='4'>No orders yet</td></tr>";
     }
 
     async function submitDeposit() {
+        const status = document.getElementById("depStatus");
         const res = await fetch(`${API}/deposit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({
-                amount: document.getElementById('dep-amount').value,
-                message: document.getElementById('dep-msg').value
-            })
+            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ amount: document.getElementById("depAmount").value, message: document.getElementById("depMessage").value })
         });
-        if(res.ok) { alert("Submitted to Admin!"); document.getElementById('dep-msg').value = ""; }
+        if(res.ok) { status.innerText = "Submitted! Wait for admin approval."; status.style.color = "var(--secondary)"; }
     }
 
-    async function loadUserHistory() {
-        const res = await fetch(`${API}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` }});
-        const orders = await res.json();
-        document.getElementById('user-order-table').innerHTML = orders.map(o => `
-            <tr><td>${o.serviceName.substring(0,20)}...</td><td>${o.quantity}</td><td>${o.cost}</td>
-            <td><span class="badge bg-success">${o.status}</span></td></tr>
-        `).join('');
-    }
-
-    // --- ADMIN SYSTEM ---
+    // --- ADMIN ---
     async function loadAdminPanel() {
-        // 1. Load User Management
-        const resU = await fetch(`${API}/admin/users`, { headers: { "Authorization": `Bearer ${token}` }});
-        const users = await resU.json();
-        let totalBal = 0;
-        document.getElementById('admin-user-table').innerHTML = users.map(u => {
-            totalBal += u.balance;
-            const isOnline = (new Date() - new Date(u.lastSeen)) < 300000; // 5 mins
-            return `<tr>
-                <td>${u.email}</td><td>KES ${u.balance.toFixed(2)}</td>
-                <td>${new Date(u.lastSeen || Date.now()).toLocaleString()}</td>
-                <td>${isOnline ? '<span class="online-dot"></span>Online' : '<span class="offline-dot"></span>Offline'}</td>
-            </tr>`;
+        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+        const users = await uRes.json();
+        let totalB = 0;
+        document.getElementById("adminUserTable").innerHTML = users.map(u => {
+            totalB += u.balance;
+            const isOnline = (new Date() - new Date(u.lastSeen)) < 300000;
+            return `<tr><td>${u.email}</td><td>KES ${u.balance.toFixed(2)}</td><td>${new Date(u.lastSeen || Date.now()).toLocaleString()}</td>
+            <td>${isOnline ? '<span class="online-dot"></span>Online' : '<span class="offline-dot"></span>Offline'}</td></tr>`;
         }).join('');
-        document.getElementById('adm-total-users').innerText = users.length;
-        document.getElementById('adm-total-bal').innerText = totalBal.toFixed(2);
+        document.getElementById("adm-total-users").innerText = users.length;
+        document.getElementById("adm-total-bal").innerText = totalB.toFixed(2);
 
-        // 2. Load Deposits
-        const resD = await fetch(`${API}/admin/deposits`, { headers: { "Authorization": `Bearer ${token}` }});
-        const deposits = await resD.json();
-        const pending = deposits.filter(d => d.status === 'pending');
-        document.getElementById('adm-pending-dep').innerText = pending.length;
-        document.getElementById('admin-deposit-table').innerHTML = deposits.map(d => `
-            <tr>
-                <td>${d.userEmail}</td><td>KES ${d.amount}</td>
-                <td><small>${d.message.substring(0,40)}...</small></td>
-                <td>
-                    ${d.status === 'pending' ? 
-                        `<button class="btn-sm btn-approve" onclick="approveDep('${d._id}')">Approve</button>
-                         <button class="btn-sm btn-cancel" onclick="cancelDep('${d._id}')">X</button>` : 
-                        `<span class="badge ${d.status === 'approved' ? 'bg-success' : 'bg-danger'}">${d.status}</span>`
-                    }
-                </td>
-            </tr>
+        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+        const deposits = await dRes.json();
+        document.getElementById("adm-pending-dep").innerText = deposits.filter(d => d.status === 'pending').length;
+        document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
+            <tr><td>${d.userEmail}</td><td>KES ${d.amount}</td><td><small>${d.message.substring(0,30)}...</small></td>
+            <td>${d.status === 'pending' ? `<button class="btn-sm btn-approve" onclick="approveDep('${d._id}')">Approve</button>
+            <button class="btn-sm btn-cancel" onclick="cancelDep('${d._id}')">X</button>` : `<span class="status status-completed">${d.status}</span>`}</td></tr>
         `).join('');
 
-        // 3. Load Global Orders
-        const resO = await fetch(`${API}/admin/all-orders`, { headers: { "Authorization": `Bearer ${token}` }});
-        const allOrders = await resO.json();
-        document.getElementById('admin-order-table').innerHTML = allOrders.map(o => `
+        const oRes = await fetch(`${API}/admin/all-orders`, { headers: { Authorization: `Bearer ${token}` }});
+        const allO = await oRes.json();
+        document.getElementById("adminOrderTable").innerHTML = allO.map(o => `
             <tr><td>${o.userEmail}</td><td>${o.serviceName.substring(0,15)}</td><td>${o.quantity}</td>
-            <td><span class="badge bg-warning">${o.status}</span></td></tr>
+            <td><span class="status status-pending">${o.status}</span></td></tr>
         `).join('');
     }
 
     async function approveDep(id) {
-        if(!confirm("Credit user balance?")) return;
-        await fetch(`${API}/admin/approve-deposit`, {
-            method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ depositId: id })
-        });
-        loadAdminPanel();
+        if(!confirm("Credit balance?")) return;
+        await fetch(`${API}/admin/approve-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id })});
+        loadAdminPanel(); syncData();
     }
 
     async function cancelDep(id) {
-        if(!confirm("Cancel this request?")) return;
-        await fetch(`${API}/admin/cancel-deposit`, {
-            method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-            body: JSON.stringify({ depositId: id })
-        });
+        if(!confirm("Cancel request?")) return;
+        await fetch(`${API}/admin/cancel-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id })});
         loadAdminPanel();
     }
 
+    function showPage(p) {
+        document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+        document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
+        document.getElementById(p).classList.add("active");
+        document.getElementById(`nav-${p}`)?.classList.add("active");
+        if(p === 'orders') loadOrders();
+        if(p === 'admin') loadAdminPanel();
+    }
+
+    function closeSuccess() { document.getElementById("successOverlay").style.display = "none"; showPage('orders'); }
     function logout() { localStorage.clear(); window.location.href = "index.html"; }
 
-    init();
+    syncData();
+    loadServices();
 </script>
 </body>
 </html>
