@@ -104,7 +104,7 @@
 </div>
 
 <div class="dashboard">
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR - MESSAGES REMOVED -->
     <div class="sidebar">
         <h2>UNASEMEJE</h2>
         <div class="sidebar-nav">
@@ -223,7 +223,7 @@
             </div>
         </div>
 
-        <!-- ADMIN PANEL -->
+        <!-- ADMIN PANEL - PRESERVED AND PROTECTED -->
         <div id="admin" class="page">
             <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="card" style="margin:0"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
@@ -288,6 +288,7 @@
         document.getElementById("refCode").innerText = user.referralCode || "N/A";
         document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
 
+        // Access limited to your specific admin email
         if(user.email === "diasamratbarusz@gmail.com") {
             document.getElementById("adminBtn").style.display = "flex";
         }
@@ -396,7 +397,7 @@
         if(res.ok) { status.innerText = "Submitted! Wait for admin approval."; status.style.color = "var(--secondary)"; }
     }
 
-    // --- ADMIN ---
+    // --- ADMIN CONTROLS (UNTOUCHED) ---
     async function loadAdminPanel() {
         const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
         const users = await uRes.json();
