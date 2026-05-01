@@ -106,19 +106,20 @@ function loadUser() {
   const user = decodeToken(getToken());
   if (!user) return;
 
-  // Displays the user's email in the dashboard sidebar or header
+  // Displays the user's username (or email if username is missing) in the dashboard
   const el = document.getElementById("userEmail");
-  if (el) el.innerText = user.email || "User";
+  if (el) el.innerText = user.username || user.email || "User";
 }
 
 // ================= LOGIN LOGIC =================
 async function login() {
-  const email = document.getElementById("email")?.value?.trim();
+  // 'identifier' is used here because the input can now be a Username or Email
+  const identifier = document.getElementById("email")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
 
   // Validates presence of credentials
-  if (!email || !password) {
-    return showToast("Please enter both email and password", "error");
+  if (!identifier || !password) {
+    return showToast("Please enter your username/email and password", "error");
   }
 
   showLoading();
@@ -127,7 +128,8 @@ async function login() {
     const res = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      // Matches the 'identifier' logic in your updated server.js
+      body: JSON.stringify({ identifier, password })
     });
 
     const data = await res.json();
@@ -152,15 +154,16 @@ async function login() {
 
 // ================= REGISTRATION LOGIC =================
 async function register() {
+  // New: Captured 'username' for registration
+  const username = document.getElementById("username")?.value?.trim();
   const email = document.getElementById("email")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
   const phone = document.getElementById("phone")?.value?.trim();
-  // Optional referral code for the referral bonus feature
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  // Mandatory fields for Unasemeje SMM registration
-  if (!email || !password || !phone) {
-    return showToast("Email, Password, and Phone are required", "error");
+  // Updated validation to include 'username'
+  if (!username || !email || !password || !phone) {
+    return showToast("Username, Email, Password, and Phone are required", "error");
   }
 
   showLoading();
@@ -170,6 +173,7 @@ async function register() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
+        username,
         email, 
         password, 
         phone,
@@ -207,7 +211,6 @@ function logoutUser() {
 }
 
 // ================= AUTHORIZED FETCH WRAPPER =================
-// Use this for any dashboard calls that require the JWT token
 async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -222,7 +225,6 @@ async function authFetch(url, options = {}) {
 
 // ================= AUTOMATIC INITIALIZATION =================
 document.addEventListener("DOMContentLoaded", () => {
-  // Only runs authentication checks if the user is on the dashboard
   if (window.location.pathname.includes("dashboard")) {
     checkAuth();
     loadUser();
