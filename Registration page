@@ -1,22 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Register</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | unasemeje ø dia</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-blue: #1d4ed8;
+      --accent-yellow: #facc15;
+      --bg-dark: #0a0a0a;
+      --card-bg: #1a1a1a;
+      --text-gray: #a1a1aa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: var(--bg-dark); 
+      color: white; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #0a0a0a, #1e1b4b);
+    }
+
+    .register-wrapper { width: 100%; max-width: 450px; padding: 20px; }
+    
+    .brand-logo { 
+      text-align: center; 
+      color: #00df9a; 
+      font-weight: 800; 
+      font-size: 1.5rem; 
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    .register-card { 
+      background: var(--card-bg); 
+      border-radius: 20px; 
+      padding: 40px; 
+      border: 1px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    h2 { font-family: 'Archivo'; margin-bottom: 10px; font-size: 1.8rem; text-align: center; }
+    p.subtitle { color: var(--text-gray); text-align: center; margin-bottom: 30px; font-size: 14px; }
+
+    .input-group { margin-bottom: 20px; }
+    .input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+    .input-group input { 
+      width: 100%; 
+      padding: 15px; 
+      border-radius: 10px; 
+      border: 1px solid #333; 
+      background: #0f0f0f; 
+      color: white; 
+      outline: none;
+    }
+    .input-group input:focus { border-color: var(--primary-blue); }
+
+    .btn-register { 
+      width: 100%; 
+      background: var(--primary-blue); 
+      color: white; 
+      padding: 16px; 
+      border: none; 
+      border-radius: 10px; 
+      font-weight: 700; 
+      cursor: pointer; 
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+    .btn-register:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .login-link { text-align: center; margin-top: 25px; font-size: 14px; color: var(--text-gray); }
+    .login-link a { color: var(--accent-yellow); text-decoration: none; font-weight: 600; }
+
+    /* Toast Notification */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 16px;
+      position: fixed;
+      z-index: 100;
+      bottom: 30px;
+      font-size: 14px;
+    }
+    #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+
+    @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+    @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Create Account</h2>
+<div class="register-wrapper">
+  <div class="brand-logo">UNASEMEJE SMM</div>
+  
+  <div class="register-card">
+    <h2>Create Account</h2>
+    <p class="subtitle">Join Africa's #1 SMM Panel today</p>
 
-  <input id="email" placeholder="Email">
-  <input id="password" placeholder="Password">
-  <input id="phone" placeholder="2547XXXXXXXX">
+    <div class="input-group">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="example@gmail.com">
+    </div>
 
-  <button onclick="register()">Register</button>
+    <div class="input-group">
+      <label>Phone Number</label>
+      <input type="text" id="phone" placeholder="2547XXXXXXXX">
+    </div>
 
-  <p>Already have account?</p>
-  <a href="index.html"><button>Login</button></a>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Min. 8 characters">
+    </div>
+
+    <button class="btn-register" onclick="register()">Register</button>
+
+    <div class="login-link">
+      Already have an account? <a href="index.html">Sign In</a>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
