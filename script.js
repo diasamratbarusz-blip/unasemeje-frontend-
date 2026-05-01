@@ -60,7 +60,8 @@ async function loadUser() {
     const emailEl = document.getElementById("userEmail");
     const balanceEl = document.getElementById("balance");
 
-    if (emailEl) emailEl.innerText = data.email || "User";
+    // Updated to show Username if available, otherwise Email
+    if (emailEl) emailEl.innerText = data.username || data.email || "User";
     if (balanceEl) balanceEl.innerText = data.balance || 0;
 }
 
@@ -76,7 +77,12 @@ function normalizeServices(data) {
     }
     else if (data?.data && typeof data.data === "object") {
         Object.values(data.data).forEach(group => {
-            if (Array.isArray(group)) {
+            if (typeof group === "object" && !Array.isArray(group)) {
+                // Handle nested categories (Platform > Category > Services)
+                Object.values(group).forEach(subGroup => {
+                    if (Array.isArray(subGroup)) services.push(...subGroup);
+                });
+            } else if (Array.isArray(group)) {
                 services.push(...group);
             }
         });
@@ -184,7 +190,8 @@ async function loadOrders() {
 
     data.forEach(o => {
         const li = document.createElement("li");
-        li.innerText = `${o.service} | Qty: ${o.quantity} | Cost: ${o.cost}`;
+        // serviceName is preferred if your backend provides it
+        li.innerText = `${o.serviceName || o.serviceId} | Qty: ${o.quantity} | Cost: ${o.cost} | Status: ${o.status}`;
         table.appendChild(li);
     });
 }
@@ -201,12 +208,17 @@ function showPage(page) {
 
 /* ================= LOGIN CHECK ================= */
 window.onload = () => {
-    if (!getToken()) {
-        location.href = "index.html";
-        return;
+    // Check if on dashboard or restricted page
+    if (document.body.classList.contains("restricted") || window.location.pathname.includes("dashboard")) {
+        if (!getToken()) {
+            location.href = "index.html";
+            return;
+        }
     }
 
-    loadUser();
-    loadServices();
-    loadOrders();
+    if (getToken()) {
+        loadUser();
+        loadServices();
+        loadOrders();
+    }
 };
