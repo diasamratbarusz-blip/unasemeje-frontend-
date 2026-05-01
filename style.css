@@ -11,56 +11,116 @@ html, body {
   overflow-x: hidden;
 }
 
-/* ================= BODY ================= */
+/* ================= VARIABLES & BODY ================= */
+:root {
+  --primary-blue: #1d4ed8;
+  --accent-yellow: #facc15;
+  --bg-dark: #0a0a0a;
+  --card-bg: #1a1a1a;
+  --input-bg: #0f0f0f;
+  --text-gray: #a1a1aa;
+}
+
 body {
-  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #020617);
+  font-family: 'Inter', 'Poppins', sans-serif;
+  background: radial-gradient(circle at top, #1e1b4b, #0a0a0a);
   color: white;
   min-height: 100vh;
+  line-height: 1.6;
 }
 
-/* ================= LOGIN CONTAINER ================= */
+/* ================= CONTAINER & CARDS ================= */
 .container {
-  width: 95%; /* Responsive width for mobile */
-  max-width: 420px;
-  margin: 40px auto; /* Reduced margin for mobile spacing */
-  padding: 25px;
-  background: rgba(17, 24, 39, 0.75);
-  border-radius: 16px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+  width: 95%;
+  max-width: 440px;
+  margin: 40px auto;
+  padding: 35px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  border: 1px solid #333;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* ================= INPUT ================= */
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 20px;
+  border: 1px solid #333;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* ================= INFO COMPONENT (From Signup) ================= */
+.info-box {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.btn-info {
+  background: linear-gradient(to right, #4f46e5, #7c3aed);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ================= FORM ELEMENTS ================= */
 input, select {
   width: 100%;
   margin-top: 10px;
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
-  background: #0f172a;
-  border: 1px solid #1e293b;
+  background: var(--input-bg);
+  border: 1px solid #333;
   color: white;
   outline: none;
-  font-size: 16px; /* Prevents auto-zoom on iOS */
+  font-size: 16px;
+  transition: 0.2s;
 }
 
-input:focus {
-  border-color: #38bdf8;
+input:focus, select:focus {
+  border-color: var(--primary-blue);
 }
 
-/* ================= BUTTON ================= */
+label {
+  display: block;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+/* ================= BUTTONS ================= */
 button {
   width: 100%;
-  margin-top: 10px;
-  padding: 14px; /* Slightly larger for better touch */
-  border-radius: 10px;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  font-weight: bold;
-  background: linear-gradient(135deg, #38bdf8, #22c55e);
-  color: black;
+  font-weight: 800;
+  font-size: 16px;
+  text-transform: uppercase;
   transition: 0.3s;
   touch-action: manipulation;
+}
+
+/* Primary Yellow Button (Sign Up/Action) */
+button.primary, .btn-signup {
+  background: var(--accent-yellow);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
+}
+
+/* Blue Button (Login/Nav) */
+button.secondary, .btn-login {
+  background: var(--primary-blue);
+  color: white;
 }
 
 button:hover {
@@ -68,238 +128,113 @@ button:hover {
   transform: translateY(-1px);
 }
 
-/* ================= DASHBOARD ================= */
+/* ================= DASHBOARD LAYOUT ================= */
 .dashboard {
   display: flex;
   min-height: 100vh;
 }
 
-/* ================= SIDEBAR ================= */
 .sidebar {
-  width: 240px;
-  background: #020617;
-  padding: 20px;
-  border-right: 1px solid #1e293b;
+  width: 260px;
+  background: #050505;
+  padding: 25px;
+  border-right: 1px solid #1a1a1a;
   flex-shrink: 0;
-  transition: 0.3s;
 }
 
 .sidebar h2 {
-  color: #38bdf8;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+  color: #00df9a;
+  margin-bottom: 30px;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .sidebar a {
   display: block;
-  padding: 12px;
-  margin: 8px 0;
+  padding: 12px 15px;
+  margin: 5px 0;
   border-radius: 8px;
-  color: #cbd5e1;
+  color: var(--text-gray);
   text-decoration: none;
-  cursor: pointer;
   transition: 0.2s;
 }
 
-.sidebar a:hover {
-  background: rgba(56,189,248,0.1);
-  color: #38bdf8;
+.sidebar a:hover, .sidebar a.active {
+  background: rgba(29, 78, 216, 0.15);
+  color: white;
 }
 
-/* ================= MAIN ================= */
 .main {
   flex: 1;
-  padding: 20px;
-  width: 100%;
+  padding: 30px;
+  background: #0a0a0a;
 }
 
-/* ================= NAVBAR ================= */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(17, 24, 39, 0.7);
-  padding: 12px 15px;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  margin-bottom: 20px;
-}
-
-/* ================= CARD ================= */
-.card {
-  background: rgba(17, 24, 39, 0.7);
-  padding: 20px;
-  border-radius: 16px;
-  margin-top: 20px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-/* ================= SERVICES GRID ================= */
+/* ================= GRID & SERVICES ================= */
 .grid {
   display: grid;
-  /* Automatically adjusts columns based on screen width */
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
 }
 
-/* ================= SERVICE BOX ================= */
 .service {
-  background: #020617;
-  padding: 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  border: 1px solid #1e293b;
-  transition: 0.3s;
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
   text-align: center;
+  border: 1px solid #222;
+  transition: 0.3s;
 }
 
 .service:hover {
-  border-color: #38bdf8;
-  transform: scale(1.03);
+  border-color: var(--accent-yellow);
+  transform: translateY(-5px);
 }
 
-/* ================= ORDER FORM ================= */
-.order-box input {
-  margin-top: 10px;
-}
-
-/* ================= STEP ORDER FLOW ================= */
-.container.step-ui {
-  max-width: 500px;
-  margin: 20px auto;
-  width: 95%;
-}
-
-.step {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
-  margin-top: 15px;
-}
-
-.list-item {
-  background: #334155;
-  padding: 15px;
-  margin: 10px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.list-item:hover {
-  background: #475569;
-}
-
-/* ================= AMOUNT GRID ================= */
-.amount-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.amount-grid button {
-  background: #334155;
-  border: 1px solid #475569;
-  color: white;
-  padding: 12px 5px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-/* ================= PRICE DISPLAY ================= */
-.price-display {
-  margin-top: 15px;
-  font-size: 1.2rem;
-  color: #38bdf8;
-  font-weight: bold;
-}
-
-/* ================= TOAST ================= */
+/* ================= TOAST NOTIFICATION ================= */
 #toast {
   position: fixed;
-  bottom: 20px;
+  bottom: 30px;
   left: 50%;
-  transform: translateX(-50%); /* Center on all screens */
+  transform: translateX(-50%);
   background: #22c55e;
-  color: black;
-  padding: 12px 24px;
-  border-radius: 10px;
+  color: white;
+  padding: 16px 30px;
+  border-radius: 12px;
   display: none;
   z-index: 1000;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-  font-weight: bold;
-  white-space: nowrap;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* ================= ORDER LIST ================= */
-ul {
-  list-style: none;
-}
-
-ul li {
-  background: #020617;
-  padding: 15px;
-  margin-top: 10px;
-  border-radius: 10px;
-  border: 1px solid #1e293b;
-  font-size: 14px;
-}
-
-/* ================= MOBILE RESPONSIVE UPDATES ================= */
+/* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 768px) {
   .dashboard {
-    flex-direction: column; /* Stacks sidebar and main */
+    flex-direction: column;
   }
 
-  /* Make sidebar a horizontal top bar or hide it */
   .sidebar {
     width: 100%;
     border-right: none;
-    border-bottom: 1px solid #1e293b;
-    padding: 10px 20px;
+    border-bottom: 1px solid #1a1a1a;
     display: flex;
-    overflow-x: auto; /* Allow scrolling menu items horizontally */
-    white-space: nowrap;
+    overflow-x: auto;
+    padding: 10px;
     gap: 10px;
   }
 
-  .sidebar h2 {
-    display: none; /* Hide logo in mobile sidebar to save space */
-  }
+  .sidebar h2 { display: none; }
 
-  .sidebar a {
-    margin: 0;
-    padding: 8px 15px;
-    display: inline-block;
-    font-size: 14px;
-  }
+  .main { padding: 15px; }
 
-  .main {
-    padding: 15px 10px;
-  }
-
-  .container {
-    margin: 20px auto;
-    padding: 20px;
-  }
-
-  .amount-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on small phones */
-  }
-
-  .navbar {
-    font-size: 14px;
-  }
+  .container { margin: 20px auto; padding: 25px; }
+  
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Smaller phones (iPhone SE size) */
-@media (max-width: 380px) {
-    .grid {
-        grid-template-columns: 1fr; /* 1 service per row on tiny screens */
-    }
-    
-    .amount-grid {
-        grid-template-columns: 1fr;
-    }
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+  
+  .amount-grid { grid-template-columns: repeat(2, 1fr); }
 }
