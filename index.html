@@ -6,213 +6,113 @@
   <title>unasemeje ø dia | #1 Professional SMM Panel</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     :root {
-      --primary: #3b82f6;
-      --accent: #00df9a; /* Kenyan Energy Green */
+      --primary: #2563eb; /* Blue from image_11.png */
+      --accent: #facc15; /* Yellow from image_11.png */
       --bg: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.8);
+      --card-bg: rgba(30, 41, 59, 0.9);
       --wa-green: #25D366;
     }
 
-    /* GLOBAL FIXES FOR RESPONSIVENESS */
-    * { 
-        margin: 0; 
-        padding: 0; 
-        box-sizing: border-box; 
-    }
-
-    html, body {
-        width: 100%;
-        overflow-x: hidden; /* Prevents side-scrolling on small phones */
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; overflow-x: hidden; }
 
     body {
       font-family: 'Inter', sans-serif;
       background: radial-gradient(circle at center, #1e293b, #020617);
       color: white;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 15px; /* Reduced padding for mobile space */
     }
 
-    h1, h2, h3 {
-      font-family: 'Archivo', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: -1px;
-    }
-
-    /* BACKGROUND DECORATION */
-    .bg-glow {
-      position: absolute;
-      width: 400px;
-      height: 400px;
-      background: var(--primary);
-      filter: blur(150px);
-      opacity: 0.15;
-      z-index: -1;
-      border-radius: 50%;
-      max-width: 100%; /* Ensure glow doesn't push screen width */
-    }
-
-    /* LOGO SECTION */
-    .brand-header {
+    /* HERO SECTION STYLE FROM IMAGE_11.PNG */
+    .hero-section {
       text-align: center;
-      margin-bottom: 25px;
-      padding: 0 10px;
+      padding: 60px 15px;
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(30, 27, 75, 1));
     }
 
     .brand-header h1 {
-      font-size: clamp(2rem, 8vw, 2.8rem); /* Scales based on screen width */
-      background: linear-gradient(to right, #3b82f6, #00df9a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
+      font-family: 'Archivo', sans-serif;
+      font-size: clamp(2rem, 8vw, 3rem);
+      color: var(--accent);
+      margin-bottom: 20px;
+      text-transform: uppercase;
     }
 
-    .brand-header p {
-      color: #94a3b8;
-      font-size: clamp(0.9rem, 4vw, 1.1rem);
-      font-weight: 400;
+    .hero-text {
+      max-width: 800px;
+      margin: 0 auto 30px;
+      color: #cbd5e1;
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
 
-    /* CENTRAL CONTAINER - RESPONSIVE FIX */
+    /* LOGIN CARD */
     .main-wrapper {
-      max-width: 500px; /* Desktop limit */
-      width: 100%; /* Mobile full-width */
+      max-width: 480px;
+      width: 90%;
+      margin: -20px auto 60px;
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       border-radius: 24px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.7);
       overflow: hidden;
+      position: relative;
+      z-index: 10;
     }
 
-    .form-container {
-      padding: clamp(20px, 5vw, 40px); /* Smaller padding on phones */
-    }
+    .form-container { padding: 40px; }
 
-    .trust-badge {
-      display: inline-flex;
-      align-items: center;
-      background: rgba(0, 223, 154, 0.1);
-      padding: 6px 16px;
-      border-radius: 50px;
-      color: var(--accent);
-      font-size: 10px;
-      font-weight: 800;
-      margin-bottom: 20px;
-      letter-spacing: 1px;
-      text-align: center;
-    }
-
-    /* INPUT STYLING */
-    .input-wrapper {
-        margin-bottom: 15px;
-        text-align: left;
-    }
+    .input-wrapper { margin-bottom: 20px; text-align: left; }
+    .input-wrapper label { display: block; font-size: 14px; color: white; margin-bottom: 8px; font-weight: 600; }
     
-    .input-wrapper label {
-        display: block;
-        font-size: 12px;
-        color: #94a3b8;
-        margin-bottom: 5px;
-        font-weight: 600;
-    }
-
     input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 14px;
       border: 1.5px solid #334155;
       border-radius: 12px;
-      background: #020617;
+      background: #0f172a;
       color: white;
-      font-size: 16px; /* 16px prevents iOS auto-zoom */
-      transition: all 0.3s ease;
+      font-size: 16px;
     }
 
-    input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-    }
-
-    .remember-me {
+    .remember-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: flex-start;
+      margin-bottom: 25px;
       font-size: 14px;
-      color: #94a3b8;
-      margin: 15px 0;
     }
 
-    .remember-me input {
-      width: auto;
-      margin-right: 10px;
-    }
-
-    /* ACTION BUTTONS */
-    button {
+    .btn-signin {
+      background: var(--primary);
       width: 100%;
       padding: 16px;
-      margin-top: 10px;
-      background: var(--primary);
+      border-radius: 12px;
       border: none;
       color: white;
       font-weight: 700;
       font-size: 16px;
-      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      touch-action: manipulation; /* Optimizes for mobile taps */
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
     }
 
-    button:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
+    /* SCROLLABLE SECTIONS FROM IMAGES */
+    .section-dark { padding: 80px 10%; text-align: center; }
+    .section-dark h2 { color: var(--accent); margin-bottom: 40px; }
+    
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
     }
 
-    button.secondary {
-      background: transparent;
-      border: 1px solid #334155;
-      margin-top: 15px;
-    }
+    .info-footer { background: #000; padding: 60px 10%; border-top: 1px solid #222; }
 
-    /* INSTRUCTIONS & ADS SECTION - GRID FIX */
-    .info-footer {
-        background: rgba(0, 0, 0, 0.3);
-        padding: clamp(20px, 5vw, 30px) clamp(20px, 5vw, 40px);
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        text-align: left;
-    }
-
-    .info-footer h3 {
-        font-size: 14px;
-        color: var(--accent);
-        margin-bottom: 15px;
-    }
-
-    .ad-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Adaptive columns */
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .ad-pill {
-        font-size: 11px;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 8px;
-        border-radius: 8px;
-        color: #cbd5e1;
-        text-align: center;
-    }
-
-    /* WHATSAPP SUPPORT */
     .whatsapp-btn {
       display: flex;
       align-items: center;
@@ -225,75 +125,36 @@
       padding: 14px;
       border-radius: 12px;
       margin-top: 20px;
-      font-size: 14px;
-      transition: 0.3s;
     }
 
-    /* LOADER */
     .btn-loader {
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       border: 3px solid rgba(255,255,255,0.3);
       border-top: 3px solid white;
       border-radius: 50%;
       display: inline-block;
       animation: spin 0.8s linear infinite;
-      vertical-align: middle;
-      margin-left: 10px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    footer {
-      padding: 30px 15px;
-      text-align: center;
-      width: 100%;
-    }
-
-    footer p {
-      color: #64748b;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    /* RESPONSIVE TABLET/MOBILE TWEAKS */
-    @media (max-width: 480px) {
-        .main-wrapper {
-            border-radius: 16px; /* Slightly sharper corners on small phones */
-        }
-        .form-container {
-            padding: 25px 20px;
-        }
-    }
-
+    footer { padding: 40px 15px; text-align: center; background: #000; }
   </style>
 </head>
 
 <body>
 
-<div class="bg-glow"></div>
-
-<header class="brand-header">
-  <h1>unasemeje ø dia</h1>
-  <p>The #1 SMM Destination for Kenyan Creators</p>
-</header>
+<section class="hero-section">
+  <header class="brand-header">
+    <h1>unasemeje ø dia</h1>
+    <p class="hero-text">Best SMM Panel in Africa & Kenya for Fast Social Media Growth. Buy Instagram followers, YouTube watch hours, TikTok likes, and Facebook engagement with Kenya's most trusted panel.</p>
+  </header>
+</section>
 
 <div class="main-wrapper">
   <div class="form-container">
-    <center>
-      <div class="trust-badge">✓ SECURED VIA M-PESA & ENCRYPTION</div>
-      <h2 style="margin-bottom: 8px;">Welcome Back</h2>
-      <p style="color: #94a3b8; font-size: 14px; margin-bottom: 25px;">Access the cheapest SMM services in Kenya.</p>
-    </center>
-
     <div class="input-wrapper">
-        <label>Email Address</label>
-        <input id="email" type="email" placeholder="name@example.com">
-    </div>
-
-    <div class="input-wrapper">
-        <label>Phone Number</label>
-        <input id="phone" type="text" placeholder="2547XXXXXXXX">
+        <label>Username</label>
+        <input id="username" type="text" placeholder="Enter your username">
     </div>
 
     <div class="input-wrapper">
@@ -301,92 +162,90 @@
         <input id="password" type="password" placeholder="••••••••">
     </div>
 
-    <label class="remember-me">
-      <input type="checkbox"> Remember my session
-    </label>
+    <div class="remember-row">
+      <label style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" style="width: auto;"> Remember me
+      </label>
+      <a href="#" style="color: var(--accent); text-decoration: none;">Password Lost?</a>
+    </div>
 
-    <button onclick="login()">Sign In to Dashboard</button>
+    <button class="btn-signin" onclick="login()">Sign in</button>
 
     <div id="loadingText" style="display:none; text-align:center; font-size: 13px; color: #38bdf8; margin-top: 15px;">
       Connecting ...
     </div>
 
-    <p style="margin-top: 25px; color: #64748b; font-size: 13px; text-align: center;">Need an account?</p>
-    <button class="secondary" onclick="register()">Create Account for free</button>
-  </div>
-
-  <div class="info-footer">
-      <h3>SERVICE HIGHLIGHTS</h3>
-      <div class="ad-grid">
-          <div class="ad-pill">🚀 Instant M-Pesa</div>
-          <div class="ad-pill">💎 Real Followers</div>
-          <div class="ad-pill">⚡ Auto-API Logic</div>
-          <div class="ad-pill">🔥 Lowest Rates</div>
-      </div>
-
-      <h3 style="color: #94a3b8;">QUICK GUIDE</h3>
-      <p style="font-size: 12px; color: #64748b; line-height: 1.5;">
-          1. Login to your panel.<br>
-          2. Deposit funds via M-Pesa .<br>
-          3. Order and track growth in real-time.
-      </p>
-
-      <a href="https://wa.me/254715509440?text=Hello%20Support%2C%20I%20am%20a%20customer%20from%20Unasemeje%20website%20(www.unasemeje.co.ke)%20and%20I%20need%20assistance" class="whatsapp-btn">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="18" alt="WA">
-        Chat with the Plug (24/7 Support)
-      </a>
+    <p style="margin-top: 25px; color: #94a3b8; font-size: 13px; text-align: center;">
+      Do not have an account? <a href="signup.html" style="color: var(--accent); text-decoration: none; font-weight: bold;">Sign up</a>
+    </p>
   </div>
 </div>
 
+<!-- SCROLLABLE CONTENT AS SEEN IN IMAGE_11.PNG -->
+<section class="section-dark">
+    <span style="color: var(--accent); font-size: 12px; font-weight: 800;">Best & Cheapest SMM Panel Provider</span>
+    <h2 style="margin-top: 10px;">Why Unasemeje Services Is Africa's #1 SMM Provider</h2>
+    <div class="grid-4">
+        <div style="background: #1e293b; padding: 25px; border-radius: 15px; text-align: left;">
+            <i class="fas fa-check-circle" style="color: var(--accent); margin-bottom: 15px;"></i>
+            <h4>API for Resellers</h4>
+            <p style="font-size: 13px; color: #94a3b8;">Full API access for automation.</p>
+        </div>
+        <div style="background: #1e293b; padding: 25px; border-radius: 15px; text-align: left;">
+            <i class="fas fa-mobile-alt" style="color: var(--accent); margin-bottom: 15px;"></i>
+            <h4>Manual M-Pesa</h4>
+            <p style="font-size: 13px; color: #94a3b8;">Safe, manual deposits for full control.</p>
+        </div>
+    </div>
+</section>
+
+<div class="info-footer">
+    <h3 style="color: var(--accent); margin-bottom: 20px;">HOW IT WORKS</h3>
+    <p style="font-size: 14px; color: #cbd5e1; line-height: 1.8;">
+        1. Login or Register your account.<br>
+        2. Deposit funds manually via M-Pesa.<br>
+        3. Select services and watch your growth.
+    </p>
+
+    <a href="https://wa.me/254715509440?text=Hello%20Support%2C%20I%20am%20a%20customer%20from%20Unasemeje%20website%20and%20I%20need%20assistance" class="whatsapp-btn">
+      <i class="fab fa-whatsapp"></i> Chat with the Plug (24/7 Support)
+    </a>
+</div>
+
 <footer>
-  <p><b>Support:</b> support@unasemeje-dia.com | 0715509440</p>
-  <p>HQ: Nairobi, Kenya</p>
-  <p style="margin-top: 15px; font-size: 11px; opacity: 0.5;">© 2026 unasemeje ø dia. All Rights Reserved.</p>
+  <p style="color: #94a3b8; font-size: 14px;"><b>Support:</b> 0715509440 | Nairobi, Kenya</p>
+  <p style="margin-top: 15px; font-size: 11px; color: #475569;">© 2026 unasemeje ø dia. All Rights Reserved.</p>
 </footer>
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
 
 <script>
-function setButtonLoading(buttonText, loading) {
-  const buttons = document.querySelectorAll("button");
-  buttons.forEach(btn => {
-    if (btn.innerText.includes(buttonText)) {
-      if (loading) {
-        btn.disabled = true;
-        if (!btn.dataset.original) btn.dataset.original = btn.innerHTML;
-        btn.innerHTML = 'Processing <span class="btn-loader"></span>';
-      } else {
-        btn.disabled = false;
-        btn.innerHTML = btn.dataset.original || buttonText;
-      }
-    }
-  });
-  document.getElementById("loadingText").style.display = loading ? "block" : "none";
+function setButtonLoading(loading) {
+  const btn = document.querySelector(".btn-signin");
+  if (loading) {
+    btn.disabled = true;
+    btn.innerHTML = 'Processing <span class="btn-loader"></span>';
+    document.getElementById("loadingText").style.display = "block";
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = "Sign in";
+    document.getElementById("loadingText").style.display = "none";
+  }
 }
 
-// HOOK LOGIN (Preserves your auth.js logic)
+// Integrates your existing manual login logic from auth.js
 const originalLogin = window.login;
 window.login = async function () {
-  setButtonLoading("Sign In", true);
+  setButtonLoading(true);
   try {
-    if (typeof originalLogin === "function") await originalLogin();
+    if (typeof originalLogin === "function") {
+      await originalLogin();
+    }
   } catch (e) {
-    console.error(e);
+    console.error("Login Error:", e);
   }
-  setTimeout(() => setButtonLoading("Sign In", false), 2000);
-};
-
-// HOOK REGISTER (Preserves your auth.js logic)
-const originalRegister = window.register;
-window.register = async function () {
-  setButtonLoading("Create", true);
-  try {
-    if (typeof originalRegister === "function") await originalRegister();
-  } catch (e) {
-    console.error(e);
-  }
-  setTimeout(() => setButtonLoading("Create", false), 2000);
+  setTimeout(() => setButtonLoading(false), 2000);
 };
 </script>
 
