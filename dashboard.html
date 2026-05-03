@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNASEMEJE  | Pro Dashboard</title>
+    <title>UNASEMEJE SMM | Pro Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -54,6 +54,10 @@
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* LIST ITEMS */
+        .list-item { padding: 15px; background: rgba(15, 23, 42, 0.5); border-radius: 10px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+        .list-item:hover { border-color: var(--primary); background: rgba(124, 58, 237, 0.1); }
+
         /* TABLES */
         .table-container { overflow-x: auto; background: rgba(15, 23, 42, 0.3); border-radius: 10px; margin-top: 15px; }
         table { width: 100%; border-collapse: collapse; min-width: 700px; }
@@ -95,7 +99,7 @@
 
 <div class="dashboard">
     <div class="sidebar">
-        <h2>UNASEMEJE</h2>
+        <h2>UNASEMEJE SMM</h2>
         <div class="sidebar-nav">
             <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> <span>New Order</span></a>
@@ -121,7 +125,7 @@
         <div id="home" class="page active">
             <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95);">
                 <h3>Habari! 🇰🇪</h3>
-                <p>Welcome to Unasemeje Ø DIA. Start growing your presence today.</p>
+                <p>Welcome to UNASEMEJE SMM. Start growing your presence today.</p>
             </div>
             <div class="card">
                 <h3><i class="fas fa-bullhorn" style="color:var(--warning)"></i> Updates</h3>
@@ -176,16 +180,12 @@
         <div id="deposit" class="page">
             <div class="card">
                 <h3>Add Funds (M-Pesa)</h3>
-                
                 <label>Phone Number Used</label>
                 <input id="depPhone" type="tel" placeholder="07xxxxxxxx">
-                
                 <label>Amount Sent (KES)</label>
                 <input id="depAmount" type="number" placeholder="Enter amount sent">
-                
                 <label>Paste M-Pesa Message</label>
                 <textarea id="depMessage" rows="5" placeholder="Paste the full M-Pesa SMS here..."></textarea>
-                
                 <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit Deposit</button>
                 <p id="depStatus" style="text-align: center; margin-top:10px; font-weight:bold;"></p>
             </div>
@@ -193,11 +193,11 @@
             <div class="card">
                 <h3>**💳 How to Deposit (M-Pesa)**</h3>
                 <ul class="instructions-list">
-                    <li>* Go to your mpesa Send money to <b>0715509440</b>.</li>
+                    <li>* Send money to <b>0715509440</b> via M-Pesa.</li>
                     <li>* Copy the M-Pesa confirmation message.</li>
-                    <li>* After that return back to the <b>Unasemeje</b> website and click <b>'Add Funds'</b>.</li>
-                    <li>* Enter the <b>phone number used</b>, the <b>amount</b>, and <b>paste the M-Pesa message</b> in the blank space.</li>
-                    <li>* Click <b>'Submit Deposit'</b> and your funds will be added.</li>
+                    <li>* Return to the <b>UNASEMEJE SMM</b> website and click <b>'Add Funds'</b>.</li>
+                    <li>* Enter the <b>phone number used</b>, the <b>amount</b>, and <b>paste the message</b>.</li>
+                    <li>* Click <b>'Submit Deposit'</b> to add your funds.</li>
                     <li>* If not added, call <b>+254715509440</b> for quick help.</li>
                 </ul>
             </div>
