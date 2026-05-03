@@ -11,37 +11,42 @@ function showToast(msg, type = "success") {
     t.id = "toast";
     document.body.appendChild(t);
 
-    // Styling matches the unasemeje ø dia aesthetic
+    // Styling updated to match the Neon Emerald & Deep Navy aesthetic
     Object.assign(t.style, {
       position: "fixed",
-      bottom: "20px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      padding: "12px 18px",
-      borderRadius: "8px",
+      bottom: "30px",
+      right: "30px", // Moved to side for modern look
+      padding: "16px 24px",
+      borderRadius: "14px",
       color: "#fff",
       fontSize: "14px",
-      fontWeight: "bold",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
+      fontWeight: "700",
       zIndex: "9999",
       display: "none",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.3)"
+      boxShadow: "0 15px 30px rgba(0,0,0,0.4)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      transition: "all 0.3s ease"
     });
   }
 
   t.innerText = msg;
-  // Green for success, Red for error
-  t.style.background = type === "error" ? "#ef4444" : "#22c55e";
+  // Neon Emerald for success (#10b981), Soft Red for error (#ef4444)
+  t.style.background = type === "error" ? "#ef4444" : "#10b981";
   t.style.display = "block";
 
   setTimeout(() => {
     t.style.display = "none";
-  }, 3000);
+  }, 4000);
 }
 
 // ================= LOADING STATES =================
 function showLoading() {
   const el = document.getElementById("loading");
-  if (el) el.style.display = "block";
+  if (el) {
+    el.style.display = "flex";
+    el.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; // Adds visual spinner
+  }
 }
 
 function hideLoading() {
@@ -113,11 +118,10 @@ function loadUser() {
 
 // ================= LOGIN LOGIC =================
 async function login() {
-  // 'identifier' is used here because the input can now be a Username or Email
+  // 'identifier' allows login with Username or Email
   const identifier = document.getElementById("email")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
 
-  // Validates presence of credentials
   if (!identifier || !password) {
     return showToast("Please enter your username/email and password", "error");
   }
@@ -128,7 +132,6 @@ async function login() {
     const res = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      // Matches the 'identifier' logic in your updated server.js
       body: JSON.stringify({ identifier, password })
     });
 
@@ -139,11 +142,11 @@ async function login() {
     }
 
     saveToken(data.token);
-    showToast("Login successful! Welcome back.");
+    showToast("Success! Welcome to unasemeje ø dia.");
 
     setTimeout(() => {
       window.location.href = "dashboard.html";
-    }, 800);
+    }, 1000);
 
   } catch (err) {
     showToast(err.message, "error");
@@ -154,14 +157,13 @@ async function login() {
 
 // ================= REGISTRATION LOGIC =================
 async function register() {
-  // New: Captured 'username' for registration
   const username = document.getElementById("username")?.value?.trim();
   const email = document.getElementById("email")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
   const phone = document.getElementById("phone")?.value?.trim();
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  // Updated validation to include 'username'
+  // Full validation for Kenyan market users
   if (!username || !email || !password || !phone) {
     return showToast("Username, Email, Password, and Phone are required", "error");
   }
@@ -184,14 +186,14 @@ async function register() {
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.error || "Registration failed");
+      throw new Error(data.error || "Registration failed. Check details.");
     }
 
-    showToast("Account created successfully! Please login.");
+    showToast("Account verified! Redirecting to login...");
 
     setTimeout(() => {
       window.location.href = "index.html";
-    }, 1200);
+    }, 1500);
 
   } catch (err) {
     showToast(err.message, "error");
@@ -203,7 +205,7 @@ async function register() {
 // ================= LOGOUT LOGIC =================
 function logoutUser() {
   removeToken();
-  showToast("Successfully logged out");
+  showToast("Safe Logout successful", "success");
 
   setTimeout(() => {
     window.location.href = "index.html";
@@ -225,7 +227,8 @@ async function authFetch(url, options = {}) {
 
 // ================= AUTOMATIC INITIALIZATION =================
 document.addEventListener("DOMContentLoaded", () => {
-  if (window.location.pathname.includes("dashboard")) {
+  // Check for dashboard or internal pages
+  if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("order")) {
     checkAuth();
     loadUser();
   }
