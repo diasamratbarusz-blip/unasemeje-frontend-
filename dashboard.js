@@ -25,9 +25,12 @@ async function loadUser() {
     const res = await fetch(`${API}/me`, { headers: headers() });
     const data = await res.json();
 
-    if (!res.ok) throw new Error("User load failed");
+    if (!res.ok) {
+      if(res.status === 401) logout();
+      throw new Error("User load failed");
+    }
 
-    // Update balance across the UI
+    // Update balance across the UI with Kenyan formatting
     const balanceEl = document.getElementById("balance");
     if (balanceEl) {
       balanceEl.innerText = Number(data.balance || 0).toLocaleString('en-KE', { 
@@ -36,10 +39,15 @@ async function loadUser() {
       });
     }
 
-    // Load user-specific info like Referral Code if element exists
+    // Load user-specific info like Referral Code or Username
     const refCodeEl = document.getElementById("referralCodeDisplay");
     if (refCodeEl && data.referralCode) {
         refCodeEl.innerText = data.referralCode;
+    }
+
+    const userEmailEl = document.getElementById("userEmail");
+    if (userEmailEl) {
+        userEmailEl.innerText = data.username || data.email || "User";
     }
 
   } catch (err) {
@@ -51,7 +59,7 @@ async function loadUser() {
 function normalizeServices(json) {
   let services = [];
 
-  // Support for both flat arrays and grouped platform objects
+  // Support for flat arrays, grouped platform objects, or backend responses
   if (Array.isArray(json)) {
     services = json;
   }
@@ -60,14 +68,14 @@ function normalizeServices(json) {
   }
   else if (json?.data && typeof json.data === "object") {
     Object.entries(json.data).forEach(([platform, groups]) => {
-      // Process nested categories (e.g., Platform -> Category -> Services)
+      // Process nested categories (Platform -> Category -> Services)
       Object.entries(groups).forEach(([category, list]) => {
         if (Array.isArray(list)) {
           list.forEach(s => {
             services.push({
               ...s,
-              platform,
-              category
+              platform: platform || s.platform,
+              category: category || s.category
             });
           });
         }
@@ -78,6 +86,9 @@ function normalizeServices(json) {
 }
 
 async function loadServices() {
+  const container = document.getElementById("services");
+  if (container) container.innerHTML = `<div class="loading-spinner"><i class="fas fa-circle-notch fa-spin"></i> Loading Services...</div>`;
+
   try {
     const res = await fetch(`${API}/services`);
     const json = await res.json();
@@ -103,29 +114,50 @@ function renderServices() {
 
   container.innerHTML = "";
 
-  servicesData.forEach(s => {
-    // Apply filters and search logic
-    if (filter !== "all" && s.platform !== filter) return;
-    if (search && !String(s.name).toLowerCase().includes(search)) return;
+  const filtered = servicesData.filter(s => {
+    const matchPlatform = filter === "all" || s.platform === filter;
+    const matchSearch = !search || String(s.name).toLowerCase().includes(search) || String(s.category).toLowerCase().includes(search);
+    return matchPlatform && matchSearch;
+  });
 
+  if (filtered.length === 0) {
+    container.innerHTML = `<div style="padding:20px; color: #94a3b8; text-align:center;">No services found matching your search.</div>`;
+    return;
+  }
+
+  filtered.forEach(s => {
     const div = document.createElement("div");
-    div.className = "service";
+    div.className = "service-card"; // Updated class for emerald styling
     
     // unasemeje ø dia specific styling for service cards
     div.innerHTML = `
-      <div class="service-header">
-        <b>${s.name}</b>
-        <span class="badge">${s.platform || "Social"}</span>
+      <div class="service-info">
+        <div class="platform-icon">${getIcon(s.platform)}</div>
+        <div class="details">
+          <b class="s-name">${s.name}</b>
+          <p class="s-cat">${s.category || "General Service"}</p>
+          <small class="s-id">ID: ${s.serviceId}</small>
+        </div>
       </div>
-      <small>ID: ${s.serviceId}</small><br>
-      <div class="price-tag">
-        KES ${Number(s.rate).toFixed(2)} <small>/1k</small>
+      <div class="service-price">
+        <span class="price">KES ${Number(s.rate).toFixed(2)}</span>
+        <small>per 1,000</small>
       </div>
     `;
 
     div.onclick = () => selectService(s);
     container.appendChild(div);
   });
+}
+
+function getIcon(platform) {
+    const p = String(platform).toLowerCase();
+    if (p.includes("insta")) return '<i class="fab fa-instagram" style="color:#e1306c"></i>';
+    if (p.includes("tik")) return '<i class="fab fa-tiktok" style="color:#fff"></i>';
+    if (p.includes("face")) return '<i class="fab fa-facebook" style="color:#1877f2"></i>';
+    if (p.includes("youtube")) return '<i class="fab fa-youtube" style="color:#ff0000"></i>';
+    if (p.includes("telegram")) return '<i class="fab fa-telegram" style="color:#0088cc"></i>';
+    return '<i class="fas fa-globe" style="color:#10b981"></i>';
 }
 
 /* ================= ORDER LOGIC ================= */
@@ -135,23 +167,34 @@ function selectService(service) {
   const idInput = document.getElementById("serviceId");
   if (idInput) idInput.value = service.serviceId;
 
-  // Auto-scroll to order section
+  // Visual confirmation on card selection (optional)
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+  
+  // Update order box display
+  const nameDisplay = document.getElementById("selectedServiceName");
+  if (nameDisplay) nameDisplay.innerText = service.name;
+
   document.querySelector(".order-box")?.scrollIntoView({
-    behavior: "smooth"
+    behavior: "smooth", block: "center"
   });
 
   calculatePrice();
 }
 
 function calculatePrice() {
-  if (!selectedService) return;
+  const qtyInput = document.getElementById("quantity");
+  const totalEl = document.getElementById("total");
+  
+  if (!selectedService || !qtyInput) return;
 
-  const qty = Number(document.getElementById("quantity")?.value || 0);
+  const qty = Number(qtyInput.value || 0);
   const price = (Number(selectedService.rate) / 1000) * qty;
 
-  const totalEl = document.getElementById("total");
   if (totalEl) {
-    totalEl.innerText = price.toLocaleString('en-KE', { minimumFractionDigits: 2 }) + " KES";
+    totalEl.innerText = price.toLocaleString('en-KE', { 
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + " KES";
   }
 }
 
@@ -159,13 +202,17 @@ async function placeOrder() {
   const serviceId = document.getElementById("serviceId")?.value;
   const link = document.getElementById("link")?.value;
   const quantity = document.getElementById("quantity")?.value;
+  const btn = document.querySelector(".btn-order");
 
   if (!serviceId || !link || !quantity) {
-    showToast("Please fill all fields", "error");
+    showToast("Please select a service and enter link/quantity", "error");
     return;
   }
 
   try {
+    if(btn) btn.disabled = true;
+    if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
     const res = await fetch(`${API}/order`, {
       method: "POST",
       headers: headers(),
@@ -182,22 +229,33 @@ async function placeOrder() {
 
     showToast("Order placed successfully! 🚀", "success");
 
-    loadUser(); // Update balance
+    loadUser(); // Refresh balance
     resetOrderFields();
 
   } catch (err) {
     showToast(err.message, "error");
+  } finally {
+    if(btn) {
+        btn.disabled = false;
+        btn.innerText = "Place Order";
+    }
   }
 }
 
 function resetOrderFields() {
-  const linkField = document.getElementById("link");
-  const qtyField = document.getElementById("quantity");
+  const fields = ["serviceId", "link", "quantity"];
+  fields.forEach(f => {
+      const el = document.getElementById(f);
+      if(el) el.value = "";
+  });
+  
   const totalDisplay = document.getElementById("total");
-
-  if (linkField) linkField.value = "";
-  if (qtyField) qtyField.value = "";
   if (totalDisplay) totalDisplay.innerText = "0.00 KES";
+  
+  const nameDisplay = document.getElementById("selectedServiceName");
+  if (nameDisplay) nameDisplay.innerText = "None Selected";
+  
+  selectedService = null;
 }
 
 /* ================= DEPOSIT LOGIC ================= */
@@ -206,7 +264,7 @@ async function submitMpesaCode() {
     const amount = document.getElementById("depositAmount")?.value;
 
     if (!message || !amount) {
-        showToast("Please enter amount and paste M-Pesa message", "error");
+        showToast("Enter amount and paste the M-Pesa confirmation SMS", "error");
         return;
     }
 
@@ -214,13 +272,13 @@ async function submitMpesaCode() {
         const res = await fetch(`${API}/deposit`, {
             method: "POST",
             headers: headers(),
-            body: JSON.stringify({ message, amount })
+            body: JSON.stringify({ message, amount: Number(amount) })
         });
         const data = await res.json();
         
         if (!res.ok) throw new Error(data.error);
 
-        showToast("Payment submitted for approval!", "success");
+        showToast("Payment submitted! Admin will verify in 5-10 mins.", "success");
         document.getElementById("mpesaMessage").value = "";
         document.getElementById("depositAmount").value = "";
     } catch (err) {
@@ -234,12 +292,17 @@ function showToast(msg, type = "success") {
   if (!toast) return;
 
   toast.innerText = msg;
-  toast.style.background = type === "success" ? "#22c55e" : "#ef4444";
+  toast.style.background = type === "success" ? "#10b981" : "#ef4444";
   toast.style.display = "block";
 
   setTimeout(() => {
     toast.style.display = "none";
   }, 4000);
+}
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "index.html";
 }
 
 /* ================= EVENT LISTENERS ================= */
@@ -258,6 +321,6 @@ window.onload = () => {
   loadUser();
   loadServices();
   
-  // Optional: Auto-refresh balance every 60 seconds
-  setInterval(loadUser, 60000);
+  // Auto-refresh balance and user info every 2 minutes
+  setInterval(loadUser, 120000);
 };
