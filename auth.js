@@ -118,10 +118,11 @@ function loadUser() {
 
 // ================= LOGIN LOGIC =================
 async function login() {
-  // 'identifier' allows login with Username or Email
-  const identifier = document.getElementById("email")?.value?.trim();
+  // FIXED: Updated IDs to match identifier/password in your modern index.html
+  const identifier = document.getElementById("identifier")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
 
+  // If you are using 'email' as the ID in your HTML, change 'identifier' above back to 'email'
   if (!identifier || !password) {
     return showToast("Please enter your username/email and password", "error");
   }
@@ -142,7 +143,7 @@ async function login() {
     }
 
     saveToken(data.token);
-    showToast("Success! Welcome to unasemeje ø dia.");
+    showToast("Success! Welcome to UNASEMEJE SMM.");
 
     setTimeout(() => {
       window.location.href = "dashboard.html";
