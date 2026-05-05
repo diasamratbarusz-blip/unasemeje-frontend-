@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UNASEMEJE SMM | Pro Dashboard</title>
+    <title>UNASEMEJE ø DIA | Pro Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -69,6 +69,13 @@
         .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
         .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; }
 
+        /* STATUS BADGES */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .bg-pending { background: #6366f1; color: white; }
+        .bg-completed { background: var(--secondary); color: white; }
+        .bg-partial { background: var(--warning); color: white; }
+        .bg-canceled { background: var(--danger); color: white; }
+
         /* MOBILE BOTTOM NAV */
         @media (max-width: 768px) {
             .sidebar { position: fixed; bottom: 0; top: auto; height: 70px; width: 100%; flex-direction: row; padding: 0; z-index: 1000; border-top: 1px solid #1f2937; }
@@ -99,7 +106,7 @@
 
 <div class="dashboard">
     <div class="sidebar">
-        <h2>UNASEMEJE SMM</h2>
+        <h2>UNASEMEJE ø DIA</h2>
         <div class="sidebar-nav">
             <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> <span>New Order</span></a>
@@ -124,14 +131,14 @@
         <!-- HOME PAGE -->
         <div id="home" class="page active">
             <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95);">
-                <h3>Habari! 🇰🇪</h3>
-                <p>Welcome to UNASEMEJE SMM. Use the menu to start growing your social media presence.</p>
+                <h3>Habari! 👋</h3>
+                <p>Welcome to UNASEMEJE ø DIA. Your gateway to viral social growth in Kenya.</p>
             </div>
             <div class="card">
                 <h3><i class="fas fa-bullhorn" style="color:var(--warning)"></i> Official Updates</h3>
                 <div class="list-item" style="cursor: default; border-left: 4px solid var(--secondary);">
-                    <small style="color:var(--secondary)">M-Pesa Auto-Deposit</small>
-                    <p style="margin:5px 0 0;">Check the 'Add Funds' section for the updated deposit process.</p>
+                    <small style="color:var(--secondary)">M-Pesa Deposits</small>
+                    <p style="margin:5px 0 0;">Check the 'Add Funds' section for the manual verification steps. Approved in minutes!</p>
                 </div>
             </div>
         </div>
@@ -171,33 +178,39 @@
                 <h3>Your Order History</h3>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Qty</th>
+                                <th>Remains</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
                         <tbody id="ordersList"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ADD FUNDS (WITH MPESA INSTRUCTIONS) -->
+        <!-- ADD FUNDS -->
         <div id="deposit" class="page">
             <div class="card" style="border: 1px solid var(--primary); background: rgba(124, 58, 237, 0.05);">
                 <h3 style="color: var(--primary);"><i class="fas fa-credit-card"></i> 💳 How to Deposit (M-Pesa)</h3>
                 <ul class="instructions-list">
-                    <li><i class="fas fa-circle-chevron-right"></i> Send money to <b>0715509440</b>.</li>
-                    <li><i class="fas fa-circle-chevron-right"></i> Copy the M-Pesa confirmation message.</li>
-                    <li><i class="fas fa-circle-chevron-right"></i> Go to the <b>Unasemeje</b> website and click <b>'Add Funds'</b>.</li>
-                    <li><i class="fas fa-circle-chevron-right"></i> Enter the <b>phone number used</b>, the <b>amount</b>, and <b>paste the M-Pesa message</b> in the blank space below.</li>
-                    <li><i class="fas fa-circle-chevron-right"></i> Click <b>'Submit Deposit'</b> and your funds will be added.</li>
-                    <li><i class="fas fa-phone-volume"></i> If not added, call <b>+254715509440</b> for quick help.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Send money to <b>0715509440</b> (SMM Admin).</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Copy the M-Pesa confirmation message you received.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Enter the <b>amount</b> and <b>paste the M-Pesa message</b> below.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Click <b>'Submit Deposit'</b>.</li>
+                    <li><i class="fas fa-phone-volume"></i> For instant approval, call <b>+254715509440</b>.</li>
                 </ul>
             </div>
 
             <div class="card">
                 <h3>Submit Deposit Details</h3>
-                <label>Phone Number Used (M-Pesa)</label>
+                <label>Phone Number Used</label>
                 <input id="depPhone" type="tel" placeholder="07xxxxxxxx">
                 <label>Amount (KES)</label>
-                <input id="depAmount" type="number" placeholder="KES 100">
+                <input id="depAmount" type="number" placeholder="e.g. 500">
                 <label>Paste M-Pesa Confirmation Message</label>
                 <textarea id="depMessage" rows="5" placeholder="Paste full M-Pesa text here..."></textarea>
                 <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit Deposit</button>
@@ -210,10 +223,10 @@
             <div class="card" style="text-align:center;">
                 <h3>Affiliate Program</h3>
                 <p>Share your link and get <b>10%</b> of every deposit they make!</p>
-                <input id="refLink" readonly style="text-align:center; color: var(--primary);">
-                <button onclick="copyRef()" class="btn-primary" style="width: auto; padding: 10px 20px;">Copy Link</button>
+                <input id="refLink" readonly style="text-align:center; color: var(--primary); background: rgba(124, 58, 237, 0.1);">
+                <button onclick="copyRef()" class="btn-primary" style="width: auto; padding: 10px 40px;">Copy Link</button>
                 <div style="display:flex; justify-content: space-around; margin-top:20px;">
-                    <div><small>Earnings</small><br><b id="refEarnings">KES 0.00</b></div>
+                    <div><small>Earnings</small><br><b id="refEarnings" style="color: var(--secondary);">KES 0.00</b></div>
                     <div><small>Your Code</small><br><b id="refCode">...</b></div>
                 </div>
             </div>
@@ -223,13 +236,13 @@
         <div id="admin" class="page">
             <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="card" style="margin:0"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
-                <div class="card" style="margin:0"><h4>Wait Deposits</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
+                <div class="card" style="margin:0"><h4>Pending Deposits</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
             </div>
             <div class="card">
-                <h3>Pending M-Pesa Approvals</h3>
+                <h3>Deposit Verification Queue</h3>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>User</th><th>Amount</th><th>Details</th><th>Action</th></tr></thead>
+                        <thead><tr><th>User</th><th>Amount</th><th>Code</th><th>Action</th></tr></thead>
                         <tbody id="adminDepositTable"></tbody>
                     </table>
                 </div>
@@ -354,10 +367,7 @@
         const payload = { 
             serviceId: document.getElementById("orderServiceId").value, 
             link: document.getElementById("orderLink").value, 
-            quantity: document.getElementById("orderQty").value,
-            rate: selectedRate,
-            serviceName: selectedServiceName,
-            userId: currentUserId 
+            quantity: document.getElementById("orderQty").value
         };
 
         if(!payload.link || !payload.quantity) return alert("Please fill all details");
@@ -400,51 +410,30 @@
 
         if(!phone || !amount || !msg) return alert("Fill all details");
         
-        const res = await fetch(`${API}/deposit`, { 
-            method: "POST", 
-            headers: { 
-                "Content-Type": "application/json", 
-                Authorization: `Bearer ${token}` 
-            }, 
-            body: JSON.stringify({ phone, amount, message: msg }) 
-        });
+        status.innerText = "Submitting...";
 
-        if(res.ok) { 
-            status.innerText = "Request Sent! Please wait for approval."; 
-            status.style.color = "var(--secondary)"; 
-            document.getElementById("depMessage").value = ""; 
-        } else { 
-            alert("Error submitting request."); 
+        try {
+            const res = await fetch(`${API}/deposit`, { 
+                method: "POST", 
+                headers: { 
+                    "Content-Type": "application/json", 
+                    Authorization: `Bearer ${token}` 
+                }, 
+                body: JSON.stringify({ phone, amount, message: msg }) 
+            });
+            const data = await res.json();
+
+            if(res.ok) { 
+                status.innerText = "Submitted! We will approve your balance shortly."; 
+                status.style.color = "var(--secondary)"; 
+                document.getElementById("depMessage").value = ""; 
+            } else { 
+                alert(data.error || "Error submitting request."); 
+                status.innerText = "";
+            }
+        } catch (e) {
+            alert("Submission error.");
         }
-    }
-
-    async function loadAdminPanel() {
-        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
-        const users = await uRes.json();
-        document.getElementById("adm-total-users").innerText = users.length;
-        
-        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
-        const deposits = await dRes.json();
-        document.getElementById("adm-pending-dep").innerText = deposits.length;
-        
-        document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
-            <tr>
-                <td>${d.userEmail}</td>
-                <td>KES ${d.amount}</td>
-                <td><small>${d.message.substring(0,25)}...</small></td>
-                <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Approve</button></td>
-            </tr>
-        `).join('') || "<tr><td colspan='4'>No pending deposits</td></tr>";
-    }
-
-    async function approveDep(id) {
-        if(!confirm("Approve this deposit?")) return;
-        const res = await fetch(`${API}/admin/approve-deposit`, { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
-            body: JSON.stringify({ depositId: id }) 
-        });
-        if(res.ok) { loadAdminPanel(); syncData(); alert("User Funded!"); }
     }
 
     async function loadOrders() {
@@ -452,25 +441,54 @@
             const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
             const orders = await res.json();
             document.getElementById("ordersList").innerHTML = orders.map(o => {
-                let statusColor = "var(--warning)";
-                if(o.status === "completed") statusColor = "var(--secondary)";
-                if(o.status === "canceled" || o.status === "refunded") statusColor = "var(--danger)";
+                const st = (o.status || 'pending').toLowerCase();
+                const badgeClass = `bg-${st}`;
                 
                 return `
                 <tr>
-                    <td>${o.serviceName.substring(0,20)}...</td>
+                    <td><small>${o.serviceName.substring(0,25)}</small></td>
                     <td>${o.quantity}</td>
-                    <td>KES ${(o.cost || 0).toFixed(2)}</td>
-                    <td><span style="color:${statusColor}">${o.status.toUpperCase()}</span></td>
+                    <td>${o.remains || 0}</td>
+                    <td><span class="badge ${badgeClass}">${st}</span></td>
                 </tr>`;
-            }).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+            }).join('') || "<tr><td colspan='4' style='text-align:center'>No orders yet.</td></tr>";
         } catch (e) { console.error("Order sync error", e); }
+    }
+
+    async function loadAdminPanel() {
+        try {
+            const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+            const users = await uRes.json();
+            document.getElementById("adm-total-users").innerText = users.length;
+            
+            const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+            const deposits = await dRes.json();
+            document.getElementById("adm-pending-dep").innerText = deposits.length;
+            
+            document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
+                <tr>
+                    <td>${d.userEmail}</td>
+                    <td>KES ${d.amount}</td>
+                    <td><small>${d.transactionCode || 'N/A'}</small></td>
+                    <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Fund</button></td>
+                </tr>
+            `).join('') || "<tr><td colspan='4'>Queue is empty</td></tr>";
+        } catch (e) { console.error("Admin Load Error"); }
+    }
+
+    async function approveDep(id) {
+        if(!confirm("Verify and add funds to this user?")) return;
+        const res = await fetch(`${API}/admin/approve-deposit`, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
+            body: JSON.stringify({ depositId: id }) 
+        });
+        if(res.ok) { loadAdminPanel(); syncData(); alert("User account updated!"); }
     }
 
     function copyRef() { 
         const refInput = document.getElementById("refLink");
         refInput.select(); 
-        refInput.setSelectionRange(0, 99999);
         navigator.clipboard.writeText(refInput.value);
         alert("Referral Link Copied!"); 
     }
@@ -485,7 +503,7 @@
         window.location.href = "index.html"; 
     }
     
-    // Initial Load
+    // Initial Sync
     syncData(); 
     loadServices();
 </script>
