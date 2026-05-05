@@ -1,1 +1,463 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UNASEMEJE SMM | Pro Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --secondary: #10b981;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --whatsapp: #25d366;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        body { margin: 0; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
+        
+        .dashboard { display: flex; min-height: 100vh; }
+
+        /* SIDEBAR */
+        .sidebar { 
+            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
+            position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; 
+        }
+        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; letter-spacing: 1px; }
+        .sidebar-nav { flex-grow: 1; }
+        .sidebar a { 
+            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
+            text-decoration: none; border-radius: 10px; margin-bottom: 5px; cursor: pointer; transition: 0.2s; 
+        }
+        .sidebar a i { margin-right: 12px; width: 20px; text-align: center; }
+        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
+        
+        /* ADMIN BUTTON STYLE */
+        #adminBtn { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 15px; font-weight: bold; }
+        .whatsapp-btn { color: var(--whatsapp) !important; border: 1px solid rgba(37, 211, 102, 0.2); margin-top: 10px; }
+
+        /* MAIN CONTENT */
+        .main { flex: 1; padding: 25px; max-width: 1400px; margin: 0 auto; width: 100%; }
+        .navbar { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: var(--card-bg); padding: 12px 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #334155;
+        }
+        .balance-badge { color: var(--secondary); font-weight: 800; background: rgba(16, 185, 129, 0.1); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--secondary); }
+
+        /* CARDS & PAGES */
+        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 20px; animation: fadeIn 0.3s ease; }
+        .page { display: none; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* LIST ITEMS */
+        .list-item { padding: 15px; background: rgba(15, 23, 42, 0.5); border-radius: 10px; margin-bottom: 10px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+        .list-item:hover { border-color: var(--primary); background: rgba(124, 58, 237, 0.1); }
+
+        /* TABLES */
+        .table-container { overflow-x: auto; background: rgba(15, 23, 42, 0.3); border-radius: 10px; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { text-align: left; padding: 12px; color: var(--text-dim); border-bottom: 1px solid #334155; font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #1f2937; font-size: 13px; }
+
+        /* INPUTS & BUTTONS */
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #334155; background: var(--bg-dark); color: white; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .btn-primary:hover { opacity: 0.9; transform: scale(0.98); }
+        .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; }
+
+        /* MOBILE BOTTOM NAV */
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; bottom: 0; top: auto; height: 70px; width: 100%; flex-direction: row; padding: 0; z-index: 1000; border-top: 1px solid #1f2937; }
+            .sidebar h2, .sidebar-support, .sidebar a span { display: none; }
+            .sidebar-nav { display: flex; width: 100%; justify-content: space-around; align-items: center; }
+            .sidebar a { flex-direction: column; padding: 15px; margin: 0; font-size: 20px; }
+            .main { padding: 10px 10px 90px 10px; }
+            #adminBtn { border: none; margin: 0; }
+        }
+
+        .instructions-list { list-style: none; padding: 0; margin-top: 15px; }
+        .instructions-list li { margin-bottom: 10px; font-size: 14px; line-height: 1.5; color: var(--text-dim); }
+        .instructions-list li b { color: white; }
+    </style>
+</head>
+<body>
+
+<!-- SUCCESS OVERLAY -->
+<div id="successOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 9999;">
+    <div class="card" style="text-align: center; max-width: 350px;">
+        <i class="fas fa-check-circle" style="font-size: 50px; color: var(--secondary); margin-bottom: 15px;"></i>
+        <h2>Order Placed!</h2>
+        <p>Your request has been received and is being processed.</p>
+        <button onclick="closeSuccess()" class="btn-primary" style="background: var(--secondary);">Awesome!</button>
+    </div>
+</div>
+
+<div class="dashboard">
+    <div class="sidebar">
+        <h2>UNASEMEJE SMM</h2>
+        <div class="sidebar-nav">
+            <a onclick="showPage('home')" id="nav-home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a onclick="showPage('services')" id="nav-services"><i class="fas fa-shopping-cart"></i> <span>New Order</span></a>
+            <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            <!-- Only visible to Diasamratbarusz -->
+            <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> <span>Admin</span></a>
+        </div>
+        
+        <div class="sidebar-support">
+            <a href="https://wa.me/254715509440" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> <span>Support</span></a>
+            <a onclick="logout()" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="navbar">
+            <div><i class="fas fa-user-circle"></i> <span id="userEmail">Loading...</span></div>
+            <div class="balance-badge">KES <span id="balance">0.00</span></div>
+        </div>
+
+        <!-- HOME -->
+        <div id="home" class="page active">
+            <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95);">
+                <h3>Habari! 🇰🇪</h3>
+                <p>Welcome to UNASEMEJE SMM. Start growing your presence today.</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-bullhorn" style="color:var(--warning)"></i> Updates</h3>
+                <div class="list-item" style="cursor: default; border-left: 4px solid var(--secondary);">
+                    <small style="color:var(--secondary)">Announcement</small>
+                    <p style="margin:5px 0 0;">M-Pesa deposits are processed within 5-30 seconds. Please paste the full SMS.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SERVICES SELECTION -->
+        <div id="services" class="page">
+            <div class="card">
+                <div id="platformList"><h3>Select Platform</h3></div>
+                <div id="categoryList" style="display:none;"></div>
+                <div id="serviceList" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- ORDER FORM -->
+        <div id="order" class="page">
+            <div class="card">
+                <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button>
+                <h3 id="displayServiceName" style="margin-top:15px; color:var(--primary)">-</h3>
+                <input id="orderServiceId" type="hidden">
+                <input id="orderProvider" type="hidden">
+                <label>Target Link</label><input id="orderLink" placeholder="Paste link here...">
+                <label>Quantity</label><input id="orderQty" type="number" placeholder="Enter amount" oninput="calcTotal()">
+                <div class="card" style="margin-top:20px; background: rgba(124, 58, 237, 0.05); border: 1px dashed var(--primary);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Total Cost:</span>
+                        <span style="color: var(--secondary); font-weight: 800;">KES <span id="orderTotal">0.00</span></span>
+                    </div>
+                </div>
+                <button id="orderSubmitBtn" class="btn-primary" onclick="submitOrder()">Place Order Now</button>
+            </div>
+        </div>
+
+        <!-- MY ORDERS -->
+        <div id="orders" class="page">
+            <div class="card">
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <h3>My Orders</h3>
+                    <button onclick="loadOrders()" class="btn-sm" style="background: var(--primary); color:white;">Refresh Status</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
+                        <tbody id="ordersList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD FUNDS -->
+        <div id="deposit" class="page">
+            <div class="card">
+                <h3>Add Funds (M-Pesa)</h3>
+                <label>Phone Number Used</label>
+                <input id="depPhone" type="tel" placeholder="07xxxxxxxx">
+                <label>Amount Sent (KES)</label>
+                <input id="depAmount" type="number" placeholder="Enter amount sent">
+                <label>Paste M-Pesa Message</label>
+                <textarea id="depMessage" rows="5" placeholder="Paste the full M-Pesa SMS here..."></textarea>
+                <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit Deposit</button>
+                <p id="depStatus" style="text-align: center; margin-top:10px; font-weight:bold;"></p>
+            </div>
+
+            <div class="card">
+                <h3>**💳 How to Deposit (M-Pesa)**</h3>
+                <ul class="instructions-list">
+                    <li>* Send money to <b>0715509440</b> via M-Pesa.</li>
+                    <li>* Copy the M-Pesa confirmation message.</li>
+                    <li>* Return to the <b>UNASEMEJE SMM</b> website and click <b>'Add Funds'</b>.</li>
+                    <li>* Enter the <b>phone number used</b>, the <b>amount</b>, and <b>paste the message</b>.</li>
+                    <li>* Click <b>'Submit Deposit'</b> to add your funds.</li>
+                    <li>* If not added, call <b>+254715509440</b> for quick help.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- REFERRAL -->
+        <div id="referral" class="page">
+            <div class="card">
+                <h3>Refer & Earn 10%</h3>
+                <div style="background: #0f172a; padding: 25px; border-radius: 12px; text-align: center; border: 1px solid var(--primary);">
+                    <p style="color:var(--text-dim); margin-bottom: 10px;">Your Referral Link</p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <input id="refLink" readonly style="margin-top:0; text-align:center;">
+                        <button onclick="copyRef()" style="background:var(--primary); color:white; border:none; border-radius:8px; padding: 0 15px; cursor:pointer;"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="card" style="margin:0; background: rgba(16, 185, 129, 0.05);">
+                            <small>Total Earned</small>
+                            <h4 style="color:var(--secondary); margin:5px 0 0;">KES <span id="refEarnings">0.00</span></h4>
+                        </div>
+                        <div class="card" style="margin:0; background: rgba(124, 58, 237, 0.05);">
+                            <small>My Code</small>
+                            <h4 id="refCode" style="color:var(--primary); margin:5px 0 0;">...</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL (RESTRICTED) -->
+        <div id="admin" class="page">
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div class="card" style="margin:0"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
+                <div class="card" style="margin:0"><h4>Total Bal</h4><p id="adm-total-bal">0.00</p></div>
+                <div class="card" style="margin:0"><h4>Pending Dep</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
+            </div>
+            <div class="card">
+                <h3>Deposit Requests</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>User</th><th>Amount</th><th>Phone/SMS</th><th>Action</th></tr></thead>
+                        <tbody id="adminDepositTable"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <h3>User Management</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Email</th><th>Phone</th><th>Balance</th></tr></thead>
+                        <tbody id="adminUserTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = "https://unasemeje-backend-3.onrender.com/api";
+    const token = localStorage.getItem("token");
+    let servicesData = {};
+    let selectedRate = 0;
+
+    // Strict Admin Restriction
+    const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
+    const ADMIN_PHONE = "0715509440";
+
+    if (!token) window.location.href = "index.html";
+
+    async function syncData() {
+        try {
+            const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+            if (!res.ok) logout();
+            const user = await res.json();
+            
+            document.getElementById("userEmail").innerText = user.email;
+            document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
+            document.getElementById("refCode").innerText = user.referralCode || "N/A";
+            document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
+            document.getElementById("refLink").value = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+
+            // Check if user is the admin (Diasamratbarusz)
+            if(user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase() || user.phone === ADMIN_PHONE) {
+                document.getElementById("adminBtn").style.display = "flex";
+            }
+        } catch (e) { logout(); }
+    }
+
+    async function loadServices() {
+        const res = await fetch(`${API}/services`);
+        const json = await res.json();
+        servicesData = json.data;
+        renderPlatforms();
+    }
+
+    function renderPlatforms() {
+        const list = document.getElementById("platformList");
+        list.innerHTML = "<h3>Select Platform</h3>";
+        Object.keys(servicesData).forEach(p => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerHTML = `<i class="fas fa-chevron-right" style="float:right"></i> ${p}`;
+            div.onclick = () => renderCategories(p);
+            list.appendChild(div);
+        });
+    }
+
+    function renderCategories(p) {
+        document.getElementById("platformList").style.display = "none";
+        const list = document.getElementById("categoryList");
+        list.innerHTML = `<button onclick="resetServices()" class="btn-sm" style="background:#334155; color:white; margin-bottom:10px;">← Back</button><h3>${p}</h3>`;
+        Object.keys(servicesData[p]).forEach(c => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerText = c;
+            div.onclick = () => renderServicesList(p, c);
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
+
+    function renderServicesList(p, c) {
+        document.getElementById("categoryList").style.display = "none";
+        const list = document.getElementById("serviceList");
+        list.innerHTML = `<button onclick="renderCategories('${p}')" class="btn-sm" style="background:#334155; color:white; margin-bottom:10px;">← Back</button><h3>${c}</h3>`;
+        servicesData[p][c].forEach(s => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate}/1k</span>`;
+            div.onclick = () => {
+                document.getElementById("orderServiceId").value = s.serviceId;
+                document.getElementById("orderProvider").value = s.provider;
+                document.getElementById("displayServiceName").innerText = s.name;
+                selectedRate = s.rate;
+                calcTotal();
+                showPage('order');
+            };
+            list.appendChild(div);
+        });
+        list.style.display = "block";
+    }
+
+    function resetServices() {
+        document.getElementById("platformList").style.display = "block";
+        document.getElementById("categoryList").style.display = "none";
+        document.getElementById("serviceList").style.display = "none";
+    }
+
+    function calcTotal() {
+        const qty = document.getElementById("orderQty").value || 0;
+        document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
+    }
+
+    async function submitOrder() {
+        const btn = document.getElementById("orderSubmitBtn");
+        const payload = {
+            serviceId: document.getElementById("orderServiceId").value,
+            link: document.getElementById("orderLink").value,
+            quantity: document.getElementById("orderQty").value
+        };
+        if(!payload.link || !payload.quantity) return alert("Fill all details");
+        btn.disabled = true;
+        const res = await fetch(`${API}/order`, {
+            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if(data.success) { document.getElementById("successOverlay").style.display = "flex"; syncData(); }
+        else alert(data.error);
+        btn.disabled = false;
+    }
+
+    async function submitDeposit() {
+        const status = document.getElementById("depStatus");
+        const phone = document.getElementById("depPhone").value;
+        const amount = document.getElementById("depAmount").value;
+        const msg = document.getElementById("depMessage").value;
+        if(!phone || !amount || !msg) return alert("Fill all details");
+        
+        const res = await fetch(`${API}/deposit`, {
+            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ phone, amount, message: msg })
+        });
+        if(res.ok) { 
+            status.innerText = "Submitted! Admin will verify soon."; 
+            status.style.color = "var(--secondary)"; 
+            document.getElementById("depMessage").value = "";
+        } else {
+            const err = await res.json();
+            alert(err.error);
+        }
+    }
+
+    async function loadAdminPanel() {
+        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+        const users = await uRes.json();
+        let totalB = 0;
+        document.getElementById("adminUserTable").innerHTML = users.map(u => {
+            totalB += u.balance;
+            return `<tr><td>${u.email}</td><td>${u.phone || 'N/A'}</td><td>KES ${u.balance.toFixed(2)}</td></tr>`;
+        }).join('');
+        document.getElementById("adm-total-users").innerText = users.length;
+        document.getElementById("adm-total-bal").innerText = totalB.toFixed(2);
+
+        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+        const deposits = await dRes.json();
+        document.getElementById("adm-pending-dep").innerText = deposits.length;
+        document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
+            <tr><td>${d.userEmail}</td><td>KES ${d.amount}</td><td><small>${d.message.substring(0,25)}...</small></td>
+            <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Approve</button></td></tr>
+        `).join('');
+    }
+
+    async function approveDep(id) {
+        if(!confirm("Confirm manual approval? Funds will be added instantly.")) return;
+        const res = await fetch(`${API}/admin/approve-deposit`, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
+            body: JSON.stringify({ depositId: id })
+        });
+        if(res.ok) { loadAdminPanel(); syncData(); alert("Approved!"); }
+    }
+
+    function showPage(p) {
+        document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+        document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
+        document.getElementById(p).classList.add("active");
+        document.getElementById(`nav-${p}`)?.classList.add("active");
+        if(p === 'admin') loadAdminPanel();
+        if(p === 'orders') loadOrders();
+    }
+
+    async function loadOrders() {
+        const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
+        const orders = await res.json();
+        document.getElementById("ordersList").innerHTML = orders.map(o => `
+            <tr><td>${o.serviceName.substring(0,25)}...</td><td>${o.quantity}</td><td>KES ${o.cost.toFixed(2)}</td>
+            <td><span style="color:var(--warning)">${o.status}</span></td></tr>
+        `).join('') || "<tr><td colspan='4'>No orders yet.</td></tr>";
+    }
+
+    function copyRef() {
+        const link = document.getElementById("refLink");
+        link.select(); document.execCommand("copy"); alert("Copied Referral Link!");
+    }
+
+    function closeSuccess() { document.getElementById("successOverlay").style.display = "none"; showPage('orders'); }
+    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    
+    // Auto-load
+    syncData(); 
+    loadServices();
+</script>
+</body>
+</html>
