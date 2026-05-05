@@ -9,7 +9,7 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #0f172a;
   color: white;
   display: flex;
@@ -19,62 +19,85 @@ body {
 }
 
 .box {
-  width: 95%;
-  max-width: 500px;
+  width: 90%;
+  max-width: 450px;
   background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 h2 {
   text-align: center;
   margin-bottom: 10px;
   color: #38bdf8;
+  font-size: 24px;
 }
 
 p {
-  font-size: 13px;
+  font-size: 14px;
   color: #cbd5e1;
   text-align: center;
-  margin-bottom: 15px;
+  line-height: 1.5;
+  margin-bottom: 20px;
 }
 
 textarea {
   width: 100%;
-  height: 180px;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
+  height: 160px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #334155;
   resize: none;
   background: #0f172a;
-  color: white;
+  color: #f8fafc;
   outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+textarea:focus {
+  border-color: #38bdf8;
 }
 
 button {
   width: 100%;
-  padding: 12px;
-  margin-top: 12px;
+  padding: 14px;
+  margin-top: 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #22c55e;
-  color: black;
+  color: #052e16;
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 button:disabled {
   background: #64748b;
+  color: #cbd5e1;
   cursor: not-allowed;
 }
 
 .note {
-  margin-top: 10px;
+  margin-top: 15px;
   font-size: 12px;
   color: #94a3b8;
   text-align: center;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.example-text {
+  color: #38bdf8;
+  font-style: italic;
 }
 </style>
 
@@ -87,77 +110,91 @@ button:disabled {
 <h2>💰 Deposit Funds</h2>
 
 <p>
-Send money to your M-Pesa number then paste the full SMS message below.<br>
-System will auto-detect transaction code & amount.
+  Send money to your M-Pesa number then paste the <strong>full SMS message</strong> below.<br>
+  The system will automatically detect the transaction code & amount.
 </p>
 
 <textarea id="msg" placeholder="Paste full M-Pesa message here..."></textarea>
 
 <button id="btn" onclick="deposit()">Submit Deposit</button>
 
-<p class="note">
-Example:  
-"ABC123XYZ Confirmed. Ksh1,000 sent to ..."
-</p>
+<div class="note">
+  <strong>Example:</strong><br>
+  <span class="example-text">"ABC123XYZ Confirmed. Ksh1,000 sent to..."</span>
+</div>
 
 </div>
 
 <script>
-
+// API Configuration
 const API = "https://unasemeje-backend-3.onrender.com/api";
 
-/* ================= LOADING BUTTON ================= */
+/** 
+ * UI Feedback: Disables button and changes text during request
+ */
 function setLoading(state) {
   const btn = document.getElementById("btn");
-
   if (state) {
     btn.disabled = true;
-    btn.innerText = "Processing...";
+    btn.innerText = "Processing Transaction...";
   } else {
     btn.disabled = false;
     btn.innerText = "Submit Deposit";
   }
 }
 
-/* ================= DEPOSIT ================= */
+/** 
+ * Deposit Action: Sends M-Pesa message to backend
+ */
 async function deposit() {
+  const messageInput = document.getElementById("msg");
+  const message = messageInput.value.trim();
+  const token = localStorage.getItem("token");
 
-  const message = document.getElementById("msg").value.trim();
-
+  // 1. Validation
   if (!message) {
-    alert("Please paste M-Pesa message");
+    alert("⚠️ Please paste the M-Pesa message first.");
+    return;
+  }
+
+  if (!token) {
+    alert("❌ Session expired. Please log in again.");
     return;
   }
 
   setLoading(true);
 
   try {
-    const res = await fetch(API + "/deposit", {
+    // 2. API Request
+    const res = await fetch(`${API}/deposit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token")
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({ message })
     });
 
     const data = await res.json();
 
+    // 3. Handle Response
     if (!res.ok) {
-      throw new Error(data.error || "Deposit failed");
+      throw new Error(data.error || "Deposit verification failed. Please try again.");
     }
 
-    alert("✅ " + (data.message || "Submitted successfully"));
-
-    document.getElementById("msg").value = "";
+    alert("✅ Success! " + (data.message || "Your deposit is being processed."));
+    
+    // Clear the textarea on success
+    messageInput.value = "";
 
   } catch (err) {
-    alert("❌ " + err.message);
+    // 4. Handle Errors
+    console.error("Deposit Error:", err);
+    alert("❌ Error: " + err.message);
+  } finally {
+    setLoading(false);
   }
-
-  setLoading(false);
 }
-
 </script>
 
 </body>
