@@ -37,7 +37,6 @@
         .sidebar a i { margin-right: 12px; width: 20px; text-align: center; }
         .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
         
-        /* ADMIN BUTTON STYLE - HIDDEN BY DEFAULT */
         #adminBtn { border: 1px solid var(--danger); color: var(--danger); display: none; margin-top: 15px; font-weight: bold; border-radius: 10px; }
         .whatsapp-btn { color: var(--whatsapp) !important; border: 1px solid rgba(37, 211, 102, 0.2); margin-top: 10px; }
 
@@ -81,8 +80,9 @@
         }
 
         .instructions-list { list-style: none; padding: 0; margin-top: 15px; }
-        .instructions-list li { margin-bottom: 10px; font-size: 14px; color: var(--text-dim); }
-        .instructions-list li b { color: white; }
+        .instructions-list li { margin-bottom: 12px; font-size: 14px; color: var(--text-dim); line-height: 1.5; }
+        .instructions-list li b { color: var(--text-main); }
+        .instructions-list i { color: var(--primary); margin-right: 10px; }
     </style>
 </head>
 <body>
@@ -106,8 +106,6 @@
             <a onclick="showPage('orders')" id="nav-orders"><i class="fas fa-history"></i> <span>My Orders</span></a>
             <a onclick="showPage('deposit')" id="nav-deposit"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
             <a onclick="showPage('referral')" id="nav-referral"><i class="fas fa-users"></i> <span>Referrals</span></a>
-            
-            <!-- ADMIN BUTTON: ONLY VISIBLE TO DIASAMRATBARUSZ@GMAIL.COM -->
             <a id="adminBtn" onclick="showPage('admin')"><i class="fas fa-user-shield"></i> <span>Admin Control</span></a>
         </div>
         
@@ -133,7 +131,7 @@
                 <h3><i class="fas fa-bullhorn" style="color:var(--warning)"></i> Official Updates</h3>
                 <div class="list-item" style="cursor: default; border-left: 4px solid var(--secondary);">
                     <small style="color:var(--secondary)">M-Pesa Auto-Deposit</small>
-                    <p style="margin:5px 0 0;">Ensure you paste the full SMS received from M-Pesa for instant funding.</p>
+                    <p style="margin:5px 0 0;">Check the 'Add Funds' section for the updated deposit process.</p>
                 </div>
             </div>
         </div>
@@ -153,14 +151,10 @@
                 <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back to Services</button>
                 <h3 id="displayServiceName" style="margin-top:15px; color:var(--primary)">Service Name</h3>
                 <input id="orderServiceId" type="hidden">
-                <input id="orderProvider" type="hidden">
-                
                 <label>Link (URL)</label>
                 <input id="orderLink" placeholder="https://www.instagram.com/p/...">
-                
                 <label>Quantity</label>
                 <input id="orderQty" type="number" placeholder="Enter quantity" oninput="calcTotal()">
-                
                 <div class="card" style="margin-top:20px; background: rgba(124, 58, 237, 0.05); border: 1px dashed var(--primary);">
                     <div style="display: flex; justify-content: space-between;">
                         <span>Order Total:</span>
@@ -184,67 +178,59 @@
             </div>
         </div>
 
-        <!-- ADD FUNDS -->
+        <!-- ADD FUNDS (WITH MPESA INSTRUCTIONS) -->
         <div id="deposit" class="page">
+            <div class="card" style="border: 1px solid var(--primary); background: rgba(124, 58, 237, 0.05);">
+                <h3 style="color: var(--primary);"><i class="fas fa-credit-card"></i> 💳 How to Deposit (M-Pesa)</h3>
+                <ul class="instructions-list">
+                    <li><i class="fas fa-circle-chevron-right"></i> Send money to <b>0715509440</b>.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Copy the M-Pesa confirmation message.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Go to the <b>Unasemeje</b> website and click <b>'Add Funds'</b>.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Enter the <b>phone number used</b>, the <b>amount</b>, and <b>paste the M-Pesa message</b> in the blank space below.</li>
+                    <li><i class="fas fa-circle-chevron-right"></i> Click <b>'Submit Deposit'</b> and your funds will be added.</li>
+                    <li><i class="fas fa-phone-volume"></i> If not added, call <b>+254715509440</b> for quick help.</li>
+                </ul>
+            </div>
+
             <div class="card">
-                <h3>Deposit via M-Pesa</h3>
-                <label>Sender Phone</label>
+                <h3>Submit Deposit Details</h3>
+                <label>Phone Number Used (M-Pesa)</label>
                 <input id="depPhone" type="tel" placeholder="07xxxxxxxx">
                 <label>Amount (KES)</label>
                 <input id="depAmount" type="number" placeholder="KES 100">
-                <label>M-Pesa SMS Message</label>
+                <label>Paste M-Pesa Confirmation Message</label>
                 <textarea id="depMessage" rows="5" placeholder="Paste full M-Pesa text here..."></textarea>
-                <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit for Approval</button>
+                <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit Deposit</button>
                 <p id="depStatus" style="text-align: center; margin-top:10px; font-weight:bold;"></p>
-            </div>
-            <div class="card">
-                <ul class="instructions-list">
-                    <li>1. Pay to <b>0715509440</b>.</li>
-                    <li>2. Paste the <b>Full SMS</b> in the box above.</li>
-                    <li>3. Approval takes 1-30 minutes.</li>
-                </ul>
             </div>
         </div>
 
         <!-- REFERRALS -->
         <div id="referral" class="page">
-            <div class="card">
+            <div class="card" style="text-align:center;">
                 <h3>Affiliate Program</h3>
-                <div class="card" style="text-align:center; background: #0f172a;">
-                    <p>Share your link and get <b>10%</b> of every deposit they make!</p>
-                    <input id="refLink" readonly style="text-align:center; color: var(--primary);">
-                    <button onclick="copyRef()" class="btn-primary" style="width: auto; padding: 10px 20px;">Copy Link</button>
-                    <hr style="border:0; border-top: 1px solid #334155; margin: 20px 0;">
-                    <div style="display:flex; justify-content: space-around;">
-                        <div><small>Earnings</small><br><b id="refEarnings">KES 0.00</b></div>
-                        <div><small>Your Code</small><br><b id="refCode">...</b></div>
-                    </div>
+                <p>Share your link and get <b>10%</b> of every deposit they make!</p>
+                <input id="refLink" readonly style="text-align:center; color: var(--primary);">
+                <button onclick="copyRef()" class="btn-primary" style="width: auto; padding: 10px 20px;">Copy Link</button>
+                <div style="display:flex; justify-content: space-around; margin-top:20px;">
+                    <div><small>Earnings</small><br><b id="refEarnings">KES 0.00</b></div>
+                    <div><small>Your Code</small><br><b id="refCode">...</b></div>
                 </div>
             </div>
         </div>
 
-        <!-- ADMIN PANEL (RESTRICTED TO DIASAMRATBARUSZ@GMAIL.COM) -->
+        <!-- ADMIN PANEL -->
         <div id="admin" class="page">
             <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="card" style="margin:0"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
-                <div class="card" style="margin:0"><h4>Total SMM Bal</h4><p id="adm-total-bal">0.00</p></div>
                 <div class="card" style="margin:0"><h4>Wait Deposits</h4><p id="adm-pending-dep" style="color:var(--warning)">0</p></div>
             </div>
             <div class="card">
-                <h3>Approve Deposits</h3>
+                <h3>Pending M-Pesa Approvals</h3>
                 <div class="table-container">
                     <table>
                         <thead><tr><th>User</th><th>Amount</th><th>Details</th><th>Action</th></tr></thead>
                         <tbody id="adminDepositTable"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card">
-                <h3>User Base</h3>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Email</th><th>Phone</th><th>Balance</th></tr></thead>
-                        <tbody id="adminUserTable"></tbody>
                     </table>
                 </div>
             </div>
@@ -256,8 +242,6 @@
 <script>
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
-    
-    // THE ONLY ALLOWED ADMIN EMAIL
     const EXCLUSIVE_ADMIN = "diasamratbarusz@gmail.com";
     let currentUserEmail = "";
 
@@ -268,93 +252,64 @@
             const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
             if (!res.ok) logout();
             const user = await res.json();
-            
             currentUserEmail = user.email.toLowerCase();
             document.getElementById("userEmail").innerText = user.email;
             document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
             document.getElementById("refCode").innerText = user.referralCode;
             document.getElementById("refEarnings").innerText = "KES " + (user.referralEarnings || 0).toFixed(2);
             document.getElementById("refLink").value = `${window.location.origin}/register.html?ref=${user.referralCode}`;
-
-            // STRICT VISIBILITY CHECK
-            if(currentUserEmail === EXCLUSIVE_ADMIN) {
-                document.getElementById("adminBtn").style.display = "flex";
-            }
+            if(currentUserEmail === EXCLUSIVE_ADMIN) document.getElementById("adminBtn").style.display = "flex";
         } catch (e) { logout(); }
     }
 
-    // Navigation with Strict Security
     function showPage(p) {
-        // Double Check: If someone tries to open admin via console but isn't the owner
-        if(p === 'admin' && currentUserEmail !== EXCLUSIVE_ADMIN) {
-            alert("Security Alert: Unauthorized Access Attempt Blocked.");
-            p = 'home';
-        }
-
+        if(p === 'admin' && currentUserEmail !== EXCLUSIVE_ADMIN) return showPage('home');
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
         document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
-        
         if(p === 'admin') loadAdminPanel();
         if(p === 'orders') loadOrders();
     }
 
-    /* SERVICES LOGIC */
-    let servicesData = {};
-    let selectedRate = 0;
-
+    let servicesData = {}; let selectedRate = 0;
     async function loadServices() {
         const res = await fetch(`${API}/services`);
-        const json = await res.json();
-        servicesData = json.data;
-        renderPlatforms();
+        const json = await res.json(); servicesData = json.data; renderPlatforms();
     }
 
     function renderPlatforms() {
-        const list = document.getElementById("platformList");
-        list.innerHTML = "<h3>Select Platform</h3>";
+        const list = document.getElementById("platformList"); list.innerHTML = "<h3>Select Platform</h3>";
         Object.keys(servicesData).forEach(p => {
-            const div = document.createElement("div");
-            div.className = "list-item";
+            const div = document.createElement("div"); div.className = "list-item";
             div.innerHTML = `<i class="fas fa-chevron-right" style="float:right"></i> ${p}`;
-            div.onclick = () => renderCategories(p);
-            list.appendChild(div);
+            div.onclick = () => renderCategories(p); list.appendChild(div);
         });
     }
 
     function renderCategories(p) {
         document.getElementById("platformList").style.display = "none";
-        const list = document.getElementById("categoryList");
+        const list = document.getElementById("categoryList"); list.style.display = "block";
         list.innerHTML = `<button onclick="resetServices()" class="btn-sm" style="background:#334155; color:white; margin-bottom:10px;">← Back</button><h3>${p}</h3>`;
         Object.keys(servicesData[p]).forEach(c => {
-            const div = document.createElement("div");
-            div.className = "list-item";
-            div.innerText = c;
-            div.onclick = () => renderServicesList(p, c);
-            list.appendChild(div);
+            const div = document.createElement("div"); div.className = "list-item"; div.innerText = c;
+            div.onclick = () => renderServicesList(p, c); list.appendChild(div);
         });
-        list.style.display = "block";
     }
 
     function renderServicesList(p, c) {
         document.getElementById("categoryList").style.display = "none";
-        const list = document.getElementById("serviceList");
+        const list = document.getElementById("serviceList"); list.style.display = "block";
         list.innerHTML = `<button onclick="renderCategories('${p}')" class="btn-sm" style="background:#334155; color:white; margin-bottom:10px;">← Back</button><h3>${c}</h3>`;
         servicesData[p][c].forEach(s => {
-            const div = document.createElement("div");
-            div.className = "list-item";
+            const div = document.createElement("div"); div.className = "list-item";
             div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate}/1k</span>`;
             div.onclick = () => {
                 document.getElementById("orderServiceId").value = s.serviceId;
                 document.getElementById("displayServiceName").innerText = s.name;
-                selectedRate = s.rate;
-                calcTotal();
-                showPage('order');
-            };
-            list.appendChild(div);
+                selectedRate = s.rate; calcTotal(); showPage('order');
+            }; list.appendChild(div);
         });
-        list.style.display = "block";
     }
 
     function resetServices() {
@@ -370,61 +325,29 @@
 
     async function submitOrder() {
         const btn = document.getElementById("orderSubmitBtn");
-        const payload = {
-            serviceId: document.getElementById("orderServiceId").value,
-            link: document.getElementById("orderLink").value,
-            quantity: document.getElementById("orderQty").value
-        };
+        const payload = { serviceId: document.getElementById("orderServiceId").value, link: document.getElementById("orderLink").value, quantity: document.getElementById("orderQty").value };
         if(!payload.link || !payload.quantity) return alert("Please fill all details");
         btn.disabled = true;
-        const res = await fetch(`${API}/order`, {
-            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify(payload)
-        });
+        const res = await fetch(`${API}/order`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) });
         const data = await res.json();
-        if(data.success) { 
-            document.getElementById("successOverlay").style.display = "flex"; 
-            syncData(); 
-        } else { alert(data.error); }
+        if(data.success) { document.getElementById("successOverlay").style.display = "flex"; syncData(); } else { alert(data.error); }
         btn.disabled = false;
     }
 
-    /* DEPOSIT LOGIC */
     async function submitDeposit() {
         const status = document.getElementById("depStatus");
         const phone = document.getElementById("depPhone").value;
         const amount = document.getElementById("depAmount").value;
         const msg = document.getElementById("depMessage").value;
         if(!phone || !amount || !msg) return alert("Fill all details");
-        
-        const res = await fetch(`${API}/deposit`, {
-            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ phone, amount, message: msg })
-        });
-        if(res.ok) { 
-            status.innerText = "Request Sent! Please wait for approval."; 
-            status.style.color = "var(--secondary)"; 
-            document.getElementById("depMessage").value = "";
-        } else {
-            const err = await res.json();
-            alert(err.error);
-        }
+        const res = await fetch(`${API}/deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ phone, amount, message: msg }) });
+        if(res.ok) { status.innerText = "Request Sent! Please wait for approval."; status.style.color = "var(--secondary)"; document.getElementById("depMessage").value = ""; } else { alert("Error submitting request."); }
     }
 
-    /* ADMIN TOOLS - ONLY FOR DIASAMRATBARUSZ@GMAIL.COM */
     async function loadAdminPanel() {
-        if(currentUserEmail !== EXCLUSIVE_ADMIN) return;
-        
         const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
         const users = await uRes.json();
-        let totalB = 0;
-        document.getElementById("adminUserTable").innerHTML = users.map(u => {
-            totalB += u.balance;
-            return `<tr><td>${u.email}</td><td>${u.phone || 'N/A'}</td><td>KES ${u.balance.toFixed(2)}</td></tr>`;
-        }).join('');
         document.getElementById("adm-total-users").innerText = users.length;
-        document.getElementById("adm-total-bal").innerText = totalB.toFixed(2);
-
         const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
         const deposits = await dRes.json();
         document.getElementById("adm-pending-dep").innerText = deposits.length;
@@ -435,34 +358,22 @@
     }
 
     async function approveDep(id) {
-        if(!confirm("Approve this deposit now?")) return;
-        const res = await fetch(`${API}/admin/approve-deposit`, { 
-            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
-            body: JSON.stringify({ depositId: id })
-        });
-        if(res.ok) { loadAdminPanel(); syncData(); alert("User Funded Successfully!"); }
+        if(!confirm("Approve this deposit?")) return;
+        const res = await fetch(`${API}/admin/approve-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id }) });
+        if(res.ok) { loadAdminPanel(); syncData(); alert("User Funded!"); }
     }
 
     async function loadOrders() {
         const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
         const orders = await res.json();
-        document.getElementById("ordersList").innerHTML = orders.map(o => `
-            <tr><td>${o.serviceName.substring(0,20)}...</td><td>${o.quantity}</td><td>KES ${o.cost.toFixed(2)}</td>
-            <td><span style="color:var(--warning)">${o.status}</span></td></tr>
-        `).join('') || "<tr><td colspan='4'>No orders found</td></tr>";
+        document.getElementById("ordersList").innerHTML = orders.map(o => `<tr><td>${o.serviceName.substring(0,20)}...</td><td>${o.quantity}</td><td>KES ${o.cost.toFixed(2)}</td><td><span style="color:var(--warning)">${o.status}</span></td></tr>`).join('') || "<tr><td colspan='4'>No orders</td></tr>";
     }
 
-    function copyRef() {
-        const link = document.getElementById("refLink");
-        link.select(); document.execCommand("copy"); alert("Affiliate Link Copied!");
-    }
-
+    function copyRef() { document.getElementById("refLink").select(); document.execCommand("copy"); alert("Copied!"); }
     function closeSuccess() { document.getElementById("successOverlay").style.display = "none"; showPage('orders'); }
     function logout() { localStorage.clear(); window.location.href = "index.html"; }
     
-    // Auto Startup
-    syncData(); 
-    loadServices();
+    syncData(); loadServices();
 </script>
 </body>
 </html>
