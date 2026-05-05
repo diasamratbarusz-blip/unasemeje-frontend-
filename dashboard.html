@@ -244,6 +244,7 @@
     const token = localStorage.getItem("token");
     const EXCLUSIVE_ADMIN = "diasamratbarusz@gmail.com";
     let currentUserEmail = "";
+    let currentUserId = "";
 
     if (!token) window.location.href = "index.html";
 
@@ -253,11 +254,14 @@
             if (!res.ok) logout();
             const user = await res.json();
             currentUserEmail = user.email.toLowerCase();
-            document.getElementById("userEmail").innerText = user.email;
+            currentUserId = user._id;
+            
+            document.getElementById("userEmail").innerText = user.username || user.email;
             document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
             document.getElementById("refCode").innerText = user.referralCode;
             document.getElementById("refEarnings").innerText = "KES " + (user.referralEarnings || 0).toFixed(2);
             document.getElementById("refLink").value = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+            
             if(currentUserEmail === EXCLUSIVE_ADMIN) document.getElementById("adminBtn").style.display = "flex";
         } catch (e) { logout(); }
     }
@@ -268,47 +272,69 @@
         document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
+        
         if(p === 'admin') loadAdminPanel();
         if(p === 'orders') loadOrders();
+        if(p === 'services') resetServices();
     }
 
-    let servicesData = {}; let selectedRate = 0;
+    let servicesData = {}; 
+    let selectedRate = 0;
+    let selectedServiceName = "";
+
     async function loadServices() {
-        const res = await fetch(`${API}/services`);
-        const json = await res.json(); servicesData = json.data; renderPlatforms();
+        try {
+            const res = await fetch(`${API}/services`);
+            const json = await res.json(); 
+            servicesData = json.data; 
+            renderPlatforms();
+        } catch (e) { console.error("Load Services Error", e); }
     }
 
     function renderPlatforms() {
-        const list = document.getElementById("platformList"); list.innerHTML = "<h3>Select Platform</h3>";
+        const list = document.getElementById("platformList"); 
+        list.innerHTML = "<h3>Select Platform</h3>";
         Object.keys(servicesData).forEach(p => {
-            const div = document.createElement("div"); div.className = "list-item";
+            const div = document.createElement("div"); 
+            div.className = "list-item";
             div.innerHTML = `<i class="fas fa-chevron-right" style="float:right"></i> ${p}`;
-            div.onclick = () => renderCategories(p); list.appendChild(div);
+            div.onclick = () => renderCategories(p); 
+            list.appendChild(div);
         });
     }
 
     function renderCategories(p) {
         document.getElementById("platformList").style.display = "none";
-        const list = document.getElementById("categoryList"); list.style.display = "block";
+        const list = document.getElementById("categoryList"); 
+        list.style.display = "block";
         list.innerHTML = `<button onclick="resetServices()" class="btn-sm" style="background:#334155; color:white; margin-bottom:10px;">← Back</button><h3>${p}</h3>`;
         Object.keys(servicesData[p]).forEach(c => {
-            const div = document.createElement("div"); div.className = "list-item"; div.innerText = c;
-            div.onclick = () => renderServicesList(p, c); list.appendChild(div);
+            const div = document.createElement("div"); 
+            div.className = "list-item"; 
+            div.innerText = c;
+            div.onclick = () => renderServicesList(p, c); 
+            list.appendChild(div);
         });
     }
 
     function renderServicesList(p, c) {
         document.getElementById("categoryList").style.display = "none";
-        const list = document.getElementById("serviceList"); list.style.display = "block";
+        const list = document.getElementById("serviceList"); 
+        list.style.display = "block";
         list.innerHTML = `<button onclick="renderCategories('${p}')" class="btn-sm" style="background:#334155; color:white; margin-bottom:10px;">← Back</button><h3>${c}</h3>`;
         servicesData[p][c].forEach(s => {
-            const div = document.createElement("div"); div.className = "list-item";
+            const div = document.createElement("div"); 
+            div.className = "list-item";
             div.innerHTML = `<b>${s.name}</b><br><span style="color:var(--secondary)">KES ${s.rate}/1k</span>`;
             div.onclick = () => {
                 document.getElementById("orderServiceId").value = s.serviceId;
                 document.getElementById("displayServiceName").innerText = s.name;
-                selectedRate = s.rate; calcTotal(); showPage('order');
-            }; list.appendChild(div);
+                selectedRate = s.rate;
+                selectedServiceName = s.name;
+                calcTotal(); 
+                showPage('order');
+            }; 
+            list.appendChild(div);
         });
     }
 
@@ -325,13 +351,45 @@
 
     async function submitOrder() {
         const btn = document.getElementById("orderSubmitBtn");
-        const payload = { serviceId: document.getElementById("orderServiceId").value, link: document.getElementById("orderLink").value, quantity: document.getElementById("orderQty").value };
+        const payload = { 
+            serviceId: document.getElementById("orderServiceId").value, 
+            link: document.getElementById("orderLink").value, 
+            quantity: document.getElementById("orderQty").value,
+            rate: selectedRate,
+            serviceName: selectedServiceName,
+            userId: currentUserId 
+        };
+
         if(!payload.link || !payload.quantity) return alert("Please fill all details");
+        
+        btn.innerText = "Processing...";
         btn.disabled = true;
-        const res = await fetch(`${API}/order`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify(payload) });
-        const data = await res.json();
-        if(data.success) { document.getElementById("successOverlay").style.display = "flex"; syncData(); } else { alert(data.error); }
-        btn.disabled = false;
+
+        try {
+            const res = await fetch(`${API}/order`, { 
+                method: "POST", 
+                headers: { 
+                    "Content-Type": "application/json", 
+                    Authorization: `Bearer ${token}` 
+                }, 
+                body: JSON.stringify(payload) 
+            });
+            const data = await res.json();
+            
+            if(data.success) { 
+                document.getElementById("successOverlay").style.display = "flex"; 
+                document.getElementById("orderLink").value = "";
+                document.getElementById("orderQty").value = "";
+                syncData(); 
+            } else { 
+                alert(data.error || "Order failed. Check your balance."); 
+            }
+        } catch (e) {
+            alert("Connection error. Try again.");
+        } finally {
+            btn.innerText = "Confirm Order";
+            btn.disabled = false;
+        }
     }
 
     async function submitDeposit() {
@@ -339,41 +397,97 @@
         const phone = document.getElementById("depPhone").value;
         const amount = document.getElementById("depAmount").value;
         const msg = document.getElementById("depMessage").value;
+
         if(!phone || !amount || !msg) return alert("Fill all details");
-        const res = await fetch(`${API}/deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ phone, amount, message: msg }) });
-        if(res.ok) { status.innerText = "Request Sent! Please wait for approval."; status.style.color = "var(--secondary)"; document.getElementById("depMessage").value = ""; } else { alert("Error submitting request."); }
+        
+        const res = await fetch(`${API}/deposit`, { 
+            method: "POST", 
+            headers: { 
+                "Content-Type": "application/json", 
+                Authorization: `Bearer ${token}` 
+            }, 
+            body: JSON.stringify({ phone, amount, message: msg }) 
+        });
+
+        if(res.ok) { 
+            status.innerText = "Request Sent! Please wait for approval."; 
+            status.style.color = "var(--secondary)"; 
+            document.getElementById("depMessage").value = ""; 
+        } else { 
+            alert("Error submitting request."); 
+        }
     }
 
     async function loadAdminPanel() {
         const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
         const users = await uRes.json();
         document.getElementById("adm-total-users").innerText = users.length;
+        
         const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
         const deposits = await dRes.json();
         document.getElementById("adm-pending-dep").innerText = deposits.length;
+        
         document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
-            <tr><td>${d.userEmail}</td><td>KES ${d.amount}</td><td><small>${d.message.substring(0,25)}...</small></td>
-            <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Approve</button></td></tr>
+            <tr>
+                <td>${d.userEmail}</td>
+                <td>KES ${d.amount}</td>
+                <td><small>${d.message.substring(0,25)}...</small></td>
+                <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Approve</button></td>
+            </tr>
         `).join('') || "<tr><td colspan='4'>No pending deposits</td></tr>";
     }
 
     async function approveDep(id) {
         if(!confirm("Approve this deposit?")) return;
-        const res = await fetch(`${API}/admin/approve-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id }) });
+        const res = await fetch(`${API}/admin/approve-deposit`, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
+            body: JSON.stringify({ depositId: id }) 
+        });
         if(res.ok) { loadAdminPanel(); syncData(); alert("User Funded!"); }
     }
 
     async function loadOrders() {
-        const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
-        const orders = await res.json();
-        document.getElementById("ordersList").innerHTML = orders.map(o => `<tr><td>${o.serviceName.substring(0,20)}...</td><td>${o.quantity}</td><td>KES ${o.cost.toFixed(2)}</td><td><span style="color:var(--warning)">${o.status}</span></td></tr>`).join('') || "<tr><td colspan='4'>No orders</td></tr>";
+        try {
+            const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
+            const orders = await res.json();
+            document.getElementById("ordersList").innerHTML = orders.map(o => {
+                let statusColor = "var(--warning)";
+                if(o.status === "completed") statusColor = "var(--secondary)";
+                if(o.status === "canceled" || o.status === "refunded") statusColor = "var(--danger)";
+                
+                return `
+                <tr>
+                    <td>${o.serviceName.substring(0,20)}...</td>
+                    <td>${o.quantity}</td>
+                    <td>KES ${(o.cost || 0).toFixed(2)}</td>
+                    <td><span style="color:${statusColor}">${o.status.toUpperCase()}</span></td>
+                </tr>`;
+            }).join('') || "<tr><td colspan='4'>No orders found.</td></tr>";
+        } catch (e) { console.error("Order sync error", e); }
     }
 
-    function copyRef() { document.getElementById("refLink").select(); document.execCommand("copy"); alert("Copied!"); }
-    function closeSuccess() { document.getElementById("successOverlay").style.display = "none"; showPage('orders'); }
-    function logout() { localStorage.clear(); window.location.href = "index.html"; }
+    function copyRef() { 
+        const refInput = document.getElementById("refLink");
+        refInput.select(); 
+        refInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(refInput.value);
+        alert("Referral Link Copied!"); 
+    }
+
+    function closeSuccess() { 
+        document.getElementById("successOverlay").style.display = "none"; 
+        showPage('orders'); 
+    }
+
+    function logout() { 
+        localStorage.clear(); 
+        window.location.href = "index.html"; 
+    }
     
-    syncData(); loadServices();
+    // Initial Load
+    syncData(); 
+    loadServices();
 </script>
 </body>
 </html>
