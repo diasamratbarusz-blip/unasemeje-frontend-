@@ -71,6 +71,12 @@
         .btn-primary:hover { opacity: 0.9; transform: scale(0.98); }
         .btn-sm { padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; }
 
+        /* STATUS BADGES */
+        .status { padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: var(--warning); color: #000; }
+        .status-completed { background: var(--secondary); color: #fff; }
+        .status-canceled { background: var(--danger); color: #fff; }
+
         /* MOBILE BOTTOM NAV */
         @media (max-width: 768px) {
             .sidebar { position: fixed; bottom: 0; top: auto; height: 70px; width: 100%; flex-direction: row; padding: 0; z-index: 1000; border-top: 1px solid #1f2937; }
@@ -121,7 +127,7 @@
             <div class="balance-badge">KES <span id="balance">0.00</span></div>
         </div>
 
-        <!-- HOME -->
+        <!-- HOME PAGE -->
         <div id="home" class="page active">
             <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95);">
                 <h3>Habari! 🇰🇪</h3>
@@ -136,7 +142,7 @@
             </div>
         </div>
 
-        <!-- SERVICES -->
+        <!-- SERVICES SELECTION -->
         <div id="services" class="page">
             <div class="card">
                 <div id="platformList"><h3>Select Platform</h3></div>
@@ -150,9 +156,15 @@
             <div class="card">
                 <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back</button>
                 <h3 id="displayServiceName" style="margin-top:15px; color:var(--primary)">-</h3>
-                <input id="orderServiceId" type="hidden"><input id="orderProvider" type="hidden">
-                <label>Target Link</label><input id="orderLink" placeholder="Paste link here...">
-                <label>Quantity</label><input id="orderQty" type="number" placeholder="Enter amount" oninput="calcTotal()">
+                <input id="orderServiceId" type="hidden">
+                <input id="orderProvider" type="hidden">
+                
+                <label>Target Link</label>
+                <input id="orderLink" placeholder="Paste profile or post link here...">
+                
+                <label>Quantity</label>
+                <input id="orderQty" type="number" placeholder="Enter amount" oninput="calcTotal()">
+                
                 <div class="card" style="margin-top:20px; background: rgba(124, 58, 237, 0.05); border: 1px dashed var(--primary);">
                     <div style="display: flex; justify-content: space-between;">
                         <span>Total Cost:</span>
@@ -163,29 +175,44 @@
             </div>
         </div>
 
-        <!-- MY ORDERS -->
+        <!-- MY ORDERS PAGE -->
         <div id="orders" class="page">
             <div class="card">
-                <h3>My Orders</h3>
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <h3>My Orders</h3>
+                    <button class="btn-sm" style="background:var(--primary); color:white" onclick="loadOrders()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
                 <div class="table-container">
                     <table>
-                        <thead><tr><th>Service</th><th>Qty</th><th>Cost</th><th>Status</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Service</th>
+                                <th>Qty</th>
+                                <th>Cost</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
                         <tbody id="ordersList"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ADD FUNDS -->
+        <!-- ADD FUNDS PAGE -->
         <div id="deposit" class="page">
             <div class="card">
                 <h3>Add Funds (M-Pesa)</h3>
                 <label>Phone Number Used</label>
                 <input id="depPhone" type="tel" placeholder="07xxxxxxxx">
+                
                 <label>Amount Sent (KES)</label>
                 <input id="depAmount" type="number" placeholder="Enter amount sent">
+                
                 <label>Paste M-Pesa Message</label>
                 <textarea id="depMessage" rows="5" placeholder="Paste the full M-Pesa SMS here..."></textarea>
+                
                 <button id="depSubmitBtn" class="btn-primary" onclick="submitDeposit()">Submit Deposit</button>
                 <p id="depStatus" style="text-align: center; margin-top:10px; font-weight:bold;"></p>
             </div>
@@ -203,7 +230,7 @@
             </div>
         </div>
 
-        <!-- REFERRAL -->
+        <!-- REFERRAL PAGE -->
         <div id="referral" class="page">
             <div class="card">
                 <h3>Refer & Earn 10%</h3>
@@ -227,7 +254,7 @@
             </div>
         </div>
 
-        <!-- ADMIN -->
+        <!-- ADMIN PAGE -->
         <div id="admin" class="page">
             <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
                 <div class="card" style="margin:0"><h4>Total Users</h4><p id="adm-total-users">0</p></div>
@@ -257,25 +284,41 @@
 </div>
 
 <script>
+    // Configuration
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
     let servicesData = {};
     let selectedRate = 0;
 
+    // Auth Guard
     if (!token) window.location.href = "index.html";
 
+    // Initialize Dashboard
     async function syncData() {
-        const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
-        if (!res.ok) logout();
-        const user = await res.json();
-        document.getElementById("userEmail").innerText = user.email;
-        document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
-        document.getElementById("refCode").innerText = user.referralCode || "N/A";
-        document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
-        document.getElementById("refLink").value = `https://unasemeje-smm.netlify.app/register?ref=${user.referralCode}`;
-        if(user.email === "diasamratbarusz@gmail.com") document.getElementById("adminBtn").style.display = "flex";
+        try {
+            const res = await fetch(`${API}/me`, { headers: { Authorization: `Bearer ${token}` }});
+            if (!res.ok) throw new Error("Unauthorized");
+            const user = await res.json();
+            
+            document.getElementById("userEmail").innerText = user.username || user.email;
+            document.getElementById("balance").innerText = (user.balance || 0).toFixed(2);
+            document.getElementById("refCode").innerText = user.referralCode || "N/A";
+            document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
+            
+            // Generate referral link based on current domain
+            const currentUrl = window.location.origin;
+            document.getElementById("refLink").value = `${currentUrl}/register.html?ref=${user.referralCode}`;
+            
+            // Admin Check
+            if(user.email === "diasamratbarusz@gmail.com" || user.phone === "0715509440") {
+                document.getElementById("adminBtn").style.display = "flex";
+            }
+        } catch (err) {
+            logout();
+        }
     }
 
+    // Load and Render Services
     async function loadServices() {
         const res = await fetch(`${API}/services`);
         const json = await res.json();
@@ -336,6 +379,7 @@
         document.getElementById("serviceList").style.display = "none";
     }
 
+    // Order Logic
     function calcTotal() {
         const qty = document.getElementById("orderQty").value || 0;
         document.getElementById("orderTotal").innerText = ((selectedRate / 1000) * qty).toFixed(2);
@@ -345,89 +389,184 @@
         const btn = document.getElementById("orderSubmitBtn");
         const payload = {
             serviceId: document.getElementById("orderServiceId").value,
-            provider: document.getElementById("orderProvider").value,
             link: document.getElementById("orderLink").value,
             quantity: document.getElementById("orderQty").value
         };
-        if(!payload.link || !payload.quantity) return alert("Fill all details");
+        
+        if(!payload.link || !payload.quantity) return alert("Please provide a link and quantity.");
+        
         btn.disabled = true;
-        const res = await fetch(`${API}/order`, {
-            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if(data.success) { document.getElementById("successOverlay").style.display = "flex"; syncData(); }
-        else alert(data.error);
-        btn.disabled = false;
+        btn.innerText = "Processing...";
+        
+        try {
+            const res = await fetch(`${API}/order`, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                document.getElementById("successOverlay").style.display = "flex";
+                syncData();
+            } else {
+                alert(data.error);
+            }
+        } catch (err) {
+            alert("Connection error. Try again.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Place Order Now";
+        }
     }
 
+    // Deposit Logic
     async function submitDeposit() {
         const status = document.getElementById("depStatus");
+        const btn = document.getElementById("depSubmitBtn");
         const phone = document.getElementById("depPhone").value;
         const amount = document.getElementById("depAmount").value;
         const msg = document.getElementById("depMessage").value;
-        if(!phone || !amount || !msg) return alert("Fill all details including phone number");
         
-        const res = await fetch(`${API}/deposit`, {
-            method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ amount, message: `Phone: ${phone} | SMS: ${msg}` })
-        });
-        if(res.ok) { status.innerText = "Submitted! Verification in progress."; status.style.color = "var(--secondary)"; }
+        if(!phone || !amount || !msg) return alert("Please fill all details including the full M-Pesa message.");
+        
+        btn.disabled = true;
+        status.innerText = "Submitting...";
+        
+        try {
+            const res = await fetch(`${API}/deposit`, {
+                method: "POST", 
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ phone, amount, message: msg })
+            });
+            const data = await res.json();
+            
+            if(res.ok) {
+                status.innerText = "Submitted! Admin will approve within 30 minutes.";
+                status.style.color = "var(--secondary)";
+                document.getElementById("depMessage").value = "";
+            } else {
+                status.innerText = data.error;
+                status.style.color = "var(--danger)";
+            }
+        } catch (err) {
+            status.innerText = "Error connecting to server.";
+        } finally {
+            btn.disabled = false;
+        }
     }
 
-    async function loadAdminPanel() {
-        const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
-        const users = await uRes.json();
-        let totalB = 0;
-        document.getElementById("adminUserTable").innerHTML = users.map(u => {
-            totalB += u.balance;
-            const isOnline = (new Date() - new Date(u.lastSeen)) < 300000;
-            return `<tr><td>${u.email}</td><td>KES ${u.balance.toFixed(2)}</td><td>${isOnline ? 'Online' : 'Offline'}</td></tr>`;
-        }).join('');
-        document.getElementById("adm-total-users").innerText = users.length;
-        document.getElementById("adm-total-bal").innerText = totalB.toFixed(2);
+    // Orders History & Sync
+    async function loadOrders() {
+        const list = document.getElementById("ordersList");
+        list.innerHTML = "<tr><td colspan='6' style='text-align:center'>Syncing status...</td></tr>";
+        
+        try {
+            const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
+            const orders = await res.json();
+            
+            list.innerHTML = orders.map(o => `
+                <tr>
+                    <td>${new Date(o.createdAt).toLocaleDateString()}</td>
+                    <td>${o.serviceName.substring(0,30)}...</td>
+                    <td>${o.quantity}</td>
+                    <td>KES ${o.cost.toFixed(2)}</td>
+                    <td><span class="status status-${o.status.toLowerCase()}">${o.status}</span></td>
+                    <td>
+                        <button class="btn-sm" style="background:#1e293b; color:white" onclick="requestRefill('${o._id}')">Refill</button>
+                    </td>
+                </tr>
+            `).join('') || "<tr><td colspan='6' style='text-align:center'>No orders found.</td></tr>";
+        } catch (err) {
+            list.innerHTML = "<tr><td colspan='6' style='text-align:center'>Error loading orders.</td></tr>";
+        }
+    }
 
-        const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
-        const deposits = await dRes.json();
-        document.getElementById("adm-pending-dep").innerText = deposits.filter(d => d.status === 'pending').length;
-        document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
-            <tr><td>${d.userEmail}</td><td>KES ${d.amount}</td><td><small>${d.message.substring(0,25)}...</small></td>
-            <td>${d.status === 'pending' ? `<button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">✓</button>` : 'Done'}</td></tr>
-        `).join('');
+    async function requestRefill(id) {
+        const res = await fetch(`${API}/refill`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ orderId: id })
+        });
+        const data = await res.json();
+        alert(data.message || data.error);
+    }
+
+    // Admin Panel
+    async function loadAdminPanel() {
+        try {
+            const uRes = await fetch(`${API}/admin/users`, { headers: { Authorization: `Bearer ${token}` }});
+            const users = await uRes.json();
+            let totalB = 0;
+            document.getElementById("adminUserTable").innerHTML = users.map(u => {
+                totalB += u.balance;
+                return `<tr><td>${u.email || u.username}</td><td>KES ${u.balance.toFixed(2)}</td><td>Active</td></tr>`;
+            }).join('');
+            
+            document.getElementById("adm-total-users").innerText = users.length;
+            document.getElementById("adm-total-bal").innerText = totalB.toFixed(2);
+
+            const dRes = await fetch(`${API}/admin/deposits`, { headers: { Authorization: `Bearer ${token}` }});
+            const deposits = await dRes.json();
+            document.getElementById("adm-pending-dep").innerText = deposits.length;
+            document.getElementById("adminDepositTable").innerHTML = deposits.map(d => `
+                <tr>
+                    <td>${d.userEmail}</td>
+                    <td>KES ${d.amount}</td>
+                    <td><small>${d.message.substring(0,50)}...</small></td>
+                    <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Approve</button></td>
+                </tr>
+            `).join('') || "<tr><td colspan='4' style='text-align:center'>No pending deposits.</td></tr>";
+        } catch (err) {
+            console.error("Admin Load Error:", err);
+        }
     }
 
     async function approveDep(id) {
-        if(!confirm("Approve?")) return;
-        await fetch(`${API}/admin/approve-deposit`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ depositId: id })});
-        loadAdminPanel(); syncData();
+        if(!confirm("Are you sure you want to approve this deposit?")) return;
+        const res = await fetch(`${API}/admin/approve-deposit`, { 
+            method: "POST", 
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
+            body: JSON.stringify({ depositId: id })
+        });
+        if(res.ok) {
+            alert("Deposit Approved!");
+            loadAdminPanel(); 
+            syncData();
+        }
     }
 
+    // Helper Functions
     function showPage(p) {
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
         document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
+        
         if(p === 'admin') loadAdminPanel();
         if(p === 'orders') loadOrders();
     }
 
-    async function loadOrders() {
-        const res = await fetch(`${API}/sync-orders`, { headers: { Authorization: `Bearer ${token}` }});
-        const orders = await res.json();
-        document.getElementById("ordersList").innerHTML = orders.map(o => `
-            <tr><td>${o.serviceName.substring(0,20)}...</td><td>${o.quantity}</td><td>${o.cost}</td>
-            <td>${o.status}</td></tr>
-        `).join('') || "<tr><td colspan='4'>No orders</td></tr>";
-    }
-
     function copyRef() {
         const link = document.getElementById("refLink");
-        link.select(); document.execCommand("copy"); alert("Copied!");
+        link.select(); 
+        document.execCommand("copy"); 
+        alert("Referral link copied to clipboard!");
     }
 
-    function closeSuccess() { document.getElementById("successOverlay").style.display = "none"; showPage('orders'); }
-    function logout() { localStorage.clear(); window.location.href = "index.html"; }
-    syncData(); loadServices();
+    function closeSuccess() { 
+        document.getElementById("successOverlay").style.display = "none"; 
+        showPage('orders'); 
+    }
+
+    function logout() { 
+        localStorage.clear(); 
+        window.location.href = "index.html"; 
+    }
+
+    // Run on startup
+    syncData(); 
+    loadServices();
 </script>
 </body>
 </html>
