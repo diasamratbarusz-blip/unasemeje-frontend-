@@ -18,7 +18,7 @@
             --whatsapp: #25d366;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
         body { margin: 0; background: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
         
         .dashboard { display: flex; min-height: 100vh; }
@@ -143,7 +143,7 @@
             </div>
         </div>
 
-        <!-- NEW ORDER PAGE -->
+        <!-- NEW ORDER PAGE (Services Entry) -->
         <div id="services" class="page">
             <div class="card">
                 <div id="platformList"><h3>Select Platform</h3></div>
@@ -155,13 +155,20 @@
         <!-- ORDER FORM -->
         <div id="order" class="page">
             <div class="card">
-                <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer;"><i class="fas fa-arrow-left"></i> Back to Services</button>
+                <button onclick="showPage('services')" style="background:none; border:none; color:var(--text-dim); cursor:pointer; padding: 0;"><i class="fas fa-arrow-left"></i> Back to Services</button>
                 <h3 id="displayServiceName" style="margin-top:15px; color:var(--primary)">Service Name</h3>
                 <input id="orderServiceId" type="hidden">
-                <label>Link (URL)</label>
-                <input id="orderLink" placeholder="https://www.instagram.com/p/...">
-                <label>Quantity</label>
-                <input id="orderQty" type="number" placeholder="Enter quantity" oninput="calcTotal()">
+                
+                <div style="margin-top:15px;">
+                    <label style="font-size: 13px; color: var(--text-dim);">Link (URL)</label>
+                    <input id="orderLink" placeholder="https://www.instagram.com/p/...">
+                </div>
+                
+                <div style="margin-top:15px;">
+                    <label style="font-size: 13px; color: var(--text-dim);">Quantity</label>
+                    <input id="orderQty" type="number" placeholder="Enter quantity" oninput="calcTotal()">
+                </div>
+
                 <div class="card" style="margin-top:20px; background: rgba(124, 58, 237, 0.05); border: 1px dashed var(--primary);">
                     <div style="display: flex; justify-content: space-between;">
                         <span>Order Total:</span>
@@ -275,14 +282,22 @@
             document.getElementById("refEarnings").innerText = "KES " + (user.referralEarnings || 0).toFixed(2);
             document.getElementById("refLink").value = `${window.location.origin}/register.html?ref=${user.referralCode}`;
             
-            if(currentUserEmail === EXCLUSIVE_ADMIN) document.getElementById("adminBtn").style.display = "flex";
-        } catch (e) { logout(); }
+            if(currentUserEmail === EXCLUSIVE_ADMIN) {
+                document.getElementById("adminBtn").style.display = "flex";
+            }
+        } catch (e) { 
+            console.error("Sync Error", e);
+            logout(); 
+        }
     }
 
     function showPage(p) {
+        // Safety check for admin page
         if(p === 'admin' && currentUserEmail !== EXCLUSIVE_ADMIN) return showPage('home');
+        
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
         document.querySelectorAll(".sidebar a").forEach(x => x.classList.remove("active"));
+        
         document.getElementById(p).classList.add("active");
         document.getElementById(`nav-${p}`)?.classList.add("active");
         
@@ -301,11 +316,14 @@
             const json = await res.json(); 
             servicesData = json.data; 
             renderPlatforms();
-        } catch (e) { console.error("Load Services Error", e); }
+        } catch (e) { 
+            console.error("Load Services Error", e); 
+        }
     }
 
     function renderPlatforms() {
         const list = document.getElementById("platformList"); 
+        list.style.display = "block";
         list.innerHTML = "<h3>Select Platform</h3>";
         Object.keys(servicesData).forEach(p => {
             const div = document.createElement("div"); 
@@ -427,6 +445,7 @@
                 status.innerText = "Submitted! We will approve your balance shortly."; 
                 status.style.color = "var(--secondary)"; 
                 document.getElementById("depMessage").value = ""; 
+                document.getElementById("depAmount").value = "";
             } else { 
                 alert(data.error || "Error submitting request."); 
                 status.innerText = "";
@@ -446,12 +465,12 @@
                 
                 return `
                 <tr>
-                    <td><small>${o.serviceName.substring(0,25)}</small></td>
+                    <td><small>${o.serviceName.substring(0,30)}${o.serviceName.length > 30 ? '...' : ''}</small></td>
                     <td>${o.quantity}</td>
                     <td>${o.remains || 0}</td>
                     <td><span class="badge ${badgeClass}">${st}</span></td>
                 </tr>`;
-            }).join('') || "<tr><td colspan='4' style='text-align:center'>No orders yet.</td></tr>";
+            }).join('') || "<tr><td colspan='4' style='text-align:center'>No orders found.</td></tr>";
         } catch (e) { console.error("Order sync error", e); }
     }
 
@@ -470,7 +489,7 @@
                     <td>${d.userEmail}</td>
                     <td>KES ${d.amount}</td>
                     <td><small>${d.transactionCode || 'N/A'}</small></td>
-                    <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Fund</button></td>
+                    <td><button class="btn-sm" style="background:var(--secondary);color:white" onclick="approveDep('${d._id}')">Fund Account</button></td>
                 </tr>
             `).join('') || "<tr><td colspan='4'>Queue is empty</td></tr>";
         } catch (e) { console.error("Admin Load Error"); }
@@ -478,12 +497,20 @@
 
     async function approveDep(id) {
         if(!confirm("Verify and add funds to this user?")) return;
-        const res = await fetch(`${API}/admin/approve-deposit`, { 
-            method: "POST", 
-            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
-            body: JSON.stringify({ depositId: id }) 
-        });
-        if(res.ok) { loadAdminPanel(); syncData(); alert("User account updated!"); }
+        try {
+            const res = await fetch(`${API}/admin/approve-deposit`, { 
+                method: "POST", 
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, 
+                body: JSON.stringify({ depositId: id }) 
+            });
+            if(res.ok) { 
+                loadAdminPanel(); 
+                syncData(); 
+                alert("User account updated successfully!"); 
+            } else {
+                alert("Failed to approve. Try again.");
+            }
+        } catch (e) { alert("Admin Error."); }
     }
 
     function copyRef() { 
@@ -503,7 +530,7 @@
         window.location.href = "index.html"; 
     }
     
-    // Initial Sync
+    // Initial Startup
     syncData(); 
     loadServices();
 </script>
