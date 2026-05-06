@@ -118,10 +118,10 @@
     </div>
 
     <label for="link">Target Link</label>
-    <input type="text" id="link" placeholder="https://www.instagram.com/p/..." autocomplete="off">
+    <input type="text" id="link" placeholder="https://www.facebook.com/..." autocomplete="off">
 
     <label for="quantity">Quantity</label>
-    <input type="number" id="quantity" placeholder="Min: 100" oninput="updatePrice()">
+    <input type="number" id="quantity" placeholder="Min: 10" oninput="updatePrice()">
 
     <div class="amount-grid">
         <button type="button" onclick="setQty(100)">100</button>
@@ -138,11 +138,11 @@
 </div>
 
 <script>
-    // These would typically come from the URL or local storage
+    // Get Service Data from URL
     const urlParams = new URLSearchParams(window.location.search);
-    const serviceId = urlParams.get('id') || "101"; // Default for testing
-    const serviceRate = parseFloat(urlParams.get('rate')) || 0.50; // Rate per 1000
-    const name = urlParams.get('name') || "Followers Standard";
+    const serviceId = urlParams.get('id');
+    const serviceRate = parseFloat(urlParams.get('rate')) || 0;
+    const name = urlParams.get('name') || "SMM Service";
 
     // Initialize Page
     document.getElementById('serviceName').innerText = name;
@@ -162,43 +162,51 @@
         const link = document.getElementById('link').value;
         const quantity = document.getElementById('quantity').value;
         const btn = document.getElementById('submitBtn');
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("Please login first.");
+            window.location.href = "/login.html";
+            return;
+        }
 
         if (!link || !quantity || quantity <= 0) {
             alert("Please provide a valid link and quantity.");
             return;
         }
 
-        // Disable button to prevent double-spending
         btn.disabled = true;
         btn.innerText = "Processing...";
 
         try {
-            const response = await fetch('/api/orders', {
+            // FIXED: URL changed from /api/orders to /api/order to match server.js
+            const response = await fetch('/api/order', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
-                    userId: "USER_ID_HERE", // Replace with actual logged-in User ID
                     serviceId: serviceId,
                     link: link,
-                    quantity: parseInt(quantity),
-                    rate: serviceRate,
-                    serviceName: name
+                    quantity: parseInt(quantity)
                 })
             });
 
             const result = await response.json();
 
             if (result.success) {
-                alert("Order Placed Successfully! Order ID: " + result.orderId);
-                window.location.href = "/history.html"; // Redirect to orders list
+                alert("Order Placed Successfully!");
+                window.location.href = "/dashboard.html"; 
             } else {
-                alert("Error: " + result.message);
+                // Shows exact error from server (e.g., Insufficient balance)
+                alert("Order Failed: " + (result.error || "Unknown error"));
                 btn.disabled = false;
                 btn.innerText = "Confirm Order";
             }
         } catch (error) {
             console.error("Order failed:", error);
-            alert("Network error. Please check your connection.");
+            alert("Connection error. Ensure your server is running.");
             btn.disabled = false;
             btn.innerText = "Confirm Order";
         }
