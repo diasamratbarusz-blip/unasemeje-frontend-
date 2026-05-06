@@ -15,7 +15,7 @@ function showToast(msg, type = "success") {
     Object.assign(t.style, {
       position: "fixed",
       bottom: "30px",
-      right: "30px", // Moved to side for modern look
+      right: "30px", 
       padding: "16px 24px",
       borderRadius: "14px",
       color: "#fff",
@@ -45,7 +45,7 @@ function showLoading() {
   const el = document.getElementById("loading");
   if (el) {
     el.style.display = "flex";
-    el.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; // Adds visual spinner
+    el.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; 
   }
 }
 
@@ -96,8 +96,8 @@ function checkAuth() {
 
   // Session expiry check
   if (user.exp && user.exp < now) {
-    logoutUser();
     showToast("Session expired, please login again", "error");
+    logoutUser();
   }
 }
 
@@ -111,18 +111,17 @@ function loadUser() {
   const user = decodeToken(getToken());
   if (!user) return;
 
-  // Displays the user's username (or email if username is missing) in the dashboard
+  // Displays the user's username (or email if username is missing)
   const el = document.getElementById("userEmail");
   if (el) el.innerText = user.username || user.email || "User";
 }
 
 // ================= LOGIN LOGIC =================
 async function login() {
-  // FIXED: Updated IDs to match identifier/password in your modern index.html
+  // Pulling values from the UI
   const identifier = document.getElementById("identifier")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
 
-  // If you are using 'email' as the ID in your HTML, change 'identifier' above back to 'email'
   if (!identifier || !password) {
     return showToast("Please enter your username/email and password", "error");
   }
@@ -164,7 +163,7 @@ async function register() {
   const phone = document.getElementById("phone")?.value?.trim();
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  // Full validation for Kenyan market users
+  // Basic Frontend Validation
   if (!username || !email || !password || !phone) {
     return showToast("Username, Email, Password, and Phone are required", "error");
   }
@@ -190,7 +189,7 @@ async function register() {
       throw new Error(data.error || "Registration failed. Check details.");
     }
 
-    showToast("Account verified! Redirecting to login...");
+    showToast("Account created! Redirecting to login...");
 
     setTimeout(() => {
       window.location.href = "index.html";
@@ -214,6 +213,7 @@ function logoutUser() {
 }
 
 // ================= AUTHORIZED FETCH WRAPPER =================
+// Use this for any dashboard data requests
 async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -228,8 +228,10 @@ async function authFetch(url, options = {}) {
 
 // ================= AUTOMATIC INITIALIZATION =================
 document.addEventListener("DOMContentLoaded", () => {
-  // Check for dashboard or internal pages
-  if (window.location.pathname.includes("dashboard") || window.location.pathname.includes("order")) {
+  const path = window.location.pathname;
+  
+  // Only run auth checks on dashboard and internal pages
+  if (path.includes("dashboard") || path.includes("order") || path.includes("profile")) {
     checkAuth();
     loadUser();
   }
