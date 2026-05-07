@@ -71,9 +71,16 @@ function removeToken() {
 function decodeToken(token) {
   try {
     if (!token) return null;
-    const base64 = token.split(".")[1];
-    return JSON.parse(atob(base64));
+    const base64Url = token.split(".")[1];
+    // Replace characters for standard base64 decoding to prevent errors
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
   } catch (err) {
+    console.error("Token decoding failed:", err);
     return null;
   }
 }
@@ -103,7 +110,10 @@ function checkAuth() {
 
 // ================= NAVIGATION HELPERS =================
 function redirectLogin() {
-  window.location.href = "index.html";
+  // Ensures user is redirected to index if not authenticated
+  if (!window.location.pathname.includes("index.html") && window.location.pathname !== "/") {
+    window.location.href = "index.html";
+  }
 }
 
 // ================= UI UPDATES =================
@@ -118,7 +128,6 @@ function loadUser() {
 
 // ================= LOGIN LOGIC =================
 async function login() {
-  // Pulling values from the UI
   const identifier = document.getElementById("identifier")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
 
@@ -163,7 +172,6 @@ async function register() {
   const phone = document.getElementById("phone")?.value?.trim();
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  // Basic Frontend Validation
   if (!username || !email || !password || !phone) {
     return showToast("Username, Email, Password, and Phone are required", "error");
   }
@@ -217,12 +225,18 @@ function logoutUser() {
 async function authFetch(url, options = {}) {
   const token = getToken();
 
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {})
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   return fetch(url, {
     ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authorization: token ? `Bearer ${token}` : ""
-    }
+    headers: headers
   });
 }
 
@@ -231,7 +245,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
   
   // Only run auth checks on dashboard and internal pages
-  if (path.includes("dashboard") || path.includes("order") || path.includes("profile")) {
+  const protectedPages = ["dashboard", "order", "profile", "services", "deposit"];
+  const isProtected = protectedPages.some(page => path.includes(page));
+
+  if (isProtected) {
     checkAuth();
     loadUser();
   }
