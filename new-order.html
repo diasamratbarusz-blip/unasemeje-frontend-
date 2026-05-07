@@ -6,244 +6,213 @@
     <title>New Order | UNASEMEJE ø DIA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root { 
-            --primary: #7c3aed; 
-            --secondary: #10b981; 
-            --bg-dark: #0f172a; 
-            --card-bg: #1e293b; 
-            --text-main: #f8fafc; 
-            --text-dim: #94a3b8;
-        }
-        
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg-dark); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; display: flex; }
-        
-        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 25px; position: fixed; border-right: 1px solid #1f2937; }
-        .sidebar h2 { color: var(--primary); text-align: center; font-weight: 800; margin-bottom: 30px; font-size: 20px; }
-        .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); text-decoration: none; border-radius: 10px; margin-bottom: 5px; transition: 0.3s; }
-        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
-        .sidebar i { margin-right: 12px; width: 20px; text-align: center; }
-
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
-        
-        .card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 20px; }
-        
-        label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-dim); font-weight: 600; }
-        input, select { 
-            width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; 
-            color: white; border-radius: 12px; outline: none; margin-bottom: 20px; font-size: 14px;
-        }
-        input:focus, select:focus { border-color: var(--primary); }
-
-        .price-display { 
-            margin-top: 10px; padding: 20px; background: rgba(124, 58, 237, 0.1); 
-            border: 1px solid rgba(124, 58, 237, 0.2); border-radius: 15px; text-align: center; 
-        }
-        .price-display small { color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-size: 10px; }
-        .price-display b { color: var(--secondary); font-size: 28px; display: block; margin-top: 5px; }
-
-        .btn-order { 
-            width: 100%; padding: 18px; background: var(--primary); color: white; border: none; 
-            border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; 
-            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.2);
-        }
-        .btn-order:hover { transform: translateY(-2px); background: #6d28d9; }
-        .btn-order:disabled { background: #4b5563; cursor: not-allowed; transform: none; }
-
-        .info-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 10px; }
-
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 20px; width: 100%; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="dashboard">
     <div class="sidebar">
         <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="platform.html" class="active"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
-        <a href="services.html"><i class="fas fa-list"></i> Services</a>
-        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
-        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="new-order.html" class="active"><i class="fas fa-plus-circle"></i> <span>New Order</span></a>
+            <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
+            <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+        </div>
     </div>
 
     <div class="main">
-        <div class="card">
-            <h2 style="margin:0;">Create Order</h2>
-            <p style="color: var(--text-dim); margin-top: 5px;">Configure your boost below.</p>
+        <div class="card" style="border-left: 5px solid var(--primary);">
+            <h2 style="margin:0;">Boost Your Socials</h2>
+            <p style="color: var(--text-dim); margin-top: 5px; font-size: 14px;">Select a package and watch your engagement grow.</p>
         </div>
 
         <div class="card">
-            <label>1. Platform</label>
+            <label><i class="fas fa-th-large"></i> 1. Select Platform</label>
             <select id="platformSelect" onchange="loadCategories()">
-                <option value="">Choose Platform</option>
+                <option value="">-- Choose Platform --</option>
             </select>
 
-            <label>2. Category</label>
+            <label><i class="fas fa-layer-group"></i> 2. Choose Category</label>
             <select id="categorySelect" onchange="loadServices()">
-                <option value="">Select Category</option>
+                <option value="">-- Select Category --</option>
             </select>
 
-            <label>3. Specific Service</label>
+            <label><i class="fas fa-bolt"></i> 3. Select Service</label>
             <select id="serviceSelect" onchange="updateServiceInfo()">
-                <option value="">Select Service</option>
+                <option value="">-- Select Service --</option>
             </select>
 
-            <div id="serviceDetails" style="display: none; margin-bottom: 20px;">
-                <div class="info-row">
-                    <span>Min Order: <b id="minQty">0</b></span>
-                    <span>Max Order: <b id="maxQty">0</b></span>
+            <div id="serviceDetails" style="display: none; background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                    <span>Min: <b id="minQty" style="color: var(--primary);">0</b></span>
+                    <span>Max: <b id="maxQty" style="color: var(--primary);">0</b></span>
                 </div>
             </div>
 
-            <label>4. Target Link</label>
-            <input type="text" id="link" placeholder="Paste your profile or post link here">
+            <label><i class="fas fa-link"></i> 4. Target Link</label>
+            <input type="text" id="link" placeholder="Paste link (e.g., TikTok video/profile URL)">
 
-            <label>5. Quantity</label>
-            <input type="number" id="quantity" placeholder="Enter amount..." oninput="calculateTotal()">
+            <label><i class="fas fa-sort-amount-up"></i> 5. Quantity</label>
+            <input type="number" id="quantity" placeholder="How many do you want?" oninput="calculateTotal()">
 
             <div class="price-display">
-                <small>Total Investment</small>
-                <b>KES <span id="totalPrice">0.00</span></b>
+                <small>Order Total</small>
+                <b id="priceContainer">KES <span id="totalPrice">0.00</span></b>
             </div>
 
-            <button class="btn-order" id="orderBtn" onclick="placeOrder()">PLACE ORDER NOW</button>
+            <button class="btn-primary" id="orderBtn" onclick="placeOrder()">
+                <i class="fas fa-paper-plane"></i> CONFIRM ORDER
+            </button>
         </div>
     </div>
+</div>
 
-    <script>
-        let allData = {};
-        const API = "https://unasemeje-backend-3.onrender.com/api";
-        const token = localStorage.getItem("token");
+<script>
+    let allData = {};
+    const API = "https://unasemeje-backend-3.onrender.com/api";
+    const token = localStorage.getItem("token");
 
-        if (!token) window.location.href = "index.html";
+    // Protect route
+    if (!token) window.location.href = "index.html";
 
-        // 1. Initial Load from Backend
-        async function init() {
-            try {
-                const res = await fetch(`${API}/services`);
-                const json = await res.json();
-                allData = json.data;
+    // 1. Fetch Services from Backend
+    async function init() {
+        try {
+            const res = await fetch(`${API}/services`);
+            const json = await res.json();
+            allData = json.data;
 
-                const pSelect = document.getElementById("platformSelect");
-                Object.keys(allData).forEach(p => {
-                    const opt = document.createElement("option");
-                    opt.value = p; opt.innerText = p;
-                    pSelect.appendChild(opt);
-                });
+            const pSelect = document.getElementById("platformSelect");
+            Object.keys(allData).forEach(p => {
+                const opt = document.createElement("option");
+                opt.value = p; opt.innerText = p;
+                pSelect.appendChild(opt);
+            });
 
-                // Auto-fill from URL if coming from packages.html
-                const params = new URLSearchParams(window.location.search);
-                if (params.get('platform')) {
-                    pSelect.value = params.get('platform');
-                    loadCategories(params.get('category'));
-                }
-            } catch (e) { alert("Error connecting to server."); }
+            // Handle pre-selection from redirect (if applicable)
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('platform')) {
+                pSelect.value = params.get('platform');
+                loadCategories(params.get('category'));
+            }
+        } catch (e) { 
+            console.error("Fetch error:", e);
+            alert("Could not load services. Please check your connection."); 
         }
+    }
 
-        // 2. Handle Category Selection
-        function loadCategories(preselectCat = null) {
-            const platform = document.getElementById("platformSelect").value;
-            const cSelect = document.getElementById("categorySelect");
-            cSelect.innerHTML = '<option value="">Select Category</option>';
-            
-            if (allData[platform]) {
-                Object.keys(allData[platform]).forEach(c => {
-                    const opt = document.createElement("option");
-                    opt.value = c; opt.innerText = c;
-                    cSelect.appendChild(opt);
-                });
-                if(preselectCat) {
-                    cSelect.value = preselectCat;
-                    loadServices();
-                }
+    // 2. Filter Categories based on Platform
+    function loadCategories(preselectCat = null) {
+        const platform = document.getElementById("platformSelect").value;
+        const cSelect = document.getElementById("categorySelect");
+        cSelect.innerHTML = '<option value="">-- Select Category --</option>';
+        
+        if (allData[platform]) {
+            Object.keys(allData[platform]).forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c; opt.innerText = c;
+                cSelect.appendChild(opt);
+            });
+            if(preselectCat) {
+                cSelect.value = preselectCat;
+                loadServices();
             }
         }
+    }
 
-        // 3. Handle Service Selection
-        function loadServices() {
-            const p = document.getElementById("platformSelect").value;
-            const c = document.getElementById("categorySelect").value;
-            const sSelect = document.getElementById("serviceSelect");
-            sSelect.innerHTML = '<option value="">Select Service</option>';
+    // 3. Filter Services based on Category
+    function loadServices() {
+        const p = document.getElementById("platformSelect").value;
+        const c = document.getElementById("categorySelect").value;
+        const sSelect = document.getElementById("serviceSelect");
+        sSelect.innerHTML = '<option value="">-- Select Service --</option>';
 
-            if (allData[p] && allData[p][c]) {
-                allData[p][c].forEach(s => {
-                    const opt = document.createElement("option");
-                    opt.value = s.serviceId;
-                    opt.innerText = `${s.name} - KES ${s.rate}/1k`;
-                    sSelect.appendChild(opt);
-                });
-            }
+        if (allData[p] && allData[p][c]) {
+            allData[p][c].forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = s.serviceId;
+                opt.innerText = `${s.name} - KES ${s.rate}/1k`;
+                sSelect.appendChild(opt);
+            });
         }
+    }
 
-        function updateServiceInfo() {
-            const p = document.getElementById("platformSelect").value;
-            const c = document.getElementById("categorySelect").value;
-            const sId = document.getElementById("serviceSelect").value;
-            const details = document.getElementById("serviceDetails");
+    // 4. Show Min/Max and setup Pricing
+    function updateServiceInfo() {
+        const p = document.getElementById("platformSelect").value;
+        const c = document.getElementById("categorySelect").value;
+        const sId = document.getElementById("serviceSelect").value;
+        const details = document.getElementById("serviceDetails");
 
+        const service = allData[p][c].find(x => x.serviceId == sId);
+        if (service) {
+            details.style.display = "block";
+            document.getElementById("minQty").innerText = service.min.toLocaleString();
+            document.getElementById("maxQty").innerText = service.max.toLocaleString();
+            calculateTotal();
+        } else {
+            details.style.display = "none";
+        }
+    }
+
+    // 5. Live Calculation
+    function calculateTotal() {
+        const p = document.getElementById("platformSelect").value;
+        const c = document.getElementById("categorySelect").value;
+        const sId = document.getElementById("serviceSelect").value;
+        const qty = document.getElementById("quantity").value || 0;
+
+        if (p && c && sId) {
             const service = allData[p][c].find(x => x.serviceId == sId);
-            if (service) {
-                details.style.display = "block";
-                document.getElementById("minQty").innerText = service.min;
-                document.getElementById("maxQty").innerText = service.max;
-                calculateTotal();
-            }
+            const total = (service.rate / 1000) * qty;
+            document.getElementById("totalPrice").innerText = total.toFixed(2);
         }
+    }
 
-        function calculateTotal() {
-            const p = document.getElementById("platformSelect").value;
-            const c = document.getElementById("categorySelect").value;
-            const sId = document.getElementById("serviceSelect").value;
-            const qty = document.getElementById("quantity").value || 0;
+    // 6. Submit Order to API
+    async function placeOrder() {
+        const sId = document.getElementById("serviceSelect").value;
+        const link = document.getElementById("link").value;
+        const qty = document.getElementById("quantity").value;
+        const btn = document.getElementById("orderBtn");
 
-            if (p && c && sId) {
-                const service = allData[p][c].find(x => x.serviceId == sId);
-                const total = (service.rate / 1000) * qty;
-                document.getElementById("totalPrice").innerText = total.toFixed(2);
-            }
-        }
+        if (!sId || !link || !qty) return alert("Please complete all steps.");
 
-        async function placeOrder() {
-            const sId = document.getElementById("serviceSelect").value;
-            const link = document.getElementById("link").value;
-            const qty = document.getElementById("quantity").value;
-            const btn = document.getElementById("orderBtn");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
 
-            if (!sId || !link || !qty) return alert("Please fill all fields");
+        try {
+            const res = await fetch(`${API}/order`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json", 
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ serviceId: sId, link, quantity: parseInt(qty) })
+            });
 
-            btn.disabled = true;
-            btn.innerText = "PROCESSING...";
+            const data = await res.json();
 
-            try {
-                const res = await fetch(`${API}/order`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                    body: JSON.stringify({ serviceId: sId, link, quantity: qty })
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    // Success! Redirect to the Order Placed page with details
-                    window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(data.serviceName)}&cost=${data.totalCost}&balance=${data.newBalance}`;
-                } else {
-                    alert(data.error || "Order failed");
-                    btn.disabled = false;
-                    btn.innerText = "PLACE ORDER NOW";
-                }
-            } catch (e) {
-                alert("Connection error");
+            if (res.ok) {
+                // Redirect to success page with URL parameters
+                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(data.serviceName)}&cost=${data.totalCost}&balance=${data.newBalance}`;
+            } else {
+                alert(data.error || "Order failed. Check your balance.");
                 btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM ORDER';
             }
+        } catch (e) {
+            alert("Connection error. Please try again.");
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM ORDER';
         }
+    }
 
-        init();
-    </script>
+    init();
+</script>
+
 </body>
 </html>
