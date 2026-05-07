@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Select Package | UNASEMEJE ø DIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --secondary: #10b981;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; background: var(--bg-dark); color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif; display: flex; 
+        }
+
+        /* SIDEBAR */
+        .sidebar { 
+            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
+            position: fixed; height: 100vh; display: flex; flex-direction: column; 
+        }
+        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
+        .sidebar a { 
+            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
+            text-decoration: none; border-radius: 10px; margin-bottom: 5px; 
+        }
+        .sidebar a.active { background: var(--primary); color: white; }
+
+        /* MAIN CONTENT */
+        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
+        
+        .header-nav { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .back-btn { 
+            background: #334155; color: white; border: none; padding: 10px 15px; 
+            border-radius: 10px; cursor: pointer; text-decoration: none; font-size: 14px;
+        }
+
+        .header-section h1 { font-weight: 800; font-size: 28px; margin: 0; color: var(--primary); }
+
+        /* PACKAGE LIST */
+        .package-container { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+        
+        .package-card {
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .package-card:hover {
+            border-color: var(--secondary);
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateX(5px);
+        }
+
+        .package-info h3 { margin: 0; font-size: 16px; font-weight: 700; }
+        .package-info p { margin: 5px 0 0; font-size: 13px; color: var(--text-dim); }
+
+        .go-icon { color: var(--text-dim); font-size: 18px; }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 20px; }
+            .header-section h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>unasemeje ø dia</h2>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="platform.html" class="active"><i class="fas fa-plus-circle"></i> New Order</a>
+        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
+        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
+        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
+    </div>
+
+    <div class="main">
+        <div class="header-nav">
+            <a href="platform.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+            <div class="header-section">
+                <h1 id="platformTitle">Packages</h1>
+                <p>Select a category to view specific services</p>
+            </div>
+        </div>
+
+        <div class="package-container" id="packageList">
+            <div style="text-align: center; padding: 50px; color: var(--text-dim);">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                <p>Fetching categories...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const platform = urlParams.get('platform');
+        
+        document.getElementById('platformTitle').innerText = platform + " Packages";
+
+        async function loadCategories() {
+            try {
+                // Fetching from your Delixgains-connected backend
+                const response = await fetch(`https://unasemeje-backend-3.onrender.com/api/services`);
+                const result = await response.json();
+                
+                const categories = result.data[platform];
+                const list = document.getElementById('packageList');
+                list.innerHTML = "";
+
+                Object.keys(categories).forEach(catName => {
+                    const card = document.createElement('a');
+                    card.href = `new-order.html?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(catName)}`;
+                    card.className = 'package-card';
+                    card.innerHTML = `
+                        <div class="package-info">
+                            <h3>${catName}</h3>
+                            <p>${categories[catName].length} Services Available</p>
+                        </div>
+                        <div class="go-icon"><i class="fas fa-chevron-right"></i></div>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('packageList').innerHTML = `<p style="color:red; text-align:center;">Error loading packages. Please try again.</p>`;
+            }
+        }
+
+        if(platform) {
+            loadCategories();
+        } else {
+            window.location.href = "platform.html";
+        }
+    </script>
+</body>
+</html>
