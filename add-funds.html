@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Funds | UNASEMEJE ø DIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #7c3aed; --secondary: #10b981; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-dim: #94a3b8; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { margin: 0; background: var(--bg-dark); color: var(--text-main); display: flex; }
+        
+        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #1f2937; }
+        .sidebar h2 { color: var(--primary); text-align: center; font-weight: 800; margin-bottom: 30px; }
+        .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); text-decoration: none; border-radius: 10px; margin-bottom: 5px; transition: 0.3s; }
+        .sidebar a i { margin-right: 12px; width: 20px; text-align: center; }
+        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
+
+        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .balance-badge { color: var(--secondary); font-weight: 800; background: rgba(16, 185, 129, 0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid var(--secondary); }
+        
+        .card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; }
+        .instructions { list-style: none; padding: 0; }
+        .instructions li { margin-bottom: 15px; display: flex; align-items: center; color: var(--text-dim); }
+        .instructions i { color: var(--primary); margin-right: 15px; }
+        
+        label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-dim); }
+        input, textarea { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 12px; outline: none; margin-bottom: 20px; }
+        .btn-deposit { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-deposit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3); }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 20px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>unasemeje ø dia</h2>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="new-order.html"><i class="fas fa-plus-circle"></i> New Order</a>
+        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
+        <a href="add-funds.html" class="active"><i class="fas fa-wallet"></i> Add Funds</a>
+        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
+    </div>
+
+    <div class="main">
+        <div class="navbar">
+            <h2 style="margin:0;">Add Funds</h2>
+            <div class="balance-badge">KES <span id="userBalance">0.00</span></div>
+        </div>
+
+        <div class="card" style="border: 1px solid var(--primary); background: rgba(124, 58, 237, 0.05);">
+            <h3 style="color: var(--primary); margin-top: 0;"><i class="fas fa-mobile-alt"></i> M-Pesa Instructions</h3>
+            <ul class="instructions">
+                <li><i class="fas fa-check-circle"></i> Send deposit amount to <b>0715509440</b> (SMM ADMIN).</li>
+                <li><i class="fas fa-check-circle"></i> Copy the entire M-Pesa confirmation SMS.</li>
+                <li><i class="fas fa-check-circle"></i> Submit the details below for instant balance update.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <label>Amount Sent (KES)</label>
+            <input type="number" id="depAmount" placeholder="e.g. 1000">
+
+            <label>M-Pesa Confirmation Message</label>
+            <textarea id="depMessage" rows="5" placeholder="Paste the full message here (e.g. PJX82LQ91 Confirmed...)"></textarea>
+
+            <button class="btn-deposit" onclick="submitDeposit()">SUBMIT FOR VERIFICATION</button>
+            <p id="statusMsg" style="text-align: center; margin-top: 15px; font-weight: 600;"></p>
+        </div>
+    </div>
+
+    <script>
+        async function sync() {
+            const res = await fetch("/api/me", { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } });
+            const data = await res.json();
+            document.getElementById("userBalance").innerText = data.balance.toFixed(2);
+        }
+
+        async function submitDeposit() {
+            const amount = document.getElementById("depAmount").value;
+            const message = document.getElementById("depMessage").value;
+            const status = document.getElementById("statusMsg");
+
+            if(!amount || !message) return alert("Please fill in all details");
+
+            status.innerText = "Processing...";
+            const res = await fetch("/api/deposit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${localStorage.getItem("token")}` },
+                body: JSON.stringify({ amount, message })
+            });
+
+            if(res.ok) {
+                status.style.color = "var(--secondary)";
+                status.innerText = "Success! Admin will verify and fund your account in 2-5 mins.";
+                document.getElementById("depAmount").value = "";
+                document.getElementById("depMessage").value = "";
+            } else {
+                status.style.color = "#ef4444";
+                status.innerText = "Error submitting. Please contact support.";
+            }
+        }
+        sync();
+    </script>
+</body>
+</html>
