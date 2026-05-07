@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | UNASEMEJE ø DIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css"> <style>
+        /* Including the core styles you like */
+        :root { --primary: #7c3aed; --secondary: #10b981; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; }
+        body { margin: 0; background: var(--bg-dark); color: var(--text-main); font-family: sans-serif; display: flex; }
+        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; }
+        .main { margin-left: 260px; padding: 30px; width: 100%; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 20px; }
+        .sidebar a { display: block; padding: 12px; color: #94a3b8; text-decoration: none; margin-bottom: 5px; }
+        .sidebar a.active { background: var(--primary); color: white; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 style="color:var(--primary); text-align:center;">UNASEMEJE ø DIA</h2>
+        <a href="home.html" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="new-order.html"><i class="fas fa-plus-circle"></i> New Order</a>
+        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
+        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
+        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
+    </div>
+
+    <div class="main">
+        <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95);">
+            <h1>Habari! 👋</h1>
+            <p>Welcome to your personal growth dashboard. Check your balance and start trending.</p>
+        </div>
+
+        <div class="card">
+            <h3>Account Summary</h3>
+            <div style="display:flex; gap: 20px;">
+                <div><small>Balance</small><br><b style="color:var(--secondary); font-size: 20px;">KES <span id="bal">0.00</span></b></div>
+                <div><small>Total Orders</small><br><b style="font-size: 20px;" id="orderCount">0</b></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch user data on load
+        async function loadHome() {
+            const token = localStorage.getItem("token");
+            const res = await fetch("https://unasemeje-backend-3.onrender.com/api/me", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            const data = await res.json();
+            document.getElementById("bal").innerText = data.balance.toFixed(2);
+        }
+        loadHome();
+    </script>
+</body>
+</html>
