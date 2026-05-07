@@ -1,11 +1,26 @@
-const API = "https://unasemeje-backend-3.onrender.com/api";
+/**
+ * =========================================
+ * UNASEMEJE ø DIA - Core Frontend Logic
+ * =========================================
+ */
 
-/* ================= TOKEN ================= */
+// ✅ SMART API DETECTION
+// Automatically switches between local testing and production Render URL
+const API = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000/api"
+    : "/api"; // In production, it uses the same domain (better for CORS)
+
+/* ================= AUTH HELPERS ================= */
 function getToken() {
     return localStorage.getItem("token");
 }
 
-/* ================= TOAST ================= */
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+}
+
+/* ================= PREMIUM TOAST (Neon Style) ================= */
 function toast(msg, success = true) {
     let t = document.getElementById("toast");
 
@@ -14,33 +29,48 @@ function toast(msg, success = true) {
         t.id = "toast";
         document.body.appendChild(t);
 
-        t.style.position = "fixed";
-        t.style.bottom = "20px";
-        t.style.left = "50%";
-        t.style.transform = "translateX(-50%)";
-        t.style.padding = "10px 15px";
-        t.style.borderRadius = "8px";
-        t.style.color = "white";
-        t.style.zIndex = "9999";
-        t.style.fontSize = "14px";
+        // Styling the toast for a premium, high-quality look
+        Object.assign(t.style, {
+            position: "fixed",
+            bottom: "30px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "14px 24px",
+            borderRadius: "16px",
+            color: "white",
+            zIndex: "10000",
+            fontSize: "15px",
+            fontWeight: "700",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+            transition: "all 0.4s ease",
+            textAlign: "center",
+            minWidth: "250px"
+        });
     }
 
     t.innerText = msg;
-    t.style.background = success ? "#22c55e" : "#ef4444";
+    // Neon Green for success, Neon Red for failure
+    t.style.background = success ? "linear-gradient(135deg, #10b981, #059669)" : "linear-gradient(135deg, #ef4444, #b91c1c)";
     t.style.display = "block";
+    t.style.opacity = "1";
 
     setTimeout(() => {
-        t.style.display = "none";
-    }, 2500);
+        t.style.opacity = "0";
+        setTimeout(() => { t.style.display = "none"; }, 400);
+    }, 3000);
 }
 
-/* ================= SAFE FETCH ================= */
+/* ================= SAFE FETCH ENGINE ================= */
 async function safeFetch(url, options = {}) {
     try {
         const res = await fetch(url, options);
         const data = await res.json();
 
-        if (!res.ok) throw new Error(data.error || "Request failed");
+        if (!res.ok) {
+            if (res.status === 401) logout(); // Session expired
+            throw new Error(data.error || "Request failed");
+        }
 
         return data;
     } catch (err) {
@@ -49,7 +79,7 @@ async function safeFetch(url, options = {}) {
     }
 }
 
-/* ================= USER ================= */
+/* ================= USER & PROFILE ================= */
 async function loadUser() {
     const data = await safeFetch(API + "/me", {
         headers: { Authorization: "Bearer " + getToken() }
@@ -57,166 +87,148 @@ async function loadUser() {
 
     if (!data) return;
 
+    // Elements on dashboard/nav
     const emailEl = document.getElementById("userEmail");
     const balanceEl = document.getElementById("balance");
+    const refCodeEl = document.getElementById("myRefCode");
 
-    // Updated to show Username if available, otherwise Email
-    if (emailEl) emailEl.innerText = data.username || data.email || "User";
-    if (balanceEl) balanceEl.innerText = data.balance || 0;
+    if (emailEl) emailEl.innerText = data.username || data.email;
+    if (balanceEl) balanceEl.innerText = Number(data.balance || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+    if (refCodeEl) refCodeEl.innerText = data.referralCode || "N/A";
 }
 
-/* ================= NORMALIZE SERVICES ================= */
+/* ================= SERVICES LOGIC ================= */
+let ALL_SERVICES = [];
+
 function normalizeServices(data) {
     let services = [];
-
-    if (Array.isArray(data)) {
+    // Handles the grouped structure (Platform > Category > Services)
+    if (data?.data && typeof data.data === "object") {
+        Object.values(data.data).forEach(platformGroup => {
+            Object.values(platformGroup).forEach(categoryList => {
+                if (Array.isArray(categoryList)) services.push(...categoryList);
+            });
+        });
+    } else if (Array.isArray(data)) {
         services = data;
     }
-    else if (data?.data && Array.isArray(data.data)) {
-        services = data.data;
-    }
-    else if (data?.data && typeof data.data === "object") {
-        Object.values(data.data).forEach(group => {
-            if (typeof group === "object" && !Array.isArray(group)) {
-                // Handle nested categories (Platform > Category > Services)
-                Object.values(group).forEach(subGroup => {
-                    if (Array.isArray(subGroup)) services.push(...subGroup);
-                });
-            } else if (Array.isArray(group)) {
-                services.push(...group);
-            }
-        });
-    }
-
     return services;
 }
-
-/* ================= SERVICES ================= */
-let ALL_SERVICES = [];
 
 async function loadServices() {
     const container = document.getElementById("servicesList");
     if (!container) return;
 
-    container.innerHTML = "<p>Loading services...</p>";
+    container.innerHTML = `<div class="loading-spinner">Fetching services...</div>`;
 
     const data = await safeFetch(API + "/services");
-
     if (!data) {
-        container.innerHTML = "<p style='color:red'>Failed to load services</p>";
+        container.innerHTML = "<p style='color:#ef4444'>Failed to load services. Please refresh.</p>";
         return;
     }
 
     ALL_SERVICES = normalizeServices(data);
-
     renderServices();
 }
 
-/* ================= RENDER SERVICES ================= */
 function renderServices(filter = "") {
     const container = document.getElementById("servicesList");
     if (!container) return;
 
     container.innerHTML = "";
-
     const query = filter.toLowerCase();
 
-    ALL_SERVICES.forEach(s => {
-        if (query && !s.name.toLowerCase().includes(query)) return;
+    const filtered = ALL_SERVICES.filter(s => 
+        s.name.toLowerCase().includes(query) || 
+        s.platform.toLowerCase().includes(query)
+    );
 
+    if (filtered.length === 0) {
+        container.innerHTML = "<p>No services found matching your search.</p>";
+        return;
+    }
+
+    filtered.forEach(s => {
         const div = document.createElement("div");
-        div.className = "service";
-
+        div.className = "service-card"; // Make sure your CSS matches this class
         div.innerHTML = `
-            <b>${s.name}</b><br>
-            Platform: ${s.platform || "Other"}<br>
-            Rate: ${Number(s.rate).toFixed(2)}<br>
-            Min: ${s.min} | Max: ${s.max}<br><br>
-            <button onclick="order('${s.serviceId}')">Order</button>
+            <div class="service-platform">${s.platform || "SMM"}</div>
+            <div class="service-name">${s.name}</div>
+            <div class="service-meta">
+                <span><i class="fas fa-tag"></i> KES ${Number(s.rate).toFixed(2)} /1k</span>
+                <span><i class="fas fa-layer-group"></i> Min: ${s.min}</span>
+            </div>
+            <button class="order-btn-sm" onclick="orderNow('${s.serviceId}', '${encodeURIComponent(s.name)}', ${s.rate})">
+                Select Service
+            </button>
         `;
-
         container.appendChild(div);
     });
 }
 
-/* ================= SEARCH SERVICES ================= */
 function searchServices(val) {
     renderServices(val);
 }
 
-/* ================= ORDER ================= */
-async function order(serviceId) {
-    const link = prompt("Enter link:");
-    const qty = prompt("Enter quantity:");
-
-    if (!link || !qty) return;
-
-    const data = await safeFetch(API + "/order", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + getToken()
-        },
-        body: JSON.stringify({
-            serviceId,
-            link,
-            quantity: Number(qty)
-        })
-    });
-
-    if (!data) {
-        toast("Order failed ❌", false);
-        return;
-    }
-
-    toast("Order placed ✅");
-
-    loadOrders();
-    loadUser();
+/* ================= ORDERING ENGINE ================= */
+function orderNow(id, name, rate) {
+    // Redirects to the beautiful order page we created
+    window.location.href = `/order?id=${id}&name=${name}&rate=${rate}`;
 }
 
-/* ================= ORDERS ================= */
+/* ================= ORDER HISTORY ================= */
 async function loadOrders() {
-    const table = document.getElementById("ordersList");
-    if (!table) return;
+    const tableBody = document.getElementById("ordersTableBody");
+    if (!tableBody) return;
 
-    const data = await safeFetch(API + "/orders", {
+    // Sync with provider first to get latest status
+    await safeFetch(API + "/sync-orders", {
+        headers: { Authorization: "Bearer " + getToken() }
+    });
+
+    const data = await safeFetch(API + "/sync-orders", {
         headers: { Authorization: "Bearer " + getToken() }
     });
 
     if (!data) return;
 
-    table.innerHTML = "";
+    tableBody.innerHTML = "";
 
     data.forEach(o => {
-        const li = document.createElement("li");
-        // serviceName is preferred if your backend provides it
-        li.innerText = `${o.serviceName || o.serviceId} | Qty: ${o.quantity} | Cost: ${o.cost} | Status: ${o.status}`;
-        table.appendChild(li);
+        const tr = document.createElement("tr");
+        const statusClass = `status-${o.status.toLowerCase()}`;
+        
+        tr.innerHTML = `
+            <td>#${o.orderId}</td>
+            <td>${o.serviceName || "SMM Service"}</td>
+            <td>${o.quantity}</td>
+            <td>KES ${o.cost}</td>
+            <td><span class="status-badge ${statusClass}">${o.status.toUpperCase()}</span></td>
+        `;
+        tableBody.appendChild(tr);
     });
 }
 
-/* ================= STEP FLOW ================= */
-function showPage(page) {
-    document.querySelectorAll(".page").forEach(p => {
-        p.style.display = "none";
+/* ================= NAVIGATION & BOOT ================= */
+function showPage(pageId) {
+    document.querySelectorAll(".page-section").forEach(section => {
+        section.style.display = "none";
     });
-
-    const el = document.getElementById(page);
-    if (el) el.style.display = "block";
+    const target = document.getElementById(pageId);
+    if (target) target.style.display = "block";
 }
 
-/* ================= LOGIN CHECK ================= */
+// RUN ON LOAD
 window.onload = () => {
-    // Check if on dashboard or restricted page
-    if (document.body.classList.contains("restricted") || window.location.pathname.includes("dashboard")) {
-        if (!getToken()) {
-            location.href = "index.html";
-            return;
-        }
+    const token = getToken();
+    const isLoginPage = window.location.pathname === "/" || window.location.pathname.includes("index");
+
+    if (!token && !isLoginPage) {
+        window.location.href = "/";
+        return;
     }
 
-    if (getToken()) {
+    if (token) {
         loadUser();
         loadServices();
         loadOrders();
