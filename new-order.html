@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order | UNASEMEJE ø DIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Same shared styles as above */
+        :root { --primary: #7c3aed; --secondary: #10b981; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; }
+        body { margin: 0; background: var(--bg-dark); color: var(--text-main); font-family: sans-serif; display: flex; }
+        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; }
+        .main { margin-left: 260px; padding: 30px; width: 100%; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 15px; }
+        input, select { width: 100%; padding: 12px; margin-top: 10px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 8px; }
+        .btn-order { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .list-item { padding: 12px; background: #111827; margin-bottom: 8px; cursor: pointer; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2 style="color:var(--primary); text-align:center;">UNASEMEJE ø DIA</h2>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="new-order.html" class="active"><i class="fas fa-plus-circle"></i> New Order</a>
+        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
+        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <h3><i class="fas fa-shopping-cart"></i> Place New Order</h3>
+            <p style="color:#94a3b8;">Follow the steps to boost your account.</p>
+        </div>
+
+        <div class="card">
+            <label>1. Select Platform</label>
+            <select id="platformSelect" onchange="updateCategories()">
+                <option value="">-- Choose Platform --</option>
+                <option value="tiktok">TikTok</option>
+                <option value="instagram">Instagram</option>
+            </select>
+
+            <label>2. Target Link</label>
+            <input type="text" id="link" placeholder="https://www.tiktok.com/@user/video/...">
+
+            <label>3. Quantity</label>
+            <input type="number" id="quantity" placeholder="Min: 100" oninput="calculateTotal()">
+
+            <div style="margin-top:20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; text-align:center;">
+                <small>Estimated Cost</small><br>
+                <b style="color:var(--secondary); font-size: 24px;">KES <span id="totalPrice">0.00</span></b>
+            </div>
+
+            <button class="btn-order" onclick="placeOrder()">CONFIRM ORDER</button>
+        </div>
+    </div>
+
+    <script>
+        function calculateTotal() {
+            const qty = document.getElementById("quantity").value || 0;
+            const rate = 50; // Example rate KES per 1000
+            document.getElementById("totalPrice").innerText = ((rate / 1000) * qty).toFixed(2);
+        }
+
+        async function placeOrder() {
+            // Your existing order placement logic using fetch()
+            alert("Order processing...");
+        }
+    </script>
+</body>
+</html>
