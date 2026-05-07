@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Service List | UNASEMEJE ø DIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --secondary: #10b981;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; background: var(--bg-dark); color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif; display: flex; 
+        }
+
+        /* SIDEBAR */
+        .sidebar { 
+            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
+            position: fixed; height: 100vh; display: flex; flex-direction: column; 
+        }
+        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
+        .sidebar a { 
+            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
+            text-decoration: none; border-radius: 10px; margin-bottom: 5px; 
+        }
+        .sidebar a.active { background: var(--primary); color: white; }
+
+        /* MAIN CONTENT */
+        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
+        
+        .header-section { margin-bottom: 30px; }
+        .header-section h1 { font-weight: 800; font-size: 28px; margin: 0; }
+
+        /* FILTER & SEARCH */
+        .controls { display: flex; gap: 15px; margin-bottom: 20px; }
+        .search-input { 
+            flex: 1; padding: 12px 20px; border-radius: 12px; border: 1px solid #334155; 
+            background: var(--card-bg); color: white; outline: none;
+        }
+
+        /* SERVICE TABLE */
+        .card { 
+            background: var(--card-bg); border-radius: 20px; border: 1px solid #334155; 
+            overflow: hidden; 
+        }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th { 
+            background: rgba(0,0,0,0.2); text-align: left; padding: 15px; 
+            color: var(--text-dim); font-size: 11px; text-transform: uppercase; 
+        }
+        td { padding: 15px; border-bottom: 1px solid #1f2937; font-size: 13px; }
+
+        .category-header { 
+            background: #111827; padding: 10px 15px; font-weight: 800; 
+            color: var(--primary); font-size: 14px;
+        }
+
+        .price-tag { color: var(--secondary); font-weight: 800; }
+        .order-btn {
+            background: var(--primary); color: white; border: none; padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 11px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>unasemeje ø dia</h2>
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="platform.html"><i class="fas fa-plus-circle"></i> New Order</a>
+        <a href="services.html" class="active"><i class="fas fa-list"></i> Services</a>
+        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
+        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
+    </div>
+
+    <div class="main">
+        <div class="header-section">
+            <h1>Service List</h1>
+            <p style="color: var(--text-dim);">Browse all available social media packages and prices.</p>
+        </div>
+
+        <div class="controls">
+            <input type="text" id="serviceSearch" class="search-input" placeholder="Search for a service (e.g. TikTok, Real, High Quality)..." onkeyup="filterServices()">
+        </div>
+
+        <div class="card">
+            <div class="table-container">
+                <table id="serviceTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Service</th>
+                            <th>Rate per 1k</th>
+                            <th>Min / Max</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceListBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = "https://unasemeje-backend-3.onrender.com/api";
+
+        async function fetchAllServices() {
+            try {
+                const response = await fetch(`${API}/services`);
+                const result = await response.json();
+                const data = result.data;
+                const body = document.getElementById('serviceListBody');
+                body.innerHTML = "";
+
+                // Loop through Platforms -> Categories -> Services
+                for (const platform in data) {
+                    for (const category in data[platform]) {
+                        // Add a category header row
+                        const headerRow = document.createElement('tr');
+                        headerRow.innerHTML = `<td colspan="5" class="category-header">${platform.toUpperCase()} - ${category}</td>`;
+                        body.appendChild(headerRow);
+
+                        data[platform][category].forEach(service => {
+                            const row = document.createElement('tr');
+                            row.className = "service-row";
+                            row.innerHTML = `
+                                <td style="color: var(--text-dim);">${service.id}</td>
+                                <td style="font-weight: 600;">${service.name}</td>
+                                <td class="price-tag">KES ${service.rate}</td>
+                                <td style="color: var(--text-dim);">${service.min} / ${service.max}</td>
+                                <td><a href="new-order.html?serviceId=${service.id}" class="order-btn">Order</a></td>
+                            `;
+                            body.appendChild(row);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading services:", error);
+            }
+        }
+
+        function filterServices() {
+            const input = document.getElementById("serviceSearch").value.toLowerCase();
+            const rows = document.querySelectorAll(".service-row");
+            const headers = document.querySelectorAll(".category-header");
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            });
+
+            // Hide category headers if no visible rows follow them (optional polish)
+        }
+
+        fetchAllServices();
+    </script>
+</body>
+</html>
