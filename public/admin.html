@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard | Unasemeje SMM</title>
+<title>Admin Dashboard | Unasemeje ø dia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -134,7 +134,7 @@ button {
 .btn-approve { background: #22c55e; color: #052e16; }
 .btn-balance { background: #38bdf8; color: #082f49; }
 .btn-danger { background: #ef4444; color: white; }
-.btn-warn { background: #f59e0b; color: white; }
+.btn-sync { background: #8b5cf6; color: white; margin-bottom: 10px; }
 
 button:hover { filter: brightness(1.2); }
 
@@ -172,6 +172,7 @@ button:hover { filter: brightness(1.2); }
 <div class="main">
   <h1 id="pageTitle">Dashboard Overview</h1>
   
+  <!-- TOP LEVEL STATS -->
   <div id="statsSection" class="stats-grid">
       <div class="card stat-card"><h3>Total Users</h3><p id="stat-users">0</p></div>
       <div class="card stat-card"><h3>Total Balances</h3><p id="stat-money">KES 0</p></div>
@@ -184,16 +185,21 @@ button:hover { filter: brightness(1.2); }
 </div>
 
 <script>
+// Configuration
 const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
 /* --- SECURITY: ADMIN ONLY --- */
+// Strictly controls access to only your credentials
 function checkAdmin() {
   if (!token) { location.href = "index.html"; return; }
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const isAdmin = payload.email === "diasamratbarusz@gmail.com" || payload.phone === "0715509440";
-    if (!isAdmin) { location.href = "dashboard.html"; }
+    if (!isAdmin) { 
+        alert("Restricted Access: You are not authorized to view the Unasemeje Admin Panel.");
+        location.href = "home.html"; 
+    }
   } catch (e) { location.href = "index.html"; }
 }
 checkAdmin();
@@ -210,7 +216,7 @@ async function adminFetch(endpoint, method = "GET", body = null) {
   } catch (err) { return { error: "Network Connection Failed" }; }
 }
 
-/* --- OVERVIEW STATS --- */
+/* --- OVERVIEW STATS & SERVICE CONTROL --- */
 async function loadStats() {
     setActiveNav('nav-stats');
     document.getElementById("pageTitle").innerText = "System Overview";
@@ -226,6 +232,40 @@ async function loadStats() {
         const pending = deposits.filter(d => d.status === "pending").length;
         document.getElementById("stat-deposits").innerText = pending;
     }
+
+    // Integrated Force Sync Tool
+    document.getElementById("content").innerHTML = `
+        <div class="card">
+            <h3>Service Sync Manager</h3>
+            <p>If the user dashboard shows broken or old services, use this button to force a new sync with Delixgains API.</p>
+            <button class="btn-sync" onclick="forceSyncServices()"><i class="fas fa-sync"></i> Force Refresh Provider Services</button>
+        </div>
+    `;
+}
+
+/* --- FORCE SYNC LOGIC --- */
+async function forceSyncServices() {
+    if(!confirm("This will delete all current services and pull the latest ones from Delixgains. Proceed?")) return;
+    const btn = document.querySelector(".btn-sync");
+    btn.innerText = "Syncing with Provider...";
+    btn.disabled = true;
+    
+    try {
+        const res = await fetch(`${API}/services?refresh=true`, {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        const data = await res.json();
+        if(data.success) {
+            alert("Success! All services have been updated.");
+        } else {
+            alert("Error syncing: " + (data.error || "Unknown error"));
+        }
+    } catch(e) {
+        alert("Sync failed. Check your backend connection.");
+    } finally {
+        btn.innerHTML = '<i class="fas fa-sync"></i> Force Refresh Provider Services';
+        btn.disabled = false;
+    }
 }
 
 /* --- USER MANAGEMENT --- */
@@ -236,18 +276,18 @@ async function loadUsers() {
   content.innerHTML = "<p>Loading users...</p>";
 
   const users = await adminFetch("/admin/users");
-  let html = `<input type="text" class="search-box" placeholder="Search by email or phone..." onkeyup="filterTable(0)">
+  let html = `<input type="text" class="search-box" placeholder="Search by email, phone, or username..." onkeyup="filterTable(0)">
     <div class="table-container"><table id="adminTable">
     <tr><th>User Details</th><th>Balance</th><th>Status</th><th>Action</th></tr>`;
 
   users.forEach(u => {
-    const isOnline = (new Date() - new Date(u.lastSeen)) < 300000; // 5 mins
+    const isOnline = (new Date() - new Date(u.lastSeen)) < 300000;
     html += `<tr>
-        <td>${u.email}<br><small>${u.phone || 'No Phone'}</small></td>
+        <td>${u.email}<br><small>${u.username || 'User'} | ${u.phone || 'No Phone'}</small></td>
         <td><b>KES ${u.balance.toFixed(2)}</b></td>
         <td>${isOnline ? '<span class="online-dot"></span>Online' : '<span class="offline-dot"></span>Offline'}</td>
         <td>
-          <button class="btn-balance" onclick="adjustBalance('${u._id}', '${u.email}')">Add/Sub KES</button>
+          <button class="btn-balance" onclick="adjustBalance('${u._id}', '${u.email}')">Add/Deduct KES</button>
         </td>
       </tr>`;
   });
@@ -257,19 +297,19 @@ async function loadUsers() {
 /* --- DEPOSIT MANAGEMENT --- */
 async function loadDeposits() {
   setActiveNav('nav-deposits');
-  document.getElementById("pageTitle").innerText = "Deposit Requests";
+  document.getElementById("pageTitle").innerText = "M-Pesa Deposit Requests";
   const content = document.getElementById("content");
   const deposits = await adminFetch("/admin/deposits");
 
   let html = `<div class="table-container"><table>
-    <tr><th>User</th><th>Amount</th><th>M-Pesa Message</th><th>Action</th></tr>`;
+    <tr><th>User</th><th>Amount</th><th>Code</th><th>Action</th></tr>`;
 
   deposits.reverse().forEach(d => {
     if (d.status === "pending") {
         html += `<tr>
-            <td>${d.userEmail}<br><small>${d.phone}</small></td>
+            <td>${d.userEmail}<br><small>${d.phone || ''}</small></td>
             <td>KES ${d.amount}</td>
-            <td><small style="color:#94a3b8">${d.message}</small></td>
+            <td><code style="color:#38bdf8">${d.transactionCode}</code></td>
             <td>
               <button class="btn-approve" onclick="approveDeposit('${d._id}')">Approve</button>
               <button class="btn-danger" onclick="cancelDeposit('${d._id}')">Reject</button>
@@ -277,23 +317,23 @@ async function loadDeposits() {
         </tr>`;
     }
   });
-  content.innerHTML = html + `</table></div>`;
+  content.innerHTML = html + (deposits.filter(d => d.status === "pending").length === 0 ? "<tr><td colspan='4' style='text-align:center'>No new deposit requests</td></tr>" : "") + `</table></div>`;
 }
 
-/* --- ORDER MANAGEMENT --- */
+/* --- ORDER TRACKING --- */
 async function loadOrders() {
     setActiveNav('nav-orders');
-    document.getElementById("pageTitle").innerText = "Recent Orders";
+    document.getElementById("pageTitle").innerText = "Platform Orders";
     const orders = await adminFetch("/admin/orders");
     const content = document.getElementById("content");
 
     let html = `<div class="table-container"><table>
-        <tr><th>User</th><th>Service ID</th><th>Qty</th><th>Link</th><th>Status</th></tr>`;
+        <tr><th>User</th><th>Service</th><th>Qty</th><th>Link</th><th>Status</th></tr>`;
 
-    orders.reverse().slice(0, 50).forEach(o => {
+    orders.reverse().slice(0, 100).forEach(o => {
         html += `<tr>
-            <td>${o.userEmail}</td>
-            <td>${o.serviceId}</td>
+            <td>${o.userEmail || 'Client'}</td>
+            <td>ID: ${o.serviceId}</td>
             <td>${o.quantity}</td>
             <td><a href="${o.link}" target="_blank" style="color:#38bdf8">Link</a></td>
             <td><span class="status-badge ${o.status.toLowerCase()}">${o.status}</span></td>
@@ -302,31 +342,32 @@ async function loadOrders() {
     content.innerHTML = html + `</table></div>`;
 }
 
-/* --- ACTIONS --- */
+/* --- SYSTEM ACTIONS --- */
 async function approveDeposit(id) {
-  if (!confirm("Verify payment and add money to user?")) return;
+  if (!confirm("Confirm M-Pesa verification and credit user balance?")) return;
   const res = await adminFetch("/admin/approve-deposit", "POST", { depositId: id });
-  alert(res.error ? "Error: " + res.error : "Credited Successfully!");
+  alert(res.error ? "Error: " + res.error : "Funds Credited Successfully!");
   loadDeposits(); loadStats();
 }
 
 async function cancelDeposit(id) {
-  if (!confirm("Reject this deposit request?")) return;
+  if (!confirm("Reject this deposit transaction?")) return;
   const res = await adminFetch("/admin/cancel-deposit", "POST", { depositId: id });
   loadDeposits();
 }
 
 async function adjustBalance(userId, email) {
-    const amount = prompt(`Add/Subtract money for ${email}\n(e.g., 500 to add, -500 to deduct):`);
+    const amount = prompt(`Update balance for ${email}\n(Enter positive to add, negative to subtract):`);
     if (!amount || isNaN(amount)) return;
     const res = await adminFetch("/admin/update-balance", "POST", { userId, amount: parseFloat(amount) });
-    if (!res.error) { alert("Updated!"); loadUsers(); loadStats(); }
+    if (!res.error) { alert("Balance updated!"); loadUsers(); loadStats(); }
 }
 
 function filterTable(colIndex) {
     let input = document.querySelector(".search-box");
     let filter = input.value.toUpperCase();
     let table = document.getElementById("adminTable");
+    if(!table) return;
     let tr = table.getElementsByTagName("tr");
     for (let i = 1; i < tr.length; i++) {
         let td = tr[i].getElementsByTagName("td")[colIndex];
@@ -344,7 +385,7 @@ function setActiveNav(id) {
 
 function logout() { localStorage.removeItem("token"); location.href = "index.html"; }
 
-// Initialize
+// Initialize Dashboard
 loadStats();
 </script>
 </body>
