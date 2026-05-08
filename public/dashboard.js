@@ -19,6 +19,29 @@ function headers() {
   };
 }
 
+/* ================= ADMIN SECURITY GATE ================= */
+/**
+ * Verifies if the logged-in user is the administrator.
+ * Only grants access to the specified email or phone.
+ */
+function checkAdminAccess(user) {
+    const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
+    const ADMIN_PHONE = "0715509440";
+
+    const isOwner = user.email === ADMIN_EMAIL || user.phone === ADMIN_PHONE;
+
+    if (isOwner) {
+        // Add the class to body to override 'display: none !important' in style.css
+        document.body.classList.add('is-admin');
+        
+        // Manual backup to ensure the element is visible
+        const adminBtn = document.getElementById("adminMenu");
+        if (adminBtn) adminBtn.style.display = "flex";
+        
+        console.log("Admin security gate: Owner Verified.");
+    }
+}
+
 /* ================= USER DATA & BALANCE ================= */
 async function loadUser() {
   try {
@@ -30,25 +53,32 @@ async function loadUser() {
       throw new Error("User load failed");
     }
 
+    // Security Gate: Check if current user is the owner
+    checkAdminAccess(data);
+
     // Update balance across the UI with Kenyan formatting
-    const balanceEl = document.getElementById("balance");
+    const balanceEl = document.getElementById("balance") || document.getElementById("userBalance");
     if (balanceEl) {
-      balanceEl.innerText = Number(data.balance || 0).toLocaleString('en-KE', { 
+      const balanceValue = Number(data.balance || 0).toLocaleString('en-KE', { 
         minimumFractionDigits: 2, 
         maximumFractionDigits: 2 
       });
+      // If using the dashboard-specific 'userBalance' ID, add the KES prefix
+      balanceEl.innerText = (balanceEl.id === "userBalance") ? `KES ${balanceValue}` : balanceValue;
     }
 
     // Load user-specific info like Referral Code or Username
-    const refCodeEl = document.getElementById("referralCodeDisplay");
+    const refCodeEl = document.getElementById("referralCodeDisplay") || document.getElementById("myRefCode");
     if (refCodeEl && data.referralCode) {
         refCodeEl.innerText = data.referralCode;
+        localStorage.setItem("refCode", data.referralCode);
     }
 
+    const userNameEl = document.getElementById("userName");
     const userEmailEl = document.getElementById("userEmail");
-    if (userEmailEl) {
-        userEmailEl.innerText = data.username || data.email || "User";
-    }
+    
+    if (userNameEl) userNameEl.innerText = data.username || "User";
+    if (userEmailEl) userEmailEl.innerText = data.email || "";
 
   } catch (err) {
     console.error("User load error:", err);
@@ -59,7 +89,6 @@ async function loadUser() {
 function normalizeServices(json) {
   let services = [];
 
-  // Support for flat arrays, grouped platform objects, or backend responses
   if (Array.isArray(json)) {
     services = json;
   }
@@ -68,7 +97,6 @@ function normalizeServices(json) {
   }
   else if (json?.data && typeof json.data === "object") {
     Object.entries(json.data).forEach(([platform, groups]) => {
-      // Process nested categories (Platform -> Category -> Services)
       Object.entries(groups).forEach(([category, list]) => {
         if (Array.isArray(list)) {
           list.forEach(s => {
@@ -86,7 +114,7 @@ function normalizeServices(json) {
 }
 
 async function loadServices() {
-  const container = document.getElementById("services");
+  const container = document.getElementById("services") || document.getElementById("servicesList");
   if (container) container.innerHTML = `<div class="loading-spinner"><i class="fas fa-circle-notch fa-spin"></i> Loading Services...</div>`;
 
   try {
@@ -100,13 +128,13 @@ async function loadServices() {
 
   } catch (err) {
     console.error("Services error:", err);
-    showToast("Failed to load services. Please refresh.", "error");
+    if (typeof showToast === "function") showToast("Failed to load services.", "error");
   }
 }
 
 /* ================= UI RENDERING ================= */
 function renderServices() {
-  const container = document.getElementById("services");
+  const container = document.getElementById("services") || document.getElementById("servicesList");
   if (!container) return;
 
   const search = document.getElementById("search")?.value?.toLowerCase() || "";
@@ -127,9 +155,8 @@ function renderServices() {
 
   filtered.forEach(s => {
     const div = document.createElement("div");
-    div.className = "service-card"; // Updated class for emerald styling
+    div.className = "service-card"; 
     
-    // unasemeje ø dia specific styling for service cards
     div.innerHTML = `
       <div class="service-info">
         <div class="platform-icon">${getIcon(s.platform)}</div>
@@ -167,10 +194,8 @@ function selectService(service) {
   const idInput = document.getElementById("serviceId");
   if (idInput) idInput.value = service.serviceId;
 
-  // Visual confirmation on card selection (optional)
   document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
   
-  // Update order box display
   const nameDisplay = document.getElementById("selectedServiceName");
   if (nameDisplay) nameDisplay.innerText = service.name;
 
@@ -205,13 +230,15 @@ async function placeOrder() {
   const btn = document.querySelector(".btn-order");
 
   if (!serviceId || !link || !quantity) {
-    showToast("Please select a service and enter link/quantity", "error");
+    if (typeof showToast === "function") showToast("Please enter link and quantity", "error");
     return;
   }
 
   try {
-    if(btn) btn.disabled = true;
-    if(btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    if(btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    }
 
     const res = await fetch(`${API}/order`, {
       method: "POST",
@@ -227,13 +254,13 @@ async function placeOrder() {
 
     if (!res.ok) throw new Error(data.error || "Order failed");
 
-    showToast("Order placed successfully! 🚀", "success");
+    if (typeof showToast === "function") showToast("Order placed successfully! 🚀", "success");
 
-    loadUser(); // Refresh balance
+    loadUser(); 
     resetOrderFields();
 
   } catch (err) {
-    showToast(err.message, "error");
+    if (typeof showToast === "function") showToast(err.message, "error");
   } finally {
     if(btn) {
         btn.disabled = false;
@@ -258,34 +285,6 @@ function resetOrderFields() {
   selectedService = null;
 }
 
-/* ================= DEPOSIT LOGIC ================= */
-async function submitMpesaCode() {
-    const message = document.getElementById("mpesaMessage")?.value;
-    const amount = document.getElementById("depositAmount")?.value;
-
-    if (!message || !amount) {
-        showToast("Enter amount and paste the M-Pesa confirmation SMS", "error");
-        return;
-    }
-
-    try {
-        const res = await fetch(`${API}/deposit`, {
-            method: "POST",
-            headers: headers(),
-            body: JSON.stringify({ message, amount: Number(amount) })
-        });
-        const data = await res.json();
-        
-        if (!res.ok) throw new Error(data.error);
-
-        showToast("Payment submitted! Admin will verify in 5-10 mins.", "success");
-        document.getElementById("mpesaMessage").value = "";
-        document.getElementById("depositAmount").value = "";
-    } catch (err) {
-        showToast(err.message, "error");
-    }
-}
-
 /* ================= UTILS ================= */
 function showToast(msg, type = "success") {
   const toast = document.getElementById("toast");
@@ -301,7 +300,7 @@ function showToast(msg, type = "success") {
 }
 
 function logout() {
-    localStorage.removeItem("token");
+    localStorage.clear();
     window.location.href = "index.html";
 }
 
