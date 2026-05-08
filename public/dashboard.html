@@ -15,10 +15,12 @@
         <h2>unasemeje ø dia</h2>
         <div class="sidebar-nav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
-            <!-- ADMIN LINK: Only visible if credentials match -->
+            
+            <!-- ADMIN LINK: Hidden by default, strictly enabled via JS for your credentials -->
             <a href="admin.html" id="adminMenu" style="display: none; border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px;">
                 <i class="fas fa-user-shield"></i> <span>Admin Panel</span>
             </a>
+
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
             <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
@@ -90,11 +92,11 @@
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
-    // Protect Route
+    // Route Protection
     if (!token) window.location.href = "index.html";
 
     function checkAdminStatus(email, phone) {
-        // Strict Admin Control
+        // Strict Admin Control for Admin Panel Visibility
         const isAdmin = email === "diasamratbarusz@gmail.com" || phone === "0715509440";
         if (isAdmin) {
             document.getElementById("adminMenu").style.display = "flex";
@@ -113,10 +115,10 @@
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
                 
-                // Security Check: Enable Admin menu if it matches your credentials
+                // Security Check: Enable Admin menu if credentials match
                 checkAdminStatus(user.email, user.phone);
 
-                // Set Referral code in background for other pages
+                // Set Referral code for use in other pages
                 localStorage.setItem("refCode", user.referralCode);
             } else {
                 logout();
@@ -146,7 +148,7 @@
         window.location.href = "index.html";
     }
 
-    // Run on load
+    // Execute synchronization on page load
     syncDashboard();
 </script>
 
