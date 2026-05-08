@@ -6,12 +6,15 @@
  * Handles grouped, flat, and fallback API routes.
  */
 
-// Configuration - Matches your auth.js and app.js
+// Configuration - Matches your Render backend URL
 const API_URL = "https://unasemeje-backend-3.onrender.com/api";
 
 // Global variable for filtering/search
 let allServices = [];
 
+/**
+ * Main function to fetch and display services
+ */
 async function loadServices() {
     const container = document.getElementById("serviceList");
     if (!container) return;
@@ -35,7 +38,8 @@ async function loadServices() {
 
         let services = [];
 
-        /* ================= HANDLE GROUPED RESPONSE ================= */
+        /* ================= HANDLE GROUPED RESPONSE (New Backend Format) ================= */
+        // Check if data is an object with platform keys (e.g., {"TikTok": {"Category": [...]}})
         if (json?.success && json.data && typeof json.data === "object" && !Array.isArray(json.data)) {
             Object.keys(json.data).forEach(platform => {
                 const platformData = json.data[platform];
@@ -44,30 +48,30 @@ async function loadServices() {
                         services.push({
                             serviceId: String(s.serviceId || s.id || ""),
                             name: cleanText(s.name || "Unnamed Service"),
-                            rate: Number(s.sellingRate || s.rate || s.price || 0),
+                            rate: Number(s.rate || 0), // Uses the adjusted rate from backend
                             min: Number(s.min || 1),
                             max: Number(s.max || 10000),
                             category: s.category || type,
                             platform: platform,
-                            provider: s.provider || "PROVIDER1"
+                            provider: s.provider || "DELIXGAINS"
                         });
                     });
                 });
             });
         }
 
-        /* ================= HANDLE FLAT RESPONSE ================= */
+        /* ================= HANDLE FLAT RESPONSE (Legacy/Standard Format) ================= */
         else if (Array.isArray(json) || (json?.success && Array.isArray(json.data))) {
             const list = Array.isArray(json) ? json : json.data;
             services = list.map(s => ({
                 serviceId: String(s.serviceId || s.id || ""),
                 name: cleanText(s.name || "Unnamed Service"),
-                rate: Number(s.sellingRate || s.rate || s.price || 0),
+                rate: Number(s.rate || 0),
                 min: Number(s.min || 1),
                 max: Number(s.max || 10000),
                 category: s.category || "Other",
                 platform: s.platform || detectPlatform(s),
-                provider: s.provider || "PROVIDER1"
+                provider: s.provider || "DELIXGAINS"
             }));
         }
 
@@ -82,7 +86,7 @@ async function loadServices() {
 }
 
 /**
- * Fallback logic for external-services route
+ * Fallback logic for external-services route if primary fails
  */
 async function handleFallback(container) {
     try {
@@ -97,12 +101,12 @@ async function handleFallback(container) {
             services2 = list2.map(s => ({
                 serviceId: String(s.serviceId || s.id || ""),
                 name: cleanText(s.name || "Unnamed Service"),
-                rate: Number(s.sellingRate || s.rate || s.price || 0),
+                rate: Number(s.rate || 0),
                 min: Number(s.min || 1),
                 max: Number(s.max || 10000),
                 category: s.category || "Other",
                 platform: detectPlatform(s),
-                provider: s.provider || "PROVIDER1"
+                provider: s.provider || "DELIXGAINS"
             }));
         }
 
@@ -124,7 +128,7 @@ async function handleFallback(container) {
  * Filter, Clean, and Trigger Render
  */
 function processAndRender(services) {
-    // Remove invalid & Remove duplicates
+    // Filter out invalid entries and handle duplicates based on provider/serviceId
     let cleaned = services.filter(s => s.serviceId && s.name && !isNaN(s.rate));
     allServices = [
         ...new Map(cleaned.map(s => [`${s.provider}_${s.serviceId}`, s])).values()
@@ -142,7 +146,7 @@ function renderServices(data) {
     if (!container) return;
 
     if (!data.length) {
-        container.innerHTML = "<p style='text-align:center; padding:20px;'>No services matching your criteria.</p>";
+        container.innerHTML = "<p style='text-align:center; padding:20px; color: rgba(255,255,255,0.5);'>No services matching your criteria.</p>";
         return;
     }
 
@@ -152,11 +156,11 @@ function renderServices(data) {
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
                     <span style="font-size: 10px; text-transform: uppercase; color: #10b981; font-weight: 800; letter-spacing: 1px;">${s.platform}</span>
-                    <h4 style="margin: 5px 0; font-size: 14px; color: #fff;">${s.name}</h4>
-                    <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.5);">ID: ${s.serviceId} | Min: ${s.min} - Max: ${s.max}</p>
+                    <h4 style="margin: 5px 0; font-size: 14px; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;">${s.name}</h4>
+                    <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.5);">ID: ${s.serviceId} | Min: ${s.min.toLocaleString()} - Max: ${s.max.toLocaleString()}</p>
                 </div>
                 <div style="text-align: right;">
-                    <span style="display: block; color: #10b981; font-weight: 900; font-size: 16px;">KES ${s.rate}</span>
+                    <span style="display: block; color: #10b981; font-weight: 900; font-size: 16px;">KES ${s.rate.toFixed(2)}</span>
                     <small style="color: rgba(255,255,255,0.3); font-size: 10px;">per 1000</small>
                 </div>
             </div>
@@ -165,29 +169,35 @@ function renderServices(data) {
 }
 
 /**
- * Handle Service Selection
+ * Handle Service Selection (Syncs with New Order page)
  */
 function selectService(id, name) {
-    const input = document.getElementById("service");
+    // If on a page with a service input (like new-order)
+    const input = document.getElementById("serviceSelect") || document.getElementById("service");
     if (input) {
         input.value = id;
+        // Trigger manual update if the page has updateServiceInfo
+        if (typeof window.updateServiceInfo === "function") {
+            window.updateServiceInfo();
+        }
+        
         if (window.showToast) {
             showToast(`Selected: ${name}`);
         } else {
-            alert(`Selected: ${name}`);
+            console.log(`Service Selected: ${name} (${id})`);
         }
     }
 }
 
 /**
- * UTILS: Text Cleaning
+ * UTILS: Text Cleaning (Removes bracketed codes from provider names)
  */
 function cleanText(text) {
     return String(text || "").replace(/\[.*?\]/g, "").replace(/\{.*?\}/g, "").trim();
 }
 
 /**
- * UTILS: Platform Detection
+ * UTILS: Platform Detection for Icons/Filtering
  */
 function detectPlatform(s) {
     const text = `${s.name} ${s.category}`.toLowerCase();
@@ -200,5 +210,7 @@ function detectPlatform(s) {
     return "Other";
 }
 
-// Auto-init
-document.addEventListener("DOMContentLoaded", loadServices);
+// Auto-initialize when the DOM is ready
+document.addEventListener("DOMContentLoaded", () => {
+    loadServices();
+});
