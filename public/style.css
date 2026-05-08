@@ -299,8 +299,9 @@ td {
 
 /* ================= ADMIN VISIBILITY CONTROL ================= */
 /* 
-   These rules hide admin elements globally. 
-   They only display if JavaScript adds the 'is-admin' class to the body.
+   These rules hide admin elements globally for all regular users.
+   They only trigger and display if JavaScript detects your specific email 
+   (diasamratbarusz@gmail.com) or phone (0715509440) and adds the 'is-admin' class.
 */
 
 #adminMenu, 
