@@ -14,7 +14,7 @@
     <div class="sidebar">
         <h2>unasemeje ø dia</h2>
         <div class="sidebar-nav">
-            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="home.html"><i class="fas fa-home"></i> <span>Home</span></a>
             <a href="new-order.html" class="active"><i class="fas fa-plus-circle"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
             <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
@@ -72,6 +72,7 @@
 
 <script>
     let allData = {};
+    // Pointing to your Render backend
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
@@ -92,7 +93,7 @@
                 pSelect.appendChild(opt);
             });
 
-            // Handle pre-selection from redirect (if applicable)
+            // Handle pre-selection from redirect
             const params = new URLSearchParams(window.location.search);
             if (params.get('platform')) {
                 pSelect.value = params.get('platform');
@@ -147,7 +148,7 @@
         const sId = document.getElementById("serviceSelect").value;
         const details = document.getElementById("serviceDetails");
 
-        const service = allData[p][c].find(x => x.serviceId == sId);
+        const service = allData[p] && allData[p][c] ? allData[p][c].find(x => x.serviceId == sId) : null;
         if (service) {
             details.style.display = "block";
             document.getElementById("minQty").innerText = service.min.toLocaleString();
@@ -163,23 +164,30 @@
         const p = document.getElementById("platformSelect").value;
         const c = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
-        const qty = document.getElementById("quantity").value || 0;
+        const qtyInput = document.getElementById("quantity").value;
+        const qty = parseFloat(qtyInput) || 0;
 
         if (p && c && sId) {
             const service = allData[p][c].find(x => x.serviceId == sId);
             const total = (service.rate / 1000) * qty;
-            document.getElementById("totalPrice").innerText = total.toFixed(2);
+            document.getElementById("totalPrice").innerText = total.toLocaleString('en-KE', { minimumFractionDigits: 2 });
         }
     }
 
     // 6. Submit Order to API
     async function placeOrder() {
+        const p = document.getElementById("platformSelect").value;
+        const c = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
-        const link = document.getElementById("link").value;
+        const link = document.getElementById("link").value.trim();
         const qty = document.getElementById("quantity").value;
         const btn = document.getElementById("orderBtn");
 
         if (!sId || !link || !qty) return alert("Please complete all steps.");
+
+        const service = allData[p][c].find(x => x.serviceId == sId);
+        if (parseInt(qty) < service.min) return alert(`Minimum quantity for this service is ${service.min}`);
+        if (parseInt(qty) > service.max) return alert(`Maximum quantity for this service is ${service.max}`);
 
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
@@ -197,15 +205,17 @@
             const data = await res.json();
 
             if (res.ok) {
-                // Redirect to success page with URL parameters
-                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(data.serviceName)}&cost=${data.totalCost}&balance=${data.newBalance}`;
+                // Redirect to success page with encoded parameters
+                const finalCost = (service.rate / 1000) * parseInt(qty);
+                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(service.name)}&cost=${finalCost}&balance=${data.newBalance}`;
             } else {
-                alert(data.error || "Order failed. Check your balance.");
+                alert(data.error || "Order failed. Please check your balance.");
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM ORDER';
             }
         } catch (e) {
-            alert("Connection error. Please try again.");
+            console.error("Order error:", e);
+            alert("Connection error. Please check your internet and try again.");
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM ORDER';
         }
