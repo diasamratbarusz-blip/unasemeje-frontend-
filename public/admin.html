@@ -190,7 +190,10 @@ const API = "https://unasemeje-backend-3.onrender.com/api";
 const token = localStorage.getItem("token");
 
 /* --- SECURITY: ADMIN ONLY --- */
-// Strictly controls access to only your credentials
+/**
+ * Strictly controls access to the Admin Panel.
+ * Only diasamratbarusz@gmail.com and 0715509440 are authorized.
+ */
 function checkAdmin() {
   if (!token) { location.href = "index.html"; return; }
   try {
@@ -198,7 +201,7 @@ function checkAdmin() {
     const isAdmin = payload.email === "diasamratbarusz@gmail.com" || payload.phone === "0715509440";
     if (!isAdmin) { 
         alert("Restricted Access: You are not authorized to view the Unasemeje Admin Panel.");
-        location.href = "home.html"; 
+        location.href = "home.html";
     }
   } catch (e) { location.href = "index.html"; }
 }
@@ -233,7 +236,7 @@ async function loadStats() {
         document.getElementById("stat-deposits").innerText = pending;
     }
 
-    // Integrated Force Sync Tool
+    // Integrated Force Sync Tool for Provider Services
     document.getElementById("content").innerHTML = `
         <div class="card">
             <h3>Service Sync Manager</h3>
@@ -294,7 +297,7 @@ async function loadUsers() {
   content.innerHTML = html + `</table></div>`;
 }
 
-/* --- DEPOSIT MANAGEMENT --- */
+/* --- DEPOSIT MANAGEMENT (M-Pesa Verification) --- */
 async function loadDeposits() {
   setActiveNav('nav-deposits');
   document.getElementById("pageTitle").innerText = "M-Pesa Deposit Requests";
