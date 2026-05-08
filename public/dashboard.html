@@ -16,8 +16,8 @@
         <div class="sidebar-nav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             
-            <!-- ADMIN LINK: Hidden by default, strictly enabled via JS for your credentials -->
-            <a href="admin.html" id="adminMenu" style="display: none; border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px;">
+            <!-- ADMIN LINK: Hidden by style.css, enabled for diasamratbarusz@gmail.com -->
+            <a href="admin.html" id="adminMenu" style="border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px;">
                 <i class="fas fa-user-shield"></i> <span>Admin Panel</span>
             </a>
 
@@ -97,9 +97,20 @@
 
     function checkAdminStatus(email, phone) {
         // Strict Admin Control for Admin Panel Visibility
-        const isAdmin = email === "diasamratbarusz@gmail.com" || phone === "0715509440";
+        const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
+        const ADMIN_PHONE = "0715509440";
+        
+        const isAdmin = email === ADMIN_EMAIL || phone === ADMIN_PHONE;
+        
         if (isAdmin) {
-            document.getElementById("adminMenu").style.display = "flex";
+            // Add the class to body to trigger visibility in style.css
+            document.body.classList.add('is-admin');
+            
+            // Manual fallback to ensure it shows
+            const adminBtn = document.getElementById("adminMenu");
+            if(adminBtn) adminBtn.style.display = "flex";
+            
+            console.log("Admin Access Verified.");
         }
     }
 
@@ -115,7 +126,7 @@
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
                 
-                // Security Check: Enable Admin menu if credentials match
+                // Security Check: Enable Admin functions if credentials match
                 checkAdminStatus(user.email, user.phone);
 
                 // Set Referral code for use in other pages
