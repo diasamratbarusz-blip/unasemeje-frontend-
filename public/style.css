@@ -296,3 +296,32 @@ td {
     padding: 25px;
   }
 }
+
+/* ================= ADMIN VISIBILITY CONTROL ================= */
+/* 
+   These rules hide admin elements globally. 
+   They only display if JavaScript adds the 'is-admin' class to the body.
+*/
+
+#adminMenu, 
+.admin-only, 
+[href="admin.html"], 
+[href="admin"] {
+  display: none !important;
+}
+
+body.is-admin #adminMenu, 
+body.is-admin .admin-only, 
+body.is-admin [href="admin.html"], 
+body.is-admin [href="admin"] {
+  display: flex !important;
+}
+
+/* For mobile admin view specifically */
+@media (max-width: 768px) {
+  body.is-admin #adminMenu, 
+  body.is-admin [href="admin.html"] {
+    display: flex !important;
+    flex-direction: column;
+  }
+}
