@@ -11,6 +11,7 @@
 <body>
 
 <div class="dashboard">
+    <!-- Sidebar Navigation -->
     <div class="sidebar">
         <h2>unasemeje ø dia</h2>
         <div class="sidebar-nav">
@@ -23,6 +24,7 @@
         </div>
     </div>
 
+    <!-- Main Content Area -->
     <div class="main">
         <div class="card" style="border-left: 5px solid var(--primary);">
             <h2 style="margin:0;">Boost Your Socials</h2>
@@ -30,21 +32,25 @@
         </div>
 
         <div class="card">
+            <!-- Step 1: Platform -->
             <label><i class="fas fa-th-large"></i> 1. Select Platform</label>
             <select id="platformSelect" onchange="loadCategories()">
                 <option value="">-- Choose Platform --</option>
             </select>
 
+            <!-- Step 2: Category -->
             <label><i class="fas fa-layer-group"></i> 2. Choose Category</label>
             <select id="categorySelect" onchange="loadServices()">
                 <option value="">-- Select Category --</option>
             </select>
 
+            <!-- Step 3: Service -->
             <label><i class="fas fa-bolt"></i> 3. Select Service</label>
             <select id="serviceSelect" onchange="updateServiceInfo()">
                 <option value="">-- Select Service --</option>
             </select>
 
+            <!-- Service Details (Min/Max) -->
             <div id="serviceDetails" style="display: none; background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border);">
                 <div style="display: flex; justify-content: space-between; font-size: 12px;">
                     <span>Min: <b id="minQty" style="color: var(--primary);">0</b></span>
@@ -52,17 +58,21 @@
                 </div>
             </div>
 
+            <!-- Step 4: Link -->
             <label><i class="fas fa-link"></i> 4. Target Link</label>
             <input type="text" id="link" placeholder="Paste link (e.g., TikTok video/profile URL)">
 
+            <!-- Step 5: Quantity -->
             <label><i class="fas fa-sort-amount-up"></i> 5. Quantity</label>
             <input type="number" id="quantity" placeholder="How many do you want?" oninput="calculateTotal()">
 
+            <!-- Price Display -->
             <div class="price-display">
                 <small>Order Total</small>
                 <b id="priceContainer">KES <span id="totalPrice">0.00</span></b>
             </div>
 
+            <!-- Submit Button -->
             <button class="btn-primary" id="orderBtn" onclick="placeOrder()">
                 <i class="fas fa-paper-plane"></i> CONFIRM ORDER
             </button>
@@ -72,40 +82,42 @@
 
 <script>
     let allData = {};
-    // Pointing to your Render backend
+    // API Configuration
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
-    // Protect route
+    // Route Protection
     if (!token) window.location.href = "index.html";
 
-    // 1. Fetch Services from Backend
+    // 1. Initial Load: Fetch Services from Backend
     async function init() {
         try {
             const res = await fetch(`${API}/services`);
+            if (!res.ok) throw new Error("Failed to fetch services");
             const json = await res.json();
             allData = json.data;
 
             const pSelect = document.getElementById("platformSelect");
             Object.keys(allData).forEach(p => {
                 const opt = document.createElement("option");
-                opt.value = p; opt.innerText = p;
+                opt.value = p; 
+                opt.innerText = p;
                 pSelect.appendChild(opt);
             });
 
-            // Handle pre-selection from redirect
+            // Auto-preselect platform if coming from a direct link
             const params = new URLSearchParams(window.location.search);
             if (params.get('platform')) {
                 pSelect.value = params.get('platform');
                 loadCategories(params.get('category'));
             }
         } catch (e) { 
-            console.error("Fetch error:", e);
-            alert("Could not load services. Please check your connection."); 
+            console.error("Service Loading Error:", e);
+            alert("Could not load services. Please check your internet connection."); 
         }
     }
 
-    // 2. Filter Categories based on Platform
+    // 2. Load Categories based on selected Platform
     function loadCategories(preselectCat = null) {
         const platform = document.getElementById("platformSelect").value;
         const cSelect = document.getElementById("categorySelect");
@@ -114,7 +126,8 @@
         if (allData[platform]) {
             Object.keys(allData[platform]).forEach(c => {
                 const opt = document.createElement("option");
-                opt.value = c; opt.innerText = c;
+                opt.value = c; 
+                opt.innerText = c;
                 cSelect.appendChild(opt);
             });
             if(preselectCat) {
@@ -124,7 +137,7 @@
         }
     }
 
-    // 3. Filter Services based on Category
+    // 3. Load individual Services based on selected Category
     function loadServices() {
         const p = document.getElementById("platformSelect").value;
         const c = document.getElementById("categorySelect").value;
@@ -135,13 +148,14 @@
             allData[p][c].forEach(s => {
                 const opt = document.createElement("option");
                 opt.value = s.serviceId;
+                // Display price per 1000 units
                 opt.innerText = `${s.name} - KES ${s.rate}/1k`;
                 sSelect.appendChild(opt);
             });
         }
     }
 
-    // 4. Show Min/Max and setup Pricing
+    // 4. Update UI with Min/Max limits
     function updateServiceInfo() {
         const p = document.getElementById("platformSelect").value;
         const c = document.getElementById("categorySelect").value;
@@ -159,36 +173,41 @@
         }
     }
 
-    // 5. Live Calculation
+    // 5. Live Calculation for Order Total
     function calculateTotal() {
         const p = document.getElementById("platformSelect").value;
         const c = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
-        const qtyInput = document.getElementById("quantity").value;
-        const qty = parseFloat(qtyInput) || 0;
+        const qty = parseFloat(document.getElementById("quantity").value) || 0;
 
         if (p && c && sId) {
             const service = allData[p][c].find(x => x.serviceId == sId);
+            // Pricing formula: (Rate per 1000 / 1000) * Quantity
             const total = (service.rate / 1000) * qty;
-            document.getElementById("totalPrice").innerText = total.toLocaleString('en-KE', { minimumFractionDigits: 2 });
+            document.getElementById("totalPrice").innerText = total.toLocaleString('en-KE', { 
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2 
+            });
         }
     }
 
-    // 6. Submit Order to API
+    // 6. Final Submission to Backend
     async function placeOrder() {
         const p = document.getElementById("platformSelect").value;
         const c = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
         const link = document.getElementById("link").value.trim();
-        const qty = document.getElementById("quantity").value;
+        const qty = parseInt(document.getElementById("quantity").value);
         const btn = document.getElementById("orderBtn");
 
-        if (!sId || !link || !qty) return alert("Please complete all steps.");
+        // Basic Validation
+        if (!sId || !link || !qty) return alert("Please fill in all details.");
 
         const service = allData[p][c].find(x => x.serviceId == sId);
-        if (parseInt(qty) < service.min) return alert(`Minimum quantity for this service is ${service.min}`);
-        if (parseInt(qty) > service.max) return alert(`Maximum quantity for this service is ${service.max}`);
+        if (qty < service.min) return alert(`Minimum quantity allowed is ${service.min}`);
+        if (qty > service.max) return alert(`Maximum quantity allowed is ${service.max}`);
 
+        // Update UI State
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
 
@@ -199,28 +218,30 @@
                     "Content-Type": "application/json", 
                     "Authorization": `Bearer ${token}` 
                 },
-                body: JSON.stringify({ serviceId: sId, link, quantity: parseInt(qty) })
+                body: JSON.stringify({ serviceId: sId, link, quantity: qty })
             });
 
             const data = await res.json();
 
             if (res.ok) {
-                // Redirect to success page with encoded parameters
-                const finalCost = (service.rate / 1000) * parseInt(qty);
-                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(service.name)}&cost=${finalCost}&balance=${data.newBalance}`;
+                // Success: Redirect to Order Confirmation
+                const finalCost = (service.rate / 1000) * qty;
+                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(service.name)}&cost=${finalCost.toFixed(2)}&balance=${data.newBalance}`;
             } else {
-                alert(data.error || "Order failed. Please check your balance.");
+                // Handle Backend/Provider errors
+                alert(data.error || "Order could not be placed. Please check your balance.");
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM ORDER';
             }
         } catch (e) {
-            console.error("Order error:", e);
-            alert("Connection error. Please check your internet and try again.");
+            console.error("Critical Order Error:", e);
+            alert("Network error. Please check your internet and try again.");
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> CONFIRM ORDER';
         }
     }
 
+    // Start fetching services on load
     init();
 </script>
 
