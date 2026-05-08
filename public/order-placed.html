@@ -21,6 +21,7 @@
             margin: 0; background: var(--bg-dark); color: var(--text-main); 
             font-family: 'Plus Jakarta Sans', sans-serif; display: flex; 
             justify-content: center; align-items: center; min-height: 100vh;
+            overflow: hidden;
         }
 
         .success-card {
@@ -32,11 +33,11 @@
             text-align: center;
             border: 1px solid #334155;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.5s ease-out;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -50,10 +51,16 @@
             border-radius: 50%;
             margin: 0 auto 20px;
             border: 2px solid var(--secondary);
+            animation: scaleIn 0.5s 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
         }
 
         h1 { font-weight: 800; font-size: 24px; margin-bottom: 10px; }
-        p { color: var(--text-dim); font-size: 14px; margin-bottom: 30px; }
+        p { color: var(--text-dim); font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
 
         .receipt-box {
             background: rgba(15, 23, 42, 0.5);
@@ -67,9 +74,11 @@
         .receipt-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 13px;
         }
+
+        .receipt-row:last-child { margin-bottom: 0; }
 
         .receipt-label { color: var(--text-dim); }
         .receipt-value { font-weight: 600; color: white; }
@@ -80,24 +89,35 @@
             background: var(--primary);
             color: white;
             text-decoration: none;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 14px;
             font-weight: 700;
-            transition: 0.3s;
+            transition: transform 0.2s, background 0.3s;
+            display: block;
         }
+
+        .btn-primary:active { transform: scale(0.98); }
 
         .btn-outline {
             background: transparent;
             color: white;
             text-decoration: none;
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-weight: 600;
             border: 1px solid #334155;
             transition: 0.3s;
         }
 
         .btn-outline:hover { background: rgba(255,255,255,0.05); }
+
+        .brand-footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +127,7 @@
             <i class="fas fa-check"></i>
         </div>
         <h1>Order Received!</h1>
-        <p>Your request is being processed. Sit back and watch your influence grow.</p>
+        <p>Your influence is on the way. We’ve successfully sent your order to the provider.</p>
 
         <div class="receipt-box">
             <div class="receipt-row">
@@ -123,28 +143,37 @@
                 <span class="receipt-value" id="dispCost" style="color: var(--secondary);">KES 0.00</span>
             </div>
             <div class="receipt-row">
-                <span class="receipt-label">Balance Left:</span>
+                <span class="receipt-label">Remaining Balance:</span>
                 <span class="receipt-value" id="dispBalance">KES 0.00</span>
             </div>
         </div>
 
         <div class="btn-group">
-            <a href="my-orders.html" class="btn-primary">TRACK ORDER STATUS</a>
-            <a href="platform.html" class="btn-outline">PLACE ANOTHER ORDER</a>
-            <a href="home.html" class="btn-outline" style="border:none; font-size: 12px; color: var(--text-dim);">Back to Dashboard</a>
+            <a href="my-orders.html" class="btn-primary">TRACK ORDER HISTORY</a>
+            <a href="new-order.html" class="btn-outline">PLACE ANOTHER ORDER</a>
         </div>
+
+        <a href="home.html" class="brand-footer">Back to Dashboard</a>
     </div>
 
     <script>
-        // Extract data from URL parameters passed from new-order.html
+        // Extract data from URL parameters
         const params = new URLSearchParams(window.location.search);
         
-        document.getElementById('dispID').innerText = '#' + (params.get('id') || '---');
-        document.getElementById('dispService').innerText = params.get('service') || 'Social Media Service';
-        document.getElementById('dispCost').innerText = 'KES ' + (parseFloat(params.get('cost')).toFixed(2) || '0.00');
-        document.getElementById('dispBalance').innerText = 'KES ' + (parseFloat(params.get('balance')).toFixed(2) || '0.00');
+        // Helper to format currency
+        const formatKES = (val) => {
+            const num = parseFloat(val);
+            return isNaN(num) ? "0.00" : num.toLocaleString('en-KE', { minimumFractionDigits: 2 });
+        };
 
-        // Logic to clear form storage or local temporary data could go here
+        // Populate the receipt UI
+        document.getElementById('dispID').innerText = '#' + (params.get('id') || '---');
+        document.getElementById('dispService').innerText = params.get('service') || 'SMM Service';
+        document.getElementById('dispCost').innerText = 'KES ' + formatKES(params.get('cost'));
+        document.getElementById('dispBalance').innerText = 'KES ' + formatKES(params.get('balance'));
+
+        // Optional: Clear local caches related to the previous order if necessary
+        console.log("UNASEMEJE ø DIA: Order " + params.get('id') + " finalized.");
     </script>
 </body>
 </html>
