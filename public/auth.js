@@ -67,12 +67,34 @@ function removeToken() {
   localStorage.removeItem("token");
 }
 
+/* ================= ADMIN SECURITY GATE ================= */
+/**
+ * Strictly controls visibility of the Admin Panel based on credentials.
+ * Only grants access to diasamratbarusz@gmail.com or 0715509440.
+ */
+function runAdminSecurityCheck(user) {
+    const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
+    const ADMIN_PHONE = "0715509440";
+
+    const isOwner = user.email === ADMIN_EMAIL || user.phone === ADMIN_PHONE;
+
+    if (isOwner) {
+        // Add class to body to trigger is-admin rules in style.css
+        document.body.classList.add('is-admin');
+        
+        // Manual fallback visibility for the menu
+        const adminBtn = document.getElementById("adminMenu");
+        if (adminBtn) adminBtn.style.display = "flex";
+        
+        console.log("Admin security gate: Owner access granted.");
+    }
+}
+
 // ================= JWT DECODE (Session Management) =================
 function decodeToken(token) {
   try {
     if (!token) return null;
     const base64Url = token.split(".")[1];
-    // Replace characters for standard base64 decoding to prevent errors
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -99,9 +121,10 @@ function checkAuth() {
     return;
   }
 
-  const now = Date.now() / 1000;
+  // Run security check for admin elements
+  runAdminSecurityCheck(user);
 
-  // Session expiry check
+  const now = Date.now() / 1000;
   if (user.exp && user.exp < now) {
     showToast("Session expired, please login again", "error");
     logoutUser();
@@ -110,7 +133,6 @@ function checkAuth() {
 
 // ================= NAVIGATION HELPERS =================
 function redirectLogin() {
-  // Ensures user is redirected to index if not authenticated
   if (!window.location.pathname.includes("index.html") && window.location.pathname !== "/") {
     window.location.href = "index.html";
   }
@@ -121,7 +143,6 @@ function loadUser() {
   const user = decodeToken(getToken());
   if (!user) return;
 
-  // Displays the user's username (or email if username is missing)
   const el = document.getElementById("userEmail");
   if (el) el.innerText = user.username || user.email || "User";
 }
@@ -151,7 +172,7 @@ async function login() {
     }
 
     saveToken(data.token);
-    showToast("Success! Welcome to UNASEMEJE SMM.");
+    showToast("Success! Welcome to UNASEMEJE ø DIA.");
 
     setTimeout(() => {
       window.location.href = "dashboard.html";
@@ -221,7 +242,6 @@ function logoutUser() {
 }
 
 // ================= AUTHORIZED FETCH WRAPPER =================
-// Use this for any dashboard data requests
 async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -244,8 +264,7 @@ async function authFetch(url, options = {}) {
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
   
-  // Only run auth checks on dashboard and internal pages
-  const protectedPages = ["dashboard", "order", "profile", "services", "deposit"];
+  const protectedPages = ["dashboard", "order", "profile", "services", "deposit", "admin"];
   const isProtected = protectedPages.some(page => path.includes(page));
 
   if (isProtected) {
