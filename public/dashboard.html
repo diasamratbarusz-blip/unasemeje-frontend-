@@ -13,13 +13,10 @@
 <div class="dashboard">
     <div class="sidebar">
         <h2>unasemeje ø dia</h2>
-        <div class="sidebar-nav">
+        <div class="sidebar-nav" id="sidebarNav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             
-            <!-- ADMIN LINK: Hidden by style.css, enabled for diasamratbarusz@gmail.com -->
-            <a href="admin.html" id="adminMenu" style="border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px;">
-                <i class="fas fa-user-shield"></i> <span>Admin Panel</span>
-            </a>
+            <!-- ADMIN LINK: Physically removed from HTML. Only injected via script for the owner. -->
 
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
@@ -95,22 +92,32 @@
     // Route Protection
     if (!token) window.location.href = "index.html";
 
-    function checkAdminStatus(email, phone) {
-        // Strict Admin Control for Admin Panel Visibility
+    /**
+     * IDENTITY-LOCK PROTOCOL
+     * This creates the Admin button only if credentials match the owner.
+     */
+    function injectAdminAccess(email, phone) {
         const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
         const ADMIN_PHONE = "0715509440";
         
-        const isAdmin = email === ADMIN_EMAIL || phone === ADMIN_PHONE;
+        const isOwner = email === ADMIN_EMAIL && phone === ADMIN_PHONE;
         
-        if (isAdmin) {
-            // Add the class to body to trigger visibility in style.css
-            document.body.classList.add('is-admin');
+        if (isOwner) {
+            const sidebarNav = document.getElementById("sidebarNav");
             
-            // Manual fallback to ensure it shows
-            const adminBtn = document.getElementById("adminMenu");
-            if(adminBtn) adminBtn.style.display = "flex";
+            // Create Admin Anchor Element
+            const adminLink = document.createElement("a");
+            adminLink.href = "admin.html";
+            adminLink.id = "adminMenu";
+            adminLink.style.cssText = "border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px; display: flex; align-items: center;";
             
-            console.log("Admin Access Verified.");
+            // Add Icon and Text
+            adminLink.innerHTML = `<i class="fas fa-user-shield"></i> <span style="margin-left: 10px;">Admin Panel</span>`;
+            
+            // Insert after the "Home" link
+            sidebarNav.insertBefore(adminLink, sidebarNav.children[1]);
+            
+            console.log("Owner Verified: Admin Access Injected.");
         }
     }
 
@@ -126,8 +133,8 @@
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
                 
-                // Security Check: Enable Admin functions if credentials match
-                checkAdminStatus(user.email, user.phone);
+                // EXECUTE SECURITY INJECTION
+                injectAdminAccess(user.email, user.phone);
 
                 // Set Referral code for use in other pages
                 localStorage.setItem("refCode", user.referralCode);
@@ -159,7 +166,7 @@
         window.location.href = "index.html";
     }
 
-    // Execute synchronization on page load
+    // Start sync on load
     syncDashboard();
 </script>
 
