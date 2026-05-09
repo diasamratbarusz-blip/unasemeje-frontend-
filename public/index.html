@@ -27,7 +27,7 @@
     nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 8%; background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #1e293b; }
     .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
-    /* Admin Button Style - Only created via script */
+    /* Admin Button Style - Only created via script for you */
     .admin-btn {
       background: rgba(16, 185, 129, 0.1);
       color: var(--brand-primary);
@@ -89,7 +89,8 @@
 <nav>
   <div class="logo">UNASEMEJE ø DIA</div>
   <div id="navActions" style="display: flex; align-items: center; gap: 20px;">
-    <!-- Admin button code is permanently DELETED from here to prevent visibility -->
+    <!-- PERMANENT SECURITY: The Admin Panel button is NOT in this HTML. 
+         It is only created by JavaScript if you are logged in as the owner. -->
     <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
     <i class="fas fa-bars" style="color: #fff; font-size: 22px;"></i>
   </div>
@@ -181,34 +182,36 @@
 
 <script>
   /**
-   * IDENTITY-LOCK PROTOCOL
-   * This script ensures only you can see the Admin Panel.
+   * IDENTITY-LOCK PROTOCOL (UNASEMEJE ø DIA)
+   * This ensures that the Admin button is physically created and 
+   * visible ONLY for the verified platform owner.
    */
   (function() {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
-      // Decode user data from your local token
+      // Decode the session data
       const payload = JSON.parse(atob(token.split(".")[1]));
       
-      // STRICT IDENTITY CHECK
-      // Only injects the button if the user is YOU (diasamratbarusz@gmail.com / 0715509440)
+      // STRICT OWNER VERIFICATION
       const isOwner = payload.email === "diasamratbarusz@gmail.com" && payload.phone === "0715509440";
       
       if (isOwner) {
-        // Creates the button from scratch so it is never in the HTML source code
+        // Create the button element only if the check passes
         const adminBtn = document.createElement("a");
         adminBtn.href = "admin.html";
         adminBtn.className = "admin-btn";
+        adminBtn.id = "ownerAdminAccess";
         adminBtn.innerText = "ADMIN PANEL";
         
-        // Injects it into your navigation actions
+        // Injects it into your navigation bar
         const navActions = document.getElementById("navActions");
         navActions.insertBefore(adminBtn, navActions.firstChild);
+        console.log("Admin Identity Verified: Access Granted.");
       }
     } catch (e) {
-      // Silent error - button simply remains non-existent for others
+      // If error occurs, button is never created - access remains hidden.
     }
   })();
 </script>
