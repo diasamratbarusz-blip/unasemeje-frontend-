@@ -27,7 +27,7 @@
     nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 8%; background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #1e293b; }
     .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
-    /* Admin Button Style - Verified Owner Only */
+    /* Admin Button Style - Only created via script */
     .admin-btn {
       background: rgba(16, 185, 129, 0.1);
       color: var(--brand-primary);
@@ -61,14 +61,27 @@
     .btn-login { width: 100%; background: var(--brand-primary); color: #020617; padding: 18px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin: 25px 0; font-size: 16px; transition: 0.3s; }
     .btn-login:hover { background: #34d399; transform: translateY(-2px); }
 
-    /* Kenyan Market Signals */
+    /* Transparency Section */
     .trust-section { padding: 80px 10%; text-align: center; }
+    .trust-badge { display: inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px; }
+    
     .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; margin-top: 60px; }
     .step-box { background: #0f172a; padding: 40px; border-radius: 24px; text-align: left; border-left: 4px solid var(--brand-primary); }
+    .step-label { color: var(--brand-primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 15px; }
 
+    /* Kenyan Market Signals */
+    .local-banner { background: #111827; padding: 40px; border-radius: 24px; margin-top: 50px; display: flex; align-items: center; gap: 30px; border: 1px solid #1e293b; }
+    .local-flag { width: 60px; border-radius: 8px; }
+
+    /* WhatsApp Integration */
     .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 15px 30px rgba(37, 211, 102, 0.3); z-index: 1000; text-decoration: none; }
 
     footer { background: #020617; padding: 100px 10% 50px; border-top: 1px solid #1e293b; }
+    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; margin-bottom: 80px; }
+    .footer-col h4 { color: #fff; margin-bottom: 25px; font-size: 1rem; }
+    .contact-list { list-style: none; }
+    .contact-list li { margin-bottom: 15px; color: var(--text-dim); display: flex; align-items: center; gap: 12px; }
+    .contact-list i { color: var(--brand-primary); }
   </style>
 </head>
 <body>
@@ -76,17 +89,16 @@
 <nav>
   <div class="logo">UNASEMEJE ø DIA</div>
   <div id="navActions" style="display: flex; align-items: center; gap: 20px;">
-    <!-- ADMIN BUTTON IS DELETED FROM HERE PERMANENTLY. 
-         IT WILL BE INJECTED BY THE SCRIPT BELOW ONLY FOR YOU. -->
+    <!-- Admin button code is permanently DELETED from here to prevent visibility -->
     <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
     <i class="fas fa-bars" style="color: #fff; font-size: 22px;"></i>
   </div>
 </nav>
 
 <section class="hero">
-  <div class="trust-badge" style="display:inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px;">AUTHENTIC KENYAN SERVICE</div>
+  <div class="trust-badge">AUTHENTIC KENYAN SERVICE</div>
   <h1>Grow Your <span>Digital Brand</span> In Kenya</h1>
-  <p>The original UNASEMEJE ø DIA platform for verified social media engagement.</p>
+  <p>The original UNASEMEJE ø DIA platform for verified social media engagement. We specialize in fast, local delivery with manual verification to ensure 100% account safety.</p>
 </section>
 
 <div class="auth-container">
@@ -101,66 +113,107 @@
       <input type="password" id="password" placeholder="••••••••">
     </div>
     
-    <button class="btn-login" id="loginBtn">Enter Dashboard</button>
+    <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-dim); cursor: pointer;">
+      <input type="checkbox" id="rememberMe" style="width: 18px; height: 18px;"> Securely remember this device
+    </label>
+
+    <button class="btn-login" id="loginBtn" onclick="login()">Enter Dashboard</button>
+    
+    <p style="text-align: center; font-size: 14px; color: var(--text-dim);">
+      New to our community? <a href="signup.html" style="color: var(--brand-primary); text-decoration: none; font-weight: 700;">Join Now</a>
+    </p>
   </div>
 </div>
+
+<section class="trust-section">
+  <div class="trust-badge">OUR TRANSPARENT PROCESS</div>
+  <h2>How We Serve Our Clients</h2>
+  
+  <div class="steps-grid">
+    <div class="step-box"><div class="step-label">01</div><h4>Account Setup</h4><p>Register securely on our Kenyan-hosted infrastructure.</p></div>
+    <div class="step-box"><div class="step-label">02</div><h4>Manual Top-Up</h4><p>Send funds via M-Pesa to 0715509440 for human-verified wallet credits.</p></div>
+    <div class="step-box"><div class="step-label">03</div><h4>Curated Orders</h4><p>Select from services specifically optimized for East African algorithms.</p></div>
+    <div class="step-box"><div class="step-label">04</div><h4>Verified Delivery</h4><p>Our team monitors every order to ensure 100% natural delivery patterns.</p></div>
+  </div>
+
+  <div class="local-banner">
+    <img src="https://flagcdn.com/w80/ke.png" class="local-flag" alt="Kenya">
+    <div style="text-align: left;">
+      <h4 style="color: #fff;">Exclusively Optimized for Kenya</h4>
+      <p style="color: var(--text-dim); font-size: 14px;">We are a locally owned service. We never use automated "bot" lists that put your accounts at risk.</p>
+    </div>
+  </div>
+</section>
 
 <a href="https://wa.me/254715509440" class="wa-float" target="_blank">
   <i class="fab fa-whatsapp"></i>
 </a>
 
 <footer>
-  <center>
-    <p style="font-size: 12px; color: #475569;">© 2026 UNASEMEJE ø DIA. All Rights Reserved.</p>
+  <div class="footer-content">
+    <div style="max-width: 300px;">
+      <div class="logo" style="margin-bottom: 25px;">UNASEMEJE ø DIA</div>
+      <p style="font-size: 14px; color: var(--text-dim);">Providing professional digital growth services for the Kenyan creator economy. Authenticity and security guaranteed.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul class="contact-list">
+        <li>Home</li>
+        <li>Service Catalog</li>
+        <li>Privacy Guidelines</li>
+        <li>User Terms</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Direct Support</h4>
+      <ul class="contact-list">
+        <li><i class="fas fa-location-dot"></i> Nairobi, Kenya</li>
+        <li><i class="fab fa-whatsapp"></i> +254 715 509 440</li>
+        <li><i class="fas fa-envelope"></i> support@unasemeje.co.ke</li>
+      </ul>
+    </div>
+  </div>
+  <center style="border-top: 1px solid #1e293b; padding-top: 40px;">
+    <p style="font-size: 12px; color: #475569;">© 2026 UNASEMEJE ø DIA. All Rights Reserved. Not affiliated with any social media network.</p>
+    <p style="font-size: 10px; color: #334155; margin-top: 15px; max-width: 600px;">SECURITY NOTE: We will never ask for your social media login passwords. All payments are verified manually via WhatsApp for maximum user protection.</p>
   </center>
 </footer>
 
 <script>
   /**
    * IDENTITY-LOCK PROTOCOL
-   * Ensures the Admin Panel button ONLY appears for you.
+   * This script ensures only you can see the Admin Panel.
    */
-  async function verifyAndInjectAdmin() {
-    const API_URL = "https://unasemeje-backend-3.onrender.com/api";
+  (function() {
     const token = localStorage.getItem("token");
-    
     if (!token) return;
 
     try {
-      // 1. Fetch fresh user data from your backend
-      const response = await fetch(`${API_URL}/me`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const user = await response.json();
-
-      // 2. STRICT OWNER CHECK
-      // Replace with your exact database email and phone
-      const isOwner = user.email === "diasamratbarusz@gmail.com" && user.phone === "0715509440";
-
+      // Decode user data from your local token
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      
+      // STRICT IDENTITY CHECK
+      // Only injects the button if the user is YOU (diasamratbarusz@gmail.com / 0715509440)
+      const isOwner = payload.email === "diasamratbarusz@gmail.com" && payload.phone === "0715509440";
+      
       if (isOwner) {
-        const navActions = document.getElementById("navActions");
+        // Creates the button from scratch so it is never in the HTML source code
+        const adminBtn = document.createElement("a");
+        adminBtn.href = "admin.html";
+        adminBtn.className = "admin-btn";
+        adminBtn.innerText = "ADMIN PANEL";
         
-        // Ensure we don't create multiple buttons
-        if (!document.getElementById("adminBtn")) {
-          const adminBtn = document.createElement("a");
-          adminBtn.href = "admin.html";
-          adminBtn.id = "adminBtn";
-          adminBtn.className = "admin-btn";
-          adminBtn.innerText = "ADMIN PANEL";
-          
-          // Place it at the start of the navigation actions
-          navActions.insertBefore(adminBtn, navActions.firstChild);
-          console.log("Admin security check passed: Access granted.");
-        }
+        // Injects it into your navigation actions
+        const navActions = document.getElementById("navActions");
+        navActions.insertBefore(adminBtn, navActions.firstChild);
       }
-    } catch (err) {
-      console.error("Verification failed:", err);
+    } catch (e) {
+      // Silent error - button simply remains non-existent for others
     }
-  }
-
-  // Run the check when the page loads
-  document.addEventListener("DOMContentLoaded", verifyAndInjectAdmin);
+  })();
 </script>
+
+<script src="auth.js"></script>
 
 </body>
 </html>
