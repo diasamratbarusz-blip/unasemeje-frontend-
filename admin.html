@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Control | UNASEMEJE ø DIA</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
@@ -22,10 +22,61 @@
       background-color: var(--bg-dark);
       color: #f8fafc;
       margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* --- SECONDARY SECURITY GATE STYLES --- */
+    #adminAuthGate {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-dark);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .gate-card {
+      background: var(--card-bg);
+      padding: 45px;
+      border-radius: 28px;
+      border: 1px solid #1e293b;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+
+    .gate-input {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 15px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .btn-gate {
+      width: 100%;
+      padding: 18px;
+      background: var(--brand-primary);
+      color: #020617;
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    /* --- DASHBOARD STYLES --- */
+    #adminWrapper {
+      display: none; /* Hidden until gate is cleared */
       display: flex;
     }
 
-    /* Sidebar */
     .admin-sidebar {
       width: 280px;
       height: 100vh;
@@ -49,6 +100,7 @@
       gap: 12px;
       border-radius: 10px;
       transition: 0.3s;
+      margin-bottom: 5px;
     }
 
     .admin-nav button.active, .admin-nav button:hover {
@@ -56,11 +108,10 @@
       color: var(--brand-primary);
     }
 
-    /* Main Content */
     .admin-main {
       margin-left: 280px;
       padding: 40px;
-      width: 100%;
+      width: calc(100% - 280px);
     }
 
     .stats-grid {
@@ -80,7 +131,6 @@
     .stat-card h3 { color: var(--text-dim); font-size: 14px; margin-bottom: 10px; }
     .stat-card p { font-size: 24px; font-weight: 800; color: var(--brand-primary); }
 
-    /* Tables */
     .table-container {
       background: var(--card-bg);
       border-radius: 20px;
@@ -89,34 +139,11 @@
       margin-top: 20px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: #1e293b; padding: 15px 20px; font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
+    td { padding: 15px 20px; border-bottom: 1px solid #1e293b; font-size: 14px; }
 
-    th {
-      background: #1e293b;
-      padding: 15px 20px;
-      font-size: 13px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
-
-    td {
-      padding: 15px 20px;
-      border-bottom: 1px solid #1e293b;
-      font-size: 14px;
-    }
-
-    .status-badge {
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
+    .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
     .status-pending { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
     .status-completed { background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); }
 
@@ -124,102 +151,104 @@
       background: var(--brand-primary);
       color: #020617;
       border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 800;
       cursor: pointer;
     }
-
-    .btn-approve:hover { opacity: 0.8; }
   </style>
 </head>
 <body>
 
-  <aside class="admin-sidebar">
-    <h2 style="font-family: 'Outfit'; color: var(--brand-primary); margin-bottom: 40px;">Admin Panel</h2>
-    <nav class="admin-nav">
-      <button class="active" onclick="showSection('deposits')"><i class="fas fa-wallet"></i> Deposits</button>
-      <button onclick="showSection('users')"><i class="fas fa-users"></i> User Management</button>
-      <button onclick="showSection('orders')"><i class="fas fa-shopping-cart"></i> All Orders</button>
-      <hr style="border: 0; border-top: 1px solid #1e293b; margin: 20px 0;">
-      <button onclick="window.location.href='dashboard.html'"><i class="fas fa-arrow-left"></i> Back to Site</button>
-    </nav>
-  </aside>
-
-  <main class="admin-main">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-      <h1>System Overview</h1>
-      <div id="adminId" style="font-size: 14px; color: var(--text-dim);">Owner: diasamratbarusz@gmail.com</div>
-    </header>
-
-    <div class="stats-grid">
-      <div class="stat-card"><h3>Pending Deposits</h3><p id="stat-pending">0</p></div>
-      <div class="stat-card"><h3>Total Users</h3><p id="stat-users">0</p></div>
-      <div class="stat-card"><h3>Platform Orders</h3><p id="stat-orders">0</p></div>
+  <!-- LAYER 1: THE SECURITY GATE -->
+  <div id="adminAuthGate">
+    <div class="gate-card">
+      <div style="font-size: 40px; color: var(--brand-primary); margin-bottom: 15px;"><i class="fas fa-user-shield"></i></div>
+      <h2 style="font-family: 'Outfit'; margin-bottom: 10px;">Security Verification</h2>
+      <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 30px;">This area is restricted to the platform owner. Please re-enter your admin credentials.</p>
+      
+      <input type="email" id="gateEmail" class="gate-input" placeholder="Admin Email">
+      <input type="password" id="gatePass" class="gate-input" placeholder="Owner Password">
+      
+      <button class="btn-gate" onclick="verifyAdminGate()">VERIFY & UNLOCK</button>
+      <a href="dashboard.html" style="display: block; margin-top: 20px; color: var(--text-dim); text-decoration: none; font-size: 13px;">Exit Admin Area</a>
     </div>
+  </div>
 
-    <!-- DEPOSITS SECTION -->
-    <section id="section-deposits">
-      <h2>Pending M-Pesa Verifications</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Amount</th>
-              <th>Transaction Code</th>
-              <th>Date</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="table-deposits"></tbody>
-        </table>
-      </div>
-    </section>
+  <!-- LAYER 2: THE PROTECTED CONTENT -->
+  <div id="adminWrapper" style="display: none;">
+    <aside class="admin-sidebar">
+      <h2 style="font-family: 'Outfit'; color: var(--brand-primary); margin-bottom: 40px;">UNASEMEJE Control</h2>
+      <nav class="admin-nav">
+        <button class="active" onclick="showSection('deposits')"><i class="fas fa-wallet"></i> Deposits</button>
+        <button onclick="showSection('users')"><i class="fas fa-users"></i> User Management</button>
+        <button onclick="showSection('orders')"><i class="fas fa-shopping-cart"></i> All Orders</button>
+        <hr style="border: 0; border-top: 1px solid #1e293b; margin: 20px 0;">
+        <button onclick="window.location.href='dashboard.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+      </nav>
+    </aside>
 
-    <!-- USERS SECTION -->
-    <section id="section-users" style="display:none;">
-      <h2>Registered Users</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Phone</th>
-              <th>Balance</th>
-              <th>Joined</th>
-            </tr>
-          </thead>
-          <tbody id="table-users"></tbody>
-        </table>
-      </div>
-    </section>
+    <main class="admin-main">
+      <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1>Platform Intelligence</h1>
+        <div style="text-align: right;">
+            <div id="adminId" style="font-size: 14px; font-weight: 800; color: var(--brand-primary);">DIASAMRAT BARUSZ</div>
+            <small style="color: var(--text-dim);">Authenticated Owner</small>
+        </div>
+      </header>
 
-    <!-- ORDERS SECTION -->
-    <section id="section-orders" style="display:none;">
-      <h2>Global Order History</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Service</th>
-              <th>Qty</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="table-orders"></tbody>
-        </table>
+      <div class="stats-grid">
+        <div class="stat-card"><h3>Pending M-Pesa</h3><p id="stat-pending">0</p></div>
+        <div class="stat-card"><h3>Total Clients</h3><p id="stat-users">0</p></div>
+        <div class="stat-card"><h3>Global Orders</h3><p id="stat-orders">0</p></div>
       </div>
-    </section>
-  </main>
+
+      <!-- SECTIONS -->
+      <section id="section-deposits">
+        <h2>Deposit Verification Que</h2>
+        <div class="table-container"><table id="table-deposits"><thead><tr><th>User</th><th>Amount</th><th>Code</th><th>Date</th><th>Action</th></tr></thead><tbody id="deposit-rows"></tbody></table></div>
+      </section>
+
+      <section id="section-users" style="display:none;">
+        <h2>User Database</h2>
+        <div class="table-container"><table id="table-users"><thead><tr><th>Username</th><th>Phone</th><th>Balance</th><th>Joined</th></tr></thead><tbody id="user-rows"></tbody></table></div>
+      </section>
+
+      <section id="section-orders" style="display:none;">
+        <h2>Global History</h2>
+        <div class="table-container"><table id="table-orders"><thead><tr><th>User</th><th>Service</th><th>Qty</th><th>Status</th></tr></thead><tbody id="order-rows"></tbody></table></div>
+      </section>
+    </main>
+  </div>
 
   <script>
     const API_URL = "https://unasemeje-backend-3.onrender.com/api/admin";
     const token = localStorage.getItem("token");
 
-    // Security check: If no token, kick back to login
+    // Immediate Main Token Check
     if (!token) window.location.href = "index.html";
+
+    /**
+     * SECONDARY GATE VERIFICATION
+     */
+    function verifyAdminGate() {
+        const email = document.getElementById('gateEmail').value;
+        const pass = document.getElementById('gatePass').value;
+        
+        const OWNER_EMAIL = "diasamratbarusz@gmail.com";
+
+        if (email.toLowerCase() === OWNER_EMAIL && pass.length > 0) {
+            // Unhide Admin Panel
+            document.getElementById('adminAuthGate').style.display = 'none';
+            document.getElementById('adminWrapper').style.display = 'flex';
+            
+            // Start Loading Data
+            loadDeposits();
+        } else {
+            alert("Security Violation: Credentials do not match owner profile.");
+            window.location.href = "dashboard.html";
+        }
+    }
 
     function showSection(sectionId) {
       document.querySelectorAll('section').forEach(s => s.style.display = 'none');
@@ -236,9 +265,9 @@
     async function loadDeposits() {
       const res = await fetch(`${API_URL}/deposits`, { headers: { "Authorization": `Bearer ${token}` } });
       const data = await res.json();
-      if (!res.ok) return alert("Unauthorized access denied.");
+      if (!res.ok) return window.location.href = "dashboard.html";
 
-      const container = document.getElementById("table-deposits");
+      const container = document.getElementById("deposit-rows");
       container.innerHTML = "";
       
       const pendingCount = data.filter(d => d.status === 'pending').length;
@@ -249,32 +278,28 @@
           <tr>
             <td>${d.userEmail}</td>
             <td>KES ${d.amount}</td>
-            <td style="font-weight:bold; color:var(--brand-primary)">${d.transactionCode}</td>
+            <td style="font-family:'JetBrains Mono'; font-weight:bold; color:var(--brand-primary)">${d.transactionCode}</td>
             <td>${new Date(d.createdAt).toLocaleDateString()}</td>
             <td>
               ${d.status === 'pending' ? 
                 `<button class="btn-approve" onclick="approveDeposit('${d._id}')">Approve</button>` : 
                 `<span class="status-badge status-completed">Verified</span>`}
             </td>
-          </tr>
-        `;
+          </tr>`;
       });
     }
 
     async function approveDeposit(depositId) {
-      if (!confirm("Confirm M-Pesa code matches? This will add funds to user wallet.")) return;
+      if (!confirm("Confirm M-Pesa verification? Funds will be added instantly.")) return;
       
       const res = await fetch(`${API_URL}/approve-deposit`, {
         method: "POST",
-        headers: { 
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ depositId })
       });
 
       if (res.ok) {
-        alert("Wallet updated successfully!");
+        alert("Transaction Verified.");
         loadDeposits();
       }
     }
@@ -284,17 +309,10 @@
       const data = await res.json();
       document.getElementById("stat-users").innerText = data.length;
       
-      const container = document.getElementById("table-users");
+      const container = document.getElementById("user-rows");
       container.innerHTML = "";
       data.forEach(u => {
-        container.innerHTML += `
-          <tr>
-            <td>${u.username}</td>
-            <td>${u.phone}</td>
-            <td>KES ${u.balance.toFixed(2)}</td>
-            <td>${new Date(u.createdAt).toLocaleDateString()}</td>
-          </tr>
-        `;
+        container.innerHTML += `<tr><td>${u.username}</td><td>${u.phone}</td><td>KES ${u.balance.toFixed(2)}</td><td>${new Date(u.createdAt).toLocaleDateString()}</td></tr>`;
       });
     }
 
@@ -302,23 +320,12 @@
       const res = await fetch(`${API_URL}/orders`, { headers: { "Authorization": `Bearer ${token}` } });
       const data = await res.json();
       document.getElementById("stat-orders").innerText = data.length;
-
-      const container = document.getElementById("table-orders");
+      const container = document.getElementById("order-rows");
       container.innerHTML = "";
       data.forEach(o => {
-        container.innerHTML += `
-          <tr>
-            <td>${o.userEmail}</td>
-            <td>${o.serviceName}</td>
-            <td>${o.quantity}</td>
-            <td><span class="status-badge status-${o.status}">${o.status}</span></td>
-          </tr>
-        `;
+        container.innerHTML += `<tr><td>${o.userEmail}</td><td>${o.serviceName}</td><td>${o.quantity}</td><td><span class="status-badge status-${o.status}">${o.status}</span></td></tr>`;
       });
     }
-
-    // Initial load
-    loadDeposits();
   </script>
 </body>
 </html>
