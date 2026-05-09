@@ -1,23 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-KE">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard | UNASEMEJE ø DIA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <title>Dashboard | UNASEMEJE ø DIA</title>
+  <meta name="description" content="The official UNASEMEJE SMM platform dashboard.">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --brand-primary: #10b981;
+      --brand-secondary: #6366f1;
+      --bg-main: #020617;
+      --card-bg: #0f172a;
+      --text-dim: #94a3b8;
+    }
+
+    /* Admin Button UI - Only injected for Diasamratbarusz@Gmail.com */
+    .admin-btn-lock {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--brand-primary);
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 13px;
+      border: 1px solid var(--brand-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.3s;
+      margin-bottom: 15px;
+    }
+    .admin-btn-lock:hover {
+      background: var(--brand-primary);
+      color: #020617;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      color: #f8fafc;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+    .sidebar-nav a:hover { background: rgba(255,255,255,0.05); }
+    .sidebar-nav a.active { background: var(--brand-primary); color: #020617; }
+  </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <div class="sidebar">
-        <h2>unasemeje ø dia</h2>
+    <div class="sidebar" style="background: var(--card-bg); height: 100vh; padding: 30px; border-right: 1px solid #1e293b; display: flex; flex-direction: column;">
+        <h2 style="font-family: 'Outfit'; color: var(--brand-primary); margin-bottom: 40px;">unasemeje ø dia</h2>
+        
         <div class="sidebar-nav" id="sidebarNav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             
-            <!-- ADMIN LINK: Physically removed from HTML to hide from general users. 
-                 Only injected via script for diasamratbarusz@gmail.com -->
+            <!-- THE ADMIN BUTTON IS REMOVED FROM HTML SOURCE -->
+            <!-- SCRIPT WILL INJECT IT HERE ONLY FOR THE OWNER -->
 
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
@@ -26,62 +74,42 @@
             <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
         </div>
         
-        <div style="margin-top: auto;">
-            <a href="https://wa.me/254715509440" target="_blank" style="color: var(--secondary);">
+        <div style="margin-top: auto; border-top: 1px solid #1e293b; padding-top: 20px;">
+            <a href="https://wa.me/254715509440" target="_blank" style="color: #25D366; text-decoration: none; display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                 <i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span>
             </a>
-            <a onclick="logout()" style="color: var(--danger); cursor: pointer;">
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
         </div>
     </div>
 
-    <div class="main">
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 25px;">
+    <div class="main" style="flex: 1; padding: 40px; overflow-y: auto;">
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #1e293b; margin-bottom: 30px;">
             <div>
                 <small style="color: var(--text-dim); display: block;">Welcome back,</small>
-                <span id="userName" style="font-weight: 800; font-size: 18px;">---</span>
+                <span id="userName" style="font-weight: 800; font-size: 20px;">---</span>
             </div>
-            <div class="price-display" style="margin: 0; padding: 10px 20px;">
-                <small>Wallet Balance</small>
-                <b id="userBalance">KES 0.00</b>
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 15px 25px; border-radius: 15px; text-align: right;">
+                <small style="color: var(--brand-primary); display: block; font-weight: 700;">Wallet Balance</small>
+                <b id="userBalance" style="font-size: 22px;">KES 0.00</b>
             </div>
-        </div>
-
-        <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95); border: none;">
-            <h2 style="margin-bottom: 10px;">Grow Your Brand 🚀</h2>
-            <p style="opacity: 0.9; font-size: 14px;">Select a platform to start boosting your TikTok, Instagram, or YouTube presence today. All orders are processed instantly.</p>
-            <button onclick="window.location.href='platform.html'" class="btn-secondary" style="width: auto; margin-top: 20px; padding: 12px 30px; background: white; color: var(--primary);">
-                START BOOSTING
-            </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-            
-            <div class="card">
-                <h3><i class="fas fa-chart-line" style="color: var(--primary);"></i> Account Stats</h3>
+            <div class="card" style="background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #1e293b;">
+                <h3><i class="fas fa-chart-line" style="color: var(--brand-primary);"></i> Stats</h3>
                 <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                    <div style="text-align: center;">
+                    <div>
                         <small style="color: var(--text-dim);">Total Spent</small>
-                        <p id="totalSpent" style="font-weight: 800; font-size: 20px; margin-top: 5px;">KES 0.00</p>
+                        <p id="totalSpent" style="font-weight: 800; font-size: 20px;">KES 0.00</p>
                     </div>
-                    <div style="text-align: center;">
+                    <div>
                         <small style="color: var(--text-dim);">Active Orders</small>
-                        <p id="activeOrders" style="font-weight: 800; font-size: 20px; margin-top: 5px;">0</p>
+                        <p id="activeOrders" style="font-weight: 800; font-size: 20px;">0</p>
                     </div>
                 </div>
             </div>
-
-            <div class="card">
-                <h3><i class="fas fa-bell" style="color: var(--warning);"></i> Updates</h3>
-                <div style="margin-top: 15px;">
-                    <div style="padding: 10px; border-left: 3px solid var(--secondary); background: rgba(16, 185, 129, 0.05); border-radius: 0 8px 8px 0;">
-                        <small style="color: var(--secondary); font-weight: 800;">NEW SYSTEM</small>
-                        <p style="font-size: 13px; margin-top: 4px;">M-Pesa deposits are now faster. Ensure you paste the full message for instant verification.</p>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
@@ -93,37 +121,10 @@
     if (!token) window.location.href = "index.html";
 
     /**
-     * FLEXIBLE IDENTITY-LOCK
-     * Handles variations in phone format (07... vs 254...) and email casing.
+     * THE IDENTITY LOCK
+     * Injects Admin Panel ONLY for Diasamratbarusz@Gmail.com
      */
-    function injectAdminAccess(email, phone) {
-        const ADMIN_EMAIL = "diasamratbarusz@gmail.com".toLowerCase();
-        const ADMIN_PHONE_MATCH = "715509440"; // Matches both 0715... and 254715...
-        
-        const emailMatch = email && email.toLowerCase() === ADMIN_EMAIL;
-        const phoneMatch = phone && String(phone).includes(ADMIN_PHONE_MATCH);
-        
-        // If either email or phone matches, inject the button
-        if (emailMatch || phoneMatch) {
-            const sidebarNav = document.getElementById("sidebarNav");
-            
-            // Avoid creating multiple buttons if script runs twice
-            if (!document.getElementById("adminMenu")) {
-                const adminLink = document.createElement("a");
-                adminLink.href = "admin.html";
-                adminLink.id = "adminMenu";
-                adminLink.style.cssText = "border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; padding: 10px; border-radius: 8px;";
-                
-                adminLink.innerHTML = `<i class="fas fa-user-shield"></i> <span style="margin-left: 10px;">Admin Panel</span>`;
-                
-                // Insert right after the 'Home' link
-                sidebarNav.insertBefore(adminLink, sidebarNav.children[1]);
-                console.log("Admin security check passed: Access granted.");
-            }
-        }
-    }
-
-    async function syncDashboard() {
+    async function verifyOwnerAccess() {
         try {
             const res = await fetch(`${API}/me`, {
                 headers: { "Authorization": `Bearer ${token}` }
@@ -134,14 +135,40 @@
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
                 
-                // Trigger the injection check with user data from the database
-                injectAdminAccess(user.email, user.phone);
+                // --- OWNER VERIFICATION LOGIC ---
+                const OWNER_EMAIL = "diasamratbarusz@gmail.com".toLowerCase();
+                const OWNER_PHONE = "0715509440"; // Core Kenyan format
+                const ALT_PHONE = "254715509440"; // Country code format
 
-                localStorage.setItem("refCode", user.referralCode);
+                const isEmailMatch = user.email && user.email.toLowerCase() === OWNER_EMAIL;
+                const isPhoneMatch = user.phone && (user.phone === OWNER_PHONE || user.phone === ALT_PHONE);
+
+                if (isEmailMatch || isPhoneMatch) {
+                    const sidebarNav = document.getElementById("sidebarNav");
+                    
+                    if (!document.getElementById("adminLockBtn")) {
+                        const adminLink = document.createElement("a");
+                        adminLink.href = "admin.html";
+                        adminLink.id = "adminLockBtn";
+                        adminLink.className = "admin-btn-lock";
+                        adminLink.innerHTML = `<i class="fas fa-user-shield"></i> <span>ADMIN PANEL</span>`;
+                        
+                        // Insert right under the Home button
+                        sidebarNav.insertBefore(adminLink, sidebarNav.children[1]);
+                    }
+                }
+                // --- END OWNER VERIFICATION ---
+
             } else {
                 logout();
             }
+        } catch (error) {
+            console.error("Auth sync error:", error);
+        }
+    }
 
+    async function fetchStats() {
+        try {
             const orderRes = await fetch(`${API}/sync-orders`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -154,10 +181,7 @@
                 document.getElementById("activeOrders").innerText = active;
                 document.getElementById("totalSpent").innerText = "KES " + spent.toFixed(2);
             }
-
-        } catch (error) {
-            console.error("Dashboard Sync Error:", error);
-        }
+        } catch (e) { console.log("Stats error"); }
     }
 
     function logout() {
@@ -165,7 +189,9 @@
         window.location.href = "index.html";
     }
 
-    syncDashboard();
+    // Initialize
+    verifyOwnerAccess();
+    fetchStats();
 </script>
 
 </body>
