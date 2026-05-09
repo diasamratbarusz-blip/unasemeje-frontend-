@@ -16,7 +16,8 @@
         <div class="sidebar-nav" id="sidebarNav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             
-            <!-- ADMIN LINK: Physically removed from HTML. Only injected via script for the owner. -->
+            <!-- ADMIN LINK: Physically removed from HTML. 
+                 Only injected via script for owner verification. -->
 
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
@@ -89,41 +90,41 @@
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
-    // Route Protection
     if (!token) window.location.href = "index.html";
 
     /**
-     * IDENTITY-LOCK PROTOCOL
-     * This creates the Admin button only if credentials match the owner.
+     * UNIVERSAL OWNER VERIFICATION
+     * Injects Admin Panel only for Diasamratbarusz@Gmail.com
      */
     function injectAdminAccess(email, phone) {
-        const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
-        const ADMIN_PHONE = "0715509440";
+        // We use lowercase to ensure "Gmail.com" and "gmail.com" both work
+        const OWNER_EMAIL = "diasamratbarusz@gmail.com".toLowerCase();
+        const OWNER_PHONE_CORE = "715509440"; // Core digits to match 0715... or 254715...
         
-        const isOwner = email === ADMIN_EMAIL && phone === ADMIN_PHONE;
+        const isEmailMatch = email && email.toLowerCase() === OWNER_EMAIL;
+        const isPhoneMatch = phone && String(phone).includes(OWNER_PHONE_CORE);
         
-        if (isOwner) {
+        if (isEmailMatch || isPhoneMatch) {
             const sidebarNav = document.getElementById("sidebarNav");
             
-            // Create Admin Anchor Element
-            const adminLink = document.createElement("a");
-            adminLink.href = "admin.html";
-            adminLink.id = "adminMenu";
-            adminLink.style.cssText = "border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px; display: flex; align-items: center;";
-            
-            // Add Icon and Text
-            adminLink.innerHTML = `<i class="fas fa-user-shield"></i> <span style="margin-left: 10px;">Admin Panel</span>`;
-            
-            // Insert after the "Home" link
-            sidebarNav.insertBefore(adminLink, sidebarNav.children[1]);
-            
-            console.log("Owner Verified: Admin Access Injected.");
+            // Check if already injected to prevent duplicates
+            if (!document.getElementById("adminMenu")) {
+                const adminLink = document.createElement("a");
+                adminLink.href = "admin.html";
+                adminLink.id = "adminMenu";
+                adminLink.style.cssText = "border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; padding: 10px; border-radius: 8px;";
+                
+                adminLink.innerHTML = `<i class="fas fa-user-shield"></i> <span style="margin-left: 10px;">Admin Panel</span>`;
+                
+                // Insert right below 'Home'
+                sidebarNav.insertBefore(adminLink, sidebarNav.children[1]);
+                console.log("Identity Verified: Admin Panel Active.");
+            }
         }
     }
 
     async function syncDashboard() {
         try {
-            // Fetch User Profile
             const res = await fetch(`${API}/me`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -133,16 +134,14 @@
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
                 
-                // EXECUTE SECURITY INJECTION
+                // Check identity to show Admin button
                 injectAdminAccess(user.email, user.phone);
 
-                // Set Referral code for use in other pages
                 localStorage.setItem("refCode", user.referralCode);
             } else {
                 logout();
             }
 
-            // Fetch Order Stats
             const orderRes = await fetch(`${API}/sync-orders`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -166,7 +165,6 @@
         window.location.href = "index.html";
     }
 
-    // Start sync on load
     syncDashboard();
 </script>
 
