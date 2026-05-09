@@ -27,6 +27,20 @@
     nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 8%; background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #1e293b; }
     .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
+    /* Admin Button Style (Only triggered by script) */
+    .admin-btn {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--brand-primary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      border: 1px solid var(--brand-primary);
+      transition: 0.3s;
+    }
+    .admin-btn:hover { background: var(--brand-primary); color: #020617; }
+
     /* Hero Branding */
     .hero { text-align: center; padding: 120px 10% 160px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
     .hero h1 { font-family: 'Outfit'; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; margin-bottom: 24px; color: #fff; }
@@ -74,7 +88,8 @@
 
 <nav>
   <div class="logo">UNASEMEJE ø DIA</div>
-  <div style="display: flex; align-items: center; gap: 20px;">
+  <div id="navActions" style="display: flex; align-items: center; gap: 20px;">
+    <!-- Admin Button is permanently removed from the static HTML for security -->
     <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
     <i class="fas fa-bars" style="color: #fff; font-size: 22px;"></i>
   </div>
@@ -164,7 +179,40 @@
   </center>
 </footer>
 
+<script>
+  /**
+   * IDENTITY-LOCK PROTOCOL
+   * Ensures the Admin Button only exists for diasamratbarusz@gmail.com
+   */
+  (function() {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      // Decode JWT token payload
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      
+      // STRICT OWNER VALIDATION
+      const isOwner = payload.email === "diasamratbarusz@gmail.com" && payload.phone === "0715509440";
+      
+      if (isOwner) {
+        // Dynamically create the button so it doesn't exist in the HTML source code
+        const adminBtn = document.createElement("a");
+        adminBtn.href = "admin.html";
+        adminBtn.className = "admin-btn";
+        adminBtn.innerText = "ADMIN PANEL";
+        
+        // Inject into navigation
+        const navActions = document.getElementById("navActions");
+        navActions.insertBefore(adminBtn, navActions.firstChild);
+      }
+    } catch (e) {
+      console.log("Access Verification Silent");
+    }
+  })();
+</script>
+
 <script src="auth.js"></script>
 
 </body>
-  </html>
+</html>
