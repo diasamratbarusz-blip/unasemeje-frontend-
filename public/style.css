@@ -298,13 +298,6 @@ td {
 }
 
 /* ================= ADMIN VISIBILITY CONTROL ================= */
-/* 
-   STRICT PROTECTION:
-   These rules hide admin elements globally for all regular users.
-   The '!important' flag ensures that no other style can accidentally show them.
-   They only trigger and display if JavaScript adds the 'is-admin' class to the body.
-*/
-
 #adminMenu, 
 .admin-only, 
 [href="admin.html"], 
@@ -319,11 +312,83 @@ body.is-admin [href="admin"] {
   display: flex !important;
 }
 
-/* For mobile admin view specifically */
 @media (max-width: 768px) {
   body.is-admin #adminMenu, 
   body.is-admin [href="admin.html"] {
     display: flex !important;
     flex-direction: column;
   }
+}
+
+/* ================= MOVING TICKER & NOTIFICATIONS ================= */
+
+/* Top Marquee Bar */
+.top-ticker {
+    background: #000;
+    border-bottom: 2px solid var(--primary);
+    overflow: hidden;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.ticker-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 25s linear infinite;
+    padding-left: 100%;
+}
+
+.ticker-item {
+    display: inline-block;
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    text-transform: uppercase;
+    padding-right: 50px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.ticker-item span {
+    color: var(--primary);
+}
+
+@keyframes marquee {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
+/* Live Order Notification */
+.live-notif {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--sidebar-bg);
+    color: white;
+    border-left: 4px solid var(--primary);
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    z-index: 10000;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    animation: slideInNotif 0.5s ease-out;
+}
+
+@keyframes slideInNotif {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Mobile Ticker Adjustment */
+@media (max-width: 768px) {
+    .live-notif {
+        bottom: 90px; /* Moves it above the mobile bottom nav */
+        left: 20px;
+        right: 20px;
+    }
 }
