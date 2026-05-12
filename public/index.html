@@ -21,13 +21,19 @@
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-main); color: #f8fafc; line-height: 1.6; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-main); color: #f8fafc; line-height: 1.6; overflow-x: hidden; }
 
     /* Unique Navigation */
     nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 8%; background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #1e293b; }
     .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
-    /* Admin Button Style - Only created via script for you */
+    /* Top Moving Words Ticker */
+    .ticker-wrap { width: 100%; overflow: hidden; background: #0f172a; border-bottom: 1px solid var(--brand-primary); padding: 8px 0; }
+    .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
+    .ticker-item { color: var(--brand-primary); padding: 0 40px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+
+    /* Admin Button Style */
     .admin-btn {
       background: rgba(16, 185, 129, 0.1);
       color: var(--brand-primary);
@@ -42,26 +48,44 @@
     .admin-btn:hover { background: var(--brand-primary); color: #020617; }
 
     /* Hero Branding */
-    .hero { text-align: center; padding: 120px 10% 160px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
+    .hero { text-align: center; padding: 100px 10% 160px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
     .hero h1 { font-family: 'Outfit'; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; margin-bottom: 24px; color: #fff; }
     .hero span { color: var(--brand-primary); }
     .hero p { max-width: 700px; margin: 0 auto 40px; color: var(--text-dim); font-size: 1.2rem; }
 
-    /* Differentiated Login Section */
+    /* Login Section */
     .auth-container { max-width: 500px; margin: -120px auto 100px; padding: 0 20px; position: relative; z-index: 10; }
     .auth-card { background: var(--card-bg); border-radius: 28px; padding: 45px; border: 1px solid #1e293b; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
     
     .field-group { margin-bottom: 24px; }
     .field-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 14px; color: #cbd5e1; }
     .field-group input { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #334155; background: #1e293b; color: white; transition: 0.3s; }
-    .field-group input:focus { border-color: var(--brand-primary); outline: none; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-    
-    .forgot-link { float: right; color: var(--brand-primary); text-decoration: none; font-size: 13px; }
+    .field-group input:focus { border-color: var(--brand-primary); outline: none; }
     
     .btn-login { width: 100%; background: var(--brand-primary); color: #020617; padding: 18px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin: 25px 0; font-size: 16px; transition: 0.3s; }
     .btn-login:hover { background: #34d399; transform: translateY(-2px); }
 
-    /* Transparency Section */
+    /* Live Notification Toast */
+    #notification-toast {
+      position: fixed;
+      bottom: 25px;
+      left: 25px;
+      background: var(--card-bg);
+      border: 1px solid var(--brand-primary);
+      padding: 15px 20px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transform: translateY(150%);
+      transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      z-index: 9999;
+    }
+    #notification-toast.show { transform: translateY(0); }
+    .toast-icon { width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); }
+
+    /* Other Sections */
     .trust-section { padding: 80px 10%; text-align: center; }
     .trust-badge { display: inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px; }
     
@@ -69,19 +93,12 @@
     .step-box { background: #0f172a; padding: 40px; border-radius: 24px; text-align: left; border-left: 4px solid var(--brand-primary); }
     .step-label { color: var(--brand-primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 15px; }
 
-    /* Kenyan Market Signals */
     .local-banner { background: #111827; padding: 40px; border-radius: 24px; margin-top: 50px; display: flex; align-items: center; gap: 30px; border: 1px solid #1e293b; }
     .local-flag { width: 60px; border-radius: 8px; }
 
-    /* WhatsApp Integration */
-    .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 15px 30px rgba(37, 211, 102, 0.3); z-index: 1000; text-decoration: none; }
+    .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 1000; text-decoration: none; }
 
     footer { background: #020617; padding: 100px 10% 50px; border-top: 1px solid #1e293b; }
-    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; margin-bottom: 80px; }
-    .footer-col h4 { color: #fff; margin-bottom: 25px; font-size: 1rem; }
-    .contact-list { list-style: none; }
-    .contact-list li { margin-bottom: 15px; color: var(--text-dim); display: flex; align-items: center; gap: 12px; }
-    .contact-list i { color: var(--brand-primary); }
   </style>
 </head>
 <body>
@@ -89,12 +106,24 @@
 <nav>
   <div class="logo">UNASEMEJE SMM </div>
   <div id="navActions" style="display: flex; align-items: center; gap: 20px;">
-    <!-- PERMANENT SECURITY: The Admin Panel button is NOT in this HTML. 
-         It is only created by JavaScript if you are logged in as the owner. -->
     <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
     <i class="fas fa-bars" style="color: #fff; font-size: 22px;"></i>
   </div>
 </nav>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item"><i class="fas fa-fire"></i> Instagram Followers Trending</div>
+    <div class="ticker-item"><i class="fas fa-bolt"></i> TikTok Views Instant Delivery</div>
+    <div class="ticker-item"><i class="fas fa-check-circle"></i> M-Pesa Top-Up Active</div>
+    <div class="ticker-item"><i class="fas fa-users"></i> Facebook Group Growth +24%</div>
+    <div class="ticker-item"><i class="fas fa-star"></i> YouTube Watch Hours Verified</div>
+    <!-- Duplicated for seamless loop -->
+    <div class="ticker-item"><i class="fas fa-fire"></i> Instagram Followers Trending</div>
+    <div class="ticker-item"><i class="fas fa-bolt"></i> TikTok Views Instant Delivery</div>
+    <div class="ticker-item"><i class="fas fa-check-circle"></i> M-Pesa Top-Up Active</div>
+  </div>
+</div>
 
 <section class="hero">
   <div class="trust-badge">AUTHENTIC KENYAN SERVICE</div>
@@ -110,7 +139,7 @@
     </div>
     <div class="field-group">
       <label>Secret Password</label>
-      <a href="https://wa.me/254715509440" class="forgot-link">Recover Access?</a>
+      <a href="https://wa.me/254715509440" class="forgot-link" style="color: var(--brand-primary); text-decoration: none; font-size: 13px; float: right;">Recover Access?</a>
       <input type="password" id="password" placeholder="••••••••">
     </div>
     
@@ -146,74 +175,69 @@
   </div>
 </section>
 
+<!-- Live Notification Toast -->
+<div id="notification-toast">
+    <div class="toast-icon"><i class="fas fa-shopping-cart"></i></div>
+    <div>
+        <p id="toast-text" style="font-size: 13px; font-weight: 700; color: #fff;">New Order Placed</p>
+        <p id="toast-sub" style="font-size: 11px; color: var(--brand-primary);">2 minutes ago from Nairobi</p>
+    </div>
+</div>
+
 <a href="https://wa.me/254715509440" class="wa-float" target="_blank">
   <i class="fab fa-whatsapp"></i>
 </a>
 
 <footer>
-  <div class="footer-content">
-    <div style="max-width: 300px;">
-      <div class="logo" style="margin-bottom: 25px;">UNASEMEJE SMM </div>
-      <p style="font-size: 14px; color: var(--text-dim);">Providing professional digital growth services for the Kenyan creator economy. Authenticity and security guaranteed.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Navigation</h4>
-      <ul class="contact-list">
-        <li>Home</li>
-        <li>Service Catalog</li>
-        <li>Privacy Guidelines</li>
-        <li>User Terms</li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Direct Support</h4>
-      <ul class="contact-list">
-        <li><i class="fas fa-location-dot"></i> Nairobi, Kenya</li>
-        <li><i class="fab fa-whatsapp"></i> +254 715 509 440</li>
-        <li><i class="fas fa-envelope"></i> support@unasemeje.co.ke</li>
-      </ul>
-    </div>
-  </div>
-  <center style="border-top: 1px solid #1e293b; padding-top: 40px;">
+  <center>
+    <div class="logo" style="margin-bottom: 25px;">UNASEMEJE SMM </div>
     <p style="font-size: 12px; color: #475569;">© 2026 UNASEMEJE ø DIA. All Rights Reserved. Not affiliated with any social media network.</p>
-    <p style="font-size: 10px; color: #334155; margin-top: 15px; max-width: 600px;">SECURITY NOTE: We will never ask for your social media login passwords. All payments are verified manually via WhatsApp for maximum user protection.</p>
   </center>
 </footer>
 
 <script>
-  /**
-   * IDENTITY-LOCK PROTOCOL (UNASEMEJE ø DIA)
-   * This ensures that the Admin button is physically created and 
-   * visible ONLY for the verified platform owner.
-   */
+  // IDENTITY-LOCK PROTOCOL
   (function() {
     const token = localStorage.getItem("token");
     if (!token) return;
-
     try {
-      // Decode the session data
       const payload = JSON.parse(atob(token.split(".")[1]));
-      
-      // STRICT OWNER VERIFICATION
       const isOwner = payload.email === "diasamratbarusz@gmail.com" && payload.phone === "0715509440";
-      
       if (isOwner) {
-        // Create the button element only if the check passes
         const adminBtn = document.createElement("a");
         adminBtn.href = "admin.html";
         adminBtn.className = "admin-btn";
-        adminBtn.id = "ownerAdminAccess";
         adminBtn.innerText = "ADMIN PANEL";
-        
-        // Injects it into your navigation bar
         const navActions = document.getElementById("navActions");
         navActions.insertBefore(adminBtn, navActions.firstChild);
-        console.log("Admin Identity Verified: Access Granted.");
       }
-    } catch (e) {
-      // If error occurs, button is never created - access remains hidden.
-    }
+    } catch (e) {}
   })();
+
+  // LIVE ORDER NOTIFICATIONS LOGIC
+  const locations = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika"];
+  const services = ["Instagram Followers", "TikTok Likes", "YouTube Subscribers", "Facebook Views"];
+  
+  function showNotification() {
+    const toast = document.getElementById('notification-toast');
+    const location = locations[Math.floor(Math.random() * locations.length)];
+    const service = services[Math.floor(Math.random() * services.length)];
+    
+    document.getElementById('toast-text').innerText = `Someone from ${location}`;
+    document.getElementById('toast-sub').innerText = `just bought ${service}`;
+    
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4000);
+  }
+
+  // Initial delay then repeat
+  setTimeout(() => {
+    showNotification();
+    setInterval(showNotification, 12000); 
+  }, 3000);
 </script>
 
 <script src="auth.js"></script>
