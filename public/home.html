@@ -1,25 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-KE">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard | UNASEMEJE ø DIA</title>
+    <title>Dashboard | UNASEMEJE </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Moving Ticker Styling */
+        .top-ticker {
+            background: #000;
+            border-bottom: 2px solid var(--primary);
+            overflow: hidden;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding-right: 50px;
+        }
+        .ticker-item span {
+            color: var(--primary);
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* Admin Button Specific Styling */
+        .admin-injection-link {
+            border: 1px solid var(--primary);
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary) !important;
+            margin-bottom: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+        .admin-injection-link:hover {
+            background: var(--primary);
+            color: white !important;
+        }
+    </style>
 </head>
 <body>
 
+<!-- Moving Words Ticker -->
+<div class="top-ticker">
+    <div class="ticker-content">
+        <div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Fastest Delivery in Kenya</div>
+        <div class="ticker-item">🔥 Instagram High-Quality Followers from <span>KSh 37</span></div>
+        <div class="ticker-item">💎 Get <span>10% BONUS</span> on all M-Pesa Deposits</div>
+        <div class="ticker-item">⚡ TikTok Services are now <span>100% INSTANT</span></div>
+        <div class="ticker-item">⭐ Boost your Aura today with the Best Rates</div>
+    </div>
+</div>
+
 <div class="dashboard">
     <div class="sidebar">
-        <h2>unasemeje ø dia</h2>
-        <div class="sidebar-nav">
+        <h2 style="font-family: 'Plus Jakarta Sans';">unasemeje ø dia</h2>
+        <div class="sidebar-nav" id="sidebarNav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             
-            <!-- ADMIN LINK: Hidden by default, strictly enabled via JS for your credentials -->
-            <a href="admin.html" id="adminMenu" style="display: none; border: 1px solid var(--primary); background: rgba(56, 189, 248, 0.05); color: var(--primary); margin-bottom: 10px;">
-                <i class="fas fa-user-shield"></i> <span>Admin Panel</span>
-            </a>
+            <!-- ADMIN LINK IS REMOVED PERMANENTLY FROM HERE -->
+            <!-- It will only appear for Diasamratbarusz@Gmail.com via script below -->
 
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
@@ -28,62 +90,63 @@
             <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
         </div>
         
-        <div style="margin-top: auto;">
-            <a href="https://wa.me/254715509440" target="_blank" style="color: var(--secondary);">
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <a href="https://wa.me/254715509440" target="_blank" style="color: var(--secondary); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
                 <i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span>
             </a>
-            <a onclick="logout()" style="color: var(--danger); cursor: pointer;">
+            <a onclick="logout()" style="color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
         </div>
     </div>
 
     <div class="main">
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 25px;">
+        <!-- Header Card -->
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
             <div>
                 <small style="color: var(--text-dim); display: block;">Welcome back,</small>
-                <span id="userName" style="font-weight: 800; font-size: 18px;">---</span>
+                <span id="userName" style="font-weight: 800; font-size: 20px;">---</span>
             </div>
-            <div class="price-display" style="margin: 0; padding: 10px 20px;">
-                <small>Wallet Balance</small>
-                <b id="userBalance">KES 0.00</b>
+            <div class="price-display" style="margin: 0; padding: 12px 25px; border-radius: 15px;">
+                <small style="display: block; font-size: 11px; opacity: 0.8;">Wallet Balance</small>
+                <b id="userBalance" style="font-size: 18px;">KES 0.00</b>
             </div>
         </div>
 
-        <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95); border: none;">
+        <!-- Promo Card -->
+        <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95); border: none; color: white;">
             <h2 style="margin-bottom: 10px;">Grow Your Brand 🚀</h2>
-            <p style="opacity: 0.9; font-size: 14px;">Select a platform to start boosting your TikTok, Instagram, or YouTube presence today. All orders are processed instantly.</p>
-            <button onclick="window.location.href='platform.html'" class="btn-secondary" style="width: auto; margin-top: 20px; padding: 12px 30px; background: white; color: var(--primary);">
+            <p style="opacity: 0.9; font-size: 14px;">Boost your TikTok, Instagram, or YouTube presence today. Instant processing on all orders.</p>
+            <button onclick="window.location.href='platform.html'" class="btn-secondary" style="width: auto; margin-top: 20px; padding: 12px 35px; background: white; color: var(--primary); font-weight: 800; border-radius: 10px; border: none; cursor: pointer;">
                 START BOOSTING
             </button>
         </div>
 
+        <!-- Stats Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-            
             <div class="card">
                 <h3><i class="fas fa-chart-line" style="color: var(--primary);"></i> Account Stats</h3>
-                <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                    <div style="text-align: center;">
+                <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                    <div style="text-align: left;">
                         <small style="color: var(--text-dim);">Total Spent</small>
-                        <p id="totalSpent" style="font-weight: 800; font-size: 20px; margin-top: 5px;">KES 0.00</p>
+                        <p id="totalSpent" style="font-weight: 800; font-size: 22px; margin-top: 5px; color: var(--primary);">KES 0.00</p>
                     </div>
-                    <div style="text-align: center;">
+                    <div style="text-align: right;">
                         <small style="color: var(--text-dim);">Active Orders</small>
-                        <p id="activeOrders" style="font-weight: 800; font-size: 20px; margin-top: 5px;">0</p>
+                        <p id="activeOrders" style="font-weight: 800; font-size: 22px; margin-top: 5px;">0</p>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-bell" style="color: var(--warning);"></i> Updates</h3>
+                <h3><i class="fas fa-bell" style="color: var(--warning);"></i> System Status</h3>
                 <div style="margin-top: 15px;">
-                    <div style="padding: 10px; border-left: 3px solid var(--secondary); background: rgba(16, 185, 129, 0.05); border-radius: 0 8px 8px 0;">
-                        <small style="color: var(--secondary); font-weight: 800;">NEW SYSTEM</small>
-                        <p style="font-size: 13px; margin-top: 4px;">M-Pesa deposits are now faster. Ensure you paste the full message for instant verification.</p>
+                    <div style="padding: 12px; border-left: 4px solid var(--secondary); background: rgba(16, 185, 129, 0.08); border-radius: 0 10px 10px 0;">
+                        <small style="color: var(--secondary); font-weight: 800;">AUTO-VERIFY ACTIVE</small>
+                        <p style="font-size: 13px; margin-top: 5px; color: var(--text-dim);">M-Pesa deposits are processed instantly. Please use the exact transaction code.</p>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -92,20 +155,39 @@
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
-    // Route Protection
     if (!token) window.location.href = "index.html";
 
-    function checkAdminStatus(email, phone) {
-        // Strict Admin Control for Admin Panel Visibility
-        const isAdmin = email === "diasamratbarusz@gmail.com" || phone === "0715509440";
-        if (isAdmin) {
-            document.getElementById("adminMenu").style.display = "flex";
+    /**
+     * PERMANENT ADMIN LOCK
+     * Checks if the logged-in user is the owner.
+     */
+    function secureAdminCheck(email, phone) {
+        const OWNER_EMAIL = "diasamratbarusz@gmail.com".toLowerCase();
+        const OWNER_PHONE_CORE = "715509440"; // Matches 0715... and 254715...
+        
+        const isOwnerEmail = email && email.toLowerCase() === OWNER_EMAIL;
+        const isOwnerPhone = phone && String(phone).includes(OWNER_PHONE_CORE);
+        
+        if (isOwnerEmail || isOwnerPhone) {
+            const sidebarNav = document.getElementById("sidebarNav");
+            
+            // Check if button already exists to prevent duplicates
+            if (!document.getElementById("adminSecureBtn")) {
+                const adminBtn = document.createElement("a");
+                adminBtn.href = "admin.html";
+                adminBtn.id = "adminSecureBtn";
+                adminBtn.className = "admin-injection-link";
+                adminBtn.innerHTML = `<i class="fas fa-user-shield"></i> <span style="margin-left: 12px;">Admin Panel</span>`;
+                
+                // Position it right after the Home link (second position)
+                sidebarNav.insertBefore(adminBtn, sidebarNav.children[1]);
+            }
         }
     }
 
     async function syncDashboard() {
         try {
-            // Fetch User Profile
+            // 1. Fetch Profile & Verify Owner Identity
             const res = await fetch(`${API}/me`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -115,16 +197,15 @@
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
                 
-                // Security Check: Enable Admin menu if credentials match
-                checkAdminStatus(user.email, user.phone);
-
-                // Set Referral code for use in other pages
+                // EXECUTE SECURITY LOCK
+                secureAdminCheck(user.email, user.phone);
+                
                 localStorage.setItem("refCode", user.referralCode);
             } else {
                 logout();
             }
 
-            // Fetch Order Stats
+            // 2. Fetch Stats
             const orderRes = await fetch(`${API}/sync-orders`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -139,7 +220,7 @@
             }
 
         } catch (error) {
-            console.error("Dashboard Sync Error:", error);
+            console.error("Critical Sync Error:", error);
         }
     }
 
@@ -148,9 +229,48 @@
         window.location.href = "index.html";
     }
 
-    // Execute synchronization on page load
+    /**
+     * LIVE ORDER NOTIFICATIONS (FOMO)
+     */
+    function showLiveOrder() {
+        const names = ["Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith"];
+        const services = ["1,000 TikTok Views", "500 IG Followers", "YouTube Watchtime", "200 Post Likes", "Premium Package"];
+        
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const randomService = services[Math.floor(Math.random() * services.length)];
+
+        const notification = document.createElement("div");
+        notification.style = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
+            padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
+            animation: slideIn 0.5s ease-out;
+        `;
+        
+        notification.innerHTML = `✅ <b>${randomName}</b> just ordered <b>${randomService}</b>!`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = "0";
+            notification.style.transition = "0.5s";
+            setTimeout(() => notification.remove(), 500);
+        }, 4000);
+    }
+
+    // Trigger notification every 15 seconds
+    setInterval(showLiveOrder, 15000);
+
+    // Initialize Dashboard
     syncDashboard();
 </script>
+
+<style>
+    @keyframes slideIn {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+</style>
 
 </body>
 </html>
