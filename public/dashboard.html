@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Moving Ticker Styling */
+        /* Moving Ticker Styling - Slow 60s Speed */
         .top-ticker {
             background: #000;
             border-bottom: 2px solid var(--primary);
@@ -23,7 +23,7 @@
         .ticker-content {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 25s linear infinite;
+            animation: marquee 60s linear infinite;
             padding-left: 100%;
         }
         .ticker-item {
@@ -63,14 +63,18 @@
 </head>
 <body>
 
-<!-- Moving Words Ticker -->
+<!-- Moving Words Ticker - Plug Content -->
 <div class="top-ticker">
     <div class="ticker-content">
-        <div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Fastest Delivery in Kenya</div>
-        <div class="ticker-item">🔥 Instagram High-Quality Followers from <span>KSh 37</span></div>
-        <div class="ticker-item">💎 Get <span>10% BONUS</span> on all M-Pesa Deposits</div>
-        <div class="ticker-item">⚡ TikTok Services are now <span>100% INSTANT</span></div>
-        <div class="ticker-item">⭐ Boost your Aura today with the Best Rates</div>
+        <div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> The Ultimate Plug wa Kanairo!</div>
+        <div class="ticker-item">🔥 IG Followers <span>KSh 37</span> — Usikae kinyonge, ongeza Aura!</div>
+        <div class="ticker-item">💎 <span>10% BONUS:</span> Deposit uone magic kwa wallet yako!</div>
+        <div class="ticker-item">⚡ TikTok Views ni <span>INSTANT</span> — Hata ukiblink zimefika!</div>
+        <div class="ticker-item">🤣 <span>FUN FACT:</span> Views zetu ni mob kuliko deni za ex wako!</div>
+        <div class="ticker-item">👑 <span>KING/QUEEN:</span> Stop being a ghost, kuwa Celeb wa mtaa today!</div>
+        <div class="ticker-item">💸 <span>CHAPA IKO:</span> Refer mbeste upate 10%... Pesa ya sherehe ishapanda!</div>
+        <div class="ticker-item">⭐ <span>AURA +1,000,000:</span> Boost socials uone vile utaitwa 'Mkubwa'!</div>
+        <div class="ticker-item">🤫 <span>SIRI NI HAPA:</span> Hata wasanii wako wa fav wanatumia hii site, shhh!</div>
     </div>
 </div>
 
@@ -79,10 +83,6 @@
         <h2 style="font-family: 'Plus Jakarta Sans';">unasemeje ø dia</h2>
         <div class="sidebar-nav" id="sidebarNav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
-            
-            <!-- ADMIN LINK IS REMOVED PERMANENTLY FROM HERE -->
-            <!-- It will only appear for Diasamratbarusz@Gmail.com via script below -->
-
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
             <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
@@ -157,29 +157,20 @@
 
     if (!token) window.location.href = "index.html";
 
-    /**
-     * PERMANENT ADMIN LOCK
-     * Checks if the logged-in user is the owner.
-     */
     function secureAdminCheck(email, phone) {
         const OWNER_EMAIL = "diasamratbarusz@gmail.com".toLowerCase();
-        const OWNER_PHONE_CORE = "715509440"; // Matches 0715... and 254715...
-        
+        const OWNER_PHONE_CORE = "715509440"; 
         const isOwnerEmail = email && email.toLowerCase() === OWNER_EMAIL;
         const isOwnerPhone = phone && String(phone).includes(OWNER_PHONE_CORE);
         
         if (isOwnerEmail || isOwnerPhone) {
             const sidebarNav = document.getElementById("sidebarNav");
-            
-            // Check if button already exists to prevent duplicates
             if (!document.getElementById("adminSecureBtn")) {
                 const adminBtn = document.createElement("a");
                 adminBtn.href = "admin.html";
                 adminBtn.id = "adminSecureBtn";
                 adminBtn.className = "admin-injection-link";
                 adminBtn.innerHTML = `<i class="fas fa-user-shield"></i> <span style="margin-left: 12px;">Admin Panel</span>`;
-                
-                // Position it right after the Home link (second position)
                 sidebarNav.insertBefore(adminBtn, sidebarNav.children[1]);
             }
         }
@@ -187,41 +178,24 @@
 
     async function syncDashboard() {
         try {
-            // 1. Fetch Profile & Verify Owner Identity
-            const res = await fetch(`${API}/me`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const res = await fetch(`${API}/me`, { headers: { "Authorization": `Bearer ${token}` } });
             const user = await res.json();
-
             if (res.ok) {
                 document.getElementById("userName").innerText = user.username || "User";
                 document.getElementById("userBalance").innerText = "KES " + (user.balance || 0).toFixed(2);
-                
-                // EXECUTE SECURITY LOCK
                 secureAdminCheck(user.email, user.phone);
-                
                 localStorage.setItem("refCode", user.referralCode);
-            } else {
-                logout();
-            }
+            } else { logout(); }
 
-            // 2. Fetch Stats
-            const orderRes = await fetch(`${API}/sync-orders`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const orderRes = await fetch(`${API}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
             const orders = await orderRes.json();
-            
             if (orderRes.ok) {
                 const active = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
                 const spent = orders.reduce((acc, curr) => acc + (curr.cost || 0), 0);
-                
                 document.getElementById("activeOrders").innerText = active;
                 document.getElementById("totalSpent").innerText = "KES " + spent.toFixed(2);
             }
-
-        } catch (error) {
-            console.error("Critical Sync Error:", error);
-        }
+        } catch (error) { console.error("Sync Error:", error); }
     }
 
     function logout() {
@@ -229,12 +203,21 @@
         window.location.href = "index.html";
     }
 
-    /**
-     * LIVE ORDER NOTIFICATIONS (FOMO)
-     */
     function showLiveOrder() {
-        const names = ["Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith"];
-        const services = ["1,000 TikTok Views", "500 IG Followers", "YouTube Watchtime", "200 Post Likes", "Premium Package"];
+        const names = [
+            "Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith", "Kamau", "Wanjiku", "Kim", "Chloe", "Dante", "Zion", "Aaliyah", "Malik", "Amara", "Tariq", "Nia", "Jabari",
+            "Musa", "Zahara", "Kofi", "Imani", "Seko", "Lulu", "Pendo", "Baraka", "Faraji", "Zola", "Bantu", "Kwame", "Makena", "Zendaya", "Tasha", "Derrick", "Vicky", "Sly", "Tyson", "Riri",
+            "Caleb", "Maya", "Leon", "Jade", "Theo", "Ruby", "Enzo", "Luna", "Omar", "Sana", "Yasin", "Layla", "Amir", "Noor", "Hassan", "Mona", "Zaid", "Hiba", "Rayan", "Sara",
+            "Ken", "Joy", "Dan", "Liz", "Sam", "Ann", "Ben", "Sue", "Tom", "Eve", "Joe", "Kay", "Bob", "May", "Ian", "Ivy", "Ray", "Ada", "Leo", "Mia",
+            "Ochieng", "Atieno", "Mutua", "Syokau", "Kibet", "Chebet", "Maina", "Njeri", "Waweru", "Nyambura", "Githinji", "Wangari", "Ondieki", "Moraa", "Simiyu", "Nasimiyu", "Kariuki", "Mumbi", "Njuguna", "Wambui",
+            "Elias", "Sasha", "Victor", "Diana", "Felix", "Brenda", "George", "Cynthia", "Collins", "Sharon", "Edwin", "Priscilla", "Dennis", "Valerie", "Arthur", "Gloria", "Silas", "Naomi", "Moses", "Ruth",
+            "King", "Queen", "Boss", "Don", "Plug", "Aura", "Chief", "GenZ", "Streetwise", "Baller", "Richie", "Drip", "Ghost", "Shujaa", "Simba", "Malkia", "Star", "Legend", "Champ", "Ace",
+            "Ahmed", "Fatma", "Ali", "Zainab", "Mustafa", "Khadija", "Yusuf", "Aisha", "Ibrahim", "Mariam", "Suleiman", "Saida", "Said", "Laila", "Salim", "Rehema", "Rashid", "Jamila", "Hamisi", "Mwanajuma",
+            "Nixon", "Talia", "Rudy", "Skye", "Blaze", "Jace", "Nova", "Ryder", "Veda", "Koda", "Milo", "Remi", "Arlo", "Cleo", "Finn", "Juno", "Beau", "Zia", "Hugo", "Lyra",
+            "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango"
+        ];
+        
+        const services = ["1,000 TikTok Views", "500 IG Followers", "YouTube Watchtime", "200 Post Likes", "Premium Package", "Facebook Page Likes", "Telegram Members", "X (Twitter) Retweets"];
         
         const randomName = names[Math.floor(Math.random() * names.length)];
         const randomService = services[Math.floor(Math.random() * services.length)];
@@ -258,10 +241,7 @@
         }, 4000);
     }
 
-    // Trigger notification every 15 seconds
     setInterval(showLiveOrder, 15000);
-
-    // Initialize Dashboard
     syncDashboard();
 </script>
 
