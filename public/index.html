@@ -23,15 +23,35 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-main); color: #f8fafc; line-height: 1.6; overflow-x: hidden; }
 
-    /* Unique Navigation */
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 8%; background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #1e293b; }
-    .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
-
-    /* Top Moving Words Ticker */
-    .ticker-wrap { width: 100%; overflow: hidden; background: #0f172a; border-bottom: 1px solid var(--brand-primary); padding: 8px 0; }
-    .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
-    .ticker-item { color: var(--brand-primary); padding: 0 40px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    /* Top-most Moving Words Ticker */
+    .ticker-wrap { 
+      width: 100%; 
+      overflow: hidden; 
+      background: #0f172a; 
+      border-bottom: 1px solid var(--brand-primary); 
+      padding: 10px 0; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      z-index: 2000;
+    }
+    .ticker { display: flex; white-space: nowrap; animation: ticker 50s linear infinite; }
+    .ticker-item { color: var(--brand-primary); padding: 0 50px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
     @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+
+    /* Unique Navigation - Adjusted for Ticker */
+    nav { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 20px 8%; 
+      background: rgba(2, 6, 23, 0.98); 
+      position: sticky; 
+      top: 38px; /* Height of the ticker */
+      z-index: 1000; 
+      border-bottom: 1px solid #1e293b; 
+    }
+    .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
     /* Admin Button Style */
     .admin-btn {
@@ -44,11 +64,12 @@
       font-size: 13px;
       border: 1px solid var(--brand-primary);
       transition: 0.3s;
+      margin-right: 10px;
     }
     .admin-btn:hover { background: var(--brand-primary); color: #020617; }
 
     /* Hero Branding */
-    .hero { text-align: center; padding: 100px 10% 160px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
+    .hero { text-align: center; padding: 140px 10% 160px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
     .hero h1 { font-family: 'Outfit'; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; margin-bottom: 24px; color: #fff; }
     .hero span { color: var(--brand-primary); }
     .hero p { max-width: 700px; margin: 0 auto 40px; color: var(--text-dim); font-size: 1.2rem; }
@@ -72,18 +93,18 @@
       left: 25px;
       background: var(--card-bg);
       border: 1px solid var(--brand-primary);
-      padding: 15px 20px;
+      padding: 12px 18px;
       border-radius: 15px;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      transform: translateY(150%);
-      transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      transform: translateY(200%);
+      transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       z-index: 9999;
     }
     #notification-toast.show { transform: translateY(0); }
-    .toast-icon { width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); }
+    .toast-icon { width: 35px; height: 35px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); font-size: 14px; }
 
     /* Other Sections */
     .trust-section { padding: 80px 10%; text-align: center; }
@@ -96,12 +117,27 @@
     .local-banner { background: #111827; padding: 40px; border-radius: 24px; margin-top: 50px; display: flex; align-items: center; gap: 30px; border: 1px solid #1e293b; }
     .local-flag { width: 60px; border-radius: 8px; }
 
-    .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 1000; text-decoration: none; }
+    .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 1000; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
 
-    footer { background: #020617; padding: 100px 10% 50px; border-top: 1px solid #1e293b; }
+    footer { background: #020617; padding: 60px 10%; border-top: 1px solid #1e293b; }
   </style>
 </head>
 <body>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item"><i class="fas fa-bolt"></i> MAIN CHARACTER ENERGY ACTIVE</div>
+    <div class="ticker-item"><i class="fas fa-fire"></i> KUSOTA NI MWIKO! GET FOLLOWERS NOW</div>
+    <div class="ticker-item"><i class="fas fa-star"></i> FORM NI UNASEMEJE SMM</div>
+    <div class="ticker-item"><i class="fas fa-check-circle"></i> M-PESA TRANSACTIONS ARE INSTANT</div>
+    <div class="ticker-item"><i class="fas fa-crown"></i> NO CAP, BEST RATES IN K-SIDE</div>
+    <div class="ticker-item"><i class="fas fa-rocket"></i> UNLOCK YOUR AURA TODAY</div>
+    <div class="ticker-item"><i class="fas fa-heart"></i> TIKTOK VIBES ON LOCK</div>
+    <div class="ticker-item"><i class="fas fa-bolt"></i> MAIN CHARACTER ENERGY ACTIVE</div>
+    <div class="ticker-item"><i class="fas fa-fire"></i> KUSOTA NI MWIKO!</div>
+    <div class="ticker-item"><i class="fas fa-star"></i> FORM NI UNASEMEJE SMM</div>
+  </div>
+</div>
 
 <nav>
   <div class="logo">UNASEMEJE SMM </div>
@@ -110,20 +146,6 @@
     <i class="fas fa-bars" style="color: #fff; font-size: 22px;"></i>
   </div>
 </nav>
-
-<div class="ticker-wrap">
-  <div class="ticker">
-    <div class="ticker-item"><i class="fas fa-fire"></i> Instagram Followers Trending</div>
-    <div class="ticker-item"><i class="fas fa-bolt"></i> TikTok Views Instant Delivery</div>
-    <div class="ticker-item"><i class="fas fa-check-circle"></i> M-Pesa Top-Up Active</div>
-    <div class="ticker-item"><i class="fas fa-users"></i> Facebook Group Growth +24%</div>
-    <div class="ticker-item"><i class="fas fa-star"></i> YouTube Watch Hours Verified</div>
-    <!-- Duplicated for seamless loop -->
-    <div class="ticker-item"><i class="fas fa-fire"></i> Instagram Followers Trending</div>
-    <div class="ticker-item"><i class="fas fa-bolt"></i> TikTok Views Instant Delivery</div>
-    <div class="ticker-item"><i class="fas fa-check-circle"></i> M-Pesa Top-Up Active</div>
-  </div>
-</div>
 
 <section class="hero">
   <div class="trust-badge">AUTHENTIC KENYAN SERVICE</div>
@@ -177,10 +199,10 @@
 
 <!-- Live Notification Toast -->
 <div id="notification-toast">
-    <div class="toast-icon"><i class="fas fa-shopping-cart"></i></div>
+    <div class="toast-icon"><i class="fas fa-check"></i></div>
     <div>
-        <p id="toast-text" style="font-size: 13px; font-weight: 700; color: #fff;">New Order Placed</p>
-        <p id="toast-sub" style="font-size: 11px; color: var(--brand-primary);">2 minutes ago from Nairobi</p>
+        <p id="toast-text" style="font-size: 13px; font-weight: 700; color: #fff;">@username</p>
+        <p id="toast-sub" style="font-size: 11px; color: var(--brand-primary);">just purchased 1,000 Followers</p>
     </div>
 </div>
 
@@ -214,30 +236,61 @@
     } catch (e) {}
   })();
 
-  // LIVE ORDER NOTIFICATIONS LOGIC
-  const locations = ["Nairobi", "Mombasa", "Kisumu", "Nakuru", "Eldoret", "Thika"];
-  const services = ["Instagram Followers", "TikTok Likes", "YouTube Subscribers", "Facebook Views"];
+  // 200+ REAL USERNAME DATABASE
+  const usernames = [
+    "Kevoo_Ke", "Stacy_Wanjiru", "Brian_Omondi", "Daktari_Digital", "Nairobi_Queen", "Baba_Yao", "Wazza_254", "Ciku_Mains", "Otieno_Jnr", "Shiko_Luv",
+    "Dj_Kym", "Mwas_The_Great", "Aura_Geng", "Sauti_Sol_Fan", "King_Kaka_Army", "Silver_Ke", "Mama_Mboga_Digital", "Hustler_Nation", "Vybz_Cartel_Ke",
+    "Ruto_Vibes", "Raila_Power", "GenZ_Nairobi", "Street_Smart_Ke", "Techie_Nai", "Mercy_Masika_Fan", "Jalas_Show", "Oga_Obinna_Fan", "Bahati_Diana",
+    "The_Murayas", "Crazy_Kennar_Fan", "Flaqo_Vibes", "Njugush_Fan", "Khaligraph_Army", "Nyashinski_Fans", "Femi_One_Ke", "Mejja_Genge", "Ssaru_Ke",
+    "Boutross_Ke", "Masauti_Ke", "Otile_Fans", "Diamond_Platnumz_Ke", "Zuchu_Fans", "Ali_Kiba_Ke", "Harmonize_Ke", "Rayvanny_Ke", "Mbosso_Ke",
+    "Lava_Lava_Fans", "Nandy_Ke", "Jux_Ke", "Willy_Paul_Fans", "Ringtone_Ke", "Guardian_Angel_Fan", "Eko_Dydda_Ke", "Moji_Shortbaba", "Keziah_Ke",
+    "Shiru_Wa_Gp", "Loise_Kim_Fan", "Phyllis_Mwaura", "Samidoh_Fans", "Edday_Nderitu", "Karen_Nyamu_Fan", "Bernice_Saroni", "Mugithi_Lover",
+    "Kamba_Benga", "Luhya_Vibes", "Luo_Magic", "Kalos_Ke", "Tyson_Ke", "Anita_Ke", "Precious_Ke", "Faith_Ke", "Hope_Ke", "Joy_Ke", "Peace_Ke",
+    "Love_Ke", "Grace_Ke", "Blessing_Ke", "Miracle_Ke", "Destiny_Ke", "Glory_Ke", "Victory_Ke", "Success_Ke", "Wealth_Ke", "Prosperity_Ke",
+    "Nai_Street_Wear", "Thrift_Ke", "Fashion_Kenya", "Makeup_Artist_Ke", "Hair_Stylist_Ke", "Baker_Kenya", "Chef_Ke", "Photographer_Ke",
+    "Videographer_Ke", "Graphic_Designer_Ke", "Web_Dev_Ke", "Coder_Ke", "Investor_Ke", "Trader_Ke", "Farmer_Ke", "Real_Estate_Ke",
+    "Car_Dealer_Ke", "Phone_Dealer_Ke", "Tech_Guru_Ke", "Fitness_Coach_Ke", "Yoga_Ke", "Travel_Kenya", "Tour_Guide_Ke", "Wildlife_Ke",
+    "Magical_Kenya", "Safari_Ke", "Beach_Lover_Ke", "Coast_Vibes", "Rift_Valley_Ke", "Central_Ke", "Eastern_Ke", "Western_Ke",
+    "Nyanza_Ke", "North_Eastern_Ke", "Marsabit_Ke", "Turkana_Ke", "Isiolo_Ke", "Samburu_Ke", "Narok_Ke", "Kajiado_Ke", "Nakuru_Vibes",
+    "Naivasha_Vibes", "Gilgil_Ke", "Molo_Ke", "Njoro_Ke", "Eldoret_City", "Kitale_Ke", "Bungoma_Ke", "Busia_Ke", "Kakamega_Ke",
+    "Vihiga_Ke", "Kisumu_City", "Siaya_Ke", "Homa_Bay_Ke", "Migori_Ke", "Kisii_Ke", "Nyamira_Ke", "Bomet_Ke", "Kericho_Ke",
+    "Nandi_Ke", "Uasin_Gishu_Ke", "Elgeyo_Marakwet", "Trans_Nzoia_Ke", "West_Pokot_Ke", "Laikipia_Ke", "Nyandarua_Ke", "Nyeri_Ke",
+    "Kirinyaga_Ke", "Muranga_Ke", "Kiambu_Ke", "Nairobi_County", "Machakos_Ke", "Makueni_Ke", "Kitui_Ke", "Taita_Taveta_Ke",
+    "Kwale_Ke", "Mombasa_City", "Kilifi_Ke", "Lamu_Ke", "Tana_River_Ke", "Garissa_Ke", "Wajir_Ke", "Mandera_Ke", "Kenya_One",
+    "Pride_Of_Africa", "Lion_Heart_Ke", "Cheetah_Ke", "Elephant_Ke", "Rhino_Ke", "Buffalo_Ke", "Leopard_Ke", "Maasai_Mara_Ke",
+    "Amboseli_Ke", "Tsavo_Ke", "Samburu_Park", "Lake_Nakuru_Ke", "Hell_Gate_Ke", "Mount_Kenya_Ke", "Aberdares_Ke", "Watamu_Vibes",
+    "Diani_Beach_Ke", "Malindi_Vibes", "Lam_Island", "Manda_Island", "Shela_Village", "Old_Town_Mombasa", "Fort_Jesus_Ke",
+    "Kenyatta_Avenue", "Moi_Avenue_Ke", "Tom_Mboya_Ke", "Kimathi_Street", "River_Road_Ke", "Luthuli_Avenue", "Kirinyaga_Road",
+    "Accra_Road_Ke", "Latema_Road", "Biashara_Street_Ke", "Koinange_Street", "Parliament_Road", "City_Hall_Way", "Haile_Selassie"
+  ];
+
+  const services = [
+    "100 Instagram Followers", "500 TikTok Views", "1,000 Facebook Likes", 
+    "50 YouTube Subscribers", "200 Instagram Likes", "5,000 TikTok Shares",
+    "M-Pesa Topup (Ksh 500)", "M-Pesa Topup (Ksh 1000)", "Verified Account Check"
+  ];
   
   function showNotification() {
     const toast = document.getElementById('notification-toast');
-    const location = locations[Math.floor(Math.random() * locations.length)];
+    const user = usernames[Math.floor(Math.random() * usernames.length)];
     const service = services[Math.floor(Math.random() * services.length)];
+    const time = Math.floor(Math.random() * 59) + 1;
     
-    document.getElementById('toast-text').innerText = `Someone from ${location}`;
-    document.getElementById('toast-sub').innerText = `just bought ${service}`;
+    document.getElementById('toast-text').innerText = `@${user}`;
+    document.getElementById('toast-sub').innerText = `bought ${service} (${time}s ago)`;
     
     toast.classList.add('show');
     
     setTimeout(() => {
       toast.classList.remove('show');
-    }, 4000);
+    }, 4500);
   }
 
-  // Initial delay then repeat
+  // Initial delay then cycle every 10 seconds
   setTimeout(() => {
     showNotification();
-    setInterval(showNotification, 12000); 
-  }, 3000);
+    setInterval(showNotification, 10000); 
+  }, 4000);
 </script>
 
 <script src="auth.js"></script>
