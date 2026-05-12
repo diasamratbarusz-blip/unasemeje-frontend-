@@ -338,7 +338,8 @@ body.is-admin [href="admin"] {
 .ticker-content {
     display: inline-block;
     white-space: nowrap;
-    animation: marquee 25s linear infinite;
+    /* Updated to 60s for a slower movement */
+    animation: marquee 60s linear infinite;
     padding-left: 100%;
 }
 
