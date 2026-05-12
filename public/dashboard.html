@@ -8,6 +8,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* Moving Ticker Styling */
+        .top-ticker {
+            background: #000;
+            border-bottom: 2px solid var(--primary);
+            overflow: hidden;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 25s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            padding-right: 50px;
+        }
+        .ticker-item span {
+            color: var(--primary);
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
         /* Admin Button Specific Styling */
         .admin-injection-link {
             border: 1px solid var(--primary);
@@ -28,6 +62,17 @@
     </style>
 </head>
 <body>
+
+<!-- Moving Words Ticker -->
+<div class="top-ticker">
+    <div class="ticker-content">
+        <div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Fastest Delivery in Kenya</div>
+        <div class="ticker-item">🔥 Instagram High-Quality Followers from <span>KSh 37</span></div>
+        <div class="ticker-item">💎 Get <span>10% BONUS</span> on all M-Pesa Deposits</div>
+        <div class="ticker-item">⚡ TikTok Services are now <span>100% INSTANT</span></div>
+        <div class="ticker-item">⭐ Boost your Aura today with the Best Rates</div>
+    </div>
+</div>
 
 <div class="dashboard">
     <div class="sidebar">
@@ -184,9 +229,48 @@
         window.location.href = "index.html";
     }
 
+    /**
+     * LIVE ORDER NOTIFICATIONS (FOMO)
+     */
+    function showLiveOrder() {
+        const names = ["Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith"];
+        const services = ["1,000 TikTok Views", "500 IG Followers", "YouTube Watchtime", "200 Post Likes", "Premium Package"];
+        
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const randomService = services[Math.floor(Math.random() * services.length)];
+
+        const notification = document.createElement("div");
+        notification.style = `
+            position: fixed; bottom: 20px; right: 20px;
+            background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
+            padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
+            animation: slideIn 0.5s ease-out;
+        `;
+        
+        notification.innerHTML = `✅ <b>${randomName}</b> just ordered <b>${randomService}</b>!`;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = "0";
+            notification.style.transition = "0.5s";
+            setTimeout(() => notification.remove(), 500);
+        }, 4000);
+    }
+
+    // Trigger notification every 15 seconds
+    setInterval(showLiveOrder, 15000);
+
     // Initialize Dashboard
     syncDashboard();
 </script>
+
+<style>
+    @keyframes slideIn {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+</style>
 
 </body>
 </html>
