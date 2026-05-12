@@ -3,65 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>New Order | UNASEMEJE</title>
+    <title>New Order | UNASEMEJE ø DIA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    
-    <style>
-        /* Ticker Styling & Slower Animation */
-        .top-ticker {
-            background: #0f172a;
-            color: white;
-            padding: 10px 0;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .ticker-content {
-            display: inline-flex;
-            gap: 50px;
-            /* Changed from 20s or 30s to 60s for a much slower, smoother crawl */
-            animation: scroll-ticker 60s linear infinite;
-        }
-
-        .ticker-item {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .ticker-item span {
-            color: #3b82f6; /* Primary color */
-        }
-
-        @keyframes scroll-ticker {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* Live Notification Styling */
-        .live-notif {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(15, 23, 42, 0.95);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            border-left: 4px solid #3b82f6;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 9999;
-            font-size: 13px;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    </style>
 </head>
 <body>
 
@@ -94,7 +39,7 @@
         </div>
         
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <a href="https://wa.me/254715509440" target="_blank" style="color: #3b82f6; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
+            <a href="https://wa.me/254715509440" target="_blank" style="color: var(--secondary); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
                 <i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span>
             </a>
         </div>
@@ -102,9 +47,9 @@
 
     <!-- Main Content Area -->
     <div class="main">
-        <div class="card" style="border-left: 5px solid #3b82f6;">
+        <div class="card" style="border-left: 5px solid var(--primary);">
             <h2 style="margin:0;">Boost Your Socials 🚀</h2>
-            <p style="color: #94a3b8; margin-top: 5px; font-size: 14px;">Chagua package yako, uanze ku-trend instantly!</p>
+            <p style="color: var(--text-dim); margin-top: 5px; font-size: 14px;">Chagua package yako, uanze ku-trend instantly!</p>
         </div>
 
         <div class="card">
@@ -127,10 +72,10 @@
             </select>
 
             <!-- Service Details (Min/Max) -->
-            <div id="serviceDetails" style="display: none; background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
+            <div id="serviceDetails" style="display: none; background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border);">
                 <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                    <span>Min: <b id="minQty" style="color: #3b82f6;">0</b></span>
-                    <span>Max: <b id="maxQty" style="color: #3b82f6;">0</b></span>
+                    <span>Min: <b id="minQty" style="color: var(--primary);">0</b></span>
+                    <span>Max: <b id="maxQty" style="color: var(--primary);">0</b></span>
                 </div>
             </div>
 
@@ -143,13 +88,13 @@
             <input type="number" id="quantity" placeholder="E.g 1000" oninput="calculateTotal()">
 
             <!-- Price Display -->
-            <div class="price-display" style="margin: 20px 0; padding: 15px; background: rgba(59, 130, 246, 0.1); border-radius: 12px;">
-                <small style="display: block; color: #94a3b8;">Order Total</small>
-                <b id="priceContainer" style="font-size: 20px;">KES <span id="totalPrice">0.00</span></b>
+            <div class="price-display">
+                <small>Order Total</small>
+                <b id="priceContainer">KES <span id="totalPrice">0.00</span></b>
             </div>
 
             <!-- Submit Button -->
-            <button class="btn-primary" id="orderBtn" onclick="placeOrder()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer;">
+            <button class="btn-primary" id="orderBtn" onclick="placeOrder()">
                 <i class="fas fa-fire"></i> CONFIRM BOOST
             </button>
         </div>
@@ -300,8 +245,25 @@
     }
 
     function showLiveOrder() {
-        const names = ["Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith", "Kamau", "Wanjiku", "Musa", "Zainab", "Chalo", "Purity", "Dancan", "Sharon", "Kibet", "Chebet", "Omondi", "Achieng", "Njoroge", "Muthoni", "Kariuki", "Nyambura", "Mwangi", "Njeri", "Githinji", "Wambui", "Maina", "Wangari", "Ochieng", "Atieno", "Okoth", "Akoth", "Odhiambo", "Adhiambo", "Onyango", "Anyango", "Owino", "Awino", "Mutua", "Syokau", "Musyoka", "Mumbua", "Kilonzo", "Kavutha", "Mwanza", "Mwikali", "Nduku", "Kyalo", "Kipkorir", "Jepchirchir", "Kipchumba", "Jepkosgei", "Kipruto", "Jepkurui", "Kiptoo", "Jepkemboi", "Rotich", "Cherono", "Barasa", "Naliaka", "Wanyama", "Nasimiyu", "Simiyu", "Nekesa", "Wafula", "Nafula", "Wekesa", "Namulunda", "Munga", "Maza", "Mwatate", "Mwanajuma", "Hamisi", "Fatuma", "Bakari", "Asha", "Ali", "Hadija", "Abdalla", "Salma", "Omar", "Mariam", "Said", "Lulu", "Rashid", "Zahara", "Idris", "Saida", "Tevin", "Shantel", "Derrick", "Precious", "Collins", "Blessing", "Victor", "Joy", "Felix", "Hope", "Jeskie", "Samrat", "Dia", "King", "Queen", "Boss", "Legend", "Aura", "Flex", "Plug"];
-        const services = ["1,000 TikTok Views", "500 IG Followers", "2,500 YouTube Views", "200 Post Likes", "50 TikTok Shares", "100 IG Reel Likes", "Premium Package Boost", "Facebook Page Likes", "Twitter Retweets", "Telegram Members", "Website Traffic", "10k Views Special"];
+        const names = [
+            "Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith", "Kamau", "Wanjiku", 
+            "Musa", "Zainab", "Chalo", "Purity", "Dancan", "Sharon", "Kibet", "Chebet", "Omondi", "Achieng",
+            "Njoroge", "Muthoni", "Kariuki", "Nyambura", "Mwangi", "Njeri", "Githinji", "Wambui", "Maina", "Wangari",
+            "Ochieng", "Atieno", "Okoth", "Akoth", "Odhiambo", "Adhiambo", "Onyango", "Anyango", "Owino", "Awino",
+            "Mutua", "Syokau", "Musyoka", "Mumbua", "Kilonzo", "Kavutha", "Mwanza", "Mwikali", "Nduku", "Kyalo",
+            "Kipkorir", "Jepchirchir", "Kipchumba", "Jepkosgei", "Kipruto", "Jepkurui", "Kiptoo", "Jepkemboi", "Rotich", "Cherono",
+            "Barasa", "Naliaka", "Wanyama", "Nasimiyu", "Simiyu", "Nekesa", "Wafula", "Nafula", "Wekesa", "Namulunda",
+            "Munga", "Maza", "Mwatate", "Mwanajuma", "Hamisi", "Fatuma", "Bakari", "Asha", "Ali", "Hadija",
+            "Abdalla", "Salma", "Omar", "Mariam", "Said", "Lulu", "Rashid", "Zahara", "Idris", "Saida",
+            "Tevin", "Shantel", "Derrick", "Precious", "Collins", "Blessing", "Victor", "Joy", "Felix", "Hope",
+            "Jeskie", "Samrat", "Dia", "King", "Queen", "Boss", "Legend", "Aura", "Flex", "Plug"
+        ];
+
+        const services = [
+            "1,000 TikTok Views", "500 IG Followers", "2,500 YouTube Views", "200 Post Likes", 
+            "50 TikTok Shares", "100 IG Reel Likes", "Premium Package Boost", "Facebook Page Likes",
+            "Twitter Retweets", "Telegram Members", "Website Traffic", "10k Views Special"
+        ];
         
         const randomName = names[Math.floor(Math.random() * names.length)];
         const randomService = services[Math.floor(Math.random() * services.length)];
@@ -318,7 +280,7 @@
         }, 4000);
     }
 
-    setInterval(showLiveOrder, 10000); 
+    setInterval(showLiveOrder, 10000); // Faster ticker (every 10s) for more 'busy' vibes
     init();
 </script>
 
