@@ -3,162 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Deposit Funds</title>
+<title>Direct Deposit | M-Pesa</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #0f172a;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  :root {
+    --primary: #38bdf8;
+    --success: #22c55e;
+    --bg-dark: #0f172a;
+    --card-bg: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+  }
 
-.box {
-  width: 90%;
-  max-width: 450px;
-  background: #1e293b;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
+  body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
 
-h2 {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #38bdf8;
-  font-size: 24px;
-}
+  .box {
+    width: 90%;
+    max-width: 400px;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
 
-p {
-  font-size: 14px;
-  color: #cbd5e1;
-  text-align: center;
-  line-height: 1.5;
-  margin-bottom: 20px;
-}
+  .header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
 
-textarea {
-  width: 100%;
-  height: 160px;
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #334155;
-  resize: none;
-  background: #0f172a;
-  color: #f8fafc;
-  outline: none;
-  box-sizing: border-box;
-  font-size: 14px;
-  transition: border-color 0.3s;
-}
+  h2 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 26px;
+    letter-spacing: -0.5px;
+  }
 
-textarea:focus {
-  border-color: #38bdf8;
-}
+  p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
 
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 15px;
-  border: none;
-  border-radius: 10px;
-  background: #22c55e;
-  color: #052e16;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 16px;
-  transition: opacity 0.2s, transform 0.1s;
-}
+  .input-group {
+    margin-bottom: 20px;
+  }
 
-button:active {
-  transform: scale(0.98);
-}
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
 
-button:disabled {
-  background: #64748b;
-  color: #cbd5e1;
-  cursor: not-allowed;
-}
+  input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
 
-.note {
-  margin-top: 15px;
-  font-size: 12px;
-  color: #94a3b8;
-  text-align: center;
-  background: rgba(15, 23, 42, 0.5);
-  padding: 10px;
-  border-radius: 8px;
-}
+  input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  }
 
-.example-text {
-  color: #38bdf8;
-  font-style: italic;
-}
+  .prefix-container {
+    position: relative;
+  }
+
+  button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 12px;
+    background: var(--success);
+    color: #052e16;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  button:disabled {
+    background: #475569;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  .status-note {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(56, 189, 248, 0.1);
+    border-radius: 10px;
+    font-size: 12px;
+    color: var(--primary);
+    text-align: center;
+    display: none;
+  }
+
+  .loader {
+    width: 18px;
+    height: 18px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
-
 </head>
-
 <body>
 
 <div class="box">
+  <div class="header">
+    <h2>💸 M-Pesa Direct</h2>
+    <p>Enter details to receive a payment prompt.</p>
+  </div>
 
-<h2>💰 Deposit Funds</h2>
+  <!-- Phone Input -->
+  <div class="input-group">
+    <label for="phone">M-Pesa Number</label>
+    <input type="number" id="phone" placeholder="e.g. 0712345678" required>
+  </div>
 
-<p>
-  Send money to your M-Pesa number then paste the <strong>full SMS message</strong> below.<br>
-  The system will automatically detect the transaction code & amount.
-</p>
+  <!-- Amount Input -->
+  <div class="input-group">
+    <label for="amount">Amount (Ksh)</label>
+    <input type="number" id="amount" placeholder="Min 10 - Max 70,000" required>
+  </div>
 
-<textarea id="msg" placeholder="Paste full M-Pesa message here..."></textarea>
+  <button id="btn" onclick="initiateDeposit()">
+    <span class="loader" id="loader"></span>
+    <span id="btnText">Deposit Now</span>
+  </button>
 
-<button id="btn" onclick="deposit()">Submit Deposit</button>
+  <div id="statusBox" class="status-note">
+    Please check your phone and enter your M-Pesa PIN.
+  </div>
 
-<div class="note">
-  <strong>Example:</strong><br>
-  <span class="example-text">"ABC123XYZ Confirmed. Ksh1,000 sent to..."</span>
-</div>
-
+  <p style="font-size: 11px; margin-top: 20px; text-align: center;">
+    Securely processed via Safaricom Daraja API
+  </p>
 </div>
 
 <script>
-// API Configuration
-const API = "https://unasemeje-backend-3.onrender.com/api";
+// API URL Configuration (Point this to your actual STK Push endpoint)
+const API_BASE = "https://unasemeje-backend-3.onrender.com/api";
 
-/** 
- * UI Feedback: Disables button and changes text during request
- */
-function setLoading(state) {
+function setLoading(isLoading) {
   const btn = document.getElementById("btn");
-  if (state) {
+  const loader = document.getElementById("loader");
+  const btnText = document.getElementById("btnText");
+  const statusBox = document.getElementById("statusBox");
+
+  if (isLoading) {
     btn.disabled = true;
-    btn.innerText = "Processing Transaction...";
+    loader.style.display = "block";
+    btnText.innerText = "Processing...";
+    statusBox.style.display = "block";
   } else {
     btn.disabled = false;
-    btn.innerText = "Submit Deposit";
+    loader.style.display = "none";
+    btnText.innerText = "Deposit Now";
   }
 }
 
-/** 
- * Deposit Action: Sends M-Pesa message to backend
- */
-async function deposit() {
-  const messageInput = document.getElementById("msg");
-  const message = messageInput.value.trim();
+async function initiateDeposit() {
+  const phone = document.getElementById("phone").value.trim();
+  const amount = document.getElementById("amount").value.trim();
   const token = localStorage.getItem("token");
 
   // 1. Validation
-  if (!message) {
-    alert("⚠️ Please paste the M-Pesa message first.");
+  if (!phone || phone.length < 10) {
+    alert("Please enter a valid M-Pesa phone number.");
     return;
   }
-
+  if (!amount || amount < 1) {
+    alert("Please enter a valid amount.");
+    return;
+  }
   if (!token) {
-    alert("❌ Session expired. Please log in again.");
+    alert("Session expired. Please login again.");
+    window.location.href = "login.html";
     return;
   }
 
@@ -166,34 +226,44 @@ async function deposit() {
 
   try {
     // 2. API Request
-    const res = await fetch(`${API}/deposit`, {
+    // Note: Changed endpoint to /stk-push (common naming for direct deposits)
+    const response = await fetch(`${API_BASE}/stk-push`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ 
+        phone: phone, 
+        amount: amount 
+      })
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
-    // 3. Handle Response
-    if (!res.ok) {
-      throw new Error(data.error || "Deposit verification failed. Please try again.");
+    if (!response.ok) {
+      throw new Error(data.error || "Could not initiate payment. Try again.");
     }
 
-    alert("✅ Success! " + (data.message || "Your deposit is being processed."));
+    // 3. Handle Success
+    alert("✅ Prompt Sent! Please enter your PIN on your phone.");
     
-    // Clear the textarea on success
-    messageInput.value = "";
+    // Optional: Start a timer to check if payment is finished
+    checkTransactionStatus(data.CheckoutRequestID);
 
   } catch (err) {
-    // 4. Handle Errors
-    console.error("Deposit Error:", err);
     alert("❌ Error: " + err.message);
+    document.getElementById("statusBox").style.display = "none";
   } finally {
     setLoading(false);
   }
+}
+
+// Optional: Function to poll the backend to see if user entered the PIN
+async function checkTransactionStatus(checkoutID) {
+  // You can implement a loop here that calls your backend 
+  // every 5 seconds to check if the payment is 'Completed'
+  console.log("Checking status for:", checkoutID);
 }
 </script>
 
