@@ -7,6 +7,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Extra styles for flexibility */
+        .dynamic-field { margin-top: 15px; display: none; }
+        .service-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 3px solid var(--primary);
+            line-height: 1.4;
+        }
+        textarea {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .badge-info {
+            font-size: 11px;
+            padding: 2px 8px;
+            background: var(--primary);
+            border-radius: 20px;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -53,43 +86,46 @@
         </div>
 
         <div class="card">
-            <!-- Step 1: Platform -->
-            <label><i class="fas fa-th-large"></i> 1. Platform Ni Gani?</label>
-            <select id="platformSelect" onchange="loadCategories()">
-                <option value="">-- Choose Platform --</option>
-            </select>
-
-            <!-- Step 2: Category -->
-            <label><i class="fas fa-layer-group"></i> 2. Select Category</label>
+            <!-- Step 1: Category (More flexible than Platform) -->
+            <label><i class="fas fa-layer-group"></i> 1. Select Category</label>
             <select id="categorySelect" onchange="loadServices()">
-                <option value="">-- Select Category --</option>
+                <option value="">-- Loading Categories... --</option>
             </select>
 
-            <!-- Step 3: Service -->
-            <label><i class="fas fa-bolt"></i> 3. Choose Service</label>
+            <!-- Step 2: Service -->
+            <label style="margin-top:20px;"><i class="fas fa-bolt"></i> 2. Choose Service</label>
             <select id="serviceSelect" onchange="updateServiceInfo()">
-                <option value="">-- Select Service --</option>
+                <option value="">-- Select Category First --</option>
             </select>
 
-            <!-- Service Details (Min/Max) -->
-            <div id="serviceDetails" style="display: none; background: rgba(15, 23, 42, 0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border);">
-                <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                    <span>Min: <b id="minQty" style="color: var(--primary);">0</b></span>
-                    <span>Max: <b id="maxQty" style="color: var(--primary);">0</b></span>
+            <!-- Service Details & Description -->
+            <div id="serviceDetails" style="display: none; margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
+                    <span>Min Order: <b id="minQty" style="color: var(--primary);">0</b></span>
+                    <span>Max Order: <b id="maxQty" style="color: var(--primary);">0</b></span>
                 </div>
+                <div id="serviceDesc" class="service-desc"></div>
             </div>
 
-            <!-- Step 4: Link -->
-            <label><i class="fas fa-link"></i> 4. Link Ya Video/Profile</label>
-            <input type="text" id="link" placeholder="Weka link hapa...">
+            <!-- Step 3: Link -->
+            <label style="margin-top:20px;"><i class="fas fa-link"></i> 3. Link (Link ya Profile/Post)</label>
+            <input type="text" id="link" placeholder="Paste link hapa...">
 
-            <!-- Step 5: Quantity -->
-            <label><i class="fas fa-sort-amount-up"></i> 5. Quantity (Unataka kiasi gani?)</label>
-            <input type="number" id="quantity" placeholder="E.g 1000" oninput="calculateTotal()">
+            <!-- Step 4: Custom Content (For Comments) -->
+            <div id="customCommentsGroup" class="dynamic-field">
+                <label><i class="fas fa-comments"></i> Enter Comments (One per line)</label>
+                <textarea id="customComments" placeholder="Weka comment moja per line..." oninput="calculateCommentsQty()"></textarea>
+            </div>
+
+            <!-- Step 5: Quantity (Hides if comments are used) -->
+            <div id="quantityGroup">
+                <label style="margin-top:20px;"><i class="fas fa-sort-amount-up"></i> 4. Quantity (Kiasi Gani?)</label>
+                <input type="number" id="quantity" placeholder="E.g 1000" oninput="calculateTotal()">
+            </div>
 
             <!-- Price Display -->
             <div class="price-display">
-                <small>Order Total</small>
+                <small id="priceLabel">Order Total</small>
                 <b id="priceContainer">KES <span id="totalPrice">0.00</span></b>
             </div>
 
@@ -103,167 +139,183 @@
 
 <script>
     let allData = {};
+    let selectedService = null;
     const API = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
     if (!token) window.location.href = "index.html";
 
+    // Initialize: Fetch all services and categories
     async function init() {
         try {
             const res = await fetch(`${API}/services`);
             if (!res.ok) throw new Error("Failed to fetch services");
             const json = await res.json();
+            
+            // This structure handles the nested provider data flexibly
             allData = json.data;
 
-            const pSelect = document.getElementById("platformSelect");
-            Object.keys(allData).forEach(p => {
-                const opt = document.createElement("option");
-                opt.value = p; 
-                opt.innerText = p;
-                pSelect.appendChild(opt);
+            const cSelect = document.getElementById("categorySelect");
+            cSelect.innerHTML = '<option value="">-- Choose Category --</option>';
+            
+            // Get all categories from all platforms
+            Object.keys(allData).forEach(platform => {
+                Object.keys(allData[platform]).forEach(category => {
+                    const opt = document.createElement("option");
+                    opt.value = `${platform}||${category}`; // Store both to find easily
+                    opt.innerText = `${platform} - ${category}`;
+                    cSelect.appendChild(opt);
+                });
             });
 
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('platform')) {
-                pSelect.value = params.get('platform');
-                loadCategories(params.get('category'));
-            }
         } catch (e) { 
             console.error("Service Loading Error:", e);
+            document.getElementById("categorySelect").innerHTML = '<option>Error loading services. Refresh!</option>';
         }
     }
 
-    function loadCategories(preselectCat = null) {
-        const platform = document.getElementById("platformSelect").value;
-        const cSelect = document.getElementById("categorySelect");
-        cSelect.innerHTML = '<option value="">-- Select Category --</option>';
-        
-        if (allData[platform]) {
-            Object.keys(allData[platform]).forEach(c => {
-                const opt = document.createElement("option");
-                opt.value = c; 
-                opt.innerText = c;
-                cSelect.appendChild(opt);
-            });
-            if(preselectCat) {
-                cSelect.value = preselectCat;
-                loadServices();
-            }
-        }
-    }
-
+    // Load Services for selected category
     function loadServices() {
-        const p = document.getElementById("platformSelect").value;
-        const c = document.getElementById("categorySelect").value;
+        const catValue = document.getElementById("categorySelect").value;
         const sSelect = document.getElementById("serviceSelect");
         sSelect.innerHTML = '<option value="">-- Select Service --</option>';
+        
+        if (!catValue) return;
 
-        if (allData[p] && allData[p][c]) {
-            allData[p][c].forEach(s => {
-                const opt = document.createElement("option");
-                opt.value = s.serviceId;
-                opt.innerText = `${s.name} - KES ${s.rate}/1k`;
-                sSelect.appendChild(opt);
-            });
-        }
+        const [platform, category] = catValue.split("||");
+        const services = allData[platform][category];
+
+        services.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.serviceId;
+            opt.innerText = `${s.name} (KES ${s.rate}/1k)`;
+            sSelect.appendChild(opt);
+        });
     }
 
+    // Update UI based on chosen service type (Quantity vs Comments)
     function updateServiceInfo() {
-        const p = document.getElementById("platformSelect").value;
-        const c = document.getElementById("categorySelect").value;
+        const catValue = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
         const details = document.getElementById("serviceDetails");
+        const qtyGroup = document.getElementById("quantityGroup");
+        const commentGroup = document.getElementById("customCommentsGroup");
 
-        const service = allData[p] && allData[p][c] ? allData[p][c].find(x => x.serviceId == sId) : null;
-        if (service) {
-            details.style.display = "block";
-            document.getElementById("minQty").innerText = service.min.toLocaleString();
-            document.getElementById("maxQty").innerText = service.max.toLocaleString();
-            calculateTotal();
-        } else {
+        if (!catValue || !sId) {
             details.style.display = "none";
+            return;
+        }
+
+        const [p, c] = catValue.split("||");
+        selectedService = allData[p][c].find(x => x.serviceId == sId);
+
+        if (selectedService) {
+            details.style.display = "block";
+            document.getElementById("minQty").innerText = Number(selectedService.min).toLocaleString();
+            document.getElementById("maxQty").innerText = Number(selectedService.max).toLocaleString();
+            document.getElementById("serviceDesc").innerHTML = selectedService.description || "Hakuna maelezo zaidi. Plug is ready!";
+
+            // CHECK FLEXIBILITY: Is this a comment service?
+            // Usually, SMM providers flag these as "Custom Comments" or "Package"
+            const type = (selectedService.type || "").toLowerCase();
+            if (type.includes("comment") || type.includes("custom")) {
+                qtyGroup.style.display = "none";
+                commentGroup.style.display = "block";
+                document.getElementById("quantity").value = 0;
+            } else {
+                qtyGroup.style.display = "block";
+                commentGroup.style.display = "none";
+                document.getElementById("customComments").value = "";
+            }
+            
+            calculateTotal();
         }
     }
 
+    // Calculate total for normal quantity
     function calculateTotal() {
-        const p = document.getElementById("platformSelect").value;
-        const c = document.getElementById("categorySelect").value;
-        const sId = document.getElementById("serviceSelect").value;
+        if (!selectedService) return;
         const qty = parseFloat(document.getElementById("quantity").value) || 0;
-
-        if (p && c && sId) {
-            const service = allData[p][c].find(x => x.serviceId == sId);
-            const total = (service.rate / 1000) * qty;
-            document.getElementById("totalPrice").innerText = total.toLocaleString('en-KE', { 
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2 
-            });
-        }
+        const total = (selectedService.rate / 1000) * qty;
+        updatePriceUI(total);
     }
 
+    // Calculate quantity and total for comments
+    function calculateCommentsQty() {
+        if (!selectedService) return;
+        const lines = document.getElementById("customComments").value.split('\n').filter(l => l.trim().length > 0);
+        const qty = lines.length;
+        document.getElementById("quantity").value = qty; // Hidden but kept for logic
+        
+        const total = (selectedService.rate / 1000) * qty;
+        updatePriceUI(total);
+        document.getElementById("priceLabel").innerHTML = `Order Total (${qty} comments)`;
+    }
+
+    function updatePriceUI(amount) {
+        document.getElementById("totalPrice").innerText = amount.toLocaleString('en-KE', { 
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2 
+        });
+    }
+
+    // Submit Order
     async function placeOrder() {
-        const p = document.getElementById("platformSelect").value;
-        const c = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
         const link = document.getElementById("link").value.trim();
         const qty = parseInt(document.getElementById("quantity").value);
+        const comments = document.getElementById("customComments").value.trim();
         const btn = document.getElementById("orderBtn");
 
-        if (!sId || !link || !qty) return alert("Buda, fill in all details first!");
+        if (!sId || !link) return alert("Weka link kwanza boss!");
+        if (!qty || qty <= 0) return alert("Weka quantity ama comments!");
 
-        const service = allData[p][c].find(x => x.serviceId == sId);
-        if (qty < service.min) return alert(`Huwezi order chini ya ${service.min}`);
-        if (qty > service.max) return alert(`Order yako imepita limit ya ${service.max}`);
+        if (qty < selectedService.min) return alert(`Huwezi order chini ya ${selectedService.min}`);
+        if (qty > selectedService.max) return alert(`Order yako imepita limit ya ${selectedService.max}`);
 
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> TUNA-PLUG...';
 
         try {
+            const payload = { 
+                serviceId: sId, 
+                link: link, 
+                quantity: qty 
+            };
+            
+            // Add comments to payload if they exist
+            if(comments) payload.comments = comments;
+
             const res = await fetch(`${API}/order`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json", 
                     "Authorization": `Bearer ${token}` 
                 },
-                body: JSON.stringify({ serviceId: sId, link, quantity: qty })
+                body: JSON.stringify(payload)
             });
 
             const data = await res.json();
 
             if (res.ok) {
-                const finalCost = (service.rate / 1000) * qty;
-                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(service.name)}&cost=${finalCost.toFixed(2)}&balance=${data.newBalance}`;
+                const finalCost = (selectedService.rate / 1000) * qty;
+                window.location.href = `order-placed.html?id=${data.orderId}&service=${encodeURIComponent(selectedService.name)}&cost=${finalCost.toFixed(2)}&balance=${data.newBalance}`;
             } else {
                 alert(data.error || "Wallet imebeat! Top up mzee.");
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-fire"></i> CONFIRM BOOST';
             }
         } catch (e) {
-            alert("Network inaleta maringo. Try again!");
+            alert("Network issues. Jaribu tena!");
             btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-fire"></i> CONFIRM BOOST';
         }
     }
 
+    // Live Notification Ticker
     function showLiveOrder() {
-        const names = [
-            "Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith", "Kamau", "Wanjiku", 
-            "Musa", "Zainab", "Chalo", "Purity", "Dancan", "Sharon", "Kibet", "Chebet", "Omondi", "Achieng",
-            "Njoroge", "Muthoni", "Kariuki", "Nyambura", "Mwangi", "Njeri", "Githinji", "Wambui", "Maina", "Wangari",
-            "Ochieng", "Atieno", "Okoth", "Akoth", "Odhiambo", "Adhiambo", "Onyango", "Anyango", "Owino", "Awino",
-            "Mutua", "Syokau", "Musyoka", "Mumbua", "Kilonzo", "Kavutha", "Mwanza", "Mwikali", "Nduku", "Kyalo",
-            "Kipkorir", "Jepchirchir", "Kipchumba", "Jepkosgei", "Kipruto", "Jepkurui", "Kiptoo", "Jepkemboi", "Rotich", "Cherono",
-            "Barasa", "Naliaka", "Wanyama", "Nasimiyu", "Simiyu", "Nekesa", "Wafula", "Nafula", "Wekesa", "Namulunda",
-            "Munga", "Maza", "Mwatate", "Mwanajuma", "Hamisi", "Fatuma", "Bakari", "Asha", "Ali", "Hadija",
-            "Abdalla", "Salma", "Omar", "Mariam", "Said", "Lulu", "Rashid", "Zahara", "Idris", "Saida",
-            "Tevin", "Shantel", "Derrick", "Precious", "Collins", "Blessing", "Victor", "Joy", "Felix", "Hope",
-            "Jeskie", "Samrat", "Dia", "King", "Queen", "Boss", "Legend", "Aura", "Flex", "Plug"
-        ];
-
-        const services = [
-            "1,000 TikTok Views", "500 IG Followers", "2,500 YouTube Views", "200 Post Likes", 
-            "50 TikTok Shares", "100 IG Reel Likes", "Premium Package Boost", "Facebook Page Likes",
-            "Twitter Retweets", "Telegram Members", "Website Traffic", "10k Views Special"
-        ];
+        const names = ["Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith", "Kamau", "Wanjiku", "Chalo", "Dancan", "Sharon", "Kibet", "Omondi", "Aura", "Plug", "King", "Queen"];
+        const services = ["1,000 TikTok Views", "500 IG Followers", "2,500 YouTube Views", "200 Post Likes", "50 TikTok Shares", "100 IG Reel Likes"];
         
         const randomName = names[Math.floor(Math.random() * names.length)];
         const randomService = services[Math.floor(Math.random() * services.length)];
@@ -275,14 +327,13 @@
 
         setTimeout(() => {
             notification.style.opacity = "0";
-            notification.style.transition = "0.5s";
             setTimeout(() => notification.remove(), 500);
         }, 4000);
     }
 
-    setInterval(showLiveOrder, 10000); // Faster ticker (every 10s) for more 'busy' vibes
+    setInterval(showLiveOrder, 10000);
     init();
 </script>
 
 </body>
-</html>
+    </html>
