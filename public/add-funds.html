@@ -51,6 +51,14 @@
         .btn-deposit:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
         .btn-deposit:disabled { background: #4b5563; cursor: not-allowed; opacity: 0.7; }
 
+        /* Fallback Link Button Styling */
+        .btn-link-payment {
+            width: 100%; padding: 14px; background: transparent; color: var(--text-main); border: 2px dashed #334155;
+            border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; text-decoration: none; font-size: 14px;
+        }
+        .btn-link-payment:hover { border-color: var(--primary); background: rgba(124, 58, 237, 0.05); color: white; }
+
         .loader { width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -104,6 +112,11 @@
             </button>
             
             <div id="statusMsg"></div>
+
+            <!-- Fallback secure direct link if STK push fails or isn't preferred -->
+            <a href="#" id="securePayLink" target="_blank" class="btn-link-payment" style="display: none;">
+                <i class="fas fa-external-link-alt"></i> STK Delayed? Pay via Secure Web Link Instead
+            </a>
         </div>
 
         <p style="text-align: center; color: var(--text-dim); font-size: 12px;">
@@ -112,7 +125,6 @@
     </div>
 
     <script>
-        // Use relative path or update domain configuration directly
         const API_URL = "/api"; 
         let pollingInterval = null;
 
@@ -122,17 +134,39 @@
             if(!token) return;
             
             try {
-                // Hits your /api/login token decode context data or user tracking endpoint
                 const res = await fetch(`${API_URL}/services`, { 
                     headers: { "Authorization": `Bearer ${token}` } 
                 });
-                // If you have a separate '/api/me' endpoint setup in other parts of backend, 
-                // it can process here. Using standard baseline synchronization logic fallback:
                 const sessionBalance = localStorage.getItem("balance");
                 if (sessionBalance !== null && document.activeElement !== document.getElementById("depositBtn")) {
                     document.getElementById("userBalance").innerText = Number(sessionBalance).toLocaleString('en-US', {minimumFractionDigits: 2});
                 }
             } catch (e) { console.error("Balance sync failed"); }
+        }
+
+        // Fetch Paynecta payment links on boot to dynamically configure the fallback button
+        async function loadPaymentLinks() {
+            const token = localStorage.getItem("token");
+            const fallbackBtn = document.getElementById("securePayLink");
+            if(!token) return;
+
+            try {
+                const res = await fetch(`${API_URL}/paynecta/links`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const result = await res.json();
+                
+                // If backend provides a valid links array, extract the primary link configuration
+                if(result.success && Array.isArray(result.data) && result.data.length > 0) {
+                    fallbackBtn.href = result.data[0].link_url || "#";
+                    fallbackBtn.style.display = "flex";
+                } else if (result.success && result.data && result.data.link_url) {
+                    fallbackBtn.href = result.data.link_url;
+                    fallbackBtn.style.display = "flex";
+                }
+            } catch (err) {
+                console.error("Could not fetch payment link fallbacks:", err);
+            }
         }
 
         // 2. Initiate Direct Deposit (STK Push via Paynecta Engine)
@@ -180,7 +214,6 @@
                     status.style.color = "#10b981";
                     status.innerHTML = "<b>✅ Prompt Sent!</b> Please check your phone and enter your PIN. Verifying receipt...";
                     
-                    // Track transaction using Paynecta's unique reference
                     if(data.data && data.data.transaction_reference) {
                         startStatusPolling(data.data.transaction_reference, token);
                     }
@@ -212,7 +245,7 @@
                     clearInterval(pollingInterval);
                     status.style.background = "rgba(234, 179, 8, 0.1)";
                     status.style.color = "#eab308";
-                    status.innerText = "⏳ Verification window closed. Please refresh balance if text prompt was validated.";
+                    status.innerText = "⏳ Verification window closed. If prompt was validated, please wait a minute for updates.";
                     resetUI();
                     return;
                 }
@@ -229,7 +262,6 @@
                         status.style.color = "#10b981";
                         status.innerHTML = "<b>🎉 Success!</b> KES " + checkData.data.amount + " credited successfully.";
                         
-                        // Update UI metric directly from processed amount array
                         const currentBal = parseFloat(document.getElementById("userBalance").innerText.replace(/,/g, '')) || 0;
                         const newBal = currentBal + parseFloat(checkData.data.amount);
                         document.getElementById("userBalance").innerText = newBal.toLocaleString('en-US', {minimumFractionDigits: 2});
@@ -253,8 +285,9 @@
             }
         }
 
-        // Initialize
+        // Initialize Everything
         sync();
+        loadPaymentLinks();
         setInterval(sync, 10000);
     </script>
 </body>
