@@ -1,294 +1,132 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Direct Deposit | UNASEMEJE ø DIA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root { 
-            --primary: #7c3aed; 
-            --secondary: #10b981; 
-            --bg-dark: #0f172a; 
-            --card-bg: #1e293b; 
-            --text-main: #f8fafc; 
-            --text-dim: #94a3b8; 
-        }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg-dark); color: var(--text-main); display: flex; }
+<a href="https://paynecta.co.ke/pay/Unasemeje" target="_blank" class="btn-link-payment" id="securePayLink">
+    <i class="fas fa-external-link-alt"></i> STK Delayed? Pay via Secure Web Link Instead
+</a>
+
+<script>
+    const API_URL = "/api"; 
+    let pollingInterval = null;
+
+    // 1. Sync User Balance
+    async function sync() {
+        const token = localStorage.getItem("token");
+        if(!token) return;
         
-        /* Sidebar */
-        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #1f2937; }
-        .sidebar h2 { color: var(--primary); text-align: center; font-weight: 800; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
-        .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); text-decoration: none; border-radius: 10px; margin-bottom: 5px; transition: 0.3s; }
-        .sidebar a i { margin-right: 12px; width: 20px; text-align: center; }
-        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
+        try {
+            const res = await fetch(`${API_URL}/services`, { 
+                headers: { "Authorization": `Bearer ${token}` } 
+            });
+            const sessionBalance = localStorage.getItem("balance");
+            if (sessionBalance !== null && document.activeElement !== document.getElementById("depositBtn")) {
+                document.getElementById("userBalance").innerText = Number(sessionBalance).toLocaleString('en-US', {minimumFractionDigits: 2});
+            }
+        } catch (e) { console.error("Balance sync failed"); }
+    }
 
-        /* Main Content */
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .balance-badge { color: var(--secondary); font-weight: 800; background: rgba(16, 185, 129, 0.1); padding: 10px 20px; border-radius: 10px; border: 1px solid var(--secondary); }
-        
-        .card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #334155; margin-bottom: 25px; }
-        
-        .stk-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .stk-header img { height: 40px; border-radius: 5px; }
+    // 2. STK Push Initiation
+    async function initiateSTK() {
+        const phone = document.getElementById("phone").value;
+        const amount = document.getElementById("amount").value;
+        const btn = document.getElementById("depositBtn");
+        const loader = document.getElementById("loader");
+        const btnText = document.getElementById("btnText");
+        const status = document.getElementById("statusMsg");
+        const fallbackBtn = document.getElementById("securePayLink");
+        const token = localStorage.getItem("token");
 
-        .instructions { list-style: none; padding: 0; }
-        .instructions li { margin-bottom: 12px; display: flex; align-items: center; color: var(--text-dim); font-size: 14px; }
-        .instructions i { color: var(--secondary); margin-right: 12px; }
-        
-        label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-dim); font-weight: 600; }
-        input { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 12px; outline: none; margin-bottom: 20px; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2); }
+        if(!phone || phone.length < 10) return alert("Please enter a valid M-Pesa number");
+        if(!amount || amount < 10) return alert("Minimum deposit is KES 10");
 
-        .btn-deposit { 
-            width: 100%; padding: 16px; background: var(--primary); color: white; border: none; 
-            border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; 
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-        .btn-deposit:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); }
-        .btn-deposit:disabled { background: #4b5563; cursor: not-allowed; opacity: 0.7; }
+        if(pollingInterval) clearInterval(pollingInterval);
 
-        /* Fallback Link Button Styling */
-        .btn-link-payment {
-            width: 100%; padding: 14px; background: transparent; color: var(--text-main); border: 2px dashed #334155;
-            border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s;
-            display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; text-decoration: none; font-size: 14px;
-        }
-        .btn-link-payment:hover { border-color: var(--primary); background: rgba(124, 58, 237, 0.05); color: white; }
+        // UI State: Loading
+        btn.disabled = true;
+        loader.style.display = "block";
+        btnText.innerText = "Requesting Prompt...";
+        status.style.display = "none";
 
-        .loader { width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        try {
+            const res = await fetch(`${API_URL}/paynecta/initialize`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json", 
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    code: "STK",
+                    amount: amount,
+                    mobile_number: phone
+                })
+            });
 
-        #statusMsg { text-align: center; margin-top: 15px; font-size: 14px; padding: 10px; border-radius: 8px; display: none; }
+            const data = await res.json();
 
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 20px; width: 100%; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar">
-        <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="new-order.html"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
-        <a href="add-funds.html" class="active"><i class="fas fa-wallet"></i> Add Funds</a>
-        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
-    </div>
-
-    <div class="main">
-        <div class="navbar">
-            <h2 style="margin:0;">Add Funds</h2>
-            <div class="balance-badge">KES <span id="userBalance">0.00</span></div>
-        </div>
-
-        <div class="card" style="border: 1px solid var(--secondary); background: rgba(16, 185, 129, 0.05);">
-            <div class="stk-header">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/512px-M-PESA_LOGO-01.svg.png" alt="M-Pesa">
-                <h3 style="margin:0; color: var(--secondary);">Instant STK Push</h3>
-            </div>
-            <ul class="instructions">
-                <li><i class="fas fa-check-circle"></i> Enter your Safaricom Number.</li>
-                <li><i class="fas fa-check-circle"></i> Enter the amount you wish to deposit.</li>
-                <li><i class="fas fa-check-circle"></i> You will receive a popup on your phone to enter your <b>M-Pesa PIN</b>.</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <label>M-Pesa Phone Number</label>
-            <input type="number" id="phone" placeholder="e.g. 0712345678">
-
-            <label>Amount to Deposit (KES)</label>
-            <input type="number" id="amount" placeholder="Min: 10, Max: 70,000">
-
-            <button class="btn-deposit" id="depositBtn" onclick="initiateSTK()">
-                <div class="loader" id="loader"></div>
-                <span id="btnText">DEPOSIT NOW</span>
-            </button>
-            
-            <div id="statusMsg"></div>
-
-            <!-- Fallback secure direct link if STK push fails or isn't preferred -->
-            <a href="#" id="securePayLink" target="_blank" class="btn-link-payment" style="display: none;">
-                <i class="fas fa-external-link-alt"></i> STK Delayed? Pay via Secure Web Link Instead
-            </a>
-        </div>
-
-        <p style="text-align: center; color: var(--text-dim); font-size: 12px;">
-            Secure encrypted transaction via Safaricom Daraja API.
-        </p>
-    </div>
-
-    <script>
-        const API_URL = "/api"; 
-        let pollingInterval = null;
-
-        // 1. Get user balance on load
-        async function sync() {
-            const token = localStorage.getItem("token");
-            if(!token) return;
-            
-            try {
-                const res = await fetch(`${API_URL}/services`, { 
-                    headers: { "Authorization": `Bearer ${token}` } 
-                });
-                const sessionBalance = localStorage.getItem("balance");
-                if (sessionBalance !== null && document.activeElement !== document.getElementById("depositBtn")) {
-                    document.getElementById("userBalance").innerText = Number(sessionBalance).toLocaleString('en-US', {minimumFractionDigits: 2});
+            if(res.ok && data.success) {
+                status.style.display = "block";
+                status.style.background = "rgba(16, 185, 129, 0.1)";
+                status.style.color = "#10b981";
+                status.innerHTML = "<b>✅ Prompt Sent!</b> Enter your PIN on your phone.";
+                
+                if(data.data && data.data.transaction_reference) {
+                    startStatusPolling(data.data.transaction_reference, token);
                 }
-            } catch (e) { console.error("Balance sync failed"); }
+            } else {
+                throw new Error(data.message || "STK Service unavailable.");
+            }
+        } catch (err) {
+            status.style.display = "block";
+            status.style.background = "rgba(239, 68, 68, 0.1)";
+            status.style.color = "#ef4444";
+            status.innerText = "❌ " + err.message;
+            
+            // Show fallback link prominently on failure
+            fallbackBtn.style.display = "flex";
+            fallbackBtn.style.borderColor = "#7c3aed";
+            
+            resetUI();
         }
+    }
 
-        // Fetch Paynecta payment links on boot to dynamically configure the fallback button
-        async function loadPaymentLinks() {
-            const token = localStorage.getItem("token");
-            const fallbackBtn = document.getElementById("securePayLink");
-            if(!token) return;
+    // 3. Polling for payment confirmation
+    function startStatusPolling(reference, token) {
+        const status = document.getElementById("statusMsg");
+        let attempts = 0;
+
+        pollingInterval = setInterval(async () => {
+            attempts++;
+            if(attempts > 15) { // ~2.5 minutes
+                clearInterval(pollingInterval);
+                status.innerText = "⏳ Polling timed out. Refresh if you completed the payment.";
+                resetUI();
+                return;
+            }
 
             try {
-                const res = await fetch(`${API_URL}/paynecta/links`, {
+                const res = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
-                const result = await res.json();
-                
-                // If backend provides a valid links array, extract the primary link configuration
-                if(result.success && Array.isArray(result.data) && result.data.length > 0) {
-                    fallbackBtn.href = result.data[0].link_url || "#";
-                    fallbackBtn.style.display = "flex";
-                } else if (result.success && result.data && result.data.link_url) {
-                    fallbackBtn.href = result.data.link_url;
-                    fallbackBtn.style.display = "flex";
-                }
-            } catch (err) {
-                console.error("Could not fetch payment link fallbacks:", err);
-            }
-        }
+                const checkData = await res.json();
 
-        // 2. Initiate Direct Deposit (STK Push via Paynecta Engine)
-        async function initiateSTK() {
-            const phone = document.getElementById("phone").value;
-            const amount = document.getElementById("amount").value;
-            const btn = document.getElementById("depositBtn");
-            const loader = document.getElementById("loader");
-            const btnText = document.getElementById("btnText");
-            const status = document.getElementById("statusMsg");
-            const token = localStorage.getItem("token");
-
-            // Validation
-            if(!phone || phone.length < 10) return alert("Please enter a valid M-Pesa number");
-            if(!amount || amount < 10) return alert("Minimum deposit is KES 10");
-
-            // Clear any active polling sessions
-            if(pollingInterval) clearInterval(pollingInterval);
-
-            // UI State: Loading
-            btn.disabled = true;
-            loader.style.display = "block";
-            btnText.innerText = "Requesting Prompt...";
-            status.style.display = "none";
-
-            try {
-                const res = await fetch(`${API_URL}/paynecta/initialize`, {
-                    method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json", 
-                        "Authorization": `Bearer ${token}` 
-                    },
-                    body: JSON.stringify({ 
-                        code: "STK",
-                        amount: amount,
-                        mobile_number: phone
-                    })
-                });
-
-                const data = await res.json();
-
-                if(res.ok && data.success) {
-                    status.style.display = "block";
-                    status.style.background = "rgba(16, 185, 129, 0.1)";
-                    status.style.color = "#10b981";
-                    status.innerHTML = "<b>✅ Prompt Sent!</b> Please check your phone and enter your PIN. Verifying receipt...";
-                    
-                    if(data.data && data.data.transaction_reference) {
-                        startStatusPolling(data.data.transaction_reference, token);
-                    }
-                } else {
-                    throw new Error(data.message || data.error || "Request failed");
-                }
-            } catch (err) {
-                status.style.display = "block";
-                status.style.background = "rgba(239, 68, 68, 0.1)";
-                status.style.color = "#ef4444";
-                status.innerText = "❌ " + err.message;
-                btn.disabled = false;
-                loader.style.display = "none";
-                btnText.innerText = "DEPOSIT NOW";
-            }
-        }
-
-        // 3. Status Check Polling Loop
-        function startStatusPolling(reference, token) {
-            const status = document.getElementById("statusMsg");
-            const btn = document.getElementById("depositBtn");
-            const loader = document.getElementById("loader");
-            const btnText = document.getElementById("btnText");
-            let attempts = 0;
-
-            pollingInterval = setInterval(async () => {
-                attempts++;
-                if(attempts > 12) { // 2 Minutes auto-timeout window
+                if (checkData.success && checkData.data.status === "completed") {
                     clearInterval(pollingInterval);
-                    status.style.background = "rgba(234, 179, 8, 0.1)";
-                    status.style.color = "#eab308";
-                    status.innerText = "⏳ Verification window closed. If prompt was validated, please wait a minute for updates.";
+                    status.innerHTML = "<b>🎉 Success!</b> Credited KES " + checkData.data.amount;
+                    sync(); // Refresh balance
                     resetUI();
-                    return;
+                } else if (checkData.success && (checkData.data.status === "failed")) {
+                    clearInterval(pollingInterval);
+                    status.innerText = "❌ Transaction failed.";
+                    resetUI();
                 }
+            } catch (e) { console.error("Status check failed"); }
+        }, 10000);
+    }
 
-                try {
-                    const res = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
-                        headers: { "Authorization": `Bearer ${token}` }
-                    });
-                    const checkData = await res.json();
+    function resetUI() {
+        document.getElementById("depositBtn").disabled = false;
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("btnText").innerText = "DEPOSIT NOW";
+    }
 
-                    if (checkData.success && checkData.data.status === "completed") {
-                        clearInterval(pollingInterval);
-                        status.style.background = "rgba(16, 185, 129, 0.1)";
-                        status.style.color = "#10b981";
-                        status.innerHTML = "<b>🎉 Success!</b> KES " + checkData.data.amount + " credited successfully.";
-                        
-                        const currentBal = parseFloat(document.getElementById("userBalance").innerText.replace(/,/g, '')) || 0;
-                        const newBal = currentBal + parseFloat(checkData.data.amount);
-                        document.getElementById("userBalance").innerText = newBal.toLocaleString('en-US', {minimumFractionDigits: 2});
-                        localStorage.setItem("balance", newBal);
-                        
-                        resetUI();
-                    } else if (checkData.success && (checkData.data.status === "failed" || checkData.data.status === "cancelled")) {
-                        clearInterval(pollingInterval);
-                        status.style.background = "rgba(239, 68, 68, 0.1)";
-                        status.style.color = "#ef4444";
-                        status.innerText = "❌ Transaction rejected or timed out on mobile device.";
-                        resetUI();
-                    }
-                } catch (e) { console.error("Tracking error:", e); }
-            }, 10000);
-
-            function resetUI() {
-                btn.disabled = false;
-                loader.style.display = "none";
-                btnText.innerText = "DEPOSIT NOW";
-            }
-        }
-
-        // Initialize Everything
-        sync();
-        loadPaymentLinks();
-        setInterval(sync, 10000);
-    </script>
-</body>
-</html>
+    // Initialize
+    sync();
+    setInterval(sync, 20000);
+</script>
