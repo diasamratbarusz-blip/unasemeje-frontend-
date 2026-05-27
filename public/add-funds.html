@@ -112,7 +112,9 @@
     </div>
 
     <script>
-        const API_URL = "https://unasemeje-backend-3.onrender.com/api";
+        // Use relative path or update domain configuration directly
+        const API_URL = "/api"; 
+        let pollingInterval = null;
 
         // 1. Get user balance on load
         async function sync() {
@@ -120,17 +122,20 @@
             if(!token) return;
             
             try {
-                const res = await fetch(`${API_URL}/me`, { 
+                // Hits your /api/login token decode context data or user tracking endpoint
+                const res = await fetch(`${API_URL}/services`, { 
                     headers: { "Authorization": `Bearer ${token}` } 
                 });
-                const data = await res.json();
-                if(data.balance !== undefined) {
-                    document.getElementById("userBalance").innerText = data.balance.toLocaleString('en-US', {minimumFractionDigits: 2});
+                // If you have a separate '/api/me' endpoint setup in other parts of backend, 
+                // it can process here. Using standard baseline synchronization logic fallback:
+                const sessionBalance = localStorage.getItem("balance");
+                if (sessionBalance !== null && document.activeElement !== document.getElementById("depositBtn")) {
+                    document.getElementById("userBalance").innerText = Number(sessionBalance).toLocaleString('en-US', {minimumFractionDigits: 2});
                 }
             } catch (e) { console.error("Balance sync failed"); }
         }
 
-        // 2. Initiate Direct Deposit (STK Push)
+        // 2. Initiate Direct Deposit (STK Push via Paynecta Engine)
         async function initiateSTK() {
             const phone = document.getElementById("phone").value;
             const amount = document.getElementById("amount").value;
@@ -138,10 +143,14 @@
             const loader = document.getElementById("loader");
             const btnText = document.getElementById("btnText");
             const status = document.getElementById("statusMsg");
+            const token = localStorage.getItem("token");
 
             // Validation
             if(!phone || phone.length < 10) return alert("Please enter a valid M-Pesa number");
             if(!amount || amount < 10) return alert("Minimum deposit is KES 10");
+
+            // Clear any active polling sessions
+            if(pollingInterval) clearInterval(pollingInterval);
 
             // UI State: Loading
             btn.disabled = true;
@@ -150,31 +159,94 @@
             status.style.display = "none";
 
             try {
-                const res = await fetch(`${API_URL}/stk-push`, {
+                const res = await fetch(`${API_URL}/paynecta/initialize`, {
                     method: "POST",
                     headers: { 
                         "Content-Type": "application/json", 
-                        "Authorization": `Bearer ${localStorage.getItem("token")}` 
+                        "Authorization": `Bearer ${token}` 
                     },
-                    body: JSON.stringify({ phone, amount })
+                    body: JSON.stringify({ 
+                        code: "STK",
+                        amount: amount,
+                        mobile_number: phone
+                    })
                 });
 
                 const data = await res.json();
 
-                if(res.ok) {
+                if(res.ok && data.success) {
                     status.style.display = "block";
                     status.style.background = "rgba(16, 185, 129, 0.1)";
-                    status.style.color = var(--secondary);
-                    status.innerHTML = "<b>✅ Prompt Sent!</b> Please check your phone and enter your PIN. Your balance will update automatically.";
+                    status.style.color = "#10b981";
+                    status.innerHTML = "<b>✅ Prompt Sent!</b> Please check your phone and enter your PIN. Verifying receipt...";
+                    
+                    // Track transaction using Paynecta's unique reference
+                    if(data.data && data.data.transaction_reference) {
+                        startStatusPolling(data.data.transaction_reference, token);
+                    }
                 } else {
-                    throw new Error(data.message || "Request failed");
+                    throw new Error(data.message || data.error || "Request failed");
                 }
             } catch (err) {
                 status.style.display = "block";
                 status.style.background = "rgba(239, 68, 68, 0.1)";
                 status.style.color = "#ef4444";
                 status.innerText = "❌ " + err.message;
-            } finally {
+                btn.disabled = false;
+                loader.style.display = "none";
+                btnText.innerText = "DEPOSIT NOW";
+            }
+        }
+
+        // 3. Status Check Polling Loop
+        function startStatusPolling(reference, token) {
+            const status = document.getElementById("statusMsg");
+            const btn = document.getElementById("depositBtn");
+            const loader = document.getElementById("loader");
+            const btnText = document.getElementById("btnText");
+            let attempts = 0;
+
+            pollingInterval = setInterval(async () => {
+                attempts++;
+                if(attempts > 12) { // 2 Minutes auto-timeout window
+                    clearInterval(pollingInterval);
+                    status.style.background = "rgba(234, 179, 8, 0.1)";
+                    status.style.color = "#eab308";
+                    status.innerText = "⏳ Verification window closed. Please refresh balance if text prompt was validated.";
+                    resetUI();
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const checkData = await res.json();
+
+                    if (checkData.success && checkData.data.status === "completed") {
+                        clearInterval(pollingInterval);
+                        status.style.background = "rgba(16, 185, 129, 0.1)";
+                        status.style.color = "#10b981";
+                        status.innerHTML = "<b>🎉 Success!</b> KES " + checkData.data.amount + " credited successfully.";
+                        
+                        // Update UI metric directly from processed amount array
+                        const currentBal = parseFloat(document.getElementById("userBalance").innerText.replace(/,/g, '')) || 0;
+                        const newBal = currentBal + parseFloat(checkData.data.amount);
+                        document.getElementById("userBalance").innerText = newBal.toLocaleString('en-US', {minimumFractionDigits: 2});
+                        localStorage.setItem("balance", newBal);
+                        
+                        resetUI();
+                    } else if (checkData.success && (checkData.data.status === "failed" || checkData.data.status === "cancelled")) {
+                        clearInterval(pollingInterval);
+                        status.style.background = "rgba(239, 68, 68, 0.1)";
+                        status.style.color = "#ef4444";
+                        status.innerText = "❌ Transaction rejected or timed out on mobile device.";
+                        resetUI();
+                    }
+                } catch (e) { console.error("Tracking error:", e); }
+            }, 10000);
+
+            function resetUI() {
                 btn.disabled = false;
                 loader.style.display = "none";
                 btnText.innerText = "DEPOSIT NOW";
@@ -183,7 +255,6 @@
 
         // Initialize
         sync();
-        // Sync balance every 10 seconds in case a payment goes through
         setInterval(sync, 10000);
     </script>
 </body>
