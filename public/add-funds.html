@@ -3,242 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Funds - UNASEMEJE ø DIA</title>
+    <title>Paynecta - Effortless Payments</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --paynecta-green: #144237;
-            --paynecta-bg: #f8f9fa;
-            --paynecta-btn: #8ba8a1;
-            --border-color: #e0e0e0;
-            --success-text: #1e7e34;
-        }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--paynecta-bg); 
-            margin: 0; 
-            padding: 0;
-            color: #333;
-        }
-
-        /* Top Header Style matched to image */
-        .header-section {
-            background-color: var(--paynecta-green);
-            color: white;
-            text-align: center;
-            padding: 70px 20px 110px 20px;
-        }
-
-        .header-section h1 {
-            font-style: italic;
-            font-size: 2.3rem;
-            margin: 0;
-            font-weight: 600;
-        }
-
-        .header-section p {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 15px;
-            opacity: 0.8;
-        }
-
-        /* Card Container */
-        .container {
-            max-width: 900px;
-            margin: -70px auto 50px auto;
-            padding: 0 20px;
-        }
-
-        .payment-card {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .payment-card h2 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-weight: 600;
-            position: relative;
-        }
-
-        /* The green line under "Payment Details" */
-        .payment-card h2::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -10px;
-            width: 45px;
-            height: 4px;
-            background-color: var(--paynecta-green);
-        }
-
-        /* Input Styling */
-        .input-group {
-            margin-top: 35px;
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #222;
-        }
-
-        .field-box {
-            display: flex;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: border-color 0.3s;
-        }
-
-        .field-box:focus-within {
-            border-color: var(--paynecta-green);
-        }
-
-        .prefix {
-            background-color: #f9f9f9;
-            padding: 15px 22px;
-            border-right: 1px solid var(--border-color);
-            color: #666;
-            font-size: 1rem;
-        }
-
-        input {
-            flex: 1;
-            border: none;
-            padding: 15px;
-            font-size: 1.05rem;
-            outline: none;
-            color: #333;
-        }
-
-        .helper-text {
-            font-size: 0.78rem;
-            margin-top: 10px;
-            display: block;
-            color: var(--success-text);
-        }
-
-        /* Button Styling matched to image */
-        .btn-send {
-            width: 100%;
-            background-color: var(--paynecta-btn);
-            color: white;
-            border: none;
-            padding: 18px;
-            font-size: 1.2rem;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 500;
-            margin-top: 15px;
-            transition: background 0.3s;
-        }
-
-        .btn-send:hover {
-            background-color: #7a948e;
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            color: #888;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
+        body { font-family: 'Plus+Jakarta+Sans', sans-serif; }
+        .bg-custom-green { background-color: #11453b; }
+        .btn-custom { background-color: #8da39e; transition: 0.3s; }
+        .btn-custom:hover { background-color: #7a8e89; }
+        .input-focus:focus { outline: none; border-color: #11453b; ring: 1px #11453b; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
 
-<div class="header-section">
-    <h1>Effortless.</h1>
-    <p>EVERY PAYMENT, EVERY TIME</p>
-</div>
+    <!-- Header Section -->
+    <div class="bg-custom-green text-white py-16 px-4 text-center">
+        <h1 class="text-4xl italic font-bold mb-2">Effortless.</h1>
+        <p class="uppercase tracking-widest text-sm opacity-80">Every Payment, Every Time</p>
+    </div>
 
-<div class="container">
-    <form id="payForm" action="https://paynecta.co.ke/pay/Unasemeje" method="POST" onsubmit="return validatePayment()">
-        <div class="payment-card">
-            <h2>Payment Details</h2>
-            
-            <div class="input-group">
-                <label>Enter Your Mpesa Phone Number</label>
-                <div class="field-box">
-                    <span class="prefix">+254</span>
-                    <input type="text" id="phone_display" placeholder="Enter Number eg. 0701...." oninput="syncPhone()">
+    <!-- Payment Card -->
+    <div class="max-w-2xl mx-auto -mt-10 px-4 pb-12">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-1">Payment Details</h2>
+            <div class="w-12 h-1 bg-custom-green mb-8"></div>
+
+            <form id="paymentForm" class="space-y-6">
+                <!-- Phone Number -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Enter Your Mpesa Phone Number</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-4 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            +254
+                        </span>
+                        <input type="number" id="phone" name="phone" required placeholder="Enter Number eg. 0701...."
+                            class="flex-1 min-w-0 block w-full px-3 py-3 rounded-none rounded-r-md border border-gray-300 text-gray-900 focus:ring-1 focus:ring-teal-900 focus:border-teal-900 sm:text-sm">
+                    </div>
+                    <p class="mt-2 text-xs text-green-600 font-medium">Enter a valid mpesa phone number eg. 701..... Start without the 0</p>
                 </div>
-                <span class="helper-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
-            </div>
 
-            <div class="input-group">
-                <label>Enter Amount</label>
-                <div class="field-box">
-                    <span class="prefix">KES</span>
-                    <input type="number" id="amount" name="amount" placeholder="0" min="10">
+                <!-- Amount -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Enter Amount</label>
+                    <div class="flex">
+                        <span class="inline-flex items-center px-4 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                            KES
+                        </span>
+                        <input type="number" id="amount" name="amount" required placeholder="0"
+                            class="flex-1 min-w-0 block w-full px-3 py-3 rounded-none rounded-r-md border border-gray-300 text-gray-900 focus:ring-1 focus:ring-teal-900 focus:border-teal-900 sm:text-sm">
+                    </div>
+                    <p class="mt-2 text-xs text-green-600 font-medium">Enter the amount to be paid</p>
                 </div>
-                <span class="helper-text">Enter the amount to be paid</span>
-            </div>
 
-            <input type="hidden" name="phone" id="phone_hidden">
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="w-full btn-custom text-white py-4 rounded-xl font-bold text-lg shadow-sm">
+                    Send Money
+                </button>
+            </form>
 
-            <button type="submit" class="btn-send">Send Money</button>
-            
-            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+            <!-- Status Message -->
+            <div id="responseMsg" class="mt-4 text-center hidden p-3 rounded-lg"></div>
         </div>
-    </form>
-</div>
+    </div>
 
-<script>
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    <script>
+        const paymentForm = document.getElementById('paymentForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const responseMsg = document.getElementById('responseMsg');
 
-    if (!token) window.location.href = "/login";
+        paymentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-    // Auto-fill from local storage if user is logged in
-    window.onload = () => {
-        if (user.phone) {
-            let ph = String(user.phone).trim();
-            if(ph.startsWith('254')) ph = ph.substring(3);
-            if(ph.startsWith('0')) ph = ph.substring(1);
-            document.getElementById("phone_display").value = ph;
-            syncPhone();
-        }
-    };
+            // Form data
+            const phone = document.getElementById('phone').value;
+            const amount = document.getElementById('amount').value;
 
-    // Ensures the phone number is always formatted correctly for the payment link
-    function syncPhone() {
-        let val = document.getElementById("phone_display").value.trim();
-        if (val.startsWith('0')) val = val.substring(1);
-        // Paynecta usually expects the 0 included or excluded depending on setup
-        // We set the hidden field to "07..." format
-        document.getElementById("phone_hidden").value = '0' + val;
-    }
+            // UI Feedback
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Processing...";
+            responseMsg.classList.add('hidden');
 
-    function validatePayment() {
-        const amt = document.getElementById("amount").value;
-        const phone = document.getElementById("phone_display").value;
+            try {
+                // Change the URL '/stkpush' to match your server.js route
+                const response = await fetch('/stkpush', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        phone: phone.startsWith('0') ? '254' + phone.substring(1) : '254' + phone,
+                        amount: amount 
+                    })
+                });
 
-        if (!amt || amt < 10) {
-            alert("Minimum amount is KES 10");
-            return false;
-        }
-        if (!phone) {
-            alert("Please enter a valid phone number");
-            return false;
-        }
+                const data = await response.json();
 
-        // Final sync before submission
-        syncPhone();
-        return true;
-    }
-</script>
-
+                if (response.ok) {
+                    responseMsg.innerText = "Check your phone to enter M-Pesa PIN";
+                    responseMsg.className = "mt-4 text-center p-3 rounded-lg bg-green-100 text-green-700";
+                } else {
+                    responseMsg.innerText = data.message || "Something went wrong";
+                    responseMsg.className = "mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700";
+                }
+            } catch (error) {
+                responseMsg.innerText = "Server connection error";
+                responseMsg.className = "mt-4 text-center p-3 rounded-lg bg-red-100 text-red-700";
+            } finally {
+                responseMsg.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Send Money";
+            }
+        });
+    </script>
 </body>
 </html>
