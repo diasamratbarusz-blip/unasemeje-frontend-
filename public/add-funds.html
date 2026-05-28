@@ -4,102 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Funds - UNASEMEJE ø DIA</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         :root {
-            --bg-color: #f8f9fa;
-            --header-bg: #144237; 
-            --primary-btn: #8ba8a1; 
-            --input-border: #e0e0e0;
-            --text-main: #333;
+            --paynecta-green: #144237;
+            --paynecta-bg: #f8f9fa;
+            --paynecta-btn: #8ba8a1;
+            --border-color: #e0e0e0;
+            --text-gray: #757575;
+            --success-green: #28a745;
         }
 
-        body { font-family: sans-serif; background: var(--bg-color); margin: 0; padding: 0; overflow-x: hidden; }
-
-        .header-banner { background-color: var(--header-bg); padding: 40px 20px; text-align: center; color: white; }
-        .header-banner h1 { font-style: italic; margin: 0; font-size: 2rem; }
-
-        .container { max-width: 600px; margin: -40px auto 40px auto; padding: 0 15px; }
-
-        .payment-card { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: all 0.5s ease;
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: var(--paynecta-bg); 
+            margin: 0; 
+            padding: 0;
+            color: #333;
         }
 
-        /* Hiding the iframe until payment is triggered */
-        #paymentFrameContainer {
-            display: none;
-            width: 100%;
-            height: 600px;
+        /* Dark Green Header Area */
+        .header-section {
+            background-color: var(--paynecta-green);
+            color: white;
+            text-align: center;
+            padding: 60px 20px 100px 20px;
+        }
+
+        .header-section h1 {
+            font-style: italic;
+            font-size: 2.2rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .header-section p {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-top: 15px;
+            opacity: 0.9;
+        }
+
+        /* Form Container Card */
+        .container {
+            max-width: 900px;
+            margin: -60px auto 40px auto;
+            padding: 0 20px;
+        }
+
+        .payment-card {
+            background: white;
             border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--input-border);
-            margin-top: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
-        iframe { width: 100%; height: 100%; border: none; }
+        .payment-card h2 {
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-weight: 600;
+            position: relative;
+        }
 
-        .input-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: 600; }
-        
-        .input-wrapper {
+        .payment-card h2::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 40px;
+            height: 3px;
+            background-color: var(--paynecta-green);
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #444;
+        }
+
+        .field-wrapper {
             display: flex;
-            border: 1px solid var(--input-border);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border 0.3s;
+        }
+
+        .field-wrapper:focus-within {
+            border-color: var(--paynecta-green);
+        }
+
+        .prefix {
+            background-color: #fcfcfc;
+            padding: 14px 20px;
+            border-right: 1px solid var(--border-color);
+            color: #666;
+            font-size: 0.95rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            padding: 14px 15px;
+            font-size: 1rem;
+            outline: none;
+            color: #333;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        .helper-text {
+            font-size: 0.75rem;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .green-text { color: var(--success-green); }
+
+        /* Submit Button */
+        .btn-send {
+            width: 100%;
+            background-color: var(--paynecta-btn);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-size: 1.1rem;
             border-radius: 8px;
-            background: #fff;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: opacity 0.3s;
         }
 
-        .prefix { padding: 12px; background: #eee; border-right: 1px solid #ddd; font-size: 0.9rem; }
-        input { width: 100%; padding: 12px; border: none; outline: none; font-size: 1rem; }
-
-        .btn { 
-            width: 100%; padding: 16px; border: none; border-radius: 8px; 
-            cursor: pointer; font-size: 1rem; font-weight: bold; background: var(--primary-btn); color: white;
+        .btn-send:hover {
+            opacity: 0.9;
         }
 
-        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
-        @keyframes dots { 0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 40% { color: white; text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); } 60% { text-shadow: .5em 0 0 white, 1em 0 0 rgba(0,0,0,0); } 80%, 100% { text-shadow: .5em 0 0 white, 1em 0 0 white; } }
+        /* Hidden Frame for background processing */
+        #hiddenPayFrame {
+            display: none;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 <body>
 
-<div class="header-banner">
-    <h1>Fast.</h1>
-    <p>SECURE WALLET DEPOSIT</p>
+<div class="header-section">
+    <h1>Effortless.</h1>
+    <p>EVERY PAYMENT, EVERY TIME</p>
 </div>
 
 <div class="container">
-    <div class="payment-card" id="mainCard">
-        <div id="formSection">
-            <h2 style="margin-top:0;">Deposit Details</h2>
-            <p style="font-size: 0.8rem; color: #666;">Enter amount to start secure checkout.</p>
-
-            <div class="input-group">
-                <label>Amount (KES)</label>
-                <div class="input-wrapper">
-                    <span class="prefix">KES</span>
-                    <input type="number" id="amount" placeholder="e.g. 500" min="10">
-                </div>
+    <div class="payment-card">
+        <h2>Payment Details</h2>
+        
+        <div class="input-group">
+            <label>Enter Your Mpesa Phone Number</label>
+            <div class="field-wrapper">
+                <span class="prefix">+254</span>
+                <input type="text" id="phone" placeholder="Enter Number eg. 0701....">
             </div>
-
-            <button class="btn" id="payBtn" onclick="startSilentPayment()">Initialize Secure Payment</button>
+            <span class="helper-text green-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
         </div>
 
-        <div id="paymentFrameContainer">
-            <div style="text-align: center; padding: 10px; background: #144237; color: white; font-size: 0.8rem;">
-                Secure Connection Established <span class="loading-dots"></span>
+        <div class="input-group">
+            <label>Enter Amount</label>
+            <div class="field-wrapper">
+                <span class="prefix">KES</span>
+                <input type="number" id="amount" placeholder="0" min="10">
             </div>
-            <iframe id="paynectaFrame" src=""></iframe>
+            <span class="helper-text green-text">Enter the amount to be paid</span>
         </div>
 
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="/dashboard" style="color: #999; text-decoration: none; font-size: 0.8rem;">← Return to Dashboard</a>
-        </div>
+        <button type="button" class="btn-send" onclick="processPayment()">Send Money</button>
+        
+        <a href="/dashboard" class="back-link">Return to Dashboard</a>
     </div>
 </div>
+
+<iframe id="hiddenPayFrame" name="hiddenPayFrame"></iframe>
 
 <script>
     const token = localStorage.getItem("token");
@@ -107,33 +210,43 @@
 
     if (!token) window.location.href = "/login";
 
-    function startSilentPayment() {
+    // Auto-fill phone if available in session
+    if (user.phone) {
+        let ph = String(user.phone).trim();
+        if(ph.startsWith('254')) ph = ph.substring(3);
+        if(ph.startsWith('0')) ph = ph.substring(1);
+        document.getElementById("phone").value = ph;
+    }
+
+    function processPayment() {
         const amt = document.getElementById("amount").value;
-        const btn = document.getElementById("payBtn");
-        const formSection = document.getElementById("formSection");
-        const frameContainer = document.getElementById("paymentFrameContainer");
-        const iframe = document.getElementById("paynectaFrame");
+        let phone = document.getElementById("phone").value.trim();
+        const btn = document.querySelector(".btn-send");
 
         if (!amt || amt < 10) {
-            alert("Minimum deposit is 10 KES");
+            alert("Please enter a valid amount (Minimum KES 10)");
             return;
         }
 
-        btn.innerHTML = "Opening Secure Channel...";
+        // Standardize phone for Paynecta link
+        if (phone.startsWith('0')) phone = phone.substring(1);
+        
+        btn.innerText = "Processing...";
         btn.disabled = true;
 
-        // Construct the link with the amount pre-filled
-        // We use the user's phone from localStorage so the Paynecta page recognizes them
-        const phone = user.phone || "";
-        const basePayUrl = "https://paynecta.co.ke/pay/Unasemeje";
-        const finalUrl = `${basePayUrl}?amount=${amt}&phone=${phone}`;
+        // Construct the exact URL that the Paynecta page uses
+        // This sends the data "behind the scenes" to the payment link
+        const targetUrl = `https://paynecta.co.ke/pay/Unasemeje?amount=${amt}&phone=0${phone}`;
 
-        // SILENT TRANSITION
+        // Load the link into the hidden frame
+        document.getElementById("hiddenPayFrame").src = targetUrl;
+
+        // Feedback to user
         setTimeout(() => {
-            formSection.style.display = "none"; // Hide the form
-            frameContainer.style.display = "block"; // Show the iframe
-            iframe.src = finalUrl; // Load Paynecta inside your site
-        }, 800);
+            alert("Payment initiated! Check your phone for the M-Pesa prompt.");
+            btn.innerText = "Send Money";
+            btn.disabled = false;
+        }, 2000);
     }
 </script>
 
