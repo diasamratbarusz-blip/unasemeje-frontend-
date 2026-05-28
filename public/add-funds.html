@@ -10,8 +10,7 @@
             --paynecta-bg: #f8f9fa;
             --paynecta-btn: #8ba8a1;
             --border-color: #e0e0e0;
-            --text-gray: #757575;
-            --success-green: #28a745;
+            --success-text: #1e7e34;
         }
 
         body { 
@@ -22,17 +21,17 @@
             color: #333;
         }
 
-        /* Dark Green Header Area */
+        /* Top Header Style matched to image */
         .header-section {
             background-color: var(--paynecta-green);
             color: white;
             text-align: center;
-            padding: 60px 20px 100px 20px;
+            padding: 70px 20px 110px 20px;
         }
 
         .header-section h1 {
             font-style: italic;
-            font-size: 2.2rem;
+            font-size: 2.3rem;
             margin: 0;
             font-weight: 600;
         }
@@ -40,130 +39,120 @@
         .header-section p {
             font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 2.5px;
+            letter-spacing: 3px;
             margin-top: 15px;
-            opacity: 0.9;
+            opacity: 0.8;
         }
 
-        /* Form Container Card */
+        /* Card Container */
         .container {
             max-width: 900px;
-            margin: -60px auto 40px auto;
+            margin: -70px auto 50px auto;
             padding: 0 20px;
         }
 
         .payment-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
         .payment-card h2 {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             margin-top: 0;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-weight: 600;
             position: relative;
         }
 
+        /* The green line under "Payment Details" */
         .payment-card h2::after {
             content: "";
             position: absolute;
             left: 0;
-            bottom: -8px;
-            width: 40px;
-            height: 3px;
+            bottom: -10px;
+            width: 45px;
+            height: 4px;
             background-color: var(--paynecta-green);
         }
 
-        /* Inputs */
+        /* Input Styling */
         .input-group {
+            margin-top: 35px;
             margin-bottom: 25px;
         }
 
         label {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             margin-bottom: 12px;
-            color: #444;
+            color: #222;
         }
 
-        .field-wrapper {
+        .field-box {
             display: flex;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
-            transition: border 0.3s;
+            transition: border-color 0.3s;
         }
 
-        .field-wrapper:focus-within {
+        .field-box:focus-within {
             border-color: var(--paynecta-green);
         }
 
         .prefix {
-            background-color: #fcfcfc;
-            padding: 14px 20px;
+            background-color: #f9f9f9;
+            padding: 15px 22px;
             border-right: 1px solid var(--border-color);
             color: #666;
-            font-size: 0.95rem;
-            min-width: 50px;
-            text-align: center;
+            font-size: 1rem;
         }
 
         input {
             flex: 1;
             border: none;
-            padding: 14px 15px;
-            font-size: 1rem;
+            padding: 15px;
+            font-size: 1.05rem;
             outline: none;
             color: #333;
         }
 
-        input::placeholder {
-            color: #aaa;
-        }
-
         .helper-text {
-            font-size: 0.75rem;
-            margin-top: 8px;
+            font-size: 0.78rem;
+            margin-top: 10px;
             display: block;
+            color: var(--success-text);
         }
 
-        .green-text { color: var(--success-green); }
-
-        /* Submit Button */
+        /* Button Styling matched to image */
         .btn-send {
             width: 100%;
             background-color: var(--paynecta-btn);
             color: white;
             border: none;
             padding: 18px;
-            font-size: 1.1rem;
-            border-radius: 8px;
+            font-size: 1.2rem;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 500;
-            margin-top: 10px;
-            transition: opacity 0.3s;
+            margin-top: 15px;
+            transition: background 0.3s;
         }
 
         .btn-send:hover {
-            opacity: 0.9;
-        }
-
-        /* Hidden Frame for background processing */
-        #hiddenPayFrame {
-            display: none;
+            background-color: #7a948e;
         }
 
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 25px;
-            color: var(--text-gray);
+            margin-top: 30px;
+            color: #888;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -175,34 +164,36 @@
 </div>
 
 <div class="container">
-    <div class="payment-card">
-        <h2>Payment Details</h2>
-        
-        <div class="input-group">
-            <label>Enter Your Mpesa Phone Number</label>
-            <div class="field-wrapper">
-                <span class="prefix">+254</span>
-                <input type="text" id="phone" placeholder="Enter Number eg. 0701....">
+    <form id="payForm" action="https://paynecta.co.ke/pay/Unasemeje" method="POST" onsubmit="return validatePayment()">
+        <div class="payment-card">
+            <h2>Payment Details</h2>
+            
+            <div class="input-group">
+                <label>Enter Your Mpesa Phone Number</label>
+                <div class="field-box">
+                    <span class="prefix">+254</span>
+                    <input type="text" id="phone_display" placeholder="Enter Number eg. 0701...." oninput="syncPhone()">
+                </div>
+                <span class="helper-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
             </div>
-            <span class="helper-text green-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
-        </div>
 
-        <div class="input-group">
-            <label>Enter Amount</label>
-            <div class="field-wrapper">
-                <span class="prefix">KES</span>
-                <input type="number" id="amount" placeholder="0" min="10">
+            <div class="input-group">
+                <label>Enter Amount</label>
+                <div class="field-box">
+                    <span class="prefix">KES</span>
+                    <input type="number" id="amount" name="amount" placeholder="0" min="10">
+                </div>
+                <span class="helper-text">Enter the amount to be paid</span>
             </div>
-            <span class="helper-text green-text">Enter the amount to be paid</span>
-        </div>
 
-        <button type="button" class="btn-send" onclick="processPayment()">Send Money</button>
-        
-        <a href="/dashboard" class="back-link">Return to Dashboard</a>
-    </div>
+            <input type="hidden" name="phone" id="phone_hidden">
+
+            <button type="submit" class="btn-send">Send Money</button>
+            
+            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
+        </div>
+    </form>
 </div>
-
-<iframe id="hiddenPayFrame" name="hiddenPayFrame"></iframe>
 
 <script>
     const token = localStorage.getItem("token");
@@ -210,43 +201,42 @@
 
     if (!token) window.location.href = "/login";
 
-    // Auto-fill phone if available in session
-    if (user.phone) {
-        let ph = String(user.phone).trim();
-        if(ph.startsWith('254')) ph = ph.substring(3);
-        if(ph.startsWith('0')) ph = ph.substring(1);
-        document.getElementById("phone").value = ph;
+    // Auto-fill from local storage if user is logged in
+    window.onload = () => {
+        if (user.phone) {
+            let ph = String(user.phone).trim();
+            if(ph.startsWith('254')) ph = ph.substring(3);
+            if(ph.startsWith('0')) ph = ph.substring(1);
+            document.getElementById("phone_display").value = ph;
+            syncPhone();
+        }
+    };
+
+    // Ensures the phone number is always formatted correctly for the payment link
+    function syncPhone() {
+        let val = document.getElementById("phone_display").value.trim();
+        if (val.startsWith('0')) val = val.substring(1);
+        // Paynecta usually expects the 0 included or excluded depending on setup
+        // We set the hidden field to "07..." format
+        document.getElementById("phone_hidden").value = '0' + val;
     }
 
-    function processPayment() {
+    function validatePayment() {
         const amt = document.getElementById("amount").value;
-        let phone = document.getElementById("phone").value.trim();
-        const btn = document.querySelector(".btn-send");
+        const phone = document.getElementById("phone_display").value;
 
         if (!amt || amt < 10) {
-            alert("Please enter a valid amount (Minimum KES 10)");
-            return;
+            alert("Minimum amount is KES 10");
+            return false;
+        }
+        if (!phone) {
+            alert("Please enter a valid phone number");
+            return false;
         }
 
-        // Standardize phone for Paynecta link
-        if (phone.startsWith('0')) phone = phone.substring(1);
-        
-        btn.innerText = "Processing...";
-        btn.disabled = true;
-
-        // Construct the exact URL that the Paynecta page uses
-        // This sends the data "behind the scenes" to the payment link
-        const targetUrl = `https://paynecta.co.ke/pay/Unasemeje?amount=${amt}&phone=0${phone}`;
-
-        // Load the link into the hidden frame
-        document.getElementById("hiddenPayFrame").src = targetUrl;
-
-        // Feedback to user
-        setTimeout(() => {
-            alert("Payment initiated! Check your phone for the M-Pesa prompt.");
-            btn.innerText = "Send Money";
-            btn.disabled = false;
-        }, 2000);
+        // Final sync before submission
+        syncPhone();
+        return true;
     }
 </script>
 
