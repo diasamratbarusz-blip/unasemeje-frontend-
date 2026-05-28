@@ -169,6 +169,18 @@
             color: #666;
             text-decoration: none;
         }
+
+        /* Status Banner Style */
+        .status-alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+            text-align: center;
+        }
+        .status-success { background-color: #e6f4ea; color: #137333; display: block; }
+        .status-error { background-color: #fce8e6; color: #c5221f; display: block; }
     </style>
 </head>
 <body>
@@ -179,18 +191,19 @@
 </div>
 
 <div class="container">
-    <!-- Form pointing directly to Paynecta's payment system link -->
-    <form id="paymentForm" action="https://paynecta.co.ke/pay/Unasemeje" method="POST" onsubmit="return validateForm()">
+    <form id="paymentForm" onsubmit="handlePaymentSubmit(event)">
         <div class="payment-card">
             <h2 class="title">Payment Details</h2>
+            
+            <!-- Dynamic Inline Status Tracking Notifications -->
+            <div id="statusNotification" class="status-alert"></div>
             
             <!-- Phone Number Input -->
             <div class="input-group">
                 <label>Enter Your Mpesa Phone Number</label>
                 <div class="phone-input-wrapper">
                     <span class="prefix">+254</span>
-                    <!-- paynecta usually looks for 'phone' or 'mobile_number' field attributes -->
-                    <input type="text" id="phone" name="phone" placeholder="Enter Number eg. 0701....">
+                    <input type="text" id="phone" name="phone" placeholder="Enter Number eg. 701....">
                 </div>
                 <span class="helper-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
             </div>
@@ -205,8 +218,8 @@
                 <span class="helper-text">Enter the amount to be paid</span>
             </div>
 
-            <!-- Submit Button directly triggers Paynecta Link -->
-            <button type="submit" class="btn btn-primary">Send Money</button>
+            <!-- Submit Button directly triggers automated STK Push API process -->
+            <button type="submit" id="submitBtn" class="btn btn-primary">Send Money</button>
 
             <div class="divider">OR USE MANUAL LINK</div>
 
@@ -227,24 +240,74 @@
         let ph = user.phone;
         if(ph.startsWith('0')) ph = ph.substring(1);
         if(ph.startsWith('254')) ph = ph.substring(3);
+        if(ph.startsWith('+254')) ph = ph.substring(4);
         document.getElementById("phone").value = ph;
     }
 
-    // Standard client side verification before sending data to Paynecta URL
-    function validateForm() {
+    // Handles the asynchronous server API checkout execution
+    async function handlePaymentSubmit(event) {
+        event.preventDefault();
+        
         const amount = document.getElementById("amount").value;
-        const phone = document.getElementById("phone").value;
+        let phoneInput = document.getElementById("phone").value.trim();
+        const submitBtn = document.getElementById("submitBtn");
 
-        if (!amount || !phone) {
-            alert("Please fill in both amount and phone number before submitting.");
-            return false;
+        if (!amount || !phoneInput) {
+            displayStatus("Please fill in both amount and phone number before submitting.", "status-error");
+            return;
         }
-        return true;
+
+        // Standardize phone payload structure into expected full format (07XXXXXXXX or 01XXXXXXXX)
+        if (!phoneInput.startsWith('0')) {
+            phoneInput = '0' + phoneInput;
+        }
+
+        displayStatus("Processing Request... Check your phone for M-Pesa entry prompt.", "status-success");
+        submitBtn.disabled = true;
+
+        try {
+            const response = await axios.post('/api/paynecta/initialize', {
+                amount: Number(amount),
+                mobile_number: phoneInput,
+                code: "600"
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.data && response.data.success) {
+                displayStatus("STK Push successfully transmitted! Enter M-Pesa PIN to update your balance immediately.", "status-success");
+            } else {
+                displayStatus(response.data.message || "Payment initiation failed. Please try again or use manual link.", "status-error");
+                submitBtn.disabled = false;
+            }
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || "Server communication issue occurred. Try again.";
+            displayStatus(errorMsg, "status-error");
+            submitBtn.disabled = false;
+        }
     }
 
-    // Direct redirection backup button
-    function goToPaymentPage() {
-        window.open('https://paynecta.co.ke/pay/Unasemeje', '_blank');
+    // Secure custom dynamic route redirection backup interface
+    async function goToPaymentPage() {
+        try {
+            const res = await axios.get('/api/paynecta/link', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.data && res.data.payment_url) {
+                window.open(res.data.payment_url, '_blank');
+            } else {
+                window.open('https://paynecta.co.ke/pay/Unasemeje', '_blank');
+            }
+        } catch (err) {
+            // Safe fallback defaults to hardcoded route link string
+            window.open('https://paynecta.co.ke/pay/Unasemeje', '_blank');
+        }
+    }
+
+    function displayStatus(msg, statusClass) {
+        const notifyDiv = document.getElementById("statusNotification");
+        notifyDiv.innerText = msg;
+        notifyDiv.className = `status-alert ${statusClass}`;
     }
 </script>
 
