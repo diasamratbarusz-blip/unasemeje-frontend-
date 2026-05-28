@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
     <title>Add Funds - Unasemeje</title>
 
-    <!-- Tailwind -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
     <style>
 
@@ -47,7 +56,26 @@
             -moz-appearance:textfield;
         }
 
+        .status-success{
+            background:#ecfdf5;
+            color:#047857;
+            border:1px solid #a7f3d0;
+        }
+
+        .status-error{
+            background:#fef2f2;
+            color:#b91c1c;
+            border:1px solid #fecaca;
+        }
+
+        .status-info{
+            background:#eff6ff;
+            color:#1d4ed8;
+            border:1px solid #bfdbfe;
+        }
+
     </style>
+
 </head>
 
 <body class="min-h-screen">
@@ -65,11 +93,12 @@
 
     </div>
 
-    <!-- CARD -->
+    <!-- MAIN CARD -->
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20">
 
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 
+            <!-- TITLE -->
             <div class="mb-8">
 
                 <h2 class="text-2xl font-bold text-gray-800">
@@ -86,13 +115,17 @@
                 <!-- PHONE -->
                 <div>
 
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label
+                        class="block text-sm font-semibold text-gray-700 mb-2"
+                    >
                         Enter Your M-PESA Number
                     </label>
 
                     <div class="flex">
 
-                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                        <span
+                            class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
+                        >
                             +254
                         </span>
 
@@ -100,6 +133,7 @@
                             type="text"
                             id="phone"
                             required
+                            autocomplete="off"
                             placeholder="701234567"
                             class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"
                         />
@@ -115,20 +149,25 @@
                 <!-- AMOUNT -->
                 <div>
 
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    <label
+                        class="block text-sm font-semibold text-gray-700 mb-2"
+                    >
                         Enter Amount
                     </label>
 
                     <div class="flex">
 
-                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                        <span
+                            class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
+                        >
                             KES
                         </span>
 
                         <input
-                            type="text"
+                            type="number"
                             id="amount"
                             required
+                            min="1"
                             placeholder="100"
                             class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"
                         />
@@ -152,10 +191,10 @@
 
             </form>
 
-            <!-- STATUS -->
+            <!-- STATUS BOX -->
             <div
                 id="statusBox"
-                class="mt-6 hidden p-4 rounded-2xl text-sm text-center"
+                class="mt-6 hidden p-4 rounded-2xl text-sm text-center font-medium"
             ></div>
 
         </div>
@@ -165,9 +204,35 @@
     <!-- SCRIPT -->
     <script>
 
+        // =========================
+        // ELEMENTS
+        // =========================
         const form = document.getElementById('stkForm');
+
         const btn = document.getElementById('submitBtn');
+
         const statusBox = document.getElementById('statusBox');
+
+        const phoneInput = document.getElementById('phone');
+
+        const amountInput = document.getElementById('amount');
+
+        // =========================
+        // AUTO REMOVE NON-NUMBERS
+        // =========================
+        phoneInput.addEventListener('input', () => {
+
+            phoneInput.value =
+                phoneInput.value.replace(/\D/g, '');
+
+        });
+
+        amountInput.addEventListener('input', () => {
+
+            amountInput.value =
+                amountInput.value.replace(/[^\d]/g, '');
+
+        });
 
         // =========================
         // PAYNECTA STK PUSH
@@ -176,21 +241,24 @@
 
             try {
 
-                const response = await fetch('/api/paynecta/stkpush', {
+                const response = await fetch(
+                    '/api/paynecta/stkpush',
+                    {
 
-                    method: 'POST',
+                        method: 'POST',
 
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
 
-                    body: JSON.stringify({
-                        amount,
-                        phone
-                    })
+                        body: JSON.stringify({
+                            amount,
+                            phone
+                        })
 
-                });
+                    }
+                );
 
                 const data = await response.json();
 
@@ -200,11 +268,11 @@
 
                     showStatus(
                         "STK Push Sent Successfully. Check your phone and enter M-PESA PIN.",
-                        "green"
+                        "success"
                     );
 
-                    document.getElementById('amount').value = "";
-                    document.getElementById('phone').value = "";
+                    amountInput.value = "";
+                    phoneInput.value = "";
 
                 } else {
 
@@ -212,7 +280,7 @@
                         data.error ||
                         data.message ||
                         "Payment failed",
-                        "red"
+                        "error"
                     );
                 }
 
@@ -222,9 +290,136 @@
 
                 showStatus(
                     "Connection Error: Server unavailable",
-                    "red"
+                    "error"
                 );
             }
         }
 
         // =========================
+        // FORM SUBMIT
+        // =========================
+        form.addEventListener('submit', async (e) => {
+
+            e.preventDefault();
+
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+
+                showStatus(
+                    "Please login first",
+                    "error"
+                );
+
+                return;
+            }
+
+            let phone = phoneInput.value.trim();
+
+            let amount = amountInput.value.trim();
+
+            // REMOVE NON NUMBERS
+            phone = phone.replace(/\D/g, '');
+
+            amount = amount.replace(/\D/g, '');
+
+            // FORMAT PHONE
+            if (phone.startsWith('0')) {
+
+                phone =
+                    '254' + phone.substring(1);
+            }
+
+            if (phone.startsWith('7')) {
+
+                phone =
+                    '254' + phone;
+            }
+
+            // VALIDATE PHONE
+            if (!/^2547\d{8}$/.test(phone)) {
+
+                showStatus(
+                    "Invalid Safaricom number format",
+                    "error"
+                );
+
+                return;
+            }
+
+            // VALIDATE AMOUNT
+            if (
+                !amount ||
+                Number(amount) < 1
+            ) {
+
+                showStatus(
+                    "Amount must be greater than 0",
+                    "error"
+                );
+
+                return;
+            }
+
+            // BUTTON LOADING
+            btn.disabled = true;
+
+            btn.innerText = "Sending STK Push...";
+
+            showStatus(
+                "Please wait while we send the STK Push...",
+                "info"
+            );
+
+            // SEND PAYMENT
+            await depositNow(
+                amount,
+                phone,
+                token
+            );
+
+            // RESET BUTTON
+            btn.disabled = false;
+
+            btn.innerText = "Send Money";
+
+        });
+
+        // =========================
+        // SHOW STATUS
+        // =========================
+        function showStatus(message, type) {
+
+            statusBox.innerText = message;
+
+            statusBox.classList.remove(
+                'hidden',
+                'status-success',
+                'status-error',
+                'status-info'
+            );
+
+            if (type === 'success') {
+
+                statusBox.classList.add(
+                    'status-success'
+                );
+
+            } else if (type === 'error') {
+
+                statusBox.classList.add(
+                    'status-error'
+                );
+
+            } else {
+
+                statusBox.classList.add(
+                    'status-info'
+                );
+            }
+        }
+
+    </script>
+
+</body>
+</html>
