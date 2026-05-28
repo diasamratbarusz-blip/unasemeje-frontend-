@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         :root {
-            /* Colors matched from the screenshot */
             --bg-color: #f8f9fa;
             --header-bg: #144237; /* The dark green top section */
             --primary-btn: #8ba8a1; /* The muted green/teal button */
@@ -139,6 +138,9 @@
             background: var(--primary-btn); 
             color: white; 
             font-weight: bold;
+            text-decoration: none;
+            display: block;
+            box-sizing: border-box;
         }
 
         .btn-primary:hover { 
@@ -151,11 +153,6 @@
             color: var(--header-bg); 
             margin-top: 15px;
         }
-
-        /* Status Messages */
-        .status { margin-top: 15px; text-align: center; font-size: 0.9rem; padding: 12px; border-radius: 5px; display: none; }
-        .success { background: #d4edda; color: #155724; display: block; }
-        .error { background: #f8d7da; color: #721c24; display: block; }
 
         .divider { 
             text-align: center; 
@@ -182,37 +179,42 @@
 </div>
 
 <div class="container">
-    <div class="payment-card">
-        <h2 class="title">Payment Details</h2>
-        
-        <div class="input-group">
-            <label>Enter Your Mpesa Phone Number</label>
-            <div class="phone-input-wrapper">
-                <span class="prefix">+254</span>
-                <input type="text" id="phone" placeholder="Enter Number eg. 0701....">
+    <!-- Form pointing directly to Paynecta's payment system link -->
+    <form id="paymentForm" action="https://paynecta.co.ke/pay/Unasemeje" method="POST" onsubmit="return validateForm()">
+        <div class="payment-card">
+            <h2 class="title">Payment Details</h2>
+            
+            <!-- Phone Number Input -->
+            <div class="input-group">
+                <label>Enter Your Mpesa Phone Number</label>
+                <div class="phone-input-wrapper">
+                    <span class="prefix">+254</span>
+                    <!-- paynecta usually looks for 'phone' or 'mobile_number' field attributes -->
+                    <input type="text" id="phone" name="phone" placeholder="Enter Number eg. 0701....">
+                </div>
+                <span class="helper-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
             </div>
-            <span class="helper-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
-        </div>
-        
-        <div class="input-group">
-            <label>Enter Amount</label>
-            <div class="phone-input-wrapper">
-                <span class="prefix">KES</span>
-                <input type="number" id="amount" placeholder="0" min="10">
+            
+            <!-- Amount Input -->
+            <div class="input-group">
+                <label>Enter Amount</label>
+                <div class="phone-input-wrapper">
+                    <span class="prefix">KES</span>
+                    <input type="number" id="amount" name="amount" placeholder="0" min="10">
+                </div>
+                <span class="helper-text">Enter the amount to be paid</span>
             </div>
-            <span class="helper-text">Enter the amount to be paid</span>
+
+            <!-- Submit Button directly triggers Paynecta Link -->
+            <button type="submit" class="btn btn-primary">Send Money</button>
+
+            <div class="divider">OR USE MANUAL LINK</div>
+
+            <button type="button" class="btn btn-outline" onclick="goToPaymentPage()">Open Paynecta Page</button>
+            
+            <a href="/dashboard" class="back-link">← Back to Dashboard</a>
         </div>
-
-        <button class="btn btn-primary" onclick="initiateSTK()">Send Money</button>
-        
-        <div id="statusMsg" class="status"></div>
-
-        <div class="divider">OR USE MANUAL LINK</div>
-
-        <button class="btn btn-outline" onclick="goToPaymentPage()">Open Paynecta Page</button>
-        
-        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
-    </div>
+    </form>
 </div>
 
 <script>
@@ -222,60 +224,27 @@
     // Pre-fill phone if available in local storage
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     if (user.phone) {
-        // Remove leading 0 if present to match the "Start without 0" instruction
         let ph = user.phone;
         if(ph.startsWith('0')) ph = ph.substring(1);
+        if(ph.startsWith('254')) ph = ph.substring(3);
         document.getElementById("phone").value = ph;
     }
 
-    async function initiateSTK() {
+    // Standard client side verification before sending data to Paynecta URL
+    function validateForm() {
         const amount = document.getElementById("amount").value;
         const phone = document.getElementById("phone").value;
-        const statusDiv = document.getElementById("statusMsg");
 
         if (!amount || !phone) {
-            showStatus("Please enter both amount and phone.", "error");
-            return;
+            alert("Please fill in both amount and phone number before submitting.");
+            return false;
         }
-
-        showStatus("Processing... Check your phone.", "success");
-
-        try {
-            const res = await axios.post('/api/paynecta/initialize', {
-                amount: amount,
-                mobile_number: phone,
-                code: "600" 
-            }, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (res.data.success) {
-                showStatus("STK Push Sent! Enter PIN to complete.", "success");
-            } else {
-                showStatus(res.data.message || "Failed to initiate.", "error");
-            }
-        } catch (err) {
-            showStatus(err.response?.data?.message || "Server Error. Try again.", "error");
-        }
+        return true;
     }
 
-    async function goToPaymentPage() {
-        try {
-            const res = await axios.get('/api/paynecta/link', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.data.payment_url) {
-                window.open(res.data.payment_url, '_blank');
-            }
-        } catch (err) {
-            alert("Could not load payment page. Please try STK Push.");
-        }
-    }
-
-    function showStatus(msg, type) {
-        const statusDiv = document.getElementById("statusMsg");
-        statusDiv.innerText = msg;
-        statusDiv.className = `status ${type}`;
+    // Direct redirection backup button
+    function goToPaymentPage() {
+        window.open('https://paynecta.co.ke/pay/Unasemeje', '_blank');
     }
 </script>
 
