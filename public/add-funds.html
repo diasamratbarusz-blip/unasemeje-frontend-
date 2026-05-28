@@ -4,65 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Funds - UNASEMEJE ø DIA</title>
-    <link rel="stylesheet" href="css/style.css"> <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         :root {
-            --primary: #00ff88;
-            --dark: #121212;
-            --card: #1e1e1e;
+            /* Colors matched from the screenshot */
+            --bg-color: #f8f9fa;
+            --header-bg: #144237; /* The dark green top section */
+            --primary-btn: #8ba8a1; /* The muted green/teal button */
+            --input-border: #e0e0e0;
+            --text-main: #333;
+            --text-muted: #1e7e34; /* Green helper text */
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; padding: 20px; }
-        .container { max-width: 500px; margin: auto; }
-        .card { background: var(--card); padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
-        h2 { color: var(--primary); text-align: center; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #bbb; }
-        input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; margin-top: 10px; }
-        .btn-primary { background: var(--primary); color: black; }
-        .btn-primary:hover { background: #00cc6e; transform: translateY(-2px); }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: black; }
-        .status { margin-top: 15px; text-align: center; font-size: 0.9rem; padding: 10px; border-radius: 5px; display: none; }
-        .success { background: rgba(0, 255, 136, 0.1); color: var(--primary); display: block; }
-        .error { background: rgba(255, 0, 0, 0.1); color: #ff4d4d; display: block; }
-        .divider { text-align: center; margin: 20px 0; color: #555; position: relative; }
-        .divider::before { content: ""; position: absolute; left: 0; top: 50%; width: 40%; border-bottom: 1px solid #333; }
-        .divider::after { content: ""; position: absolute; right: 0; top: 50%; width: 40%; border-bottom: 1px solid #333; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-main); 
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Top Header Section */
+        .header-banner {
+            background-color: var(--header-bg);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header-banner h1 {
+            font-style: italic;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: 1px;
+            font-size: 2rem;
+        }
+
+        .header-banner p {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* Container & Card */
+        .container { 
+            max-width: 900px; 
+            margin: -40px auto 40px auto; 
+            padding: 0 15px;
+        }
+
+        .payment-card { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h2.title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #144237;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Form Elements */
+        .input-group { margin-bottom: 25px; }
+
+        label { 
+            display: block; 
+            margin-bottom: 12px; 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            color: #333;
+        }
+
+        .phone-input-wrapper {
+            display: flex;
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .prefix {
+            background: #f1f1f1;
+            padding: 12px 20px;
+            border-right: 1px solid var(--input-border);
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            border: 1px solid var(--input-border); 
+            border-radius: 8px; 
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .phone-input-wrapper input {
+            border: none;
+        }
+
+        input:focus {
+            border-color: #144237;
+        }
+
+        .helper-text {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Buttons */
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 1rem;
+            font-weight: 500; 
+            transition: 0.3s; 
+            text-align: center;
+        }
+
+        .btn-primary { 
+            background: var(--primary-btn); 
+            color: white; 
+            font-weight: bold;
+        }
+
+        .btn-primary:hover { 
+            background: #7a948e; 
+        }
+
+        .btn-outline { 
+            background: transparent; 
+            border: 2px solid var(--header-bg); 
+            color: var(--header-bg); 
+            margin-top: 15px;
+        }
+
+        /* Status Messages */
+        .status { margin-top: 15px; text-align: center; font-size: 0.9rem; padding: 12px; border-radius: 5px; display: none; }
+        .success { background: #d4edda; color: #155724; display: block; }
+        .error { background: #f8d7da; color: #721c24; display: block; }
+
+        .divider { 
+            text-align: center; 
+            margin: 30px 0; 
+            color: #888; 
+            position: relative; 
+            font-size: 0.8rem;
+        }
+        
+        .back-link {
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
+<div class="header-banner">
+    <h1>Fast.</h1>
+    <p>EVERY PAYMENT, EVERY TIME</p>
+</div>
+
 <div class="container">
-    <h2>Deposit Funds</h2>
-    
-    <div class="card">
-        <h3>M-Pesa STK Push</h3>
-        <p style="font-size: 0.8rem; color: #888;">Enter amount and phone to receive a payment popup on your phone.</p>
+    <div class="payment-card">
+        <h2 class="title">Payment Details</h2>
         
         <div class="input-group">
-            <label>Amount (KES)</label>
-            <input type="number" id="amount" placeholder="Min 10 KES" min="10">
+            <label>Enter Your Mpesa Phone Number</label>
+            <div class="phone-input-wrapper">
+                <span class="prefix">+254</span>
+                <input type="text" id="phone" placeholder="Enter Number eg. 0701....">
+            </div>
+            <span class="helper-text">Enter a valid mpesa phone number eg. 701..... Start without the 0</span>
         </div>
         
         <div class="input-group">
-            <label>Phone Number</label>
-            <input type="text" id="phone" placeholder="e.g. 0715509440">
+            <label>Enter Amount</label>
+            <div class="phone-input-wrapper">
+                <span class="prefix">KES</span>
+                <input type="number" id="amount" placeholder="0" min="10">
+            </div>
+            <span class="helper-text">Enter the amount to be paid</span>
         </div>
 
-        <button class="btn btn-primary" onclick="initiateSTK()">Pay Now (STK)</button>
+        <button class="btn btn-primary" onclick="initiateSTK()">Send Money</button>
+        
         <div id="statusMsg" class="status"></div>
+
+        <div class="divider">OR USE MANUAL LINK</div>
+
+        <button class="btn btn-outline" onclick="goToPaymentPage()">Open Paynecta Page</button>
+        
+        <a href="/dashboard" class="back-link">← Back to Dashboard</a>
     </div>
-
-    <div class="divider">OR</div>
-
-    <div class="card">
-        <h3>Manual Payment Page</h3>
-        <p style="font-size: 0.8rem; color: #888;">If STK fails, use our official payment page. Balance updates automatically after payment.</p>
-        <button class="btn btn-outline" onclick="goToPaymentPage()">Go to Payment Page</button>
-    </div>
-
-    <p style="text-align: center;"><a href="/dashboard" style="color: var(--primary); text-decoration: none;">&larr; Back to Dashboard</a></p>
 </div>
 
 <script>
@@ -71,7 +221,12 @@
 
     // Pre-fill phone if available in local storage
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (user.phone) document.getElementById("phone").value = user.phone;
+    if (user.phone) {
+        // Remove leading 0 if present to match the "Start without 0" instruction
+        let ph = user.phone;
+        if(ph.startsWith('0')) ph = ph.substring(1);
+        document.getElementById("phone").value = ph;
+    }
 
     async function initiateSTK() {
         const amount = document.getElementById("amount").value;
@@ -89,7 +244,7 @@
             const res = await axios.post('/api/paynecta/initialize', {
                 amount: amount,
                 mobile_number: phone,
-                code: "600" // Adjust this if Paynecta requires a different network code
+                code: "600" 
             }, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -110,7 +265,6 @@
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.data.payment_url) {
-                // Redirect user to Paynecta hosted page
                 window.open(res.data.payment_url, '_blank');
             }
         } catch (err) {
