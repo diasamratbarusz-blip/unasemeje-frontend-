@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -49,6 +48,22 @@
             border: 1px solid #e5e7eb;
             background: #ffffff;
         }
+        
+        /* Spinner for the button */
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #047857;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
 </head>
@@ -73,34 +88,39 @@
             <!-- TITLE -->
             <div class="mb-4">
                 <h2 class="text-xl font-bold text-gray-800">
-                    Transaction Progress
+                    Transaction Detected
                 </h2>
                 <div class="w-16 h-1 bg-custom-green mt-2 rounded-full"></div>
             </div>
 
             <!-- STATUS BOX WITH APPROVAL CTA INTERFACE -->
-            <div id="statusBox" class="p-4 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-3">
-                <span id="statusMessage"></span>
-                <button id="approveBtn" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md text-sm mt-1"></button>
+            <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4">
+                <div class="text-center">
+                    <span id="statusMessage" class="text-lg block mb-2"></span>
+                    <p class="text-gray-500 text-xs">Click the button below to finalize and credit your account balance.</p>
+                </div>
+                <button id="approveBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-10 rounded-xl transition shadow-lg text-base transform active:scale-95">
+                    Approve Payment
+                </button>
             </div>
         </div>
 
-        <!-- HOSTED LIVE PAYMENT PORTAL (Using Direct Link) -->
+        <!-- HOSTED LIVE PAYMENT PORTAL -->
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">
                         Paynecta Checkout Portal
                     </h2>
-                    <p class="text-xs text-gray-500 mt-1">Complete your deposit securely inside this checkout portal below.</p>
+                    <p class="text-xs text-gray-500 mt-1">Enter amount and pay via M-PESA below.</p>
                     <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
                 </div>
 
-                <!-- MANUAL FALLBACK LINK (Ensures reliability if browser blocks iframe events) -->
+                <!-- MANUAL FALLBACK LINK -->
                 <div id="fallbackWrapper" class="text-right">
                     <p class="text-xs text-gray-400">
-                        Don't see the approval button? <br class="hidden md:inline">
-                        <button type="button" onclick="triggerManualApprovalBridge()" class="text-teal-800 underline font-semibold">Click here to manually approve</button>
+                        Payment complete but no popup? <br>
+                        <button type="button" onclick="triggerManualApprovalBridge()" class="text-teal-800 underline font-semibold">Click to manually check</button>
                     </p>
                 </div>
             </div>
@@ -124,148 +144,112 @@
         const statusBox = document.getElementById('statusBox');
         const statusMessage = document.getElementById('statusMessage');
         const approveBtn = document.getElementById('approveBtn');
-        const iframePortal = document.getElementById('paymentPortalFrame');
 
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3000/api'
             : '/api';
 
-        let pollingInterval = null;
-        let lastKnownReference = "PORTAL_TX_" + Date.now();
+        let lastKnownReference = null;
+        let lastKnownAmount = 0;
 
-        // RECOVERY ROUTE BRIDGE (Forces interface open instantly when clicked)
-        function triggerManualApprovalBridge() {
-            showCustomSuccessWithApproval("0.00", lastKnownReference);
-        }
+        // 1. LISTEN FOR MESSAGES FROM PAYNECTA IFRAME
+        window.addEventListener("message", (event) => {
+            // Security check: Ensure message comes from Paynecta
+            if (!event.origin.includes("paynecta.co.ke")) return;
 
-        // COARSE IFRAME STATE DETECTION (Fires fallback hook if user interacts and window switches layout structures)
-        if(iframePortal) {
-            iframePortal.addEventListener('load', () => {
-                try {
-                    const currentUrl = iframePortal.contentWindow.location.href;
-                    if(currentUrl && (currentUrl.includes('success') || currentUrl.includes('complete'))) {
-                        triggerManualApprovalBridge();
-                    }
-                } catch(e) {
-                    console.log("Iframe loaded internal secure payment state mapping.");
-                }
-            });
-        }
+            const data = event.data;
+            console.log("Paynecta Event Received:", data);
 
-        // DYNAMIC MESSAGE EVENT LISTENER (Handles window messages from Paynecta)
-        window.addEventListener("message", async (event) => {
-            if (event.data) {
-                const data = event.data;
-                const isPaynectaEvent = event.origin.includes("paynecta.co.ke") || 
-                                        (typeof data === 'string' && data.includes('payment')) ||
-                                        (data.event && data.event.includes('payment'));
+            // Check for success status in various possible formats sent by Paynecta
+            const isSuccess = data.event === "payment.completed" || 
+                              data.status === "completed" || 
+                              data.status === "success";
 
-                if (isPaynectaEvent) {
-                    const isSuccess = data.event === "payment.completed" || 
-                                      data.status === "completed" || 
-                                      data.status === "success" ||
-                                      data.type === "success";
+            if (isSuccess) {
+                // Extract amount and reference from the iframe message
+                lastKnownAmount = data.amount || data.transaction_amount || 0;
+                lastKnownReference = data.reference || data.transaction_reference || "REF_" + Date.now();
 
-                    if (isSuccess) {
-                        if (pollingInterval) clearInterval(pollingInterval);
-                        
-                        const finalizedAmount = data.amount || data.transaction_amount || "0.00";
-                        if(data.reference || data.transaction_reference) {
-                            lastKnownReference = data.reference || data.transaction_reference;
-                        }
-                        
-                        showCustomSuccessWithApproval(finalizedAmount, lastKnownReference);
-                    } else if (data.status === "failed" || data.event === "payment.failed") {
-                        showStatus("❌ payment link message detected: Transaction was rejected or failed.", "error");
-                    }
-                }
+                // Trigger the Approval Popup
+                showApprovalPopup(lastKnownAmount, lastKnownReference);
             }
         });
 
-        // GENERATES APPROVAL ROUTE INTERFACE ON RUNTIME
-        function showCustomSuccessWithApproval(amount, reference) {
+        // 2. SHOW THE APPROVAL INTERFACE
+        function showApprovalPopup(amount, reference) {
             statusCard.classList.remove('hidden');
+            statusBox.classList.remove('status-error', 'status-info');
+            statusBox.classList.add('status-success');
             
-            if (amount === "0.00") {
-                statusMessage.innerText = `🎉 Payment completed! Click below to approve and immediately verify your deposit.`;
-            } else {
-                statusMessage.innerText = `🎉 You have successfully deposited KES ${Number(amount).toFixed(2)}! Click below to confirm and apply changes immediately.`;
-            }
+            // Format amount for display
+            const displayAmount = amount > 0 ? `KES ${Number(amount).toLocaleString()}` : "your deposit";
             
-            // Explicitly force removal of hidden properties
-            approveBtn.innerText = "Approved";
-            approveBtn.style.display = "block";
-            approveBtn.classList.remove('hidden');
+            statusMessage.innerHTML = `✅ <strong>Success!</strong> You have successfully deposited <strong>${displayAmount}</strong>.`;
             
-            statusBox.style.display = "flex";
-            statusBox.classList.remove('hidden', 'status-error', 'status-info');
-            statusBox.classList.add('status-success', 'text-center');
-
-            // Scroll cleanly to display the validation gateway
+            // Scroll to the status card so user sees it
             statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Hardbound execution pathway to process transaction logic to core backend database systems
-            approveBtn.onclick = async () => {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    showStatus("Please login first", "error");
-                    return;
-                }
-
-                approveBtn.disabled = true;
-                approveBtn.innerText = "Updating account...";
-
-                try {
-                    // Try checking standard internal status engine first
-                    const response = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
-                        method: 'GET',
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const updateResult = await response.json();
-
-                    if (updateResult.success && updateResult.data?.status === 'completed') {
-                        const verifiedAmount = updateResult.data.amount || amount;
-                        showStatus(`🎉 Account Balance updated! KES ${verifiedAmount} successfully credited.`, "success");
-                        approveBtn.classList.add('hidden');
-                        approveBtn.style.display = "none";
-                    } else {
-                        // Direct Verification Verification Fallback route
-                        const manualResponse = await fetch(`${API_URL}/paynecta/credit-verify`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ amount: Number(amount), reference: reference })
-                        });
-                        const manualResult = await manualResponse.json();
-
-                        if (manualResult.success) {
-                            showStatus(`🎉 Account Balance updated! KES ${amount} successfully credited via verification route.`, "success");
-                            approveBtn.classList.add('hidden');
-                            approveBtn.style.display = "none";
-                        } else {
-                            showStatus(`🎉 Balance Request Logged: System verification queued for update.`, "info");
-                            approveBtn.classList.add('hidden');
-                            approveBtn.style.display = "none";
-                        }
-                    }
-                } catch (error) {
-                    showStatus("Connection Error processing server approval. Balance sync running in backend.", "error");
-                    approveBtn.disabled = false;
-                    approveBtn.innerText = "Approved";
-                }
-            };
+            // Setup the Approve Button click handler
+            approveBtn.onclick = () => handleFinalApproval(amount, reference);
         }
 
+        // 3. SEND DATA TO BACKEND
+        async function handleFinalApproval(amount, reference) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showStatus("Error: User session expired. Please login again.", "error");
+                return;
+            }
+
+            // UI Loading state
+            approveBtn.disabled = true;
+            approveBtn.innerHTML = `<span class="loader"></span> Processing...`;
+
+            try {
+                const response = await fetch(`${API_URL}/paynecta/credit-verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ 
+                        amount: Number(amount), 
+                        reference: reference 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus(`🎉 Account credited! KES ${amount} has been added to your balance.`, "success");
+                    approveBtn.classList.add('hidden');
+                } else {
+                    showStatus(result.message || "Verification failed. Our team will update it manually.", "info");
+                    approveBtn.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error("Approval Error:", error);
+                showStatus("Network error. Your balance will be updated automatically shortly.", "error");
+                approveBtn.disabled = false;
+                approveBtn.innerText = "Retry Approval";
+            }
+        }
+
+        // Helper to update status message
         function showStatus(message, type) {
             statusCard.classList.remove('hidden');
-            approveBtn.classList.add('hidden'); 
-            approveBtn.style.display = "none";
-            statusMessage.innerText = message;
-            statusBox.style.display = "flex";
-            statusBox.classList.remove('hidden', 'status-success', 'status-error', 'status-info');
+            statusMessage.innerHTML = message;
+            statusBox.classList.remove('status-success', 'status-error', 'status-info');
             statusBox.classList.add(`status-${type}`);
+            if(type !== 'success') approveBtn.classList.add('hidden');
+        }
+
+        // Manual fallback for users who don't trigger the event
+        function triggerManualApprovalBridge() {
+            const manualAmt = prompt("Enter the exact amount you paid:");
+            if(manualAmt && !isNaN(manualAmt)) {
+                showApprovalPopup(manualAmt, "MANUAL_" + Date.now());
+            }
         }
     </script>
 
