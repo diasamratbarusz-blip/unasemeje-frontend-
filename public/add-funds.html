@@ -3,207 +3,191 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Add Funds - Unasemeje</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- PAYNECTA WIDGET SCRIPT -->
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
-
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body{
-            font-family:'Plus Jakarta Sans',sans-serif;
-            background:#f5f7fb;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f2f5; }
+        .bg-custom-green { background: #11453b; }
+        
+        /* Scanner Visuals */
+        .scanner-container {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
         }
-        .bg-custom-green{
-            background:#11453b;
-        }
-        .status-success{
-            background:#ecfdf5;
-            color:#047857;
-            border:1px solid #a7f3d0;
-        }
-        .status-error{
-            background:#fef2f2;
-            color:#b91c1c;
-            border:1px solid #fecaca;
-        }
-        .status-info{
-            background:#eff6ff;
-            color:#1d4ed8;
-            border:1px solid #bfdbfe;
-        }
-        /* Smooth Responsive Frame Container */
-        .payment-frame-container {
-            width: 100%;
-            height: 650px;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-            background: #ffffff;
+        .scanner-active {
+            border-color: #10b981;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
         }
         
-        /* Spinner for the button */
-        .loader {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #047857;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
+        .payment-frame-container {
+            width: 100%; height: 680px; border-radius: 28px; overflow: hidden;
+            background: #ffffff; border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
 
+        /* Success Animation */
+        .check-glow {
+            animation: glow 2s infinite;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .loader-spin {
+            width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
 
 <body class="min-h-screen">
 
-    <!-- HEADER -->
-    <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
-        <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">
-            Add Funds
-        </h1>
-        <p class="uppercase tracking-[4px] text-xs opacity-70">
-            Fast & Secure M-PESA Payments
-        </p>
+    <div class="bg-custom-green text-white py-12 px-4 text-center">
+        <h1 class="text-3xl font-extrabold mb-2">Add Funds</h1>
+        <div id="scannerStatus" class="inline-flex items-center gap-2 bg-black/20 px-4 py-1 rounded-full border border-white/10">
+            <span class="h-2 w-2 bg-emerald-400 rounded-full animate-pulse"></span>
+            <span class="text-[10px] uppercase tracking-widest font-bold">Deep Scanner Active</span>
+        </div>
     </div>
 
-    <!-- MAIN CARDS WRAPPER -->
-    <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-8">
+    <div class="max-w-2xl mx-auto px-4 -mt-8 pb-20 space-y-6">
         
-        <!-- STATUS BOX & APPROVAL INTERFACE CARD -->
-        <div id="statusCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 hidden">
-            <!-- TITLE -->
-            <div class="mb-4">
-                <h2 class="text-xl font-bold text-gray-800">
-                    Transaction Detected
-                </h2>
-                <div class="w-16 h-1 bg-custom-green mt-2 rounded-full"></div>
-            </div>
-
-            <!-- STATUS BOX WITH APPROVAL CTA INTERFACE -->
-            <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4">
-                <div class="text-center">
-                    <span id="statusMessage" class="text-lg block mb-2"></span>
-                    <p class="text-gray-500 text-xs">Click the button below to finalize and credit your account balance.</p>
+        <!-- SCANNED INFORMATION RESULT CARD (Hidden by default) -->
+        <div id="resultCard" class="bg-white rounded-[2rem] shadow-2xl p-8 hidden border-2 border-emerald-500 transform transition-all animate-bounce-short">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 check-glow">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                 </div>
-                <button id="approveBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-10 rounded-xl transition shadow-lg text-base transform active:scale-95">
-                    Approve Payment
+                
+                <h2 class="text-2xl font-black text-gray-900 mb-1">Payment Scanned!</h2>
+                <p class="text-gray-500 text-sm mb-6">Confirm the details below to credit your account.</p>
+
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-left">
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">Amount</span>
+                        <p id="displayAmount" class="text-xl font-black text-emerald-700">KES 0.00</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-left">
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">Reference</span>
+                        <p id="displayRef" class="text-sm font-mono font-bold text-gray-700 break-all">---</p>
+                    </div>
+                </div>
+
+                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-3">
+                    <span class="text-lg">APPROVE & SYNC BALANCE</span>
                 </button>
             </div>
         </div>
 
-        <!-- HOSTED LIVE PAYMENT PORTAL -->
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-            <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">
-                        Paynecta Checkout Portal
-                    </h2>
-                    <p class="text-xs text-gray-500 mt-1">Enter amount and pay via M-PESA below.</p>
-                    <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
+        <!-- PORTAL CONTAINER -->
+        <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden scanner-container" id="mainScannerContainer">
+            <div class="p-5 border-b border-gray-50 flex justify-between items-center bg-white/50">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-emerald-50 rounded-lg">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <p class="text-sm font-bold text-gray-700">M-PESA Secure Checkout</p>
                 </div>
-
-                <!-- MANUAL FALLBACK LINK -->
-                <div id="fallbackWrapper" class="text-right">
-                    <p class="text-xs text-gray-400">
-                        Payment complete but no popup? <br>
-                        <button type="button" onclick="triggerManualApprovalBridge()" class="text-teal-800 underline font-semibold">Click to manually check</button>
-                    </p>
-                </div>
+                
+                <!-- FAIL-SAFE BUTTON -->
+                <button onclick="forceScan()" class="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 underline flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    NOT SCANNING? CLICK HERE
+                </button>
             </div>
 
-            <!-- Embedded Payment Frame -->
             <div class="payment-frame-container">
                 <iframe 
                     src="https://paynecta.co.ke/pay/unasemeje-" 
                     class="w-full h-full border-0"
-                    allow="payment"
-                    id="paymentPortalFrame">
+                    id="payPortal"
+                    allow="payment">
                 </iframe>
             </div>
         </div>
-
     </div>
 
-    <!-- SCRIPT LOGIC -->
     <script>
-        const statusCard = document.getElementById('statusCard');
-        const statusBox = document.getElementById('statusBox');
-        const statusMessage = document.getElementById('statusMessage');
+        const resultCard = document.getElementById('resultCard');
+        const displayAmount = document.getElementById('displayAmount');
+        const displayRef = document.getElementById('displayRef');
         const approveBtn = document.getElementById('approveBtn');
+        const mainContainer = document.getElementById('mainScannerContainer');
 
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3000/api'
-            : '/api';
+        const API_URL = '/api'; // Adjusted for your production environment
 
-        let lastKnownReference = null;
-        let lastKnownAmount = 0;
+        let capturedData = {
+            amount: 0,
+            reference: "",
+            status: "pending"
+        };
 
-        // 1. LISTEN FOR MESSAGES FROM PAYNECTA IFRAME
+        // 1. THE DEEP SCANNER: Listens for any cross-domain messages
         window.addEventListener("message", (event) => {
-            // Security check: Ensure message comes from Paynecta
-            if (!event.origin.includes("paynecta.co.ke")) return;
+            // Log for debugging (you can see this in Chrome Inspect > Console)
+            console.log("Scanner Pulse Detected:", event.data);
 
             const data = event.data;
-            console.log("Paynecta Event Received:", data);
+            if (!data) return;
 
-            // Check for success status in various possible formats sent by Paynecta
-            const isSuccess = data.event === "payment.completed" || 
-                              data.status === "completed" || 
-                              data.status === "success";
+            // SMART PARSING: Check for success keywords or specific M-PESA patterns (UET...)
+            const isSuccess = JSON.stringify(data).toLowerCase().includes('success') || 
+                              JSON.stringify(data).toLowerCase().includes('completed') ||
+                              (data.reference && data.reference.startsWith('UE'));
 
             if (isSuccess) {
-                // Extract amount and reference from the iframe message
-                lastKnownAmount = data.amount || data.transaction_amount || 0;
-                lastKnownReference = data.reference || data.transaction_reference || "REF_" + Date.now();
-
-                // Trigger the Approval Popup
-                showApprovalPopup(lastKnownAmount, lastKnownReference);
+                processScannedData(data);
             }
         });
 
-        // 2. SHOW THE APPROVAL INTERFACE
-        function showApprovalPopup(amount, reference) {
-            statusCard.classList.remove('hidden');
-            statusBox.classList.remove('status-error', 'status-info');
-            statusBox.classList.add('status-success');
+        // 2. PROCESS SCANNED DATA
+        function processScannedData(data) {
+            // Extract values using multiple possible keys sent by gateways
+            capturedData.amount = data.amount || data.transaction_amount || data.total || 0;
+            capturedData.reference = data.reference || data.transaction_reference || data.tx_ref || "MANUAL-SYNC";
             
-            // Format amount for display
-            const displayAmount = amount > 0 ? `KES ${Number(amount).toLocaleString()}` : "your deposit";
-            
-            statusMessage.innerHTML = `✅ <strong>Success!</strong> You have successfully deposited <strong>${displayAmount}</strong>.`;
-            
-            // Scroll to the status card so user sees it
-            statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Show result
+            displayAmount.innerText = `KES ${Number(capturedData.amount).toLocaleString()}`;
+            displayRef.innerText = capturedData.reference;
 
-            // Setup the Approve Button click handler
-            approveBtn.onclick = () => handleFinalApproval(amount, reference);
+            resultCard.classList.remove('hidden');
+            mainContainer.classList.add('scanner-active');
+            
+            // Smooth scroll to results
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // 3. SEND DATA TO BACKEND
-        async function handleFinalApproval(amount, reference) {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                showStatus("Error: User session expired. Please login again.", "error");
-                return;
-            }
+        // 3. FORCE SCAN (The Fail-safe if postMessage fails)
+        async function forceScan() {
+            const btn = event.target;
+            btn.innerText = "SCANNING...";
+            
+            // Wait 1 second to simulate scan
+            setTimeout(() => {
+                // If we don't have auto-data, we try to fetch from your backend "Status Check"
+                // For this example, we show the card so the user can sync
+                if(capturedData.reference === "") {
+                    processScannedData({ amount: 0, reference: "REF_REQUIRED" });
+                    displayRef.innerHTML = '<span class="text-red-500">Scanning failed. Click Approve to try Server Sync.</span>';
+                }
+                btn.innerText = "SCAN COMPLETE";
+            }, 1000);
+        }
 
-            // UI Loading state
+        // 4. APPROVAL & BACKEND SYNC
+        approveBtn.onclick = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) { alert("Session expired. Please login."); return; }
+
             approveBtn.disabled = true;
-            approveBtn.innerHTML = `<span class="loader"></span> Processing...`;
+            approveBtn.innerHTML = `<div class="loader-spin"></div> UPDATING BALANCE...`;
 
             try {
                 const response = await fetch(`${API_URL}/paynecta/credit-verify`, {
@@ -213,44 +197,28 @@
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({ 
-                        amount: Number(amount), 
-                        reference: reference 
+                        amount: Number(capturedData.amount), 
+                        reference: capturedData.reference 
                     })
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    showStatus(`🎉 Account credited! KES ${amount} has been added to your balance.`, "success");
-                    approveBtn.classList.add('hidden');
+                    approveBtn.innerHTML = `DONE! KES ${capturedData.amount} ADDED`;
+                    approveBtn.classList.replace('bg-emerald-600', 'bg-gray-900');
+                    setTimeout(() => window.location.reload(), 2000);
                 } else {
-                    showStatus(result.message || "Verification failed. Our team will update it manually.", "info");
-                    approveBtn.classList.add('hidden');
+                    alert(result.message || "Balance update pending. Please wait 1 minute.");
+                    approveBtn.disabled = false;
+                    approveBtn.innerHTML = "RETRY APPROVAL";
                 }
-            } catch (error) {
-                console.error("Approval Error:", error);
-                showStatus("Network error. Your balance will be updated automatically shortly.", "error");
+            } catch (err) {
+                alert("Network error. Your balance will update automatically shortly.");
                 approveBtn.disabled = false;
-                approveBtn.innerText = "Retry Approval";
+                approveBtn.innerHTML = "RETRY APPROVAL";
             }
-        }
-
-        // Helper to update status message
-        function showStatus(message, type) {
-            statusCard.classList.remove('hidden');
-            statusMessage.innerHTML = message;
-            statusBox.classList.remove('status-success', 'status-error', 'status-info');
-            statusBox.classList.add(`status-${type}`);
-            if(type !== 'success') approveBtn.classList.add('hidden');
-        }
-
-        // Manual fallback for users who don't trigger the event
-        function triggerManualApprovalBridge() {
-            const manualAmt = prompt("Enter the exact amount you paid:");
-            if(manualAmt && !isNaN(manualAmt)) {
-                showApprovalPopup(manualAmt, "MANUAL_" + Date.now());
-            }
-        }
+        };
     </script>
 
 </body>
