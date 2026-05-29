@@ -24,26 +24,6 @@
         .bg-custom-green{
             background:#11453b;
         }
-        .btn-custom{
-            background:#11453b;
-            transition:0.3s;
-            color:white;
-        }
-        .btn-custom:hover{
-            opacity:0.92;
-        }
-        .btn-custom:disabled{
-            opacity:0.6;
-            cursor:not-allowed;
-        }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button{
-            -webkit-appearance:none;
-            margin:0;
-        }
-        input[type=number]{
-            -moz-appearance:textfield;
-        }
         .status-success{
             background:#ecfdf5;
             color:#047857;
@@ -88,77 +68,41 @@
     <!-- MAIN CARDS WRAPPER -->
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-8">
         
-        <!-- ORIGINAL INPUT FORM CARD -->
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-
+        <!-- STATUS BOX & APPROVAL INTERFACE CARD -->
+        <div id="statusCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 hidden">
             <!-- TITLE -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    Payment Details
+            <div class="mb-4">
+                <h2 class="text-xl font-bold text-gray-800">
+                    Transaction Progress
                 </h2>
-                <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
+                <div class="w-16 h-1 bg-custom-green mt-2 rounded-full"></div>
             </div>
 
-            <!-- FORM -->
-            <form id="stkForm" class="space-y-6">
-                <!-- PHONE -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter Your M-PESA Number
-                    </label>
-                    <div class="flex">
-                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            +254
-                        </span>
-                        <input type="text" id="phone" required autocomplete="off" placeholder="701234567" class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"/>
-                    </div>
-                    <p class="mt-2 text-xs text-green-700 font-medium">Example: 701234567</p>
-                </div>
-
-                <!-- AMOUNT -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Enter Amount
-                    </label>
-                    <div class="flex">
-                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            KES
-                        </span>
-                        <input type="number" id="amount" required min="1" placeholder="100" class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"/>
-                    </div>
-                    <p class="mt-2 text-xs text-green-700 font-medium">Minimum deposit is KES 1</p>
-                </div>
-
-                <!-- BUTTON -->
-                <button type="submit" id="submitBtn" class="w-full btn-custom py-4 rounded-2xl font-bold text-lg shadow-lg">
-                    Send Money
-                </button>
-            </form>
-
             <!-- STATUS BOX WITH APPROVAL CTA INTERFACE -->
-            <div id="statusBox" class="mt-6 hidden p-4 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-3">
+            <div id="statusBox" class="p-4 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-3">
                 <span id="statusMessage"></span>
                 <button id="approveBtn" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md text-sm mt-1"></button>
             </div>
-
-            <!-- MANUAL FALLBACK LINK (Ensures reliability if browser blocks iframe events) -->
-            <div id="fallbackWrapper" class="mt-4 text-center">
-                <p class="text-xs text-gray-400">
-                    Paid via Checkout Portal below but don't see the button? 
-                    <button type="button" onclick="triggerManualApprovalBridge()" class="text-teal-800 underline font-semibold ml-1">Click here to manually approve</button>
-                </p>
-            </div>
-
         </div>
 
         <!-- HOSTED LIVE PAYMENT PORTAL (Using Direct Link) -->
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">
-                    Paynecta Checkout Portal
-                </h2>
-                <p class="text-xs text-gray-500 mt-1">Complete your deposit securely inside this checkout portal below.</p>
-                <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
+            <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        Paynecta Checkout Portal
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-1">Complete your deposit securely inside this checkout portal below.</p>
+                    <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
+                </div>
+
+                <!-- MANUAL FALLBACK LINK (Ensures reliability if browser blocks iframe events) -->
+                <div id="fallbackWrapper" class="text-right">
+                    <p class="text-xs text-gray-400">
+                        Don't see the approval button? <br class="hidden md:inline">
+                        <button type="button" onclick="triggerManualApprovalBridge()" class="text-teal-800 underline font-semibold">Click here to manually approve</button>
+                    </p>
+                </div>
             </div>
 
             <!-- Embedded Payment Frame -->
@@ -176,13 +120,10 @@
 
     <!-- SCRIPT LOGIC -->
     <script>
-        const form = document.getElementById('stkForm');
-        const btn = document.getElementById('submitBtn');
+        const statusCard = document.getElementById('statusCard');
         const statusBox = document.getElementById('statusBox');
         const statusMessage = document.getElementById('statusMessage');
         const approveBtn = document.getElementById('approveBtn');
-        const phoneInput = document.getElementById('phone');
-        const amountInput = document.getElementById('amount');
         const iframePortal = document.getElementById('paymentPortalFrame');
 
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -192,39 +133,27 @@
         let pollingInterval = null;
         let lastKnownReference = "PORTAL_TX_" + Date.now();
 
-        phoneInput.addEventListener('input', () => {
-            phoneInput.value = phoneInput.value.replace(/\D/g, '');
-        });
-
-        amountInput.addEventListener('input', () => {
-            amountInput.value = amountInput.value.replace(/[^\d]/g, '');
-        });
-
         // RECOVERY ROUTE BRIDGE (Forces interface open instantly when clicked)
         function triggerManualApprovalBridge() {
-            const enteredAmount = amountInput.value || "100";
-            showCustomSuccessWithApproval(enteredAmount, lastKnownReference);
+            showCustomSuccessWithApproval("0.00", lastKnownReference);
         }
 
         // COARSE IFRAME STATE DETECTION (Fires fallback hook if user interacts and window switches layout structures)
         if(iframePortal) {
             iframePortal.addEventListener('load', () => {
-                // If iframe fully refreshes or internal navigation triggers post-payment redirects
                 try {
                     const currentUrl = iframePortal.contentWindow.location.href;
                     if(currentUrl && (currentUrl.includes('success') || currentUrl.includes('complete'))) {
                         triggerManualApprovalBridge();
                     }
                 } catch(e) {
-                    // Cross-Origin security blocks URL reading, but loading state change indicates user finished payment steps
                     console.log("Iframe loaded internal secure payment state mapping.");
                 }
             });
         }
 
-        // DYNAMIC MESSAGE EVENT LISTENER (Handles window messages)
+        // DYNAMIC MESSAGE EVENT LISTENER (Handles window messages from Paynecta)
         window.addEventListener("message", async (event) => {
-            // Unrestricted catch-all mapping to safeguard against varied framework event schemas
             if (event.data) {
                 const data = event.data;
                 const isPaynectaEvent = event.origin.includes("paynecta.co.ke") || 
@@ -232,7 +161,6 @@
                                         (data.event && data.event.includes('payment'));
 
                 if (isPaynectaEvent) {
-                    // Pull transaction statuses from varied structured schemas
                     const isSuccess = data.event === "payment.completed" || 
                                       data.status === "completed" || 
                                       data.status === "success" ||
@@ -241,7 +169,7 @@
                     if (isSuccess) {
                         if (pollingInterval) clearInterval(pollingInterval);
                         
-                        const finalizedAmount = data.amount || data.transaction_amount || amountInput.value || "100";
+                        const finalizedAmount = data.amount || data.transaction_amount || "0.00";
                         if(data.reference || data.transaction_reference) {
                             lastKnownReference = data.reference || data.transaction_reference;
                         }
@@ -249,7 +177,6 @@
                         showCustomSuccessWithApproval(finalizedAmount, lastKnownReference);
                     } else if (data.status === "failed" || data.event === "payment.failed") {
                         showStatus("❌ payment link message detected: Transaction was rejected or failed.", "error");
-                        resetButtonUI();
                     }
                 }
             }
@@ -257,7 +184,13 @@
 
         // GENERATES APPROVAL ROUTE INTERFACE ON RUNTIME
         function showCustomSuccessWithApproval(amount, reference) {
-            statusMessage.innerText = `🎉 You have successfully deposited KES ${Number(amount).toFixed(2)}! Click below to confirm and apply changes immediately.`;
+            statusCard.classList.remove('hidden');
+            
+            if (amount === "0.00") {
+                statusMessage.innerText = `🎉 Payment completed! Click below to approve and immediately verify your deposit.`;
+            } else {
+                statusMessage.innerText = `🎉 You have successfully deposited KES ${Number(amount).toFixed(2)}! Click below to confirm and apply changes immediately.`;
+            }
             
             // Explicitly force removal of hidden properties
             approveBtn.innerText = "Approved";
@@ -268,8 +201,8 @@
             statusBox.classList.remove('hidden', 'status-error', 'status-info');
             statusBox.classList.add('status-success', 'text-center');
 
-            // Scroll up cleanly to display the generated validation gateway to the user
-            statusBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Scroll cleanly to display the validation gateway
+            statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             // Hardbound execution pathway to process transaction logic to core backend database systems
             approveBtn.onclick = async () => {
@@ -291,10 +224,10 @@
                     const updateResult = await response.json();
 
                     if (updateResult.success && updateResult.data?.status === 'completed') {
-                        showStatus(`🎉 Account Balance updated! KES ${amount} successfully credited.`, "success");
+                        const verifiedAmount = updateResult.data.amount || amount;
+                        showStatus(`🎉 Account Balance updated! KES ${verifiedAmount} successfully credited.`, "success");
                         approveBtn.classList.add('hidden');
                         approveBtn.style.display = "none";
-                        resetButtonUI();
                     } else {
                         // Direct Verification Verification Fallback route
                         const manualResponse = await fetch(`${API_URL}/paynecta/credit-verify`, {
@@ -312,11 +245,10 @@
                             approveBtn.classList.add('hidden');
                             approveBtn.style.display = "none";
                         } else {
-                            showStatus(`🎉 Balance Request Logged: KES ${amount} queued for verification update.`, "info");
+                            showStatus(`🎉 Balance Request Logged: System verification queued for update.`, "info");
                             approveBtn.classList.add('hidden');
                             approveBtn.style.display = "none";
                         }
-                        resetButtonUI();
                     }
                 } catch (error) {
                     showStatus("Connection Error processing server approval. Balance sync running in backend.", "error");
@@ -326,89 +258,8 @@
             };
         }
 
-        async function depositNow(amount, phone, token) {
-            try {
-                if (pollingInterval) clearInterval(pollingInterval);
-
-                const response = await fetch(`${API_URL}/paynecta/stkpush`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ amount: Number(amount), phone: phone })
-                });
-
-                const resData = await response.json();
-
-                if (response.ok && resData.success) {
-                    showStatus("✅ STK Prompt Request sent! Please enter your M-PESA PIN...", "success");
-                    const ref = resData.data?.transaction_reference || resData.data?.reference;
-                    if (ref) {
-                        lastKnownReference = ref;
-                        startStatusPolling(ref, token, amount);
-                    }
-                } else {
-                    showStatus(resData.error || "Payment request failed.", "error");
-                    resetButtonUI();
-                }
-            } catch (error) {
-                showStatus("Connection Error: Backend unreachable.", "error");
-                resetButtonUI();
-            }
-        }
-
-        function startStatusPolling(reference, token, enteredAmount) {
-            let attempts = 0;
-            pollingInterval = setInterval(async () => {
-                attempts++;
-                if (attempts > 15) {
-                    clearInterval(pollingInterval);
-                    showCustomSuccessWithApproval(enteredAmount, reference);
-                    resetButtonUI();
-                    return;
-                }
-                try {
-                    const res = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    const checkData = await res.json();
-                    if (checkData.success && checkData.data?.status === 'completed') {
-                        clearInterval(pollingInterval);
-                        showCustomSuccessWithApproval(checkData.data.amount || enteredAmount, reference);
-                        resetButtonUI();
-                    } else if (checkData.success && (checkData.data?.status === 'failed')) {
-                        clearInterval(pollingInterval);
-                        showStatus("❌ Transaction rejected.", "error");
-                        resetButtonUI();
-                    }
-                } catch (err) {}
-            }, 10000);
-        }
-
-        function resetButtonUI() {
-            btn.disabled = false;
-            btn.innerText = "Send Money";
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const token = localStorage.getItem('token');
-            if (!token) { showStatus("Please login first", "error"); return; }
-
-            let phone = phoneInput.value.trim();
-            let amount = amountInput.value.trim();
-
-            if (phone.startsWith('0')) phone = '254' + phone.substring(1);
-            else if (phone.startsWith('7')) phone = '254' + phone;
-
-            btn.disabled = true;
-            btn.innerText = "Sending STK Push...";
-            showStatus("Sending STK Push...", "info");
-            await depositNow(amount, phone, token);
-        });
-
         function showStatus(message, type) {
+            statusCard.classList.remove('hidden');
             approveBtn.classList.add('hidden'); 
             approveBtn.style.display = "none";
             statusMessage.innerText = message;
