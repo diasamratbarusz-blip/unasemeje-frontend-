@@ -135,8 +135,11 @@
                 </button>
             </form>
 
-            <!-- STATUS BOX -->
-            <div id="statusBox" class="mt-6 hidden p-4 rounded-2xl text-sm text-center font-medium"></div>
+            <!-- STATUS BOX WITH APPROVAL CTA INTERFACE -->
+            <div id="statusBox" class="mt-6 hidden p-4 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-3">
+                <span id="statusMessage"></span>
+                <button id="approveBtn" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl transition shadow-md text-sm mt-1"></button>
+            </div>
 
         </div>
 
@@ -168,6 +171,8 @@
         const form = document.getElementById('stkForm');
         const btn = document.getElementById('submitBtn');
         const statusBox = document.getElementById('statusBox');
+        const statusMessage = document.getElementById('statusMessage');
+        const approveBtn = document.getElementById('approveBtn');
         const phoneInput = document.getElementById('phone');
         const amountInput = document.getElementById('amount');
 
@@ -187,20 +192,18 @@
 
         // DYNAMIC MESSAGE EVENT LISTENER (Detects messages from the hosted Payment Link/Widget/Iframe)
         window.addEventListener("message", async (event) => {
-            // Filter events to focus on Paynecta payment responses
             if (event.origin.includes("paynecta.co.ke") || (event.data && typeof event.data === 'object')) {
                 const data = event.data;
                 
                 // If payment link transmits completed or success events
                 if (data.event === "payment.completed" || data.status === "completed" || data.status === "success") {
-                    showStatus("🎉 payment link message detected: Send Money is COMPLETED!", "success");
+                    if (pollingInterval) clearInterval(pollingInterval);
                     
-                    // Automatically trigger verification update on backend if reference is available
-                    const token = localStorage.getItem('token');
-                    const ref = data.reference || data.transaction_reference;
-                    if (ref && token) {
-                        startStatusPolling(ref, token);
-                    }
+                    // Pull transaction amount sent from frame metadata or fall back to inputs
+                    const finalizedAmount = data.amount || data.transaction_amount || amountInput.value || "0";
+                    const ref = data.reference || data.transaction_reference || "N/A";
+                    
+                    showCustomSuccessWithApproval(finalizedAmount, ref);
                 } 
                 // If payment link transmits failed events
                 else if (data.status === "failed" || data.event === "payment.failed") {
@@ -209,6 +212,67 @@
                 }
             }
         });
+
+        // GENERATES APPROVAL ROUTE INTERFACE ON RUNTIME
+        function showCustomSuccessWithApproval(amount, reference) {
+            statusMessage.innerText = `🎉 You have successfully deposited KES ${Number(amount).toFixed(2)}! Click below to confirm and apply changes immediately.`;
+            
+            // Re-render explicit approved trigger state
+            approveBtn.innerText = "Approved";
+            approveBtn.classList.remove('hidden');
+            
+            statusBox.classList.remove('hidden', 'status-error', 'status-info');
+            statusBox.classList.add('status-success', 'text-center');
+
+            // Hardbound execution pathway to process transaction logic to core backend database systems
+            approveBtn.onclick = async () => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showStatus("Please login first", "error");
+                    return;
+                }
+
+                approveBtn.disabled = true;
+                approveBtn.innerText = "Updating account...";
+
+                try {
+                    const response = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
+                        method: 'GET',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const updateResult = await response.json();
+
+                    if (updateResult.success && updateResult.data?.status === 'completed') {
+                        showStatus(`🎉 Account Balance updated! KES ${amount} successfully credited.`, "success");
+                        approveBtn.classList.add('hidden');
+                        resetButtonUI();
+                    } else {
+                        // Manual credit verification fallback wrapper if standard reference status loop isn't finished yet
+                        const manualResponse = await fetch(`${API_URL}/paynecta/credit-verify`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ amount: Number(amount), reference: reference })
+                        });
+                        const manualResult = await manualResponse.json();
+
+                        if (manualResult.success) {
+                            showStatus(`🎉 Account Balance updated! KES ${amount} successfully credited via verification route.`, "success");
+                            approveBtn.classList.add('hidden');
+                        } else {
+                            showStatus(manualResult.error || "System synchronization delayed. Balance will be updated automatically.", "info");
+                        }
+                        resetButtonUI();
+                    }
+                } catch (error) {
+                    showStatus("Connection Error processing server approval.", "error");
+                    approveBtn.disabled = false;
+                    approveBtn.innerText = "Approved";
+                }
+            };
+        }
 
         async function depositNow(amount, phone, token) {
             try {
@@ -227,10 +291,8 @@
 
                 if (response.ok && resData.success) {
                     showStatus("✅ STK Prompt Request sent! Please enter your M-PESA PIN...", "success");
-                    amountInput.value = "";
-                    phoneInput.value = "";
                     const ref = resData.data?.transaction_reference || resData.data?.reference;
-                    if (ref) startStatusPolling(ref, token);
+                    if (ref) startStatusPolling(ref, token, amount);
                 } else {
                     showStatus(resData.error || "Payment request failed.", "error");
                     resetButtonUI();
@@ -241,7 +303,7 @@
             }
         }
 
-        function startStatusPolling(reference, token) {
+        function startStatusPolling(reference, token, enteredAmount) {
             let attempts = 0;
             pollingInterval = setInterval(async () => {
                 attempts++;
@@ -258,7 +320,7 @@
                     const checkData = await res.json();
                     if (checkData.success && checkData.data?.status === 'completed') {
                         clearInterval(pollingInterval);
-                        showStatus(`🎉 Success! KES ${checkData.data.amount} credited.`, "success");
+                        showCustomSuccessWithApproval(checkData.data.amount || enteredAmount, reference);
                         resetButtonUI();
                     } else if (checkData.success && (checkData.data?.status === 'failed')) {
                         clearInterval(pollingInterval);
@@ -292,7 +354,8 @@
         });
 
         function showStatus(message, type) {
-            statusBox.innerText = message;
+            approveBtn.classList.add('hidden'); 
+            statusMessage.innerText = message;
             statusBox.classList.remove('hidden', 'status-success', 'status-error', 'status-info');
             statusBox.classList.add(`status-${type}`);
         }
