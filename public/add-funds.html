@@ -59,6 +59,16 @@
             color:#1d4ed8;
             border:1px solid #bfdbfe;
         }
+        /* Smooth Responsive Frame Container */
+        .payment-frame-container {
+            width: 100%;
+            height: 650px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
     </style>
 
 </head>
@@ -75,8 +85,10 @@
         </p>
     </div>
 
-    <!-- MAIN CARD -->
-    <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20">
+    <!-- MAIN CARDS WRAPPER -->
+    <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-8">
+        
+        <!-- ORIGINAL INPUT FORM CARD -->
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 
             <!-- TITLE -->
@@ -127,6 +139,28 @@
             <div id="statusBox" class="mt-6 hidden p-4 rounded-2xl text-sm text-center font-medium"></div>
 
         </div>
+
+        <!-- HOSTED LIVE PAYMENT PORTAL (Using Direct Link) -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">
+                    Paynecta Checkout Portal
+                </h2>
+                <p class="text-xs text-gray-500 mt-1">Complete your deposit securely inside this checkout portal below.</p>
+                <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
+            </div>
+
+            <!-- Embedded Payment Frame -->
+            <div class="payment-frame-container">
+                <iframe 
+                    src="https://paynecta.co.ke/pay/unasemeje-" 
+                    class="w-full h-full border-0"
+                    allow="payment"
+                    id="paymentPortalFrame">
+                </iframe>
+            </div>
+        </div>
+
     </div>
 
     <!-- SCRIPT LOGIC -->
@@ -151,7 +185,7 @@
             amountInput.value = amountInput.value.replace(/[^\d]/g, '');
         });
 
-        // DYNAMIC MESSAGE EVENT LISTENER (Detects messages from the hosted Payment Link/Widget)
+        // DYNAMIC MESSAGE EVENT LISTENER (Detects messages from the hosted Payment Link/Widget/Iframe)
         window.addEventListener("message", async (event) => {
             // Filter events to focus on Paynecta payment responses
             if (event.origin.includes("paynecta.co.ke") || (event.data && typeof event.data === 'object')) {
