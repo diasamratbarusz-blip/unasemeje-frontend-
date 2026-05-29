@@ -255,6 +255,34 @@ async function loadOrders() {
     }
 }
 
+/* ================= GLOBAL TRANSACTION DETECTION ENGINE ================= */
+/**
+ * Monitors cross-document messages dispatched by the Paynecta hosted payment link/widget.
+ * Fires neon feedback alerts and hooks cleanly into dashboard stats instantly upon detection.
+ */
+function initializePaymentDetection() {
+    window.addEventListener("message", async (event) => {
+        // Confirm message transmission origins belong to Paynecta systems
+        if (event.origin.includes("paynecta.co.ke") || (event.data && typeof event.data === 'object')) {
+            const data = event.data;
+
+            // Target explicit transaction state completions
+            if (data.event === "payment.completed" || data.status === "completed" || data.status === "success") {
+                toast("🎉 Payment Received! Send Money is COMPLETED.", true);
+                
+                // Immediately refresh dashboard balances if elements exist on-screen
+                if (document.getElementById("userBalance") || document.getElementById("balance")) {
+                    setTimeout(() => { loadUser(); }, 1500);
+                }
+            } 
+            // Target transaction state failures
+            else if (data.status === "failed" || data.event === "payment.failed") {
+                toast("❌ Payment link transmission: Transaction declined or failed.", false);
+            }
+        }
+    });
+}
+
 /* ================= BOOTSTRAP ================= */
 window.addEventListener('DOMContentLoaded', () => {
     const token = getToken();
@@ -269,5 +297,6 @@ window.addEventListener('DOMContentLoaded', () => {
         loadUser();
         loadServices();
         loadOrders();
+        initializePaymentDetection(); // Injected to monitor cross-document payment link events globally
     }
 });
