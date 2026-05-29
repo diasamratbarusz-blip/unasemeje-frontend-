@@ -76,7 +76,7 @@
 
     </style>
 
-</head>
+</head> head
 
 <body class="min-h-screen">
 
@@ -204,218 +204,198 @@
     <!-- SCRIPT -->
     <script>
 
-        // =========================
-        // ELEMENTS
-        // =========================
+        // =========================================
+        // ELEMENTS & API CONFIGURATION
+        // =========================================
         const form = document.getElementById('stkForm');
-
         const btn = document.getElementById('submitBtn');
-
         const statusBox = document.getElementById('statusBox');
-
         const phoneInput = document.getElementById('phone');
-
         const amountInput = document.getElementById('amount');
+
+        // Dynamically locate API domain base to prevent cross-origin drops
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000/api'
+            : '/api';
+
+        let pollingInterval = null;
 
         // =========================
         // AUTO REMOVE NON-NUMBERS
         // =========================
         phoneInput.addEventListener('input', () => {
-
-            phoneInput.value =
-                phoneInput.value.replace(/\D/g, '');
-
+            phoneInput.value = phoneInput.value.replace(/\D/g, '');
         });
 
         amountInput.addEventListener('input', () => {
-
-            amountInput.value =
-                amountInput.value.replace(/[^\d]/g, '');
-
+            amountInput.value = amountInput.value.replace(/[^\d]/g, '');
         });
 
         // =========================
         // PAYNECTA STK PUSH
         // =========================
         async function depositNow(amount, phone, token) {
-
             try {
+                if (pollingInterval) clearInterval(pollingInterval);
 
-                const response = await fetch(
-                    '/api/paynecta/stkpush',
-                    {
+                const response = await fetch(`${API_URL}/paynecta/stkpush`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        amount: Number(amount),
+                        phone: phone
+                    })
+                });
 
-                        method: 'POST',
+                const resData = await response.json();
+                console.log("PAYMENT RESPONSE:", resData);
 
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-
-                        body: JSON.stringify({
-                            amount,
-                            phone
-                        })
-
-                    }
-                );
-
-                const data = await response.json();
-
-                console.log("PAYMENT RESPONSE:", data);
-
-                if (response.ok) {
-
+                if (response.ok && resData.success) {
                     showStatus(
-                        "STK Push Sent Successfully. Check your phone and enter M-PESA PIN.",
+                        "✅ STK Prompt Request sent! Please enter your M-PESA PIN to finalize authorization...",
                         "success"
                     );
 
+                    // Clear inputs instantly
                     amountInput.value = "";
                     phoneInput.value = "";
 
-                } else {
+                    // Extract transaction reference safely based on response structures
+                    const ref = resData.data?.transaction_reference || 
+                                resData.data?.transaction?.reference || 
+                                resData.data?.reference;
 
+                    if (ref) {
+                        startStatusPolling(ref, token);
+                    }
+                } else {
                     showStatus(
-                        data.error ||
-                        data.message ||
-                        "Payment failed",
+                        resData.error || resData.message || "Payment request initialization failed.",
                         "error"
                     );
+                    resetButtonUI();
                 }
 
             } catch (error) {
-
-                console.log("PAYMENT ERROR:", error);
-
+                console.error("PAYMENT ERROR:", error);
                 showStatus(
-                    "Connection Error: Server unavailable",
+                    "Connection Error: Could not establish contact with backend infrastructure.",
                     "error"
                 );
+                resetButtonUI();
             }
+        }
+
+        // =========================================
+        // REAL-TIME TRANSACTION VERIFICATION LOOP
+        // =========================================
+        function startStatusPolling(reference, token) {
+            let attempts = 0;
+            const maxAttempts = 15; // Track for ~2.5 minutes total
+
+            pollingInterval = setInterval(async () => {
+                attempts++;
+                if (attempts > maxAttempts) {
+                    clearInterval(pollingInterval);
+                    showStatus("⏳ Payment confirmation window timed out. Refresh page if processing delays persist.", "info");
+                    resetButtonUI();
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const checkData = await res.json();
+
+                    if (checkData.success && checkData.data?.status === 'completed') {
+                        clearInterval(pollingInterval);
+                        showStatus(`🎉 Success! KES ${checkData.data.amount || 'Funds'} successfully credited to your wallet balance.`, "success");
+                        
+                        // Dynamically update localStorage session variables if running
+                        if(checkData.data.amount) {
+                            const oldBal = parseFloat(localStorage.getItem('balance')) || 0;
+                            localStorage.setItem('balance', oldBal + parseFloat(checkData.data.amount));
+                        }
+                        resetButtonUI();
+                    } else if (checkData.success && (checkData.data?.status === 'failed' || checkData.data?.status === 'cancelled')) {
+                        clearInterval(pollingInterval);
+                        showStatus("❌ Transaction was rejected or timed out on your mobile handset.", "error");
+                        resetButtonUI();
+                    }
+                } catch (err) {
+                    console.error("Polling check failed:", err);
+                }
+            }, 10000);
+        }
+
+        function resetButtonUI() {
+            btn.disabled = false;
+            btn.innerText = "Send Money";
         }
 
         // =========================
         // FORM SUBMIT
         // =========================
         form.addEventListener('submit', async (e) => {
-
             e.preventDefault();
-
             const token = localStorage.getItem('token');
 
             if (!token) {
-
-                showStatus(
-                    "Please login first",
-                    "error"
-                );
-
+                showStatus("Please login first", "error");
                 return;
             }
 
             let phone = phoneInput.value.trim();
-
             let amount = amountInput.value.trim();
 
-            // REMOVE NON NUMBERS
             phone = phone.replace(/\D/g, '');
-
             amount = amount.replace(/\D/g, '');
 
             // FORMAT PHONE
             if (phone.startsWith('0')) {
-
-                phone =
-                    '254' + phone.substring(1);
-            }
-
-            if (phone.startsWith('7')) {
-
-                phone =
-                    '254' + phone;
+                phone = '254' + phone.substring(1);
+            } else if (phone.startsWith('7')) {
+                phone = '254' + phone;
             }
 
             // VALIDATE PHONE
-            if (!/^2547\d{8}$/.test(phone)) {
-
-                showStatus(
-                    "Invalid Safaricom number format",
-                    "error"
-                );
-
+            if (!/^254(7|1)\d{8}$/.test(phone)) {
+                showStatus("Invalid Safaricom format. Use standard form without leading 0.", "error");
                 return;
             }
 
             // VALIDATE AMOUNT
-            if (
-                !amount ||
-                Number(amount) < 1
-            ) {
-
-                showStatus(
-                    "Amount must be greater than 0",
-                    "error"
-                );
-
+            if (!amount || Number(amount) < 1) {
+                showStatus("Amount must be greater than 0", "error");
                 return;
             }
 
             // BUTTON LOADING
             btn.disabled = true;
-
             btn.innerText = "Sending STK Push...";
-
-            showStatus(
-                "Please wait while we send the STK Push...",
-                "info"
-            );
+            showStatus("Please wait while we send the STK Push...", "info");
 
             // SEND PAYMENT
-            await depositNow(
-                amount,
-                phone,
-                token
-            );
-
-            // RESET BUTTON
-            btn.disabled = false;
-
-            btn.innerText = "Send Money";
-
+            await depositNow(amount, phone, token);
         });
 
         // =========================
         // SHOW STATUS
         // =========================
         function showStatus(message, type) {
-
             statusBox.innerText = message;
-
-            statusBox.classList.remove(
-                'hidden',
-                'status-success',
-                'status-error',
-                'status-info'
-            );
+            statusBox.classList.remove('hidden', 'status-success', 'status-error', 'status-info');
 
             if (type === 'success') {
-
-                statusBox.classList.add(
-                    'status-success'
-                );
-
+                statusBox.classList.add('status-success');
             } else if (type === 'error') {
-
-                statusBox.classList.add(
-                    'status-error'
-                );
-
+                statusBox.classList.add('status-error');
             } else {
-
-                statusBox.classList.add(
-                    'status-info'
-                );
+                statusBox.classList.add('status-info');
             }
         }
 
