@@ -3,11 +3,7 @@
 <head>
 
     <meta charset="UTF-8" />
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Add Funds - Unasemeje</title>
 
@@ -15,65 +11,51 @@
 
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-
         body{
             font-family:'Plus Jakarta Sans',sans-serif;
             background:#f5f7fb;
         }
-
         .bg-custom-green{
             background:#11453b;
         }
-
         .btn-custom{
             background:#11453b;
             transition:0.3s;
             color:white;
         }
-
         .btn-custom:hover{
             opacity:0.92;
         }
-
         .btn-custom:disabled{
             opacity:0.6;
             cursor:not-allowed;
         }
-
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button{
             -webkit-appearance:none;
             margin:0;
         }
-
         input[type=number]{
             -moz-appearance:textfield;
         }
-
         .status-success{
             background:#ecfdf5;
             color:#047857;
             border:1px solid #a7f3d0;
         }
-
         .status-error{
             background:#fef2f2;
             color:#b91c1c;
             border:1px solid #fecaca;
         }
-
         .status-info{
             background:#eff6ff;
             color:#1d4ed8;
             border:1px solid #bfdbfe;
         }
-
     </style>
 
 </head>
@@ -81,139 +63,74 @@
 <body class="min-h-screen">
 
     <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
-
         <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">
             Add Funds
         </h1>
-
         <p class="uppercase tracking-[4px] text-xs opacity-70">
             Fast & Secure M-PESA Payments
         </p>
-
     </div>
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20">
-
         <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 
             <div class="mb-8">
-
                 <h2 class="text-2xl font-bold text-gray-800">
                     Payment Details
                 </h2>
-
                 <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
-
             </div>
 
             <form id="stkForm" class="space-y-6">
-
                 <div>
-
-                    <label
-                        class="block text-sm font-semibold text-gray-700 mb-2"
-                    >
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
                         Enter Your M-PESA Number
                     </label>
-
                     <div class="flex">
-
-                        <span
-                            class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
-                        >
+                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                             +254
                         </span>
-
-                        <input
-                            type="text"
-                            id="phone"
-                            required
-                            autocomplete="off"
-                            placeholder="701234567"
-                            class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"
-                        />
-
+                        <input type="text" id="phone" required autocomplete="off" placeholder="701234567" class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"/>
                     </div>
-
-                    <p class="mt-2 text-xs text-green-700 font-medium">
-                        Example: 701234567
-                    </p>
-
+                    <p class="mt-2 text-xs text-green-700 font-medium">Example: 701234567</p>
                 </div>
 
                 <div>
-
-                    <label
-                        class="block text-sm font-semibold text-gray-700 mb-2"
-                    >
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
                         Enter Amount
                     </label>
-
                     <div class="flex">
-
-                        <span
-                            class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm"
-                        >
+                        <span class="inline-flex items-center px-4 rounded-l-xl border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                             KES
                         </span>
-
-                        <input
-                            type="number"
-                            id="amount"
-                            required
-                            min="1"
-                            placeholder="100"
-                            class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"
-                        />
-
+                        <input type="number" id="amount" required min="1" placeholder="100" class="flex-1 w-full px-4 py-4 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-teal-900 focus:border-teal-900 outline-none text-sm"/>
                     </div>
-
-                    <p class="mt-2 text-xs text-green-700 font-medium">
-                        Minimum deposit is KES 1
-                    </p>
-
+                    <p class="mt-2 text-xs text-green-700 font-medium">Minimum deposit is KES 1</p>
                 </div>
 
-                <button
-                    type="submit"
-                    id="submitBtn"
-                    class="w-full btn-custom py-4 rounded-2xl font-bold text-lg shadow-lg"
-                >
+                <button type="submit" id="submitBtn" class="w-full btn-custom py-4 rounded-2xl font-bold text-lg shadow-lg">
                     Send Money
                 </button>
-
             </form>
 
-            <div
-                id="statusBox"
-                class="mt-6 hidden p-4 rounded-2xl text-sm text-center font-medium"
-            ></div>
+            <div id="statusBox" class="mt-6 hidden p-4 rounded-2xl text-sm text-center font-medium"></div>
 
         </div>
-
     </div>
 
     <script>
-
-        // =========================================
-        // ELEMENTS & API CONFIGURATION
-        // =========================================
         const form = document.getElementById('stkForm');
         const btn = document.getElementById('submitBtn');
         const statusBox = document.getElementById('statusBox');
         const phoneInput = document.getElementById('phone');
         const amountInput = document.getElementById('amount');
 
-        // Dynamically locate API domain base to prevent cross-origin drops
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3000/api'
             : '/api';
 
         let pollingInterval = null;
 
-        // =========================
-        // AUTO REMOVE NON-NUMBERS
-        // =========================
         phoneInput.addEventListener('input', () => {
             phoneInput.value = phoneInput.value.replace(/\D/g, '');
         });
@@ -222,9 +139,6 @@
             amountInput.value = amountInput.value.replace(/[^\d]/g, '');
         });
 
-        // =========================
-        // PAYNECTA STK PUSH
-        // =========================
         async function depositNow(amount, phone, token) {
             try {
                 if (pollingInterval) clearInterval(pollingInterval);
@@ -235,91 +149,52 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        amount: Number(amount),
-                        phone: phone
-                    })
+                    body: JSON.stringify({ amount: Number(amount), phone: phone })
                 });
 
                 const resData = await response.json();
-                console.log("PAYMENT RESPONSE:", resData);
 
                 if (response.ok && resData.success) {
-                    showStatus(
-                        "✅ STK Prompt Request sent! Please enter your M-PESA PIN to finalize authorization...",
-                        "success"
-                    );
-
-                    // Clear inputs instantly
+                    showStatus("✅ STK Prompt Request sent! Please enter your M-PESA PIN...", "success");
                     amountInput.value = "";
                     phoneInput.value = "";
-
-                    // Extract transaction reference safely based on response structures
-                    const ref = resData.data?.transaction_reference || 
-                                resData.data?.transaction?.reference || 
-                                resData.data?.reference;
-
-                    if (ref) {
-                        startStatusPolling(ref, token);
-                    }
+                    const ref = resData.data?.transaction_reference || resData.data?.reference;
+                    if (ref) startStatusPolling(ref, token);
                 } else {
-                    showStatus(
-                        resData.error || resData.message || "Payment request initialization failed.",
-                        "error"
-                    );
+                    showStatus(resData.error || "Payment request failed.", "error");
                     resetButtonUI();
                 }
-
             } catch (error) {
-                console.error("PAYMENT ERROR:", error);
-                showStatus(
-                    "Connection Error: Could not establish contact with backend infrastructure.",
-                    "error"
-                );
+                showStatus("Connection Error: Backend unreachable.", "error");
                 resetButtonUI();
             }
         }
 
-        // =========================================
-        // REAL-TIME TRANSACTION VERIFICATION LOOP
-        // =========================================
         function startStatusPolling(reference, token) {
             let attempts = 0;
-            const maxAttempts = 15; // Track for ~2.5 minutes total
-
             pollingInterval = setInterval(async () => {
                 attempts++;
-                if (attempts > maxAttempts) {
+                if (attempts > 15) {
                     clearInterval(pollingInterval);
-                    showStatus("⏳ Payment confirmation window timed out. Refresh page if processing delays persist.", "info");
+                    showStatus("⏳ Timeout. Refresh if payment processed.", "info");
                     resetButtonUI();
                     return;
                 }
-
                 try {
                     const res = await fetch(`${API_URL}/paynecta/status?transaction_reference=${reference}`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
                     const checkData = await res.json();
-
                     if (checkData.success && checkData.data?.status === 'completed') {
                         clearInterval(pollingInterval);
-                        showStatus(`🎉 Success! KES ${checkData.data.amount || 'Funds'} successfully credited to your wallet balance.`, "success");
-                        
-                        // Dynamically update localStorage session variables if running
-                        if(checkData.data.amount) {
-                            const oldBal = parseFloat(localStorage.getItem('balance')) || 0;
-                            localStorage.setItem('balance', oldBal + parseFloat(checkData.data.amount));
-                        }
+                        showStatus(`🎉 Success! KES ${checkData.data.amount} credited.`, "success");
                         resetButtonUI();
-                    } else if (checkData.success && (checkData.data?.status === 'failed' || checkData.data?.status === 'cancelled')) {
+                    } else if (checkData.success && (checkData.data?.status === 'failed')) {
                         clearInterval(pollingInterval);
-                        showStatus("❌ Transaction was rejected or timed out on your mobile handset.", "error");
+                        showStatus("❌ Transaction rejected.", "error");
                         resetButtonUI();
                     }
-                } catch (err) {
-                    console.error("Polling check failed:", err);
-                }
+                } catch (err) {}
             }, 10000);
         }
 
@@ -328,68 +203,28 @@
             btn.innerText = "Send Money";
         }
 
-        // =========================
-        // FORM SUBMIT
-        // =========================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const token = localStorage.getItem('token');
-
-            if (!token) {
-                showStatus("Please login first", "error");
-                return;
-            }
+            if (!token) { showStatus("Please login first", "error"); return; }
 
             let phone = phoneInput.value.trim();
             let amount = amountInput.value.trim();
 
-            phone = phone.replace(/\D/g, '');
-            amount = amount.replace(/\D/g, '');
+            if (phone.startsWith('0')) phone = '254' + phone.substring(1);
+            else if (phone.startsWith('7')) phone = '254' + phone;
 
-            // FORMAT PHONE
-            if (phone.startsWith('0')) {
-                phone = '254' + phone.substring(1);
-            } else if (phone.startsWith('7')) {
-                phone = '254' + phone;
-            }
-
-            // VALIDATE PHONE
-            if (!/^254(7|1)\d{8}$/.test(phone)) {
-                showStatus("Invalid Safaricom format. Use standard form without leading 0.", "error");
-                return;
-            }
-
-            // VALIDATE AMOUNT
-            if (!amount || Number(amount) < 1) {
-                showStatus("Amount must be greater than 0", "error");
-                return;
-            }
-
-            // BUTTON LOADING
             btn.disabled = true;
             btn.innerText = "Sending STK Push...";
-            showStatus("Please wait while we send the STK Push...", "info");
-
-            // SEND PAYMENT
+            showStatus("Sending STK Push...", "info");
             await depositNow(amount, phone, token);
         });
 
-        // =========================
-        // SHOW STATUS
-        // =========================
         function showStatus(message, type) {
             statusBox.innerText = message;
             statusBox.classList.remove('hidden', 'status-success', 'status-error', 'status-info');
-
-            if (type === 'success') {
-                statusBox.classList.add('status-success');
-            } else if (type === 'error') {
-                statusBox.classList.add('status-error');
-            } else {
-                statusBox.classList.add('status-info');
-            }
+            statusBox.classList.add(`status-${type}`);
         }
-
     </script>
 
 </body>
