@@ -3,223 +3,291 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Funds - Unasemeje</title>
+    <title>Add Funds - AI Photo Capture</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0f2f5; }
-        .bg-custom-green { background: #11453b; }
-        
-        /* Scanner Visuals */
-        .scanner-container {
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .scanner-active {
-            border-color: #10b981;
-            box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
-        }
-        
-        .payment-frame-container {
-            width: 100%; height: 680px; border-radius: 28px; overflow: hidden;
-            background: #ffffff; border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; color: white; overflow: hidden; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Camera Lens Viewport */
+        .camera-lens {
+            position: relative;
+            width: 100%;
+            height: 550px;
+            background: #111;
+            border-radius: 40px;
+            overflow: hidden;
+            border: 2px solid #334155;
         }
 
-        /* Success Animation */
-        .check-glow {
-            animation: glow 2s infinite;
+        /* Scanning Laser */
+        .laser-scanner {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: #10b981;
+            box-shadow: 0 0 20px #10b981, 0 0 40px #10b981;
+            z-index: 100;
+            animation: moveScanner 4s infinite linear;
         }
-        @keyframes glow {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        @keyframes moveScanner { 0% { top: 0%; } 100% { top: 100%; } }
+
+        /* The Flash */
+        #photoFlash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .do-flash { animation: flashAnim 0.5s ease-out; }
+        @keyframes flashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* Screenshot Image Area in Result */
+        .captured-frame {
+            width: 100%;
+            height: 180px;
+            background: #000;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .captured-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.2) brightness(0.9) saturate(1.2);
         }
 
-        .loader-spin {
-            width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite;
+        /* Result Drawer */
+        #analysisDrawer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #ffffff;
+            color: #000;
+            border-radius: 35px 35px 0 0;
+            padding: 25px;
+            transform: translateY(100%);
+            transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1000;
+            box-shadow: 0 -30px 100px rgba(0,0,0,0.8);
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        #analysisDrawer.active { transform: translateY(0); }
+
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+        
+        .shutter-ring {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 6px solid #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .shutter-ring:active { transform: scale(0.9); border-color: #fff; }
+        .shutter-inside { width: 55px; height: 55px; background: white; border-radius: 50%; }
     </style>
 </head>
 
 <body class="min-h-screen">
 
-    <div class="bg-custom-green text-white py-12 px-4 text-center">
-        <h1 class="text-3xl font-extrabold mb-2">Add Funds</h1>
-        <div id="scannerStatus" class="inline-flex items-center gap-2 bg-black/20 px-4 py-1 rounded-full border border-white/10">
-            <span class="h-2 w-2 bg-emerald-400 rounded-full animate-pulse"></span>
-            <span class="text-[10px] uppercase tracking-widest font-bold">Deep Scanner Active</span>
+    <!-- HUD HEADER -->
+    <div class="p-5 flex justify-between items-center bg-black/80 backdrop-blur-md sticky top-0 z-[200]">
+        <div>
+            <h1 class="text-lg font-black italic text-emerald-500">AI OPTICAL SCAN</h1>
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                <p id="aiLabel" class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Vision Mode: Tracking</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+             <div class="text-right">
+                <p class="text-[7px] text-zinc-600 font-bold uppercase">Frame Quality</p>
+                <p class="text-[10px] font-black text-emerald-500">1080p</p>
+            </div>
+            <button onclick="window.location.reload()" class="p-2 bg-zinc-900 rounded-xl">
+                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </button>
         </div>
     </div>
 
-    <div class="max-w-2xl mx-auto px-4 -mt-8 pb-20 space-y-6">
+    <!-- MAIN VIEWFINDER -->
+    <div class="max-w-2xl mx-auto px-4 pt-2">
+        <div class="camera-lens" id="lens">
+            <div id="photoFlash"></div>
+            <div class="laser-scanner"></div>
+            
+            <!-- THE PORTAL -->
+            <iframe src="https://paynecta.co.ke/pay/unasemeje-" id="payPortal"></iframe>
+        </div>
+
+        <!-- CAMERA CONTROLS -->
+        <div class="mt-8 flex flex-col items-center gap-3">
+            <div id="captureBtn" class="shutter-ring">
+                <div class="shutter-inside"></div>
+            </div>
+            <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Tap to capture screenshot</p>
+        </div>
+    </div>
+
+    <!-- SCAN RESULT DRAWER -->
+    <div id="analysisDrawer">
+        <div class="w-10 h-1 bg-zinc-200 rounded-full mx-auto mb-6"></div>
         
-        <!-- SCANNED INFORMATION RESULT CARD (Hidden by default) -->
-        <div id="resultCard" class="bg-white rounded-[2rem] shadow-2xl p-8 hidden border-2 border-emerald-500 transform transition-all animate-bounce-short">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 check-glow">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                
-                <h2 class="text-2xl font-black text-gray-900 mb-1">Payment Scanned!</h2>
-                <p class="text-gray-500 text-sm mb-6">Confirm the details below to credit your account.</p>
-
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-left">
-                        <span class="text-[10px] text-gray-400 uppercase font-bold">Amount</span>
-                        <p id="displayAmount" class="text-xl font-black text-emerald-700">KES 0.00</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-left">
-                        <span class="text-[10px] text-gray-400 uppercase font-bold">Reference</span>
-                        <p id="displayRef" class="text-sm font-mono font-bold text-gray-700 break-all">---</p>
-                    </div>
-                </div>
-
-                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-3">
-                    <span class="text-lg">APPROVE & SYNC BALANCE</span>
-                </button>
+        <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-black">AI Frame Analysis</h2>
+                <p class="text-xs text-zinc-400">Captured: <span id="capTimestamp">Just now</span></p>
             </div>
         </div>
 
-        <!-- PORTAL CONTAINER -->
-        <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden scanner-container" id="mainScannerContainer">
-            <div class="p-5 border-b border-gray-50 flex justify-between items-center bg-white/50">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-emerald-50 rounded-lg">
-                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <p class="text-sm font-bold text-gray-700">M-PESA Secure Checkout</p>
+        <!-- SCREENSHOT IMAGE DISPLAY -->
+        <div class="captured-frame">
+            <div class="absolute top-2 left-2 bg-emerald-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full z-10 uppercase">Captured Screenshot</div>
+            <!-- We use a placeholder that looks like the real portal capture -->
+            <img id="screenshotDisplay" src="https://paynecta.co.ke/favicon.ico" alt="Scanned Frame">
+        </div>
+
+        <div class="space-y-4 mb-8">
+            <div class="bg-zinc-50 p-5 rounded-3xl border border-zinc-100 flex items-center gap-4">
+                <div id="resInitial" class="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center text-white font-black text-xl">?</div>
+                <div>
+                    <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Extracted Name</p>
+                    <p id="resName" class="text-lg font-black text-zinc-900 leading-tight">Processing...</p>
+                    <p id="resPhone" class="text-xs font-bold text-emerald-600 mono">+254 *** *** ***</p>
                 </div>
-                
-                <!-- FAIL-SAFE BUTTON -->
-                <button onclick="forceScan()" class="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 underline flex items-center gap-1">
-                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    NOT SCANNING? CLICK HERE
-                </button>
             </div>
 
-            <div class="payment-frame-container">
-                <iframe 
-                    src="https://paynecta.co.ke/pay/unasemeje-" 
-                    class="w-full h-full border-0"
-                    id="payPortal"
-                    allow="payment">
-                </iframe>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-zinc-50 p-5 rounded-3xl border border-zinc-100">
+                    <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Total Amount</p>
+                    <p id="resAmount" class="text-2xl font-black text-emerald-700">KES 0.00</p>
+                </div>
+                <div class="bg-zinc-50 p-5 rounded-3xl border border-zinc-100">
+                    <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">M-PESA Code</p>
+                    <p id="resRef" class="text-sm font-bold mono text-zinc-800 uppercase">AWAITING</p>
+                </div>
             </div>
         </div>
+
+        <button id="approveBtn" class="w-full bg-zinc-900 hover:bg-black text-white font-black py-5 rounded-[2rem] shadow-xl transition-all active:scale-95">
+            APPROVE & SYNC BALANCE
+        </button>
     </div>
 
     <script>
-        const resultCard = document.getElementById('resultCard');
-        const displayAmount = document.getElementById('displayAmount');
-        const displayRef = document.getElementById('displayRef');
+        const captureBtn = document.getElementById('captureBtn');
+        const flash = document.getElementById('photoFlash');
+        const drawer = document.getElementById('analysisDrawer');
+        const resName = document.getElementById('resName');
+        const resPhone = document.getElementById('resPhone');
+        const resAmount = document.getElementById('resAmount');
+        const resRef = document.getElementById('resRef');
+        const resInitial = document.getElementById('resInitial');
+        const aiLabel = document.getElementById('aiLabel');
+        const timestamp = document.getElementById('capTimestamp');
         const approveBtn = document.getElementById('approveBtn');
-        const mainContainer = document.getElementById('mainScannerContainer');
 
-        const API_URL = '/api'; // Adjusted for your production environment
+        let lastDetectedData = null;
+        const API_URL = '/api';
 
-        let capturedData = {
-            amount: 0,
-            reference: "",
-            status: "pending"
-        };
-
-        // 1. THE DEEP SCANNER: Listens for any cross-domain messages
-        window.addEventListener("message", (event) => {
-            // Log for debugging (you can see this in Chrome Inspect > Console)
-            console.log("Scanner Pulse Detected:", event.data);
-
-            const data = event.data;
-            if (!data) return;
-
-            // SMART PARSING: Check for success keywords or specific M-PESA patterns (UET...)
-            const isSuccess = JSON.stringify(data).toLowerCase().includes('success') || 
-                              JSON.stringify(data).toLowerCase().includes('completed') ||
-                              (data.reference && data.reference.startsWith('UE'));
-
-            if (isSuccess) {
-                processScannedData(data);
-            }
-        });
-
-        // 2. PROCESS SCANNED DATA
-        function processScannedData(data) {
-            // Extract values using multiple possible keys sent by gateways
-            capturedData.amount = data.amount || data.transaction_amount || data.total || 0;
-            capturedData.reference = data.reference || data.transaction_reference || data.tx_ref || "MANUAL-SYNC";
-            
-            // Show result
-            displayAmount.innerText = `KES ${Number(capturedData.amount).toLocaleString()}`;
-            displayRef.innerText = capturedData.reference;
-
-            resultCard.classList.remove('hidden');
-            mainContainer.classList.add('scanner-active');
-            
-            // Smooth scroll to results
-            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        // 3. FORCE SCAN (The Fail-safe if postMessage fails)
-        async function forceScan() {
-            const btn = event.target;
-            btn.innerText = "SCANNING...";
-            
-            // Wait 1 second to simulate scan
-            setTimeout(() => {
-                // If we don't have auto-data, we try to fetch from your backend "Status Check"
-                // For this example, we show the card so the user can sync
-                if(capturedData.reference === "") {
-                    processScannedData({ amount: 0, reference: "REF_REQUIRED" });
-                    displayRef.innerHTML = '<span class="text-red-500">Scanning failed. Click Approve to try Server Sync.</span>';
-                }
-                btn.innerText = "SCAN COMPLETE";
-            }, 1000);
-        }
-
-        // 4. APPROVAL & BACKEND SYNC
-        approveBtn.onclick = async () => {
+        // 1. MONITORING SENSOR (The AI Backend Link)
+        const sensor = setInterval(async () => {
             const token = localStorage.getItem('token');
-            if (!token) { alert("Session expired. Please login."); return; }
-
-            approveBtn.disabled = true;
-            approveBtn.innerHTML = `<div class="loader-spin"></div> UPDATING BALANCE...`;
+            if (!token) return;
 
             try {
-                const response = await fetch(`${API_URL}/paynecta/credit-verify`, {
+                const response = await fetch(`${API_URL}/paynecta/status-check`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await response.json();
+
+                if (result.success && result.data.status === 'completed') {
+                    lastDetectedData = result.data;
+                    aiLabel.innerText = "Vision Mode: Target Locked ✓";
+                    aiLabel.classList.replace('text-zinc-500', 'text-emerald-500');
+                }
+            } catch (e) {}
+        }, 3500);
+
+        // 2. CAPTURE SCREEN ACTION
+        captureBtn.onclick = () => {
+            // Flash Effect
+            flash.classList.add('do-flash');
+            if (window.navigator.vibrate) window.navigator.vibrate(100);
+            setTimeout(() => flash.classList.remove('do-flash'), 500);
+
+            if (!lastDetectedData) {
+                alert("AI Scanner: No payment detected yet. Please complete M-PESA payment in the portal first.");
+                return;
+            }
+
+            // Processing...
+            aiLabel.innerText = "AI: Analyzing Visual Frame...";
+            captureBtn.style.opacity = "0.5";
+            captureBtn.disabled = true;
+
+            setTimeout(() => {
+                // Populate the drawer with extracted information
+                resName.innerText = lastDetectedData.customer_name || "M-PESA USER";
+                resPhone.innerText = `+${lastDetectedData.phone || "254..."}`;
+                resAmount.innerText = `KES ${Number(lastDetectedData.amount).toLocaleString()}`;
+                resRef.innerText = lastDetectedData.reference || lastDetectedData.transaction_reference;
+                resInitial.innerText = (lastDetectedData.customer_name || "M").charAt(0);
+                timestamp.innerText = new Date().toLocaleTimeString();
+
+                // Show the Drawer
+                drawer.classList.add('active');
+                aiLabel.innerText = "Vision Mode: Analysis Complete";
+                captureBtn.style.opacity = "1";
+                captureBtn.disabled = false;
+            }, 1200);
+        };
+
+        // 3. FINAL SYNC
+        approveBtn.onclick = async () => {
+            const token = localStorage.getItem('token');
+            approveBtn.disabled = true;
+            approveBtn.innerHTML = `<span class="animate-pulse">SYNCING DATA...</span>`;
+
+            try {
+                const res = await fetch(`${API_URL}/paynecta/credit-verify`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify({ 
-                        amount: Number(capturedData.amount), 
-                        reference: capturedData.reference 
+                        amount: Number(lastDetectedData.amount), 
+                        reference: lastDetectedData.reference 
                     })
                 });
 
-                const result = await response.json();
-
+                const result = await res.json();
                 if (result.success) {
-                    approveBtn.innerHTML = `DONE! KES ${capturedData.amount} ADDED`;
-                    approveBtn.classList.replace('bg-emerald-600', 'bg-gray-900');
+                    approveBtn.innerHTML = `SUCCESS: BALANCE UPDATED`;
                     setTimeout(() => window.location.reload(), 2000);
                 } else {
-                    alert(result.message || "Balance update pending. Please wait 1 minute.");
-                    approveBtn.disabled = false;
-                    approveBtn.innerHTML = "RETRY APPROVAL";
+                    alert("Balance sync failed. Refreshing dashboard...");
+                    window.location.reload();
                 }
             } catch (err) {
-                alert("Network error. Your balance will update automatically shortly.");
-                approveBtn.disabled = false;
-                approveBtn.innerHTML = "RETRY APPROVAL";
+                alert("Network error. Your balance will update shortly.");
+                window.location.reload();
             }
         };
     </script>
-
 </body>
-</html>
+                </html>
