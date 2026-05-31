@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; color: white; overflow: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; color: white; overflow-x: hidden; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
         /* Camera Lens Viewport */
@@ -81,6 +81,19 @@
         }
         #analysisDrawer.active { transform: translateY(0); }
 
+        /* Profile Modal Overlay */
+        #profileOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-blur: 10px;
+        }
+
         iframe { width: 100%; height: 100%; border: none; background: white; }
         
         .shutter-ring {
@@ -95,15 +108,44 @@
         }
         .shutter-ring:active { transform: scale(0.9); border-color: #fff; }
         .shutter-inside { width: 55px; height: 55px; background: white; border-radius: 50%; }
+
+        input { background: #18181b; border: 1px solid #27272a; color: white; border-radius: 12px; padding: 12px; width: 100%; outline: none; }
+        input:focus { border-color: #10b981; }
     </style>
 </head>
 
 <body class="min-h-screen">
 
-    <!-- HUD HEADER -->
+    <div id="profileOverlay">
+        <div class="bg-zinc-900 w-full max-w-md p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
+            <h2 class="text-2xl font-black mb-2 text-emerald-500 italic">LINK PAYMENT PROFILE</h2>
+            <p class="text-xs text-zinc-400 mb-6 font-bold uppercase tracking-widest">Verify identity before adding funds</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-1">Full Name</label>
+                    <input type="text" id="setupName" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-1">Registered Email</label>
+                    <input type="email" id="setupEmail" placeholder="user@example.com">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-1">Payment Numbers (Max 3, comma separated)</label>
+                    <input type="text" id="setupPhones" placeholder="254712345678, 254787654321">
+                    <p class="text-[8px] text-zinc-500 mt-1 italic">* Payments from these numbers will be auto-detected.</p>
+                </div>
+                
+                <button id="saveProfileBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl mt-4 shadow-lg transition-all active:scale-95 uppercase tracking-widest text-sm">
+                    Activate AI Scanner
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="p-5 flex justify-between items-center bg-black/80 backdrop-blur-md sticky top-0 z-[200]">
         <div>
-            <h1 class="text-lg font-black italic text-emerald-500">AI OPTICAL SCAN</h1>
+            <h1 class="text-lg font-black italic text-emerald-500 uppercase">Unasemeje Optical</h1>
             <div class="flex items-center gap-2">
                 <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
                 <p id="aiLabel" class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Vision Mode: Tracking</p>
@@ -120,17 +162,14 @@
         </div>
     </div>
 
-    <!-- MAIN VIEWFINDER -->
     <div class="max-w-2xl mx-auto px-4 pt-2">
         <div class="camera-lens" id="lens">
             <div id="photoFlash"></div>
             <div class="laser-scanner"></div>
             
-            <!-- THE PORTAL -->
             <iframe src="https://paynecta.co.ke/pay/unasemeje-" id="payPortal"></iframe>
         </div>
 
-        <!-- CAMERA CONTROLS -->
         <div class="mt-8 flex flex-col items-center gap-3">
             <div id="captureBtn" class="shutter-ring">
                 <div class="shutter-inside"></div>
@@ -139,7 +178,6 @@
         </div>
     </div>
 
-    <!-- SCAN RESULT DRAWER -->
     <div id="analysisDrawer">
         <div class="w-10 h-1 bg-zinc-200 rounded-full mx-auto mb-6"></div>
         
@@ -153,10 +191,8 @@
             </div>
         </div>
 
-        <!-- SCREENSHOT IMAGE DISPLAY -->
         <div class="captured-frame">
             <div class="absolute top-2 left-2 bg-emerald-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full z-10 uppercase">Captured Screenshot</div>
-            <!-- We use a placeholder that looks like the real portal capture -->
             <img id="screenshotDisplay" src="https://paynecta.co.ke/favicon.ico" alt="Scanned Frame">
         </div>
 
@@ -199,14 +235,51 @@
         const aiLabel = document.getElementById('aiLabel');
         const timestamp = document.getElementById('capTimestamp');
         const approveBtn = document.getElementById('approveBtn');
+        const profileOverlay = document.getElementById('profileOverlay');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
 
         let lastDetectedData = null;
+        let userProfile = JSON.parse(localStorage.getItem('user_payment_profile'));
         const API_URL = '/api';
 
-        // 1. MONITORING SENSOR (The AI Backend Link)
+        // 1. CHECK IF PROFILE EXISTS ON LOAD
+        window.onload = () => {
+            if (userProfile) {
+                profileOverlay.style.display = 'none';
+            }
+        };
+
+        // 2. SAVE PROFILE ACTION
+        saveProfileBtn.onclick = async () => {
+            const name = document.getElementById('setupName').value;
+            const email = document.getElementById('setupEmail').value;
+            const phones = document.getElementById('setupPhones').value.split(',').map(p => p.trim());
+
+            if (!name || !email || phones.length === 0) {
+                alert("Please fill all fields.");
+                return;
+            }
+            if (phones.length > 3) {
+                alert("Maximum 3 phone numbers allowed.");
+                return;
+            }
+
+            const profileData = { name, email, phones };
+            localStorage.setItem('user_payment_profile', JSON.stringify(profileData));
+            userProfile = profileData;
+            
+            saveProfileBtn.innerHTML = "VERIFYING...";
+            
+            // Optional: Send this to your server to update the database
+            setTimeout(() => {
+                profileOverlay.style.display = 'none';
+            }, 1000);
+        };
+
+        // 3. MONITORING SENSOR (Detection Logic)
         const sensor = setInterval(async () => {
             const token = localStorage.getItem('token');
-            if (!token) return;
+            if (!token || !userProfile) return;
 
             try {
                 const response = await fetch(`${API_URL}/paynecta/status-check`, {
@@ -215,40 +288,43 @@
                 const result = await response.json();
 
                 if (result.success && result.data.status === 'completed') {
-                    lastDetectedData = result.data;
-                    aiLabel.innerText = "Vision Mode: Target Locked ✓";
-                    aiLabel.classList.replace('text-zinc-500', 'text-emerald-500');
+                    const detectedPhone = result.data.phone.toString();
+                    
+                    // TARGET LOCK: Only allow if the phone number matches one of the saved 3
+                    if (userProfile.phones.includes(detectedPhone)) {
+                        lastDetectedData = result.data;
+                        aiLabel.innerText = "Vision Mode: Target Locked ✓";
+                        aiLabel.classList.replace('text-zinc-500', 'text-emerald-500');
+                    } else {
+                        aiLabel.innerText = "Vision Mode: Non-User Payment Detected";
+                    }
                 }
             } catch (e) {}
         }, 3500);
 
-        // 2. CAPTURE SCREEN ACTION
+        // 4. CAPTURE SCREEN ACTION
         captureBtn.onclick = () => {
-            // Flash Effect
             flash.classList.add('do-flash');
             if (window.navigator.vibrate) window.navigator.vibrate(100);
             setTimeout(() => flash.classList.remove('do-flash'), 500);
 
             if (!lastDetectedData) {
-                alert("AI Scanner: No payment detected yet. Please complete M-PESA payment in the portal first.");
+                alert("AI Scanner: No payment detected from your registered numbers.");
                 return;
             }
 
-            // Processing...
             aiLabel.innerText = "AI: Analyzing Visual Frame...";
             captureBtn.style.opacity = "0.5";
             captureBtn.disabled = true;
 
             setTimeout(() => {
-                // Populate the drawer with extracted information
-                resName.innerText = lastDetectedData.customer_name || "M-PESA USER";
-                resPhone.innerText = `+${lastDetectedData.phone || "254..."}`;
+                resName.innerText = lastDetectedData.customer_name || userProfile.name;
+                resPhone.innerText = `+${lastDetectedData.phone}`;
                 resAmount.innerText = `KES ${Number(lastDetectedData.amount).toLocaleString()}`;
-                resRef.innerText = lastDetectedData.reference || lastDetectedData.transaction_reference;
-                resInitial.innerText = (lastDetectedData.customer_name || "M").charAt(0);
+                resRef.innerText = lastDetectedData.reference;
+                resInitial.innerText = (userProfile.name).charAt(0);
                 timestamp.innerText = new Date().toLocaleTimeString();
 
-                // Show the Drawer
                 drawer.classList.add('active');
                 aiLabel.innerText = "Vision Mode: Analysis Complete";
                 captureBtn.style.opacity = "1";
@@ -256,7 +332,7 @@
             }, 1200);
         };
 
-        // 3. FINAL SYNC
+        // 5. FINAL SYNC
         approveBtn.onclick = async () => {
             const token = localStorage.getItem('token');
             approveBtn.disabled = true;
@@ -271,7 +347,8 @@
                     },
                     body: JSON.stringify({ 
                         amount: Number(lastDetectedData.amount), 
-                        reference: lastDetectedData.reference 
+                        reference: lastDetectedData.reference,
+                        email: userProfile.email // Attached email for backend crediting
                     })
                 });
 
@@ -290,4 +367,4 @@
         };
     </script>
 </body>
-                </html>
+</html>
