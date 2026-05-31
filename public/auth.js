@@ -70,13 +70,14 @@ function removeToken() {
 /* ================= ADMIN SECURITY GATE ================= */
 /**
  * Strictly controls visibility of the Admin Panel based on credentials.
- * Only grants access to diasamratbarusz@gmail.com or 0715509440.
+ * Only grants access to the specified administrator account.
  */
 function runAdminSecurityCheck(user) {
-    const ADMIN_EMAIL = "diasamratbarusz@gmail.com";
+    // UPDATED: Matches the ADMIN_EMAIL in server.js
+    const ADMIN_EMAIL = "diasamratb@gmail.com";
     const ADMIN_PHONE = "0715509440";
 
-    const isOwner = user.email === ADMIN_EMAIL || user.phone === ADMIN_PHONE;
+    const isOwner = (user.email && user.email.toLowerCase() === ADMIN_EMAIL) || user.phone === ADMIN_PHONE;
 
     if (isOwner) {
         // Add class to body to trigger is-admin rules in style.css
@@ -133,7 +134,9 @@ function checkAuth() {
 
 // ================= NAVIGATION HELPERS =================
 function redirectLogin() {
-  if (!window.location.pathname.includes("index.html") && window.location.pathname !== "/") {
+  // Ensure we don't loop on the index page
+  const path = window.location.pathname;
+  if (!path.includes("index.html") && path !== "/" && path !== "") {
     window.location.href = "index.html";
   }
 }
@@ -242,6 +245,10 @@ function logoutUser() {
 }
 
 // ================= AUTHORIZED FETCH WRAPPER =================
+/**
+ * Global wrapper for all API calls that require authentication.
+ * Automatically injects the Bearer token and handles basic JSON headers.
+ */
 async function authFetch(url, options = {}) {
   const token = getToken();
 
@@ -264,7 +271,8 @@ async function authFetch(url, options = {}) {
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
   
-  const protectedPages = ["dashboard", "order", "profile", "services", "deposit", "admin"];
+  // List of keywords that trigger an authentication check
+  const protectedPages = ["dashboard", "order", "profile", "services", "deposit", "admin", "funds", "referrals"];
   const isProtected = protectedPages.some(page => path.includes(page));
 
   if (isProtected) {
