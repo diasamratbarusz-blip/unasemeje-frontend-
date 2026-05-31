@@ -5,8 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Funds - Unasemeje</title>
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
+    <!-- PAYNECTA WIDGET SCRIPT -->
+    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
+
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
     <style>
@@ -45,18 +50,19 @@
 
 <body class="min-h-screen">
 
+    <!-- IDENTITY VERIFICATION MODAL -->
     <div id="identityOverlay">
         <div class="bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Setup Payment Profile</h2>
-            <p class="text-xs text-gray-500 mb-6 uppercase tracking-wider font-semibold">Permanently Link M-PESA Channels to your ID</p>
+            <p class="text-xs text-gray-500 mb-6 uppercase tracking-wider font-semibold">Verification Required Before Adding Funds</p>
             
             <div class="space-y-4">
                 <div>
-                    <label class="text-xs font-bold text-gray-700 uppercase ml-1">Full Name (As per M-PESA) <span class="text-red-500">*</span></label>
+                    <label class="text-xs font-bold text-gray-700 uppercase ml-1">First & Last Name <span class="text-red-500">*</span></label>
                     <input type="text" id="userName" class="input-field" placeholder="e.g. Peter Kamau">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-gray-700 uppercase ml-1">Notification Email <span class="text-red-500">*</span></label>
+                    <label class="text-xs font-bold text-gray-700 uppercase ml-1">Account Email <span class="text-red-500">*</span></label>
                     <input type="email" id="userEmail" class="input-field" placeholder="yourname@gmail.com">
                 </div>
                 
@@ -65,24 +71,31 @@
                     
                     <div class="space-y-3">
                         <div>
-                            <input type="text" id="userPhone1" class="input-field mono" placeholder="Primary e.g. 0712345678">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">Primary Number <span class="text-red-500">* Required</span></label>
+                            <input type="text" id="userPhone1" class="input-field mono" placeholder="e.g. 0712345678">
                         </div>
                         <div>
-                            <input type="text" id="userPhone2" class="input-field mono" placeholder="Backup 2 (Optional)">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Backup Number 2 <span class="text-gray-400 italic">(Optional)</span></label>
+                            <input type="text" id="userPhone2" class="input-field mono" placeholder="e.g. 0722000000">
                         </div>
                         <div>
-                            <input type="text" id="userPhone3" class="input-field mono" placeholder="Backup 3 (Optional)">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Backup Number 3 <span class="text-gray-400 italic">(Optional)</span></label>
+                            <input type="text" id="userPhone3" class="input-field mono" placeholder="e.g. 0733000000">
                         </div>
                     </div>
+                    <p class="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 p-3 rounded-xl mt-3 font-medium">
+                        ⚠️ **Strict System Rules:** Only payments arriving from your saved numbers will be authorized and automatically credited to your account.
+                    </p>
                 </div>
                 
-                <button id="saveProfileBtn" class="w-full bg-custom-green text-white font-extrabold py-4 rounded-xl mt-2 hover:opacity-95 transition-all shadow-md uppercase tracking-wider text-sm">
-                    Save Profile Permanently
+                <button id="saveProfileBtn" class="w-full bg-custom-green text-white font-extrabold py-4 rounded-xl mt-2 hover:opacity-95 transition-all active:scale-95 shadow-md uppercase tracking-wider text-sm">
+                    Save Profile & Unlock Dashboard
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- HEADER -->
     <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
         <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
         <p class="uppercase tracking-[4px] text-xs opacity-70">Live Account Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
@@ -90,139 +103,296 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
+        <!-- PERSISTENT USER PROFILE DASHBOARD CARD -->
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div>
-                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Logged-In Profile</p>
-                    <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight">...</h3>
+                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Active Payment Profile</p>
+                    <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight">Loading Profile...</h3>
                     <p id="cardDispEmail" class="text-xs text-gray-500 font-medium"></p>
                 </div>
-                <button onclick="editProfile()" class="text-xs font-bold text-custom-green bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-200/50">
-                    Change Numbers
+                <button onclick="editProfile()" class="text-xs font-bold text-custom-green bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-xl transition-all border border-emerald-200/50">
+                    Edit Profile
                 </button>
             </div>
-            <div id="cardDispPhones" class="flex flex-wrap gap-2"></div>
+            <div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Registered Funding Gates:</p>
+                <div id="cardDispPhones" class="flex flex-wrap gap-2">
+                    <!-- Phone badges injected here dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- SENSOR STATUS & APPROVAL CARD -->
+        <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-8 hidden transform transition-all scale-105">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+            </div>
+
+            <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4 status-success">
+                <div class="text-center">
+                    <p id="sensorMessage" class="text-lg font-bold">Waiting for payment...</p>
+                    <p class="text-xs opacity-75 mt-1">Details matched to account profile: <span id="matchedIdentity" class="font-bold"></span></p>
+                </div>
+                
+                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
+                    Approve & Add Funds
+                </button>
+            </div>
         </div>
 
+        <!-- PAYMENT PORTAL -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 italic">Secure Funding</h2>
-                <p class="text-xs text-gray-500 mt-1">Automatic credit active for your registered numbers.</p>
+                <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
+                <p class="text-xs text-gray-500 mt-1">Portal listening exclusively to your profile channels above.</p>
+                <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
             </div>
 
             <div class="payment-frame-container">
                 <iframe 
-                    src="https://paynecta.co.ke/pay/Unasemeje" 
+                    src="https://paynecta.co.ke/pay/unasemeje-" 
                     class="w-full h-full border-0"
-                    id="paymentPortalFrame">
+                    id="paymentPortalFrame"
+                    allow="payment">
                 </iframe>
             </div>
         </div>
     </div>
 
     <script>
+        const statusCard = document.getElementById('statusCard');
+        const sensorMessage = document.getElementById('sensorMessage');
+        const approveBtn = document.getElementById('approveBtn');
         const overlay = document.getElementById('identityOverlay');
         const saveBtn = document.getElementById('saveProfileBtn');
+        
+        // Profile Display Elements
         const profileCard = document.getElementById('profileCard');
         const cardDispName = document.getElementById('cardDispName');
         const cardDispEmail = document.getElementById('cardDispEmail');
         const cardDispPhones = document.getElementById('cardDispPhones');
+        const portalSection = document.getElementById('portalSection');
         const liveBalance = document.getElementById('liveBalance');
+        
+        let detectedAmount = 0;
+        let detectedReference = "";
+        let serverUserProfile = null; // Stored locally per runtime session strictly from server response
 
         const API_URL = '/api';
         const token = localStorage.getItem('token');
 
-        // 1. FETCH USER DATA FROM SERVER ON LOAD
-        async function loadUserData() {
+        // 1. INITIAL FETCH RUNTIME CHECK FROM BACKEND ENGINE
+        window.onload = async () => {
             if (!token) {
                 window.location.href = '/login';
                 return;
             }
+            await fetchUserProfileFromServer();
+        };
 
+        async function fetchUserProfileFromServer() {
             try {
                 const response = await fetch(`${API_URL}/me`, {
+                    method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                
+                if (!response.ok) throw new Error("Unauthorized user session credentials");
+                
                 const user = await response.json();
+                
+                // Track dynamic wallet balance mapping live
+                liveBalance.innerText = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
 
-                // Update Balance UI
-                liveBalance.innerText = `KES ${Number(user.balance || 0).toLocaleString()}`;
-
-                // Check if payment profile exists on the server
-                if (user.paymentPhone1) {
-                    overlay.style.display = 'none';
-                    profileCard.classList.remove('hidden');
+                // Build mapping payload structural parameters using the server keys
+                if (user.paymentPhone1 || user.paymentProfileName) {
+                    const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
                     
-                    cardDispName.innerText = user.paymentProfileName || user.username;
-                    cardDispEmail.innerText = user.paymentProfileEmail || user.email;
-                    
-                    const phones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
-                    cardDispPhones.innerHTML = phones.map(p => `
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 rounded-xl text-xs font-bold font-mono border border-emerald-100">
-                            ${p}
-                        </span>
-                    `).join('');
+                    serverUserProfile = {
+                        name: user.paymentProfileName || user.username || 'User Profile',
+                        email: user.paymentProfileEmail || user.email,
+                        phones: activePhones
+                    };
                 } else {
-                    overlay.style.display = 'flex';
+                    serverUserProfile = null;
                 }
+
+                renderProfileInterface();
+
             } catch (err) {
-                console.error("Session error:", err);
+                console.error("Critical Profile Synchronization Error:", err);
+                overlay.style.display = 'flex';
             }
         }
 
-        window.onload = loadUserData;
+        // Render profile card state or display form overlay if profile incomplete
+        function renderProfileInterface() {
+            if (serverUserProfile && serverUserProfile.name && serverUserProfile.email && serverUserProfile.phones.length > 0) {
+                overlay.style.display = 'none';
+                profileCard.classList.remove('hidden');
+                portalSection.classList.remove('opacity-40', 'pointer-events-none');
+                
+                // Set text outputs
+                cardDispName.innerText = serverUserProfile.name;
+                cardDispEmail.innerText = serverUserProfile.email;
+                
+                // Build interactive number elements safely
+                cardDispPhones.innerHTML = '';
+                serverUserProfile.phones.forEach((phone, idx) => {
+                    cardDispPhones.innerHTML += `
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200">
+                            <span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
+                            ${phone}
+                        </span>`;
+                });
+            } else {
+                // Completely lock the checkout ecosystem until profile data is finalized
+                overlay.style.display = 'flex';
+                profileCard.classList.add('hidden');
+                portalSection.classList.add('opacity-40', 'pointer-events-none');
+            }
+        }
 
-        // 2. SAVE PROFILE TO SERVER (NOT LOCALSTORAGE)
+        // Trigger safe edit mode modal overlay safely
+        function editProfile() {
+            if (!serverUserProfile) return;
+            overlay.style.display = 'flex';
+            document.getElementById('userName').value = serverUserProfile.name;
+            document.getElementById('userEmail').value = serverUserProfile.email;
+            document.getElementById('userPhone1').value = serverUserProfile.phones[0] || '';
+            document.getElementById('userPhone2').value = serverUserProfile.phones[1] || '';
+            document.getElementById('userPhone3').value = serverUserProfile.phones[2] || '';
+        }
+
+        // 2. PROFILE STRUCTURE PERSISTENCE SENT SECURELY TO DB VIA SECURED ROUTE API
         saveBtn.onclick = async () => {
             const name = document.getElementById('userName').value.trim();
             const email = document.getElementById('userEmail').value.trim();
-            const phones = [
-                document.getElementById('userPhone1').value.trim(),
-                document.getElementById('userPhone2').value.trim(),
-                document.getElementById('userPhone3').value.trim()
-            ].filter(p => p !== "");
+            
+            // Collect directly from distinct operational phone boxes
+            const p1 = document.getElementById('userPhone1').value.trim().replace(/\s/g, '');
+            const p2 = document.getElementById('userPhone2').value.trim().replace(/\s/g, '');
+            const p3 = document.getElementById('userPhone3').value.trim().replace(/\s/g, '');
 
-            if (!name || !email || phones.length === 0) {
-                alert("Please fill in your name and at least one phone number.");
+            // Rule Assertions: Required base structure validations
+            if (!name || !email || !p1) {
+                alert("Validation Failure: Name, Email, and Primary Phone Number are strictly required.");
                 return;
             }
 
+            // Build structural list arrays completely dropping empty optional slots
+            const validPhones = [p1];
+            if (p2) validPhones.push(p2);
+            if (p3) validPhones.push(p3);
+
             saveBtn.disabled = true;
-            saveBtn.innerHTML = `<span class="spinner"></span> Saving to Server...`;
+            saveBtn.innerHTML = `<span class="spinner"></span> Syncing to Secure Server Database...`;
 
             try {
-                const res = await fetch(`${API_URL}/user/update-payment-profile`, {
+                const response = await fetch(`${API_URL}/user/update-payment-profile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ name, email, phones })
+                    body: JSON.stringify({ name, email, phones: validPhones })
                 });
 
-                if (res.ok) {
-                    window.location.reload();
+                const data = await response.json();
+
+                if (response.ok || data.success) {
+                    // Pull fresh configurations directly from server schema registers
+                    await fetchUserProfileFromServer();
                 } else {
-                    alert("Error saving profile. Try again.");
+                    alert("Database write error: " + (data.message || "Failed to commit parameters securely."));
                 }
             } catch (err) {
-                alert("Network error.");
+                alert("Critical connectivity disruption encountered while committing variables to the remote host server.");
             } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerHTML = "Save Profile Permanently";
+                saveBtn.innerHTML = "Save Profile & Unlock Dashboard";
             }
         };
 
-        function editProfile() {
-            overlay.style.display = 'flex';
-        }
-
-        // Webhook listener - Optional for immediate UI feedback
+        // 3. SECURED TRACKING ENGINE: FILTER OUT OUTSIDE/UNSAVED CHANNELS
         window.addEventListener("message", (event) => {
-            if (event.data.status === "completed") {
-                setTimeout(() => window.location.reload(), 3000);
+            if (!event.origin.includes("paynecta.co.ke")) return;
+
+            const data = event.data;
+            const isFinished = data.event === "payment.completed" || data.status === "completed" || data.status === "success";
+
+            if (isFinished) {
+                const incomingPhone = (data.phone || "").toString().trim();
+                
+                if (!serverUserProfile || !serverUserProfile.phones) return;
+
+                // Match incoming source number to user-saved explicit profile channels
+                const isMatched = serverUserProfile.phones.some(p => incomingPhone.includes(p) || p.includes(incomingPhone));
+
+                if (isMatched) {
+                    detectedAmount = data.amount || 0;
+                    detectedReference = data.reference || "TXN-" + Date.now();
+                    showSensorPopup(detectedAmount, detectedReference);
+                } else {
+                    alert("Security Rejection: Incoming payment detected, but your profile parameters do not recognize this number. Please utilize an explicit registered account funding gate.");
+                }
             }
         });
+
+        // 4. TRANSACTION ENGINE APPROVAL FLOW
+        function showSensorPopup(amount, reference) {
+            statusCard.classList.remove('hidden');
+            document.getElementById('matchedIdentity').innerText = serverUserProfile.name;
+            
+            const formattedAmount = Number(amount).toLocaleString('en-KE', {
+                style: 'currency',
+                currency: 'KES'
+            });
+
+            sensorMessage.innerHTML = `Successfully verified <span class="text-2xl block text-emerald-800 font-extrabold mt-1">${formattedAmount}</span>`;
+            statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            approveBtn.onclick = async () => {
+                approveBtn.disabled = true;
+                approveBtn.innerHTML = `<span class="spinner"></span> Syncing to ${serverUserProfile.email}...`;
+
+                try {
+                    const response = await fetch(`${API_URL}/paynecta/credit-verify`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ 
+                            amount: Number(amount), 
+                            reference: reference,
+                            user_email: serverUserProfile.email,
+                            user_full_name: serverUserProfile.name
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        sensorMessage.innerHTML = `🎉 Success! Account Balance Synced.`;
+                        approveBtn.style.display = 'none';
+                        setTimeout(() => window.location.reload(), 2000);
+                    } else {
+                        sensorMessage.innerText = "Error: " + (result.message || "Failed to credit.");
+                        approveBtn.innerHTML = "Retry Sync";
+                        approveBtn.disabled = false;
+                    }
+                } catch (err) {
+                    sensorMessage.innerText = "Connection error occurred. Server synchronization fallback active.";
+                    approveBtn.disabled = false;
+                }
+            };
+        }
     </script>
 </body>
 </html>
