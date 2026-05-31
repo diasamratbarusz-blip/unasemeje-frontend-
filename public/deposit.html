@@ -184,7 +184,6 @@ button:disabled{
 
 <div class="box">
 
-    <!-- HEADER -->
     <div class="header">
 
         <h2>💸 M-Pesa Direct</h2>
@@ -195,10 +194,8 @@ button:disabled{
 
     </div>
 
-    <!-- FORM -->
     <form id="depositForm">
 
-        <!-- PHONE -->
         <div class="input-group">
 
             <label for="phone">
@@ -214,7 +211,6 @@ button:disabled{
 
         </div>
 
-        <!-- AMOUNT -->
         <div class="input-group">
 
             <label for="amount">
@@ -230,7 +226,6 @@ button:disabled{
 
         </div>
 
-        <!-- BUTTON -->
         <button type="submit" id="btn">
 
             <span class="loader" id="loader"></span>
@@ -243,10 +238,8 @@ button:disabled{
 
     </form>
 
-    <!-- STATUS -->
     <div id="statusBox" class="status-box"></div>
 
-    <!-- FOOTER -->
     <p class="footer-note">
         Securely processed via Safaricom Daraja API & Paynecta Gateway
     </p>
@@ -258,7 +251,10 @@ button:disabled{
 // ======================================
 // API CONFIG
 // ======================================
-const API_BASE = "https://unasemeje-backend-3.onrender.com/api";
+// Using relative path to stay consistent with your server.js setup
+const API_BASE = window.location.hostname === "localhost" 
+    ? "http://localhost:3000/api" 
+    : "/api";
 
 // ======================================
 // ELEMENTS
@@ -321,7 +317,7 @@ function formatPhone(phone){
         phone = "254" + phone.substring(1);
     }
 
-    if(phone.startsWith("7")){
+    if(phone.startsWith("7") || phone.startsWith("1")){
         phone = "254" + phone;
     }
 
@@ -353,23 +349,22 @@ async function depositNow(amount, phone, token){
 
         const data = await response.json();
 
-        console.log("PAYMENT RESPONSE:",data);
-
         if(response.ok){
 
             showStatus(
-                "✅ STK Push sent successfully.<br>Please check your phone and enter your M-PESA PIN.",
+                "✅ STK Push sent successfully.<br>Please enter your PIN. You will be redirected shortly.",
                 "success"
             );
 
             document.getElementById("phone").value = "";
             document.getElementById("amount").value = "";
 
-            if(data.CheckoutRequestID){
-                checkTransactionStatus(data.CheckoutRequestID);
-            }
+            // Redirect back to add-funds after 5 seconds to allow time for PIN entry
+            setTimeout(() => {
+                window.location.href = "/add-funds";
+            }, 5000);
 
-        }else{
+        } else {
 
             showStatus(
                 `❌ ${data.error || data.message || "Payment failed"}`,
@@ -378,25 +373,11 @@ async function depositNow(amount, phone, token){
         }
 
     }catch(error){
-
-        console.log("PAYMENT ERROR:",error);
-
         showStatus(
             "❌ Connection Error: Server unavailable",
             "error"
         );
     }
-}
-
-// ======================================
-// CHECK STATUS
-// ======================================
-async function checkTransactionStatus(checkoutID){
-
-    console.log("Checking payment status for:",checkoutID);
-
-    // Optional future implementation
-    // Poll backend every few seconds
 }
 
 // ======================================
@@ -409,59 +390,33 @@ form.addEventListener("submit",async(e)=>{
     const token = localStorage.getItem("token");
 
     if(!token){
-
-        showStatus(
-            "❌ Session expired. Please login again.",
-            "error"
-        );
-
-        setTimeout(()=>{
-            window.location.href = "login.html";
-        },1500);
-
+        showStatus("❌ Session expired. Please login again.", "error");
+        setTimeout(()=>{ window.location.href = "/home"; }, 1500);
         return;
     }
 
     let phone = document.getElementById("phone").value.trim();
-
     const amount = document.getElementById("amount").value.trim();
 
-    // FORMAT PHONE
     phone = formatPhone(phone);
 
-    // VALIDATION
-    if(!/^2547\d{8}$/.test(phone)){
-
-        showStatus(
-            "❌ Invalid Safaricom phone number format",
-            "error"
-        );
-
+    // Validation for Safaricom numbers (7xx or 1xx)
+    if(!/^254[71]\d{8}$/.test(phone)){
+        showStatus("❌ Invalid phone format. Use 07... or 01...", "error");
         return;
     }
 
     if(!amount || Number(amount) < 1){
-
-        showStatus(
-            "❌ Amount must be greater than 0",
-            "error"
-        );
-
+        showStatus("❌ Amount must be greater than 0", "error");
         return;
     }
 
-    // START LOADING
     setLoading(true);
-
-    // HIDE OLD STATUS
     statusBox.style.display = "none";
 
-    // INITIATE PAYMENT
     await depositNow(amount,phone,token);
 
-    // STOP LOADING
     setLoading(false);
-
 });
 
 </script>
