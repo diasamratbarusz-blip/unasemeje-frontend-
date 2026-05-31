@@ -294,7 +294,8 @@
             saveBtn.innerHTML = `<span class="spinner"></span> Registering Profile...`;
 
             try {
-                const response = await fetch(`${API_URL}/update-payment-profile`, {
+                // Updated context url target to match user-profile routes perfectly
+                const response = await fetch(`${API_URL}/user/update-payment-profile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -312,7 +313,7 @@
                     alert("Error: " + (data.error || "Could not register profile."));
                 }
             } catch (err) {
-                alert("Server connection failed.");
+                alert("Server connection failed. Verify your network or background deployment context configuration.");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = "Save Profile & Unlock Dashboard";
