@@ -172,15 +172,15 @@
         
         let detectedAmount = 0;
         let detectedReference = "";
-        let serverUserProfile = null; // Stored locally per runtime session strictly from server response
+        let serverUserProfile = null; 
 
-        const API_URL = '/api';
+        const API_URL = 'https://unasemeje-backend-3.onrender.com/api'; // Matches auth.js
         const token = localStorage.getItem('token');
 
         // 1. INITIAL FETCH RUNTIME CHECK FROM BACKEND ENGINE
         window.onload = async () => {
             if (!token) {
-                window.location.href = '/login';
+                window.location.href = 'index.html';
                 return;
             }
             await fetchUserProfileFromServer();
@@ -197,10 +197,10 @@
                 
                 const user = await response.json();
                 
-                // Track dynamic wallet balance mapping live
+                // Track dynamic wallet balance
                 liveBalance.innerText = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
 
-                // Build mapping payload structural parameters using the server keys
+                // Map database fields to the UI profile
                 if (user.paymentPhone1 || user.paymentProfileName) {
                     const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
                     
@@ -221,18 +221,15 @@
             }
         }
 
-        // Render profile card state or display form overlay if profile incomplete
         function renderProfileInterface() {
             if (serverUserProfile && serverUserProfile.name && serverUserProfile.email && serverUserProfile.phones.length > 0) {
                 overlay.style.display = 'none';
                 profileCard.classList.remove('hidden');
                 portalSection.classList.remove('opacity-40', 'pointer-events-none');
                 
-                // Set text outputs
                 cardDispName.innerText = serverUserProfile.name;
                 cardDispEmail.innerText = serverUserProfile.email;
                 
-                // Build interactive number elements safely
                 cardDispPhones.innerHTML = '';
                 serverUserProfile.phones.forEach((phone, idx) => {
                     cardDispPhones.innerHTML += `
@@ -242,14 +239,12 @@
                         </span>`;
                 });
             } else {
-                // Completely lock the checkout ecosystem until profile data is finalized
                 overlay.style.display = 'flex';
                 profileCard.classList.add('hidden');
                 portalSection.classList.add('opacity-40', 'pointer-events-none');
             }
         }
 
-        // Trigger safe edit mode modal overlay safely
         function editProfile() {
             if (!serverUserProfile) return;
             overlay.style.display = 'flex';
@@ -260,32 +255,28 @@
             document.getElementById('userPhone3').value = serverUserProfile.phones[2] || '';
         }
 
-        // 2. PROFILE STRUCTURE PERSISTENCE SENT SECURELY TO DB VIA SECURED ROUTE API
+        // 2. PROFILE PERSISTENCE (Matches Backend Route)
         saveBtn.onclick = async () => {
             const name = document.getElementById('userName').value.trim();
             const email = document.getElementById('userEmail').value.trim();
-            
-            // Collect directly from distinct operational phone boxes
             const p1 = document.getElementById('userPhone1').value.trim().replace(/\s/g, '');
             const p2 = document.getElementById('userPhone2').value.trim().replace(/\s/g, '');
             const p3 = document.getElementById('userPhone3').value.trim().replace(/\s/g, '');
 
-            // Rule Assertions: Required base structure validations
             if (!name || !email || !p1) {
                 alert("Validation Failure: Name, Email, and Primary Phone Number are strictly required.");
                 return;
             }
 
-            // Build structural list arrays completely dropping empty optional slots
             const validPhones = [p1];
             if (p2) validPhones.push(p2);
             if (p3) validPhones.push(p3);
 
             saveBtn.disabled = true;
-            saveBtn.innerHTML = `<span class="spinner"></span> Syncing to Secure Server Database...`;
+            saveBtn.innerHTML = `<span class="spinner"></span> Syncing to Database...`;
 
             try {
-                // CHANGED: Removed the extra '/user' from the endpoint path to match backend routes
+                // Pointing to /api/update-payment-profile as defined in server.js
                 const response = await fetch(`${API_URL}/update-payment-profile`, {
                     method: 'POST',
                     headers: {
@@ -298,13 +289,12 @@
                 const data = await response.json();
 
                 if (response.ok || data.success) {
-                    // Pull fresh configurations directly from server schema registers
                     await fetchUserProfileFromServer();
                 } else {
-                    alert("Database write error: " + (data.message || "Failed to commit parameters securely."));
+                    alert("Database write error: " + (data.error || "Failed to commit parameters."));
                 }
             } catch (err) {
-                alert("Critical connectivity disruption encountered while committing variables to the remote host server.");
+                alert("Critical connectivity disruption encountered.");
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = "Save Profile & Unlock Dashboard";
@@ -319,19 +309,18 @@
             const isFinished = data.event === "payment.completed" || data.status === "completed" || data.status === "success";
 
             if (isFinished) {
-                const incomingPhone = (data.phone || "").toString().trim();
+                const incomingPhone = (data.phone || data.mobile_number || "").toString().trim();
                 
                 if (!serverUserProfile || !serverUserProfile.phones) return;
 
-                // Match incoming source number to user-saved explicit profile channels
                 const isMatched = serverUserProfile.phones.some(p => incomingPhone.includes(p) || p.includes(incomingPhone));
 
                 if (isMatched) {
                     detectedAmount = data.amount || 0;
-                    detectedReference = data.reference || "TXN-" + Date.now();
+                    detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
                     showSensorPopup(detectedAmount, detectedReference);
                 } else {
-                    alert("Security Rejection: Incoming payment detected, but your profile parameters do not recognize this number. Please utilize an explicit registered account funding gate.");
+                    alert("Security Rejection: Incoming payment detected, but your profile parameters do not recognize this number.");
                 }
             }
         });
@@ -354,7 +343,8 @@
                 approveBtn.innerHTML = `<span class="spinner"></span> Syncing to ${serverUserProfile.email}...`;
 
                 try {
-                    const response = await fetch(`${API_URL}/paynecta/credit-verify`, {
+                    // Manual approval fallback (Triggered when the webhook might be slow)
+                    const response = await fetch(`${API_URL}/deposit`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -362,25 +352,23 @@
                         },
                         body: JSON.stringify({ 
                             amount: Number(amount), 
-                            reference: reference,
-                            user_email: serverUserProfile.email,
-                            user_full_name: serverUserProfile.name
+                            transactionCode: reference
                         })
                     });
 
                     const result = await response.json();
 
-                    if (result.success) {
-                        sensorMessage.innerHTML = `🎉 Success! Account Balance Synced.`;
+                    if (response.ok) {
+                        sensorMessage.innerHTML = `🎉 Deposit Logged! Waiting for Webhook Sync...`;
                         approveBtn.style.display = 'none';
-                        setTimeout(() => window.location.reload(), 2000);
+                        setTimeout(() => window.location.reload(), 3000);
                     } else {
-                        sensorMessage.innerText = "Error: " + (result.message || "Failed to credit.");
+                        sensorMessage.innerText = "Error: " + (result.error || "Failed to credit.");
                         approveBtn.innerHTML = "Retry Sync";
                         approveBtn.disabled = false;
                     }
                 } catch (err) {
-                    sensorMessage.innerText = "Connection error occurred. Server synchronization fallback active.";
+                    sensorMessage.innerText = "Connection error occurred.";
                     approveBtn.disabled = false;
                 }
             };
