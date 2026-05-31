@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Funds - Unasemeje</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- PAYNECTA WIDGET SCRIPT -->
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
     <style>
@@ -50,7 +47,6 @@
 
 <body class="min-h-screen">
 
-    <!-- IDENTITY VERIFICATION MODAL -->
     <div id="identityOverlay">
         <div class="bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Setup Payment Profile</h2>
@@ -95,7 +91,6 @@
         </div>
     </div>
 
-    <!-- HEADER -->
     <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
         <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
         <p class="uppercase tracking-[4px] text-xs opacity-70">Live Account Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
@@ -103,7 +98,6 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
-        <!-- PERSISTENT USER PROFILE DASHBOARD CARD -->
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div>
@@ -118,12 +112,10 @@
             <div>
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Registered Funding Gates:</p>
                 <div id="cardDispPhones" class="flex flex-wrap gap-2">
-                    <!-- Phone badges injected here dynamically -->
-                </div>
+                    </div>
             </div>
         </div>
         
-        <!-- SENSOR STATUS & APPROVAL CARD -->
         <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-8 hidden transform transition-all scale-105">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
@@ -145,7 +137,6 @@
             </div>
         </div>
 
-        <!-- PAYMENT PORTAL -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
@@ -294,7 +285,8 @@
             saveBtn.innerHTML = `<span class="spinner"></span> Syncing to Secure Server Database...`;
 
             try {
-                const response = await fetch(`${API_URL}/user/update-payment-profile`, {
+                // CHANGED: Removed the extra '/user' from the endpoint path to match backend routes
+                const response = await fetch(`${API_URL}/update-payment-profile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
