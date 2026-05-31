@@ -3,368 +3,240 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Funds - AI Photo Capture</title>
+    <title>Add Funds - Unasemeje</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #000; color: white; overflow-x: hidden; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* Camera Lens Viewport */
-        .camera-lens {
-            position: relative;
-            width: 100%;
-            height: 550px;
-            background: #111;
-            border-radius: 40px;
-            overflow: hidden;
-            border: 2px solid #334155;
-        }
-
-        /* Scanning Laser */
-        .laser-scanner {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: #10b981;
-            box-shadow: 0 0 20px #10b981, 0 0 40px #10b981;
-            z-index: 100;
-            animation: moveScanner 4s infinite linear;
-        }
-        @keyframes moveScanner { 0% { top: 0%; } 100% { top: 100%; } }
-
-        /* The Flash */
-        #photoFlash {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: white;
-            z-index: 200;
-            opacity: 0;
-            pointer-events: none;
-        }
-        .do-flash { animation: flashAnim 0.5s ease-out; }
-        @keyframes flashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
-
-        /* Screenshot Image Area in Result */
-        .captured-frame {
-            width: 100%;
-            height: 180px;
-            background: #000;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-            position: relative;
-            margin-bottom: 20px;
-        }
-        .captured-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: contrast(1.2) brightness(0.9) saturate(1.2);
-        }
-
-        /* Result Drawer */
-        #analysisDrawer {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background: #ffffff;
-            color: #000;
-            border-radius: 35px 35px 0 0;
-            padding: 25px;
-            transform: translateY(100%);
-            transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-            z-index: 1000;
-            box-shadow: 0 -30px 100px rgba(0,0,0,0.8);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        #analysisDrawer.active { transform: translateY(0); }
-
-        /* Profile Modal Overlay */
-        #profileOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            backdrop-blur: 10px;
-        }
-
-        iframe { width: 100%; height: 100%; border: none; background: white; }
+        body{ font-family:'Plus Jakarta Sans',sans-serif; background:#f5f7fb; }
+        .bg-custom-green{ background:#11453b; }
+        .status-success{ background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; }
         
-        .shutter-ring {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 6px solid #10b981;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
+        .payment-frame-container {
+            width: 100%; height: 650px; border-radius: 24px;
+            overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb; background: #ffffff;
         }
-        .shutter-ring:active { transform: scale(0.9); border-color: #fff; }
-        .shutter-inside { width: 55px; height: 55px; background: white; border-radius: 50%; }
 
-        input { background: #18181b; border: 1px solid #27272a; color: white; border-radius: 12px; padding: 12px; width: 100%; outline: none; }
-        input:focus { border-color: #10b981; }
+        /* Identity Overlay */
+        #identityOverlay {
+            position: fixed; inset: 0; background: rgba(17, 69, 59, 0.9);
+            z-index: 1000; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px); padding: 20px;
+        }
+
+        .input-field {
+            width: 100%; background: #f9fafb; border: 1px solid #e5e7eb;
+            padding: 12px 16px; border-radius: 12px; margin-top: 4px; outline: none; transition: 0.2s;
+        }
+        .input-field:focus { border-color: #11453b; ring: 2px solid #11453b; }
+
+        .spinner {
+            width: 18px; height: 18px; border: 2px solid #ffffff;
+            border-bottom-color: transparent; border-radius: 50%;
+            display: inline-block; animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 
 <body class="min-h-screen">
 
-    <div id="profileOverlay">
-        <div class="bg-zinc-900 w-full max-w-md p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
-            <h2 class="text-2xl font-black mb-2 text-emerald-500 italic">LINK PAYMENT PROFILE</h2>
-            <p class="text-xs text-zinc-400 mb-6 font-bold uppercase tracking-widest">Verify identity before adding funds</p>
+    <div id="identityOverlay">
+        <div class="bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl">
+            <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Payment Profile</h2>
+            <p class="text-sm text-gray-500 mb-6">Enter your details to enable M-PESA auto-detection.</p>
             
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-1">Full Name</label>
-                    <input type="text" id="setupName" placeholder="John Doe">
+                    <label class="text-xs font-bold text-gray-600 uppercase ml-1">First & Last Name</label>
+                    <input type="text" id="userName" class="input-field" placeholder="e.g. Peter Kamau">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-1">Registered Email</label>
-                    <input type="email" id="setupEmail" placeholder="user@example.com">
+                    <label class="text-xs font-bold text-gray-600 uppercase ml-1">Account Email</label>
+                    <input type="email" id="userEmail" class="input-field" placeholder="yourname@gmail.com">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-zinc-500 uppercase ml-1">Payment Numbers (Max 3, comma separated)</label>
-                    <input type="text" id="setupPhones" placeholder="254712345678, 254787654321">
-                    <p class="text-[8px] text-zinc-500 mt-1 italic">* Payments from these numbers will be auto-detected.</p>
+                    <label class="text-xs font-bold text-gray-600 uppercase ml-1">M-PESA Number(s) - Max 3</label>
+                    <input type="text" id="userPhones" class="input-field" placeholder="0712345678, 0787654321">
+                    <p class="text-[10px] text-gray-400 mt-2 italic">Separate numbers with a comma. These are the ONLY numbers the system will detect.</p>
                 </div>
                 
-                <button id="saveProfileBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl mt-4 shadow-lg transition-all active:scale-95 uppercase tracking-widest text-sm">
-                    Activate AI Scanner
+                <button id="saveProfileBtn" class="w-full bg-custom-green text-white font-bold py-4 rounded-xl mt-4 hover:opacity-90 transition-all active:scale-95">
+                    Save & Start Payment
                 </button>
             </div>
         </div>
     </div>
 
-    <div class="p-5 flex justify-between items-center bg-black/80 backdrop-blur-md sticky top-0 z-[200]">
-        <div>
-            <h1 class="text-lg font-black italic text-emerald-500 uppercase">Unasemeje Optical</h1>
-            <div class="flex items-center gap-2">
-                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                <p id="aiLabel" class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Vision Mode: Tracking</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-             <div class="text-right">
-                <p class="text-[7px] text-zinc-600 font-bold uppercase">Frame Quality</p>
-                <p class="text-[10px] font-black text-emerald-500">1080p</p>
-            </div>
-            <button onclick="window.location.reload()" class="p-2 bg-zinc-900 rounded-xl">
-                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            </button>
-        </div>
+    <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
+        <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
+        <p class="uppercase tracking-[4px] text-xs opacity-70">Secured M-PESA Payment Sensor Active</p>
     </div>
 
-    <div class="max-w-2xl mx-auto px-4 pt-2">
-        <div class="camera-lens" id="lens">
-            <div id="photoFlash"></div>
-            <div class="laser-scanner"></div>
-            
-            <iframe src="https://paynecta.co.ke/pay/unasemeje-" id="payPortal"></iframe>
-        </div>
-
-        <div class="mt-8 flex flex-col items-center gap-3">
-            <div id="captureBtn" class="shutter-ring">
-                <div class="shutter-inside"></div>
-            </div>
-            <p class="text-[10px] text-zinc-600 font-black uppercase tracking-widest">Tap to capture screenshot</p>
-        </div>
-    </div>
-
-    <div id="analysisDrawer">
-        <div class="w-10 h-1 bg-zinc-200 rounded-full mx-auto mb-6"></div>
+    <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-8">
         
-        <div class="flex items-center gap-3 mb-6">
-            <div class="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+        <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-8 hidden transform transition-all scale-105">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
             </div>
-            <div>
-                <h2 class="text-xl font-black">AI Frame Analysis</h2>
-                <p class="text-xs text-zinc-400">Captured: <span id="capTimestamp">Just now</span></p>
+
+            <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4 status-success">
+                <div class="text-center">
+                    <p id="sensorMessage" class="text-lg font-bold">Waiting for payment...</p>
+                    <p class="text-xs opacity-75 mt-1">Details matched to: <span id="matchedIdentity" class="font-bold"></span></p>
+                </div>
+                
+                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
+                    Approve & Add Funds
+                </button>
             </div>
         </div>
 
-        <div class="captured-frame">
-            <div class="absolute top-2 left-2 bg-emerald-600 text-white text-[8px] font-bold px-2 py-0.5 rounded-full z-10 uppercase">Captured Screenshot</div>
-            <img id="screenshotDisplay" src="https://paynecta.co.ke/favicon.ico" alt="Scanned Frame">
-        </div>
-
-        <div class="space-y-4 mb-8">
-            <div class="bg-zinc-50 p-5 rounded-3xl border border-zinc-100 flex items-center gap-4">
-                <div id="resInitial" class="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center text-white font-black text-xl">?</div>
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+            <div class="mb-6 flex justify-between items-end">
                 <div>
-                    <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest">Extracted Name</p>
-                    <p id="resName" class="text-lg font-black text-zinc-900 leading-tight">Processing...</p>
-                    <p id="resPhone" class="text-xs font-bold text-emerald-600 mono">+254 *** *** ***</p>
+                    <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
+                    <p class="text-xs text-gray-500 mt-1">Portal active for registered numbers only.</p>
                 </div>
+                <button onclick="clearProfile()" class="text-[10px] font-bold text-red-500 uppercase border-b border-red-500 pb-1">Edit My Profile</button>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-zinc-50 p-5 rounded-3xl border border-zinc-100">
-                    <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">Total Amount</p>
-                    <p id="resAmount" class="text-2xl font-black text-emerald-700">KES 0.00</p>
-                </div>
-                <div class="bg-zinc-50 p-5 rounded-3xl border border-zinc-100">
-                    <p class="text-[9px] font-black text-zinc-400 uppercase tracking-widest mb-1">M-PESA Code</p>
-                    <p id="resRef" class="text-sm font-bold mono text-zinc-800 uppercase">AWAITING</p>
-                </div>
+            <div class="payment-frame-container">
+                <iframe 
+                    src="https://paynecta.co.ke/pay/unasemeje-" 
+                    class="w-full h-full border-0"
+                    id="paymentPortalFrame"
+                    allow="payment">
+                </iframe>
             </div>
         </div>
-
-        <button id="approveBtn" class="w-full bg-zinc-900 hover:bg-black text-white font-black py-5 rounded-[2rem] shadow-xl transition-all active:scale-95">
-            APPROVE & SYNC BALANCE
-        </button>
     </div>
 
     <script>
-        const captureBtn = document.getElementById('captureBtn');
-        const flash = document.getElementById('photoFlash');
-        const drawer = document.getElementById('analysisDrawer');
-        const resName = document.getElementById('resName');
-        const resPhone = document.getElementById('resPhone');
-        const resAmount = document.getElementById('resAmount');
-        const resRef = document.getElementById('resRef');
-        const resInitial = document.getElementById('resInitial');
-        const aiLabel = document.getElementById('aiLabel');
-        const timestamp = document.getElementById('capTimestamp');
+        const statusCard = document.getElementById('statusCard');
+        const sensorMessage = document.getElementById('sensorMessage');
         const approveBtn = document.getElementById('approveBtn');
-        const profileOverlay = document.getElementById('profileOverlay');
-        const saveProfileBtn = document.getElementById('saveProfileBtn');
+        const overlay = document.getElementById('identityOverlay');
+        const saveBtn = document.getElementById('saveProfileBtn');
+        
+        let detectedAmount = 0;
+        let detectedReference = "";
+        let userProfile = JSON.parse(localStorage.getItem('unasemeje_profile'));
 
-        let lastDetectedData = null;
-        let userProfile = JSON.parse(localStorage.getItem('user_payment_profile'));
         const API_URL = '/api';
 
-        // 1. CHECK IF PROFILE EXISTS ON LOAD
+        // 1. CHECK FOR PROFILE ON LOAD
         window.onload = () => {
             if (userProfile) {
-                profileOverlay.style.display = 'none';
+                overlay.style.display = 'none';
             }
         };
 
-        // 2. SAVE PROFILE ACTION
-        saveProfileBtn.onclick = async () => {
-            const name = document.getElementById('setupName').value;
-            const email = document.getElementById('setupEmail').value;
-            const phones = document.getElementById('setupPhones').value.split(',').map(p => p.trim());
+        function clearProfile() {
+            localStorage.removeItem('unasemeje_profile');
+            window.location.reload();
+        }
 
-            if (!name || !email || phones.length === 0) {
-                alert("Please fill all fields.");
+        // 2. SAVE PROFILE LOGIC
+        saveBtn.onclick = () => {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const phones = document.getElementById('userPhones').value.split(',').map(p => p.trim().replace(/\s/g, ''));
+
+            if (!name || !email || !phones[0]) {
+                alert("Please fill in all details to proceed.");
                 return;
             }
+
             if (phones.length > 3) {
-                alert("Maximum 3 phone numbers allowed.");
+                alert("You can only register up to 3 payment numbers.");
                 return;
             }
 
-            const profileData = { name, email, phones };
-            localStorage.setItem('user_payment_profile', JSON.stringify(profileData));
-            userProfile = profileData;
-            
-            saveProfileBtn.innerHTML = "VERIFYING...";
-            
-            // Optional: Send this to your server to update the database
-            setTimeout(() => {
-                profileOverlay.style.display = 'none';
-            }, 1000);
+            userProfile = { name, email, phones };
+            localStorage.setItem('unasemeje_profile', JSON.stringify(userProfile));
+            overlay.style.display = 'none';
         };
 
-        // 3. MONITORING SENSOR (Detection Logic)
-        const sensor = setInterval(async () => {
-            const token = localStorage.getItem('token');
-            if (!token || !userProfile) return;
+        // 3. SENSOR: LISTENING FOR PAYMENT
+        window.addEventListener("message", (event) => {
+            if (!event.origin.includes("paynecta.co.ke")) return;
 
-            try {
-                const response = await fetch(`${API_URL}/paynecta/status-check`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const result = await response.json();
+            const data = event.data;
+            const isFinished = data.event === "payment.completed" || data.status === "completed" || data.status === "success";
 
-                if (result.success && result.data.status === 'completed') {
-                    const detectedPhone = result.data.phone.toString();
-                    
-                    // TARGET LOCK: Only allow if the phone number matches one of the saved 3
-                    if (userProfile.phones.includes(detectedPhone)) {
-                        lastDetectedData = result.data;
-                        aiLabel.innerText = "Vision Mode: Target Locked ✓";
-                        aiLabel.classList.replace('text-zinc-500', 'text-emerald-500');
-                    } else {
-                        aiLabel.innerText = "Vision Mode: Non-User Payment Detected";
-                    }
-                }
-            } catch (e) {}
-        }, 3500);
+            if (isFinished) {
+                const incomingPhone = (data.phone || "").toString();
+                
+                // DETECTION LOGIC: Verify if the phone number used is in the user's saved list
+                const isMatched = userProfile.phones.some(p => incomingPhone.includes(p) || p.includes(incomingPhone));
 
-        // 4. CAPTURE SCREEN ACTION
-        captureBtn.onclick = () => {
-            flash.classList.add('do-flash');
-            if (window.navigator.vibrate) window.navigator.vibrate(100);
-            setTimeout(() => flash.classList.remove('do-flash'), 500);
-
-            if (!lastDetectedData) {
-                alert("AI Scanner: No payment detected from your registered numbers.");
-                return;
-            }
-
-            aiLabel.innerText = "AI: Analyzing Visual Frame...";
-            captureBtn.style.opacity = "0.5";
-            captureBtn.disabled = true;
-
-            setTimeout(() => {
-                resName.innerText = lastDetectedData.customer_name || userProfile.name;
-                resPhone.innerText = `+${lastDetectedData.phone}`;
-                resAmount.innerText = `KES ${Number(lastDetectedData.amount).toLocaleString()}`;
-                resRef.innerText = lastDetectedData.reference;
-                resInitial.innerText = (userProfile.name).charAt(0);
-                timestamp.innerText = new Date().toLocaleTimeString();
-
-                drawer.classList.add('active');
-                aiLabel.innerText = "Vision Mode: Analysis Complete";
-                captureBtn.style.opacity = "1";
-                captureBtn.disabled = false;
-            }, 1200);
-        };
-
-        // 5. FINAL SYNC
-        approveBtn.onclick = async () => {
-            const token = localStorage.getItem('token');
-            approveBtn.disabled = true;
-            approveBtn.innerHTML = `<span class="animate-pulse">SYNCING DATA...</span>`;
-
-            try {
-                const res = await fetch(`${API_URL}/paynecta/credit-verify`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ 
-                        amount: Number(lastDetectedData.amount), 
-                        reference: lastDetectedData.reference,
-                        email: userProfile.email // Attached email for backend crediting
-                    })
-                });
-
-                const result = await res.json();
-                if (result.success) {
-                    approveBtn.innerHTML = `SUCCESS: BALANCE UPDATED`;
-                    setTimeout(() => window.location.reload(), 2000);
+                if (isMatched) {
+                    detectedAmount = data.amount || 0;
+                    detectedReference = data.reference || "TXN-" + Date.now();
+                    showSensorPopup(detectedAmount, detectedReference);
                 } else {
-                    alert("Balance sync failed. Refreshing dashboard...");
-                    window.location.reload();
+                    alert("Payment detected but the number doesn't match your registered profile. Please use your saved numbers.");
                 }
-            } catch (err) {
-                alert("Network error. Your balance will update shortly.");
-                window.location.reload();
             }
-        };
+        });
+
+        function showSensorPopup(amount, reference) {
+            statusCard.classList.remove('hidden');
+            document.getElementById('matchedIdentity').innerText = userProfile.name;
+            
+            const formattedAmount = Number(amount).toLocaleString('en-KE', {
+                style: 'currency',
+                currency: 'KES'
+            });
+
+            sensorMessage.innerHTML = `Successfully detected <span class="text-2xl block text-emerald-800">${formattedAmount}</span>`;
+            statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            approveBtn.onclick = async () => {
+                const token = localStorage.getItem('token');
+                approveBtn.disabled = true;
+                approveBtn.innerHTML = `<span class="spinner"></span> Syncing to ${userProfile.email}...`;
+
+                try {
+                    const response = await fetch(`${API_URL}/paynecta/credit-verify`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ 
+                            amount: Number(amount), 
+                            reference: reference,
+                            user_email: userProfile.email,
+                            user_full_name: userProfile.name
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        sensorMessage.innerHTML = `🎉 Success! Account Credited.`;
+                        approveBtn.style.display = 'none';
+                        setTimeout(() => window.location.reload(), 2000);
+                    } else {
+                        sensorMessage.innerText = "Error: " + (result.message || "Failed to credit.");
+                        approveBtn.innerHTML = "Retry Approval";
+                        approveBtn.disabled = false;
+                    }
+                } catch (err) {
+                    sensorMessage.innerText = "Connection error. Please refresh.";
+                    approveBtn.disabled = false;
+                }
+            };
+        }
     </script>
 </body>
 </html>
