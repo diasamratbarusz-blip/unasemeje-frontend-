@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="page-title">Join unasemeje ø dia | Authentic SMM Registration</title>
+  <title>Join unasemeje ø dia | Authentic SMM Registration</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -110,11 +110,6 @@
     
     /* WhatsApp Float */
     .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; }
-    
-    /* Notification styling */
-    .feedback-message { padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 600; text-align: center; margin-bottom: 20px; display: none; }
-    .feedback-success { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
-    .feedback-error { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
   </style>
 </head>
 <body>
@@ -127,68 +122,53 @@
 <section class="main-content">
   <div class="signup-card">
     <div class="info-box">
-      <p id="info-box-text">Need help with your registration?<br>Talk to our Kenyan support team.</p>
+      <p>Need help with your registration?<br>Talk to our Kenyan support team.</p>
       <a href="https://wa.me/254715509440" class="btn-info" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Support</a>
     </div>
 
-    <!-- Status Alert Container -->
-    <div id="feedbackBox" class="feedback-message"></div>
-
     <div class="form-group">
-      <label id="lbl-username">Create Username</label>
+      <label>Create Username</label>
       <input type="text" id="username" placeholder="Unique username">
     </div>
 
-    <div class="form-group" id="group-email">
+    <div class="form-group">
       <label>Email Address</label>
       <input type="email" id="email" placeholder="example@gmail.com">
     </div>
 
     <div class="form-group">
-      <label id="lbl-phone">Phone Number</label>
+      <label>Phone Number</label>
       <input type="text" id="phone" placeholder="2547XXXXXXXX">
     </div>
 
-    <div class="form-group" id="group-region">
+    <div class="form-group">
       <label>Service Region</label>
       <select id="country">
-        <option value="KE">🇲🇪 Kenya (KES) - M-Pesa Available</option>
+        <option value="KE">🇰🇪 Kenya (KES) - M-Pesa Available</option>
         <option value="UG">🇺🇬 Uganda (UGX)</option>
         <option value="TZ">🇹🇿 Tanzania (TZS)</option>
         <option value="NG">🇳🇬 Nigeria (NGN)</option>
       </select>
     </div>
 
-    <!-- Alternative Funding Numbers Container (Shown in Edit Mode) -->
-    <div id="alt-funding-fields" style="display: none;">
-      <div class="form-group">
-        <label>Alternative Funding Number 1</label>
-        <input type="text" id="paymentPhone1" placeholder="Alternative Funding Node 1 (e.g. 2547...)">
-      </div>
-      <div class="form-group">
-        <label>Alternative Funding Number 2</label>
-        <input type="text" id="paymentPhone2" placeholder="Alternative Funding Node 2 (e.g. 2547...)">
-      </div>
-    </div>
-
     <div class="form-group">
-      <label id="lbl-password">Secure Password</label>
+      <label>Secure Password</label>
       <input type="password" id="password" placeholder="Min. 8 characters">
     </div>
 
-    <div class="form-group" id="group-confirm">
+    <div class="form-group">
       <label>Confirm Password</label>
       <input type="password" id="confirm_password" placeholder="Repeat password">
     </div>
 
-    <div class="checkbox-group" id="group-terms">
+    <div class="checkbox-group">
       <input type="checkbox" id="terms">
       <label for="terms">I verify that I am a real user and agree to the <a href="#">Terms of service</a></label>
     </div>
 
-    <button class="btn-signup" id="actionBtn" onclick="register()">Create My Account</button>
+    <button class="btn-signup" onclick="register()">Create My Account</button>
 
-    <div class="login-footer" id="footer-redirect">
+    <div class="login-footer">
       Already a member? <a href="index.html">Sign in here</a>
     </div>
   </div>
@@ -233,140 +213,6 @@
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
-
-<script>
-  // Dynamic UI Router Strategy 
-  const API_URL = 'https://unasemeje-backend-3.onrender.com/api';
-  const token = localStorage.getItem('token');
-  const feedbackBox = document.getElementById('feedbackBox');
-
-  window.addEventListener('DOMContentLoaded', async () => {
-    // If token exists, shift system execution context to Profile Edit mode
-    if (token) {
-      configurePageForEditMode();
-      await fetchExistingUserData();
-    }
-  });
-
-  function configurePageForEditMode() {
-    // Update structural text and headings
-    document.getElementById('page-title').innerText = "Modify Account Profile | unasemeje ø dia";
-    document.getElementById('info-box-text').innerHTML = "Modifying funding gateways or profile security?<br>Need assistance? Reach custom support.";
-    
-    document.getElementById('lbl-username').innerText = "Account Username";
-    document.getElementById('lbl-phone').innerText = "Main Account Phone Node";
-    document.getElementById('lbl-password').innerText = "Update Password (Leave blank to keep unchanged)";
-
-    // Hide configuration nodes not required during profile tuning
-    document.getElementById('group-email').style.display = 'none';
-    document.getElementById('group-region').style.display = 'none';
-    document.getElementById('group-confirm').style.display = 'none';
-    document.getElementById('group-terms').style.display = 'none';
-
-    // Show custom funding channel slots
-    document.getElementById('alt-funding-fields').style.display = 'block';
-
-    // Morph Submission Interactive Nodes
-    const actionBtn = document.getElementById('actionBtn');
-    actionBtn.innerText = "Save Changes & Update Profile";
-    actionBtn.setAttribute('onclick', 'updateUserProfile(event)');
-
-    const footerRedirect = document.getElementById('footer-redirect');
-    footerRedirect.innerHTML = `Return to funding center? <a href="add-funds.html">Go Back to Add Funds</a>`;
-  }
-
-  async function fetchExistingUserData() {
-    try {
-      const response = await fetch(`${API_URL}/me`, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const user = await response.json();
-        document.getElementById('username').value = user.username || user.name || '';
-        document.getElementById('phone').value = user.phone || '';
-        document.getElementById('paymentPhone1').value = user.paymentPhone1 || '';
-        document.getElementById('paymentPhone2').value = user.paymentPhone2 || '';
-      } else {
-        console.error("Failed to sync profile context from remote node securely.");
-      }
-    } catch (err) {
-      console.error("Network exception handled during profile sync loop:", err);
-    }
-  }
-
-  async function updateUserProfile(e) {
-    if(e) e.preventDefault();
-    
-    const btn = document.getElementById('actionBtn');
-    feedbackBox.style.display = 'none';
-    btn.disabled = true;
-    btn.innerText = "Syncing with Node Server...";
-
-    const profilePayload = {
-      username: document.getElementById('username').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      paymentPhone1: document.getElementById('paymentPhone1').value.trim(),
-      paymentPhone2: document.getElementById('paymentPhone2').value.trim()
-    };
-
-    const newPwd = document.getElementById('password').value;
-
-    try {
-      // 1. Submit Profile Parameters Update
-      const profileResponse = await fetch(`${API_URL}/user/update-profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(profilePayload)
-      });
-
-      const profileData = await profileResponse.json();
-
-      if (!profileResponse.ok) {
-        throw new Error(profileData.error || profileData.message || "Profile metadata update rejected.");
-      }
-
-      // 2. Submit Security Password Update conditionally if filled
-      if (newPwd && newPwd.trim().length >= 8) {
-        const passwordResponse = await fetch(`${API_URL}/user/change-password`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ newPassword: newPwd.trim() })
-        });
-
-        const pwdData = await passwordResponse.json();
-        if (!passwordResponse.ok) {
-          throw new Error(pwdData.error || pwdData.message || "Security gateway password update rejected.");
-        }
-      }
-
-      // Display success message
-      feedbackBox.className = "feedback-message feedback-success";
-      feedbackBox.innerText = "✓ Account profiles and metrics updated successfully.";
-      feedbackBox.style.display = 'block';
-      
-      // Redirect back to add funds center after delay
-      setTimeout(() => {
-        window.location.href = 'add-funds.html';
-      }, 2000);
-
-    } catch (err) {
-      feedbackBox.className = "feedback-message feedback-error";
-      feedbackBox.innerText = `⚠ Update Failed: ${err.message}`;
-      feedbackBox.style.display = 'block';
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Save Changes & Update Profile";
-    }
-  }
-</script>
 
 </body>
 </html>
