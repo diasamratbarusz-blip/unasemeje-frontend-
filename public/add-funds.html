@@ -104,6 +104,45 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
+        <div id="accountDetailsCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                👤 Account Information & Security
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3 border-r border-gray-100 pr-0 md:pr-4">
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
+                        <p id="infoEmail" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Available Book Wallet Balance</span>
+                        <p id="infoBalance" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Communication Nodes</span>
+                        <p id="infoPhones" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</p>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Modify Security Gateway</span>
+                    <form id="passwordChangeForm" class="space-y-3" onsubmit="changePassword(event)">
+                        <div>
+                            <input type="password" id="currentPassword" class="input-field !py-2.5 !text-sm" placeholder="Current Password" required>
+                        </div>
+                        <div>
+                            <input type="password" id="newPassword" class="input-field !py-2.5 !text-sm" placeholder="New Password" required>
+                        </div>
+                        <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-2.5 rounded-xl transition-all text-xs uppercase tracking-wider">
+                            Update Password
+                        </button>
+                    </form>
+                    <p id="pwdFeedback" class="text-[11px] font-medium mt-2 hidden"></p>
+                </div>
+            </div>
+        </div>
+        
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div>
@@ -175,6 +214,11 @@
         const cardDispPhones = document.getElementById('cardDispPhones');
         const portalSection = document.getElementById('portalSection');
         const liveBalance = document.getElementById('liveBalance');
+
+        // Added Dashboard Info hooks
+        const infoEmail = document.getElementById('infoEmail');
+        const infoBalance = document.getElementById('infoBalance');
+        const infoPhones = document.getElementById('infoPhones');
         
         let detectedAmount = 0;
         let detectedReference = "";
@@ -212,8 +256,17 @@
                 const user = await response.json();
                 
                 // Live Wallet Update
-                if (liveBalance) {
-                    liveBalance.innerText = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
+                const formattedBalance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
+                if (liveBalance) liveBalance.innerText = formattedBalance;
+                if (infoBalance) infoBalance.innerText = formattedBalance;
+
+                // Sync details directly to the static profile container info display
+                if (infoEmail) infoEmail.innerText = user.email || 'N/A';
+                if (infoPhones) {
+                    const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
+                    infoPhones.innerHTML = activePhones.length > 0 
+                        ? activePhones.map((p, i) => `<span>🔹 Connection ${i+1}: ${p}</span>`).join('')
+                        : '<span class="text-red-400 italic">No phone numbers linked yet.</span>';
                 }
 
                 // Check if payment profile is already registered in DB
@@ -319,6 +372,49 @@
                 saveBtn.innerHTML = "Save Profile & Unlock Dashboard";
             }
         };
+
+        // NEW: PASSWORD MODIFICATION LOGIC
+        async function changePassword(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const feedback = document.getElementById('pwdFeedback');
+            const btn = document.getElementById('pwdBtn');
+
+            feedback.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = "Processing Update...";
+
+            try {
+                const response = await fetch(`${API_URL}/user/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await response.json();
+
+                feedback.classList.remove('hidden');
+                if (response.ok) {
+                    feedback.className = "text-[11px] font-medium mt-2 text-emerald-600";
+                    feedback.innerText = "✓ Password shifted successfully.";
+                    document.getElementById('passwordChangeForm').reset();
+                } else {
+                    feedback.className = "text-[11px] font-medium mt-2 text-red-500";
+                    feedback.innerText = `⚠ ${data.error || "Update rejected by server."}`;
+                }
+            } catch (err) {
+                feedback.classList.remove('hidden');
+                feedback.className = "text-[11px] font-medium mt-2 text-red-500";
+                feedback.innerText = "⚠ Network failed to establish password alteration.";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Update Password";
+            }
+        }
 
         // 3. LISTEN FOR COMPLETED PAYMENTS
         window.addEventListener("message", (event) => {
