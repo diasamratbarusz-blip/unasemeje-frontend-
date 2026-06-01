@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Settings - Unasemeje</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        body{ font-family:'Plus Jakarta Sans',sans-serif; background:#f5f7fb; }
+        .bg-custom-green{ background:#11453b; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        .input-field {
+            width: 100%; background: #f9fafb; border: 1px solid #e5e7eb;
+            padding: 12px 16px; border-radius: 12px; outline: none; transition: 0.2s; color: #1f2937; font-weight: 500;
+        }
+        .input-field:focus { border-color: #11453b; box-shadow: 0 0 0 2px rgba(17, 69, 59, 0.2); }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Header Navigation Banner -->
+    <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
+        <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Profile Settings</h1>
+        <p class="uppercase tracking-[4px] text-xs opacity-70">Manage your identity & secure funding channels</p>
+    </div>
+
+    <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
+        
+        <!-- Back Navigation Hub -->
+        <div class="flex justify-between items-center">
+            <a href="add-funds.html" class="inline-flex items-center gap-2 bg-white hover:bg-zinc-50 text-zinc-800 font-bold py-2.5 px-5 rounded-2xl shadow-md border border-gray-100 text-xs uppercase tracking-wider transition-all">
+                ⬅ Return to Checkout Portal
+            </a>
+        </div>
+
+        <!-- Comprehensive Identity & Modification Control Card -->
+        <div id="accountDetailsCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                👤 Personal Identity Profile
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                <!-- Live Metadata Readout Frame -->
+                <div class="space-y-3 border-r border-gray-100 pr-0 md:pr-4">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
+                            <p id="infoUsername" class="text-sm font-bold text-zinc-800">Loading...</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
+                            <p id="infoAccountPhone" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
+                            <p id="infoFirstName" class="text-sm font-medium text-zinc-700">Loading...</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
+                            <p id="infoLastName" class="text-sm font-medium text-zinc-700">Loading...</p>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
+                        <p id="infoEmail" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Current Live Balance</span>
+                        <p id="infoBalance" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Funding Channels</span>
+                        <div id="infoPhones" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</div>
+                    </div>
+                </div>
+
+                <!-- Modification Execution Processing Box -->
+                <div class="space-y-5">
+                    <div>
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Modify Profile Parameters</span>
+                        <form id="profileUpdateForm" class="space-y-2" onsubmit="updateProfileData(event)">
+                            <div>
+                                <input type="text" id="editUsername" class="input-field !py-2 !text-xs" placeholder="Username" required>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="editFirstName" class="input-field !py-2 !text-xs" placeholder="First Name">
+                                <input type="text" id="editLastName" class="input-field !py-2 !text-xs" placeholder="Last Name">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-zinc-400 uppercase block my-1">Alternative Funding Nodes (Max 2)</span>
+                                <div class="space-y-2">
+                                    <input type="text" id="editPhone1" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 1 (e.g. 2547...)">
+                                    <input type="text" id="editPhone2" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 2 (e.g. 2547...)">
+                                </div>
+                            </div>
+                            <button type="submit" id="profileBtn" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
+                                Save Profile Changes
+                            </button>
+                        </form>
+                        <p id="profileFeedback" class="text-[11px] font-medium mt-1.5 hidden"></p>
+                    </div>
+
+                    <hr class="border-gray-100" />
+
+                    <!-- Password Management Engine Layer -->
+                    <div>
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Update Security Layer</span>
+                        <form id="passwordChangeForm" class="space-y-2" onsubmit="changePassword(event)">
+                            <div>
+                                <input type="password" id="currentPassword" class="input-field !py-2 !text-xs" placeholder="Current Password" required>
+                            </div>
+                            <div>
+                                <input type="password" id="newPassword" class="input-field !py-2 !text-xs" placeholder="New Password" required>
+                            </div>
+                            <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
+                                Update Password
+                            </button>
+                        </form>
+                        <p id="pwdFeedback" class="text-[11px] font-medium mt-1.5 hidden"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Extraction DOM Hooks
+        const infoEmail = document.getElementById('infoEmail');
+        const infoBalance = document.getElementById('infoBalance');
+        const infoPhones = document.getElementById('infoPhones');
+        const infoUsername = document.getElementById('infoUsername');
+        const infoAccountPhone = document.getElementById('infoAccountPhone');
+        const infoFirstName = document.getElementById('infoFirstName');
+        const infoLastName = document.getElementById('infoLastName');
+
+        // Target Form Reference Fields
+        const editUsername = document.getElementById('editUsername');
+        const editFirstName = document.getElementById('editFirstName');
+        const editLastName = document.getElementById('editLastName');
+        const editPhone1 = document.getElementById('editPhone1');
+        const editPhone2 = document.getElementById('editPhone2');
+
+        // Central Server Environment Network Vectors
+        const API_URL = 'https://unasemeje-backend-3.onrender.com/api';
+        const token = localStorage.getItem('token');
+
+        // Initial Identity Authentication Lifecycle Setup
+        window.onload = async () => {
+            if (!token) {
+                console.warn("No authentication token localized. Access Denied.");
+                window.location.href = 'index.html';
+                return;
+            }
+            await fetchUserProfileFromServer();
+        };
+
+        // Query Backend Node Environment to Synchronize User States
+        async function fetchUserProfileFromServer() {
+            try {
+                const response = await fetch(`${API_URL}/me`, {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!response.ok) {
+                    localStorage.removeItem('token');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                const user = await response.json();
+                
+                // Formulate and deploy structural data outputs
+                if (infoBalance) {
+                    infoBalance.innerText = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
+                }
+                if (infoEmail) infoEmail.innerText = user.email || 'N/A';
+                if (infoUsername) infoUsername.innerText = user.username || user.name || 'N/A';
+                if (infoAccountPhone) infoAccountPhone.innerText = user.phone || 'N/A';
+                if (infoFirstName) infoFirstName.innerText = user.firstName || 'N/A';
+                if (infoLastName) infoLastName.innerText = user.lastName || 'N/A';
+
+                // Synchronously Hydrate Control Fields
+                if (editUsername) editUsername.value = user.username || user.name || '';
+                if (editFirstName) editFirstName.value = user.firstName || '';
+                if (editLastName) editLastName.value = user.lastName || '';
+                if (editPhone1) editPhone1.value = user.paymentPhone1 || '';
+                if (editPhone2) editPhone2.value = user.paymentPhone2 || '';
+                
+                // Construct funding routing arrays cleanly inside presentation panels
+                const activePhones = [user.phone, user.paymentPhone1, user.paymentPhone2].filter(Boolean);
+                if (infoPhones) {
+                    infoPhones.innerHTML = activePhones.length > 0 
+                        ? activePhones.map((p, i) => `<span>🔹 Gate ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Alt)'}</span>`).join('')
+                        : '<span class="text-zinc-400 italic">No custom funding channels linked.</span>';
+                }
+
+            } catch (err) {
+                console.error("Critical Identity synchronization error:", err);
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Send Identity Configuration Packets to API Gateway Node
+        async function updateProfileData(e) {
+            e.preventDefault();
+            const feedback = document.getElementById('profileFeedback');
+            const btn = document.getElementById('profileBtn');
+
+            feedback.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = "Saving Profile...";
+
+            const payload = {
+                username: editUsername.value.trim(),
+                firstName: editFirstName.value.trim(),
+                lastName: editLastName.value.trim(),
+                paymentPhone1: editPhone1.value.trim(),
+                paymentPhone2: editPhone2.value.trim()
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/user/update-profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                feedback.classList.remove('hidden');
+
+                if (response.ok) {
+                    feedback.className = "text-[11px] font-medium mt-1.5 text-emerald-600";
+                    feedback.innerText = "✓ Profile metadata synced and updated successfully.";
+                    await fetchUserProfileFromServer();
+                } else {
+                    feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
+                    feedback.innerText = `⚠ ${data.error || data.message || "Modification denied by node server."}`;
+                }
+            } catch (err) {
+                feedback.classList.remove('hidden');
+                feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
+                feedback.innerText = "⚠ Network anomaly during identity transmission.";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Save Profile Changes";
+            }
+        }
+
+        // Secure Cryptographic Security Layer Passwords Modification Method
+        async function changePassword(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const feedback = document.getElementById('pwdFeedback');
+            const btn = document.getElementById('pwdBtn');
+
+            feedback.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = "Processing Update...";
+
+            try {
+                const response = await fetch(`${API_URL}/user/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await response.json();
+                feedback.classList.remove('hidden');
+
+                if (response.ok) {
+                    feedback.className = "text-[11px] font-medium mt-2 text-emerald-600";
+                    feedback.innerText = "✓ Security access credentials modified.";
+                    document.getElementById('passwordChangeForm').reset();
+                } else {
+                    feedback.className = "text-[11px] font-medium mt-2 text-red-500";
+                    feedback.innerText = `⚠ ${data.error || data.message || "Update rejected by server parameters."}`;
+                }
+            } catch (err) {
+                feedback.classList.remove('hidden');
+                feedback.className = "text-[11px] font-medium mt-2 text-red-500";
+                feedback.innerText = "⚠ Network error during security reconfiguration.";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Update Password";
+            }
+        }
+    </script>
+</body>
+</html>
