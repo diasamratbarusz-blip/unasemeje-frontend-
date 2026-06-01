@@ -106,7 +106,7 @@
                                     <input type="text" id="editPhone2" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 2 (e.g. 2547...)">
                                 </div>
                             </div>
-                            <button type="submit" id="profileBtn" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
+                            <button type="submit" id="profileBtn" class="w-full bg-emerald-7700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
                                 Save Profile Changes
                             </button>
                         </form>
@@ -371,7 +371,7 @@
                     await fetchUserProfileFromServer();
                 } else {
                     feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || "Modification denied by node server."}`;
+                    feedback.innerText = `⚠ ${data.error || data.message || "Modification denied by node server."}`;
                 }
             } catch (err) {
                 feedback.classList.remove('hidden');
@@ -414,7 +414,7 @@
                     document.getElementById('passwordChangeForm').reset();
                 } else {
                     feedback.className = "text-[11px] font-medium mt-2 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || "Update rejected by server."}`;
+                    feedback.innerText = `⚠ ${data.error || data.message || "Update rejected by server."}`;
                 }
             } catch (err) {
                 feedback.classList.remove('hidden');
@@ -476,7 +476,7 @@
                         setTimeout(() => window.location.reload(), 2500);
                     } else {
                         const errData = await response.json();
-                        sensorMessage.innerText = "Error: " + (errData.error || "Failed to credit.");
+                        sensorMessage.innerText = "Error: " + (errData.error || errData.message || "Failed to credit.");
                         approveBtn.innerHTML = "Retry Sync";
                         approveBtn.disabled = false;
                     }
