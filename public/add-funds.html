@@ -40,7 +40,6 @@
 
 <body class="min-h-screen">
 
-    <!-- Top Banner -->
     <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
         <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
         <p class="uppercase tracking-[4px] text-xs opacity-70">Live Account Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
@@ -48,13 +47,12 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
-        <!-- LAYOUT A: Account Wallet Information Card (With Profile Redirect Link) -->
         <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
             <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
                 <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
                     👤 Account Wallet Information
                 </h2>
-                <a href="profile.html" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline uppercase tracking-wider">
+                <a href="register.html" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline uppercase tracking-wider">
                     ⚙ Settings & Password
                 </a>
             </div>
@@ -97,7 +95,7 @@
                         <p id="infoPhonesA" class="text-xs text-gray-500 font-mono flex flex-col gap-1">Loading channels...</p>
                     </div>
                     <div class="pt-2">
-                        <a href="profile.html" class="block w-full text-center bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold py-2.5 rounded-xl transition-all text-xs uppercase tracking-wider border border-zinc-200">
+                        <a href="register.html" class="block w-full text-center bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold py-2.5 rounded-xl transition-all text-xs uppercase tracking-wider border border-zinc-200">
                             Modify Funding Numbers
                         </a>
                     </div>
@@ -105,7 +103,6 @@
             </div>
         </div>
 
-        <!-- LAYOUT B: Account Information & Security Direct Modification Card -->
         <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 👤 Account Information & Security
@@ -193,7 +190,6 @@
             </div>
         </div>
         
-        <!-- Active Payment Profile Summary Badge -->
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div class="w-full">
@@ -216,7 +212,6 @@
             </div>
         </div>
         
-        <!-- Real-Time Payment Event Interceptor Popup Box -->
         <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-8 hidden transform transition-all scale-105">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
@@ -238,7 +233,6 @@
             </div>
         </div>
 
-        <!-- Paynecta Checkout Iframe Container -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
