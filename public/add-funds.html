@@ -47,14 +47,12 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
-        <!-- USER SECURITY & DETAILS ACCOUNT CARD -->
         <div id="accountDetailsCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 👤 Account Information & Security
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Left Hand Details Column -->
                 <div class="space-y-3 border-r border-gray-100 pr-0 md:pr-4">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -90,9 +88,7 @@
                     </div>
                 </div>
 
-                <!-- Right Hand Operations Action Column -->
                 <div class="space-y-5">
-                    <!-- Update Identity & Funding Gateways Form -->
                     <div>
                         <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Modify Account Profile</span>
                         <form id="profileUpdateForm" class="space-y-2" onsubmit="updateProfileData(event)">
@@ -119,7 +115,6 @@
 
                     <hr class="border-gray-100" />
 
-                    <!-- Password Security Form -->
                     <div>
                         <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Modify Security Gateway</span>
                         <form id="passwordChangeForm" class="space-y-2" onsubmit="changePassword(event)">
@@ -141,10 +136,18 @@
         
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
-                <div>
-                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Active Payment Profile</p>
-                    <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight">Loading Profile...</h3>
-                    <p id="cardDispEmail" class="text-xs text-gray-500 font-medium"></p>
+                <div class="w-full">
+                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Active Payment Profile</p>
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                        <div>
+                            <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight">Loading Profile...</h3>
+                            <p id="cardDispFullName" class="text-xs text-zinc-600 font-medium mt-0.5">Name: Loading...</p>
+                        </div>
+                        <div class="text-left md:text-right">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Linked Email Target</span>
+                            <p id="cardDispEmail" class="text-xs text-gray-700 font-semibold break-all"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div>
@@ -201,6 +204,7 @@
         // Profile Display Elements
         const profileCard = document.getElementById('profileCard');
         const cardDispName = document.getElementById('cardDispName');
+        const cardDispFullName = document.getElementById('cardDispFullName');
         const cardDispEmail = document.getElementById('cardDispEmail');
         const cardDispPhones = document.getElementById('cardDispPhones');
         const portalSection = document.getElementById('portalSection');
@@ -282,20 +286,14 @@
                         : '<span class="text-zinc-400 italic">No custom alternative funding nodes linked.</span>';
                 }
 
-                // Hydrate composite runtime verification layers
-                if (user.paymentPhone1 && user.paymentProfileName) {
-                    serverUserProfile = {
-                        name: user.paymentProfileName,
-                        email: user.paymentProfileEmail || user.email,
-                        phones: activePhones
-                    };
-                } else {
-                    serverUserProfile = {
-                        name: user.username || user.name || "Client Account",
-                        email: user.email,
-                        phones: activePhones
-                    };
-                }
+                // Hydrate composite runtime verification layers with all detailed params
+                serverUserProfile = {
+                    username: user.username || user.name || "Client Account",
+                    firstName: user.firstName || '',
+                    lastName: user.lastName || '',
+                    email: user.email,
+                    phones: activePhones
+                };
 
                 renderProfileInterface();
 
@@ -309,7 +307,16 @@
         function renderProfileInterface() {
             if (serverUserProfile) {
                 profileCard.classList.remove('hidden');
-                cardDispName.innerText = serverUserProfile.name;
+                
+                // Display user data parameters inside the Active Payment Profile Card structure
+                cardDispName.innerText = `@${serverUserProfile.username}`;
+                
+                if (serverUserProfile.firstName || serverUserProfile.lastName) {
+                    cardDispFullName.innerText = `Real Name: ${serverUserProfile.firstName} ${serverUserProfile.lastName}`.trim();
+                } else {
+                    cardDispFullName.innerText = "Real Name: Not configured";
+                }
+                
                 cardDispEmail.innerText = serverUserProfile.email;
                 
                 cardDispPhones.innerHTML = '';
@@ -346,7 +353,6 @@
             };
 
             try {
-                // Pointing to your server endpoint for general user detail updates
                 const response = await fetch(`${API_URL}/user/update-profile`, {
                     method: 'PUT',
                     headers: {
@@ -437,7 +443,7 @@
         // 4. MANUAL CREDIT APPROVAL (In case webhook is slow)
         function showSensorPopup(amount, reference) {
             statusCard.classList.remove('hidden');
-            document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.name : "Client Account";
+            document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.username : "Client Account";
             
             const formattedAmount = Number(amount).toLocaleString('en-KE', {
                 style: 'currency',
