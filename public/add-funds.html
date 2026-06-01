@@ -40,6 +40,7 @@
 
 <body class="min-h-screen">
 
+    <!-- Top Banner -->
     <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
         <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
         <p class="uppercase tracking-[4px] text-xs opacity-70">Live Account Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
@@ -47,7 +48,65 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
-        <div id="accountDetailsCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+        <!-- LAYOUT A: Account Wallet Information Card (With Profile Redirect Link) -->
+        <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    👤 Account Wallet Information
+                </h2>
+                <a href="profile.html" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline uppercase tracking-wider">
+                    ⚙ Settings & Password
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
+                            <p id="infoUsernameA" class="text-sm font-bold text-zinc-800">Loading...</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
+                            <p id="infoAccountPhoneA" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
+                            <p id="infoFirstNameA" class="text-sm font-medium text-zinc-700">Loading...</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
+                            <p id="infoLastNameA" class="text-sm font-medium text-zinc-700">Loading...</p>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
+                        <p id="infoEmailA" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 md:border-l md:border-gray-100 md:pl-6 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Available Book Wallet Balance</span>
+                        <p id="infoBalanceA" class="text-2xl font-extrabold text-custom-green">KES 0.00</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Registered Funding Channels</span>
+                        <p id="infoPhonesA" class="text-xs text-gray-500 font-mono flex flex-col gap-1">Loading channels...</p>
+                    </div>
+                    <div class="pt-2">
+                        <a href="profile.html" class="block w-full text-center bg-zinc-100 hover:bg-zinc-200 text-zinc-800 font-bold py-2.5 rounded-xl transition-all text-xs uppercase tracking-wider border border-zinc-200">
+                            Modify Funding Numbers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LAYOUT B: Account Information & Security Direct Modification Card -->
+        <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 👤 Account Information & Security
             </h2>
@@ -57,34 +116,34 @@
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
-                            <p id="infoUsername" class="text-sm font-bold text-zinc-800">Loading...</p>
+                            <p id="infoUsernameB" class="text-sm font-bold text-zinc-800">Loading...</p>
                         </div>
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
-                            <p id="infoAccountPhone" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                            <p id="infoAccountPhoneB" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
-                            <p id="infoFirstName" class="text-sm font-medium text-zinc-700">Loading...</p>
+                            <p id="infoFirstNameB" class="text-sm font-medium text-zinc-700">Loading...</p>
                         </div>
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
-                            <p id="infoLastName" class="text-sm font-medium text-zinc-700">Loading...</p>
+                            <p id="infoLastNameB" class="text-sm font-medium text-zinc-700">Loading...</p>
                         </div>
                     </div>
                     <div>
                         <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
-                        <p id="infoEmail" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
+                        <p id="infoEmailB" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
                     </div>
                     <div>
                         <span class="text-[10px] font-bold text-gray-400 uppercase block">Available Book Wallet Balance</span>
-                        <p id="infoBalance" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
+                        <p id="infoBalanceB" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
                     </div>
                     <div>
                         <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Funding Channels</span>
-                        <p id="infoPhones" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</p>
+                        <p id="infoPhonesB" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</p>
                     </div>
                 </div>
 
@@ -134,6 +193,7 @@
             </div>
         </div>
         
+        <!-- Active Payment Profile Summary Badge -->
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div class="w-full">
@@ -156,6 +216,7 @@
             </div>
         </div>
         
+        <!-- Real-Time Payment Event Interceptor Popup Box -->
         <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-8 hidden transform transition-all scale-105">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
@@ -177,6 +238,7 @@
             </div>
         </div>
 
+        <!-- Paynecta Checkout Iframe Container -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
@@ -201,7 +263,7 @@
         const approveBtn = document.getElementById('approveBtn');
         const portalFrameWrapper = document.getElementById('portalFrameWrapper');
         
-        // Profile Display Elements
+        // Profile Summary Display DOM Links
         const profileCard = document.getElementById('profileCard');
         const cardDispName = document.getElementById('cardDispName');
         const cardDispFullName = document.getElementById('cardDispFullName');
@@ -210,16 +272,25 @@
         const portalSection = document.getElementById('portalSection');
         const liveBalance = document.getElementById('liveBalance');
 
-        // Dashboard Info hooks
-        const infoEmail = document.getElementById('infoEmail');
-        const infoBalance = document.getElementById('infoBalance');
-        const infoPhones = document.getElementById('infoPhones');
-        const infoUsername = document.getElementById('infoUsername');
-        const infoAccountPhone = document.getElementById('infoAccountPhone');
-        const infoFirstName = document.getElementById('infoFirstName');
-        const infoLastName = document.getElementById('infoLastName');
+        // Layout A UI Hooks
+        const infoEmailA = document.getElementById('infoEmailA');
+        const infoBalanceA = document.getElementById('infoBalanceA');
+        const infoPhonesA = document.getElementById('infoPhonesA');
+        const infoUsernameA = document.getElementById('infoUsernameA');
+        const infoAccountPhoneA = document.getElementById('infoAccountPhoneA');
+        const infoFirstNameA = document.getElementById('infoFirstNameA');
+        const infoLastNameA = document.getElementById('infoLastNameA');
 
-        // Form fields inputs
+        // Layout B UI Hooks
+        const infoEmailB = document.getElementById('infoEmailB');
+        const infoBalanceB = document.getElementById('infoBalanceB');
+        const infoPhonesB = document.getElementById('infoPhonesB');
+        const infoUsernameB = document.getElementById('infoUsernameB');
+        const infoAccountPhoneB = document.getElementById('infoAccountPhoneB');
+        const infoFirstNameB = document.getElementById('infoFirstNameB');
+        const infoLastNameB = document.getElementById('infoLastNameB');
+
+        // Interactive profile adjustment elements
         const editUsername = document.getElementById('editUsername');
         const editFirstName = document.getElementById('editFirstName');
         const editLastName = document.getElementById('editLastName');
@@ -230,14 +301,14 @@
         let detectedReference = "";
         let serverUserProfile = null; 
 
-        // CONFIG: Matches your Render backend
+        // Core Configuration Endpoint Targets
         const API_URL = 'https://unasemeje-backend-3.onrender.com/api';
         const token = localStorage.getItem('token');
 
-        // 1. MANDATORY AUTHENTICATION & INITIALIZATION
+        // 1. MANDATORY AUTHENTICATION & SECURITY INITIALIZATION LOOPS
         window.onload = async () => {
             if (!token) {
-                console.warn("No token found. Redirecting to login...");
+                console.warn("No authentication token localized. Routing to entry node...");
                 window.location.href = 'index.html';
                 return;
             }
@@ -259,34 +330,50 @@
                 
                 const user = await response.json();
                 
-                // Live Wallet Update
+                // Formulate standardized balance calculations
                 const formattedBalance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
                 if (liveBalance) liveBalance.innerText = formattedBalance;
-                if (infoBalance) infoBalance.innerText = formattedBalance;
+                
+                // Mirror parameters simultaneously across all active presentation fields
+                if (infoBalanceA) infoBalanceA.innerText = formattedBalance;
+                if (infoBalanceB) infoBalanceB.innerText = formattedBalance;
 
-                // Sync UI metadata blocks
-                if (infoEmail) infoEmail.innerText = user.email || 'N/A';
-                if (infoUsername) infoUsername.innerText = user.username || user.name || 'N/A';
-                if (infoAccountPhone) infoAccountPhone.innerText = user.phone || 'N/A';
-                if (infoFirstName) infoFirstName.innerText = user.firstName || 'N/A';
-                if (infoLastName) infoLastName.innerText = user.lastName || 'N/A';
+                if (infoEmailA) infoEmailA.innerText = user.email || 'N/A';
+                if (infoEmailB) infoEmailB.innerText = user.email || 'N/A';
 
-                // Prefill Profile Management modification spaces
+                const targetUser = user.username || user.name || 'N/A';
+                if (infoUsernameA) infoUsernameA.innerText = targetUser;
+                if (infoUsernameB) infoUsernameB.innerText = targetUser;
+
+                if (infoAccountPhoneA) infoAccountPhoneA.innerText = user.phone || 'N/A';
+                if (infoAccountPhoneB) infoAccountPhoneB.innerText = user.phone || 'N/A';
+
+                if (infoFirstNameA) infoFirstNameA.innerText = user.firstName || 'N/A';
+                if (infoFirstNameB) infoFirstNameB.innerText = user.firstName || 'N/A';
+
+                if (infoLastNameA) infoLastNameA.innerText = user.lastName || 'N/A';
+                if (infoLastNameB) infoLastNameB.innerText = user.lastName || 'N/A';
+
+                // Sync control interfaces
                 if (editUsername) editUsername.value = user.username || user.name || '';
                 if (editFirstName) editFirstName.value = user.firstName || '';
                 if (editLastName) editLastName.value = user.lastName || '';
                 if (editPhone1) editPhone1.value = user.paymentPhone1 || '';
                 if (editPhone2) editPhone2.value = user.paymentPhone2 || '';
                 
-                // Group main account number + alternative limits cleanly into funding arrays
+                // Structuring array configurations for custom phone systems safely
                 const activePhones = [user.phone, user.paymentPhone1, user.paymentPhone2].filter(Boolean);
-                if (infoPhones) {
-                    infoPhones.innerHTML = activePhones.length > 0 
-                        ? activePhones.map((p, i) => `<span>🔹 Gate ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Alt)'}</span>`).join('')
+                
+                const processChannelsHTML = (arr) => {
+                    return arr.length > 0 
+                        ? arr.map((p, i) => `<span>🔹 Gate ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Alt)'}</span>`).join('')
                         : '<span class="text-zinc-400 italic">No custom funding channels linked.</span>';
-                }
+                };
 
-                // Hydrate composite runtime verification layers with all detailed params
+                if (infoPhonesA) infoPhonesA.innerHTML = processChannelsHTML(activePhones);
+                if (infoPhonesB) infoPhonesB.innerHTML = processChannelsHTML(activePhones);
+
+                // Inject processing context state
                 serverUserProfile = {
                     username: user.username || user.name || "Client Account",
                     firstName: user.firstName || '',
@@ -298,17 +385,15 @@
                 renderProfileInterface();
 
             } catch (err) {
-                console.error("Auth verify error:", err);
+                console.error("Critical identity lookup transaction failure:", err);
                 window.location.href = 'index.html';
             }
         }
 
-        // Handles UI layout data sync
+        // Active Payment Badge Processor Layout
         function renderProfileInterface() {
             if (serverUserProfile) {
                 profileCard.classList.remove('hidden');
-                
-                // Display user data parameters inside the Active Payment Profile Card structure
                 cardDispName.innerText = `@${serverUserProfile.username}`;
                 
                 if (serverUserProfile.firstName || serverUserProfile.lastName) {
@@ -318,8 +403,8 @@
                 }
                 
                 cardDispEmail.innerText = serverUserProfile.email;
-                
                 cardDispPhones.innerHTML = '';
+                
                 if (serverUserProfile.phones.length > 0) {
                     serverUserProfile.phones.forEach((phone, idx) => {
                         cardDispPhones.innerHTML += `
@@ -334,7 +419,7 @@
             }
         }
 
-        // PROFILE MODIFICATION SCRIPT NODE
+        // PROFILE MODIFICATION SUBMISSION TRANSMITTER
         async function updateProfileData(e) {
             e.preventDefault();
             const feedback = document.getElementById('profileFeedback');
@@ -383,7 +468,7 @@
             }
         }
 
-        // PASSWORD MODIFICATION LOGIC
+        // PASSWORD MODIFICATION LOGIC TRANSMITTER
         async function changePassword(e) {
             e.preventDefault();
             const currentPassword = document.getElementById('currentPassword').value;
@@ -406,8 +491,8 @@
                 });
 
                 const data = await response.json();
-
                 feedback.classList.remove('hidden');
+                
                 if (response.ok) {
                     feedback.className = "text-[11px] font-medium mt-2 text-emerald-600";
                     feedback.innerText = "✓ Password updated successfully.";
@@ -426,7 +511,7 @@
             }
         }
 
-        // 3. LISTEN FOR COMPLETED PAYMENTS
+        // 3. LISTEN FOR COMPLETED IFRAME POSTMESSAGE PAYMENTS
         window.addEventListener("message", (event) => {
             if (!event.origin.includes("paynecta.co.ke")) return;
 
@@ -440,7 +525,7 @@
             }
         });
 
-        // 4. MANUAL CREDIT APPROVAL (In case webhook is slow)
+        // 4. MANUAL REAL-TIME BALANCE APPROVAL INTERCEPTOR
         function showSensorPopup(amount, reference) {
             statusCard.classList.remove('hidden');
             document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.username : "Client Account";
