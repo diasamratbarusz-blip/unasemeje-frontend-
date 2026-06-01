@@ -23,13 +23,6 @@
             border: 1px solid #e5e7eb; background: #ffffff;
         }
 
-        /* Identity Overlay Modals */
-        #identityOverlay {
-            position: fixed; inset: 0; background: rgba(11, 69, 59, 0.85);
-            z-index: 1000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(8px); padding: 20px;
-        }
-
         .input-field {
             width: 100%; background: #f9fafb; border: 1px solid #e5e7eb;
             padding: 12px 16px; border-radius: 12px; outline: none; transition: 0.2s; color: #1f2937; font-weight: 500;
@@ -42,60 +35,10 @@
             display: inline-block; animation: rotation 1s linear infinite;
         }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .locked-portal {
-            filter: grayscale(1) blur(2px);
-            pointer-events: none;
-            opacity: 0.5;
-        }
     </style>
 </head>
 
 <body class="min-h-screen">
-
-    <div id="identityOverlay">
-        <div class="bg-white w-full max-w-md p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
-            <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Setup Payment Profile</h2>
-            <p class="text-xs text-gray-500 mb-6 uppercase tracking-wider font-semibold">Verification Required Before Adding Funds</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="text-xs font-bold text-gray-700 uppercase ml-1">First & Last Name <span class="text-red-500">*</span></label>
-                    <input type="text" id="userName" class="input-field" placeholder="e.g. Peter Kamau">
-                </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-700 uppercase ml-1">Account Email <span class="text-red-500">*</span></label>
-                    <input type="email" id="userEmail" class="input-field" placeholder="yourname@gmail.com">
-                </div>
-                
-                <div class="pt-2 border-t border-gray-100">
-                    <p class="text-xs font-extrabold text-zinc-400 uppercase tracking-wider mb-3">Authorized M-PESA Numbers (Max 3)</p>
-                    
-                    <div class="space-y-3">
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-500 uppercase ml-1">Primary Number <span class="text-red-500">* Required</span></label>
-                            <input type="text" id="userPhone1" class="input-field mono" placeholder="e.g. 0712345678">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Backup Number 2 <span class="text-gray-400 italic">(Optional)</span></label>
-                            <input type="text" id="userPhone2" class="input-field mono" placeholder="e.g. 0722000000">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Backup Number 3 <span class="text-gray-400 italic">(Optional)</span></label>
-                            <input type="text" id="userPhone3" class="input-field mono" placeholder="e.g. 0733000000">
-                        </div>
-                    </div>
-                    <p class="text-[10px] text-amber-600 bg-amber-50 border border-amber-200 p-3 rounded-xl mt-3 font-medium">
-                        ⚠️ **Strict System Rules:** Only payments arriving from your saved numbers will be authorized and automatically credited to your account.
-                    </p>
-                </div>
-                
-                <button id="saveProfileBtn" class="w-full bg-custom-green text-white font-extrabold py-4 rounded-xl mt-2 hover:opacity-95 transition-all active:scale-95 shadow-md uppercase tracking-wider text-sm">
-                    Save Profile & Unlock Dashboard
-                </button>
-            </div>
-        </div>
-    </div>
 
     <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
         <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
@@ -150,9 +93,6 @@
                     <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight">Loading Profile...</h3>
                     <p id="cardDispEmail" class="text-xs text-gray-500 font-medium"></p>
                 </div>
-                <button onclick="editProfile()" class="text-xs font-bold text-custom-green bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-xl transition-all border border-emerald-200/50">
-                    Edit Profile
-                </button>
             </div>
             <div>
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Registered Funding Gates:</p>
@@ -184,7 +124,7 @@
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
-                <p class="text-xs text-gray-500 mt-1">Portal listening exclusively to your profile channels above.</p>
+                <p class="text-xs text-gray-500 mt-1">Portal listening exclusively to your active profile channels above.</p>
                 <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
             </div>
 
@@ -203,8 +143,6 @@
         const statusCard = document.getElementById('statusCard');
         const sensorMessage = document.getElementById('sensorMessage');
         const approveBtn = document.getElementById('approveBtn');
-        const overlay = document.getElementById('identityOverlay');
-        const saveBtn = document.getElementById('saveProfileBtn');
         const portalFrameWrapper = document.getElementById('portalFrameWrapper');
         
         // Profile Display Elements
@@ -230,7 +168,6 @@
 
         // 1. MANDATORY AUTHENTICATION & INITIALIZATION
         window.onload = async () => {
-            // STRICT RULE: If no token exists, send back to login immediately
             if (!token) {
                 console.warn("No token found. Redirecting to login...");
                 window.location.href = 'index.html';
@@ -247,7 +184,6 @@
                 });
                 
                 if (!response.ok) {
-                    // Token might be invalid/expired
                     localStorage.removeItem('token');
                     window.location.href = 'index.html';
                     return;
@@ -260,26 +196,30 @@
                 if (liveBalance) liveBalance.innerText = formattedBalance;
                 if (infoBalance) infoBalance.innerText = formattedBalance;
 
-                // Sync details directly to the static profile container info display
+                // Sync details directly to the account details card
                 if (infoEmail) infoEmail.innerText = user.email || 'N/A';
+                
+                const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
                 if (infoPhones) {
-                    const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
                     infoPhones.innerHTML = activePhones.length > 0 
                         ? activePhones.map((p, i) => `<span>🔹 Connection ${i+1}: ${p}</span>`).join('')
-                        : '<span class="text-red-400 italic">No phone numbers linked yet.</span>';
+                        : '<span class="text-zinc-400 italic">No phone numbers linked.</span>';
                 }
 
-                // Check if payment profile is already registered in DB
+                // Check if profile values exist to fill secondary validation panels
                 if (user.paymentPhone1 && user.paymentProfileName) {
-                    const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
-                    
                     serverUserProfile = {
                         name: user.paymentProfileName,
                         email: user.paymentProfileEmail || user.email,
                         phones: activePhones
                     };
                 } else {
-                    serverUserProfile = null;
+                    // Fallback baseline layout matrix if payment details are fresh
+                    serverUserProfile = {
+                        name: user.name || "Client Account",
+                        email: user.email,
+                        phones: activePhones
+                    };
                 }
 
                 renderProfileInterface();
@@ -290,90 +230,29 @@
             }
         }
 
-        // Handles UI state based on whether user is "Registered" for payments
+        // Handles UI layout data sync
         function renderProfileInterface() {
-            if (serverUserProfile && serverUserProfile.phones.length > 0) {
-                overlay.style.display = 'none';
+            if (serverUserProfile) {
                 profileCard.classList.remove('hidden');
-                portalFrameWrapper.classList.remove('locked-portal');
-                
                 cardDispName.innerText = serverUserProfile.name;
                 cardDispEmail.innerText = serverUserProfile.email;
                 
                 cardDispPhones.innerHTML = '';
-                serverUserProfile.phones.forEach((phone, idx) => {
-                    cardDispPhones.innerHTML += `
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200">
-                            <span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
-                            ${phone}
-                        </span>`;
-                });
-            } else {
-                // If not registered for payments, lock the checkout portal and show registration modal
-                overlay.style.display = 'flex';
-                profileCard.classList.add('hidden');
-                portalFrameWrapper.classList.add('locked-portal');
-            }
-        }
-
-        function editProfile() {
-            if (!serverUserProfile) return;
-            overlay.style.display = 'flex';
-            document.getElementById('userName').value = serverUserProfile.name;
-            document.getElementById('userEmail').value = serverUserProfile.email;
-            document.getElementById('userPhone1').value = serverUserProfile.phones[0] || '';
-            document.getElementById('userPhone2').value = serverUserProfile.phones[1] || '';
-            document.getElementById('userPhone3').value = serverUserProfile.phones[2] || '';
-        }
-
-        // 2. PAYMENT PROFILE REGISTRATION / UPDATE
-        saveBtn.onclick = async () => {
-            const name = document.getElementById('userName').value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-            const p1 = document.getElementById('userPhone1').value.trim().replace(/\s/g, '');
-            const p2 = document.getElementById('userPhone2').value.trim().replace(/\s/g, '');
-            const p3 = document.getElementById('userPhone3').value.trim().replace(/\s/g, '');
-
-            if (!name || !email || !p1) {
-                alert("Validation: Name, Email, and at least one phone number are required.");
-                return;
-            }
-
-            const validPhones = [p1];
-            if (p2) validPhones.push(p2);
-            if (p3) validPhones.push(p3);
-
-            saveBtn.disabled = true;
-            saveBtn.innerHTML = `<span class="spinner"></span> Registering Profile...`;
-
-            try {
-                // Updated context url target to match user-profile routes perfectly
-                const response = await fetch(`${API_URL}/user/update-payment-profile`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ name, email, phones: validPhones })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Profile registered successfully, reload user data to unlock portal
-                    await fetchUserProfileFromServer();
+                if (serverUserProfile.phones.length > 0) {
+                    serverUserProfile.phones.forEach((phone, idx) => {
+                        cardDispPhones.innerHTML += `
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200">
+                                <span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
+                                ${phone}
+                            </span>`;
+                    });
                 } else {
-                    alert("Error: " + (data.error || "Could not register profile."));
+                    cardDispPhones.innerHTML = `<span class="text-xs text-zinc-400 italic">No funding gateways configured.</span>`;
                 }
-            } catch (err) {
-                alert("Server connection failed. Verify your network or background deployment context configuration.");
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.innerHTML = "Save Profile & Unlock Dashboard";
             }
-        };
+        }
 
-        // NEW: PASSWORD MODIFICATION LOGIC
+        // PASSWORD MODIFICATION LOGIC
         async function changePassword(e) {
             e.preventDefault();
             const currentPassword = document.getElementById('currentPassword').value;
@@ -400,7 +279,7 @@
                 feedback.classList.remove('hidden');
                 if (response.ok) {
                     feedback.className = "text-[11px] font-medium mt-2 text-emerald-600";
-                    feedback.innerText = "✓ Password shifted successfully.";
+                    feedback.innerText = "✓ Password updated successfully.";
                     document.getElementById('passwordChangeForm').reset();
                 } else {
                     feedback.className = "text-[11px] font-medium mt-2 text-red-500";
@@ -409,7 +288,7 @@
             } catch (err) {
                 feedback.classList.remove('hidden');
                 feedback.className = "text-[11px] font-medium mt-2 text-red-500";
-                feedback.innerText = "⚠ Network failed to establish password alteration.";
+                feedback.innerText = "⚠ Network error during update.";
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Update Password";
@@ -426,25 +305,17 @@
             if (isFinished) {
                 const incomingPhone = (data.phone || data.mobile_number || "").toString().trim();
                 
-                if (!serverUserProfile || !serverUserProfile.phones) return;
-
-                // Security Match: Compare incoming M-Pesa number to the registered profile numbers
-                const isMatched = serverUserProfile.phones.some(p => incomingPhone.includes(p) || p.includes(incomingPhone));
-
-                if (isMatched) {
-                    detectedAmount = data.amount || 0;
-                    detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
-                    showSensorPopup(detectedAmount, detectedReference);
-                } else {
-                    alert("Security Check Failed: The number used to pay is not registered in your Payment Profile.");
-                }
+                // Process and sync payment tracking popup structure
+                detectedAmount = data.amount || 0;
+                detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
+                showSensorPopup(detectedAmount, detectedReference);
             }
         });
 
         // 4. MANUAL CREDIT APPROVAL (In case webhook is slow)
         function showSensorPopup(amount, reference) {
             statusCard.classList.remove('hidden');
-            document.getElementById('matchedIdentity').innerText = serverUserProfile.name;
+            document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.name : "Client Account";
             
             const formattedAmount = Number(amount).toLocaleString('en-KE', {
                 style: 'currency',
