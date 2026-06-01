@@ -278,12 +278,12 @@
                 if (editPhone1) editPhone1.value = user.paymentPhone1 || '';
                 if (editPhone2) editPhone2.value = user.paymentPhone2 || '';
                 
-                // Track funding arrays (limiting to 2 user alternate numbers per input limit constraints)
-                const activePhones = [user.paymentPhone1, user.paymentPhone2].filter(Boolean);
+                // Group main account number + alternative limits cleanly into funding arrays
+                const activePhones = [user.phone, user.paymentPhone1, user.paymentPhone2].filter(Boolean);
                 if (infoPhones) {
                     infoPhones.innerHTML = activePhones.length > 0 
-                        ? activePhones.map((p, i) => `<span>🔹 Alter Gate ${i+1}: ${p}</span>`).join('')
-                        : '<span class="text-zinc-400 italic">No custom alternative funding nodes linked.</span>';
+                        ? activePhones.map((p, i) => `<span>🔹 Gate ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Alt)'}</span>`).join('')
+                        : '<span class="text-zinc-400 italic">No custom funding channels linked.</span>';
                 }
 
                 // Hydrate composite runtime verification layers with all detailed params
