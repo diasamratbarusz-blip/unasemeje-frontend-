@@ -47,12 +47,14 @@
 
     <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
         
+        <!-- USER SECURITY & DETAILS ACCOUNT CARD -->
         <div id="accountDetailsCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 👤 Account Information & Security
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Hand Details Column -->
                 <div class="space-y-3 border-r border-gray-100 pr-0 md:pr-4">
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -62,6 +64,16 @@
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
                             <p id="infoAccountPhone" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
+                            <p id="infoFirstName" class="text-sm font-medium text-zinc-700">Loading...</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
+                            <p id="infoLastName" class="text-sm font-medium text-zinc-700">Loading...</p>
                         </div>
                     </div>
                     <div>
@@ -78,20 +90,51 @@
                     </div>
                 </div>
 
-                <div>
-                    <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Modify Security Gateway</span>
-                    <form id="passwordChangeForm" class="space-y-3" onsubmit="changePassword(event)">
-                        <div>
-                            <input type="password" id="currentPassword" class="input-field !py-2.5 !text-sm" placeholder="Current Password" required>
-                        </div>
-                        <div>
-                            <input type="password" id="newPassword" class="input-field !py-2.5 !text-sm" placeholder="New Password" required>
-                        </div>
-                        <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-2.5 rounded-xl transition-all text-xs uppercase tracking-wider">
-                            Update Password
-                        </button>
-                    </form>
-                    <p id="pwdFeedback" class="text-[11px] font-medium mt-2 hidden"></p>
+                <!-- Right Hand Operations Action Column -->
+                <div class="space-y-5">
+                    <!-- Update Identity & Funding Gateways Form -->
+                    <div>
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Modify Account Profile</span>
+                        <form id="profileUpdateForm" class="space-y-2" onsubmit="updateProfileData(event)">
+                            <div>
+                                <input type="text" id="editUsername" class="input-field !py-2 !text-xs" placeholder="Username" required>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="editFirstName" class="input-field !py-2 !text-xs" placeholder="First Name">
+                                <input type="text" id="editLastName" class="input-field !py-2 !text-xs" placeholder="Last Name">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-bold text-zinc-400 uppercase block my-1">Alternative Funding Nodes (Max 2)</span>
+                                <div class="space-y-2">
+                                    <input type="text" id="editPhone1" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 1 (e.g. 2547...)">
+                                    <input type="text" id="editPhone2" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 2 (e.g. 2547...)">
+                                </div>
+                            </div>
+                            <button type="submit" id="profileBtn" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
+                                Save Profile Changes
+                            </button>
+                        </form>
+                        <p id="profileFeedback" class="text-[11px] font-medium mt-1.5 hidden"></p>
+                    </div>
+
+                    <hr class="border-gray-100" />
+
+                    <!-- Password Security Form -->
+                    <div>
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Modify Security Gateway</span>
+                        <form id="passwordChangeForm" class="space-y-2" onsubmit="changePassword(event)">
+                            <div>
+                                <input type="password" id="currentPassword" class="input-field !py-2 !text-xs" placeholder="Current Password" required>
+                            </div>
+                            <div>
+                                <input type="password" id="newPassword" class="input-field !py-2 !text-xs" placeholder="New Password" required>
+                            </div>
+                            <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
+                                Update Password
+                            </button>
+                        </form>
+                        <p id="pwdFeedback" class="text-[11px] font-medium mt-1.5 hidden"></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -169,6 +212,15 @@
         const infoPhones = document.getElementById('infoPhones');
         const infoUsername = document.getElementById('infoUsername');
         const infoAccountPhone = document.getElementById('infoAccountPhone');
+        const infoFirstName = document.getElementById('infoFirstName');
+        const infoLastName = document.getElementById('infoLastName');
+
+        // Form fields inputs
+        const editUsername = document.getElementById('editUsername');
+        const editFirstName = document.getElementById('editFirstName');
+        const editLastName = document.getElementById('editLastName');
+        const editPhone1 = document.getElementById('editPhone1');
+        const editPhone2 = document.getElementById('editPhone2');
         
         let detectedAmount = 0;
         let detectedReference = "";
@@ -208,19 +260,29 @@
                 if (liveBalance) liveBalance.innerText = formattedBalance;
                 if (infoBalance) infoBalance.innerText = formattedBalance;
 
-                // Sync basic metadata strings
+                // Sync UI metadata blocks
                 if (infoEmail) infoEmail.innerText = user.email || 'N/A';
                 if (infoUsername) infoUsername.innerText = user.username || user.name || 'N/A';
                 if (infoAccountPhone) infoAccountPhone.innerText = user.phone || 'N/A';
+                if (infoFirstName) infoFirstName.innerText = user.firstName || 'N/A';
+                if (infoLastName) infoLastName.innerText = user.lastName || 'N/A';
+
+                // Prefill Profile Management modification spaces
+                if (editUsername) editUsername.value = user.username || user.name || '';
+                if (editFirstName) editFirstName.value = user.firstName || '';
+                if (editLastName) editLastName.value = user.lastName || '';
+                if (editPhone1) editPhone1.value = user.paymentPhone1 || '';
+                if (editPhone2) editPhone2.value = user.paymentPhone2 || '';
                 
-                const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
+                // Track funding arrays (limiting to 2 user alternate numbers per input limit constraints)
+                const activePhones = [user.paymentPhone1, user.paymentPhone2].filter(Boolean);
                 if (infoPhones) {
                     infoPhones.innerHTML = activePhones.length > 0 
-                        ? activePhones.map((p, i) => `<span>🔹 Gate ${i+1}: ${p}</span>`).join('')
-                        : '<span class="text-zinc-400 italic">No funding numbers linked.</span>';
+                        ? activePhones.map((p, i) => `<span>🔹 Alter Gate ${i+1}: ${p}</span>`).join('')
+                        : '<span class="text-zinc-400 italic">No custom alternative funding nodes linked.</span>';
                 }
 
-                // Check if profile values exist to fill secondary validation panels
+                // Hydrate composite runtime verification layers
                 if (user.paymentPhone1 && user.paymentProfileName) {
                     serverUserProfile = {
                         name: user.paymentProfileName,
@@ -260,8 +322,58 @@
                             </span>`;
                     });
                 } else {
-                    cardDispPhones.innerHTML = `<span class="text-xs text-zinc-400 italic">No funding gateways configured.</span>`;
+                    cardDispPhones.innerHTML = `<span class="text-xs text-zinc-400 italic">No custom funding gateways configured.</span>`;
                 }
+            }
+        }
+
+        // PROFILE MODIFICATION SCRIPT NODE
+        async function updateProfileData(e) {
+            e.preventDefault();
+            const feedback = document.getElementById('profileFeedback');
+            const btn = document.getElementById('profileBtn');
+
+            feedback.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerText = "Saving Profile...";
+
+            const payload = {
+                username: editUsername.value.trim(),
+                firstName: editFirstName.value.trim(),
+                lastName: editLastName.value.trim(),
+                paymentPhone1: editPhone1.value.trim(),
+                paymentPhone2: editPhone2.value.trim()
+            };
+
+            try {
+                // Pointing to your server endpoint for general user detail updates
+                const response = await fetch(`${API_URL}/user/update-profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                feedback.classList.remove('hidden');
+
+                if (response.ok) {
+                    feedback.className = "text-[11px] font-medium mt-1.5 text-emerald-600";
+                    feedback.innerText = "✓ Profile metadata synced and updated.";
+                    await fetchUserProfileFromServer();
+                } else {
+                    feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
+                    feedback.innerText = `⚠ ${data.error || "Modification denied by node server."}`;
+                }
+            } catch (err) {
+                feedback.classList.remove('hidden');
+                feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
+                feedback.innerText = "⚠ Network anomaly during identity transmission.";
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Save Profile Changes";
             }
         }
 
@@ -316,8 +428,6 @@
             const isFinished = data.event === "payment.completed" || data.status === "completed" || data.status === "success";
 
             if (isFinished) {
-                const incomingPhone = (data.phone || data.mobile_number || "").toString().trim();
-                
                 detectedAmount = data.amount || 0;
                 detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
                 showSensorPopup(detectedAmount, detectedReference);
