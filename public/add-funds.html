@@ -54,6 +54,16 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-3 border-r border-gray-100 pr-0 md:pr-4">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
+                            <p id="infoUsername" class="text-sm font-bold text-zinc-800">Loading...</p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
+                            <p id="infoAccountPhone" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                        </div>
+                    </div>
                     <div>
                         <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
                         <p id="infoEmail" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
@@ -63,7 +73,7 @@
                         <p id="infoBalance" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Communication Nodes</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Funding Channels</span>
                         <p id="infoPhones" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</p>
                     </div>
                 </div>
@@ -153,10 +163,12 @@
         const portalSection = document.getElementById('portalSection');
         const liveBalance = document.getElementById('liveBalance');
 
-        // Added Dashboard Info hooks
+        // Dashboard Info hooks
         const infoEmail = document.getElementById('infoEmail');
         const infoBalance = document.getElementById('infoBalance');
         const infoPhones = document.getElementById('infoPhones');
+        const infoUsername = document.getElementById('infoUsername');
+        const infoAccountPhone = document.getElementById('infoAccountPhone');
         
         let detectedAmount = 0;
         let detectedReference = "";
@@ -196,14 +208,16 @@
                 if (liveBalance) liveBalance.innerText = formattedBalance;
                 if (infoBalance) infoBalance.innerText = formattedBalance;
 
-                // Sync details directly to the account details card
+                // Sync basic metadata strings
                 if (infoEmail) infoEmail.innerText = user.email || 'N/A';
+                if (infoUsername) infoUsername.innerText = user.username || user.name || 'N/A';
+                if (infoAccountPhone) infoAccountPhone.innerText = user.phone || 'N/A';
                 
                 const activePhones = [user.paymentPhone1, user.paymentPhone2, user.paymentPhone3].filter(Boolean);
                 if (infoPhones) {
                     infoPhones.innerHTML = activePhones.length > 0 
-                        ? activePhones.map((p, i) => `<span>🔹 Connection ${i+1}: ${p}</span>`).join('')
-                        : '<span class="text-zinc-400 italic">No phone numbers linked.</span>';
+                        ? activePhones.map((p, i) => `<span>🔹 Gate ${i+1}: ${p}</span>`).join('')
+                        : '<span class="text-zinc-400 italic">No funding numbers linked.</span>';
                 }
 
                 // Check if profile values exist to fill secondary validation panels
@@ -214,9 +228,8 @@
                         phones: activePhones
                     };
                 } else {
-                    // Fallback baseline layout matrix if payment details are fresh
                     serverUserProfile = {
-                        name: user.name || "Client Account",
+                        name: user.username || user.name || "Client Account",
                         email: user.email,
                         phones: activePhones
                     };
@@ -305,7 +318,6 @@
             if (isFinished) {
                 const incomingPhone = (data.phone || data.mobile_number || "").toString().trim();
                 
-                // Process and sync payment tracking popup structure
                 detectedAmount = data.amount || 0;
                 detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
                 showSensorPopup(detectedAmount, detectedReference);
