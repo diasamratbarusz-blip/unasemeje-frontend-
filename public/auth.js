@@ -144,6 +144,11 @@ function decodeToken(token) {
 }
 
 // ================= AUTHENTICATION CHECK =================
+/**
+ * Checks authentication locally by decoding the JWT.
+ * Because this does NOT make a network request, it will NEVER 
+ * accidentally log a user out due to a server timeout or 500 error.
+ */
 function checkAuth() {
   const token = getToken();
   if (!token) {
