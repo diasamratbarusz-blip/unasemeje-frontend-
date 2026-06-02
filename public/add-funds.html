@@ -352,10 +352,19 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
-                if (!response.ok) {
+                // 🔒 ONLY redirect if the server explicitly rejects the token (401 Unauthorized or 403 Forbidden)
+                if (response.status === 401 || response.status === 403) {
+                    console.warn("Token rejected by server. Logging out...");
                     localStorage.removeItem('token');
                     window.location.href = 'index.html';
                     return;
+                }
+
+                // ⚠️ If it's a 500 server error or network issue, DO NOT log the user out!
+                // Just log the warning and let the dual-API fallback handle it.
+                if (!response.ok) {
+                    console.warn("Profile sync failed with status:", response.status, "- Keeping user logged in.");
+                    return; 
                 }
                 
                 const user = await response.json();
@@ -416,7 +425,8 @@
 
             } catch (err) {
                 console.error("Critical identity lookup transaction failure:", err);
-                window.location.href = 'index.html';
+                // Do not redirect to login page on network/server errors. 
+                // Keep the user on the page so they can retry or use the fallback.
             }
         }
 
@@ -603,4 +613,4 @@
         }
     </script>
 </body>
-</html>
+    </html>
