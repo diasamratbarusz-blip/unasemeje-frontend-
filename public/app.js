@@ -1,6 +1,41 @@
 // ================= CONFIG =================
-// Points to your specific Render backend URL
-const API = "https://unasemeje-backend-3.onrender.com/api"; 
+// Dual-API Configuration for High Availability
+const API_URLS = [
+    "https://unasemeje-backend.vercel.app/api",      // Primary: Vercel (Fastest)
+    "https://unasemeje-backend-3.onrender.com/api"   // Fallback: Render (High Availability)
+];
+
+// Kept for backward compatibility if referenced elsewhere
+const API = API_URLS[0]; 
+
+// Smart Fetch Wrapper: Tries Primary, falls back to Secondary on network/server errors
+async function smartFetch(path, options = {}) {
+    for (let i = 0; i < API_URLS.length; i++) {
+        const currentUrl = API_URLS[i] + path;
+        try {
+            const response = await fetch(currentUrl, options);
+            
+            // If successful (2xx) or client error (4xx like 401 Unauthorized), the server is reachable.
+            if (response.ok || (response.status >= 400 && response.status < 500)) {
+                return response;
+            }
+            
+            // If server error (5xx) and we have a fallback URL left, try the next one
+            if (response.status >= 500 && i < API_URLS.length - 1) {
+                console.warn(`Server error ${response.status} from ${API_URLS[i]}. Trying fallback...`);
+                continue;
+            }
+            
+            return response; // Return 5xx if it's the last URL
+        } catch (error) {
+            // Network error (offline, DNS failure, CORS, timeout)
+            console.warn(`Connection failed for ${API_URLS[i]}. Trying fallback...`, error);
+            if (i === API_URLS.length - 1) {
+                throw new Error("All backend servers are unreachable.");
+            }
+        }
+    }
+}
 
 /* ================= ADMIN SECURITY GATE ================= */
 /**
@@ -31,7 +66,8 @@ async function syncUserProfile() {
     if (!token) return;
 
     try {
-        const res = await fetch(API + "/me", {
+        // Uses the smart smartFetch wrapper for automatic fallback
+        const res = await smartFetch("/me", {
             headers: { "Authorization": "Bearer " + token }
         });
         const user = await res.json();
@@ -60,7 +96,8 @@ async function loadServices() {
   try {
     list.innerHTML = "<li style='padding:10px; opacity:0.7;'>Loading services...</li>";
 
-    const res = await fetch(API + "/services");
+    // Uses the smart smartFetch wrapper for automatic fallback
+    const res = await smartFetch("/services");
     if (!res.ok) throw new Error("Failed to load services");
 
     const json = await res.json();
@@ -145,7 +182,8 @@ async function placeOrder() {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     }
 
-    const res = await fetch(API + "/order", {
+    // Uses the smart smartFetch wrapper for automatic fallback
+    const res = await smartFetch("/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
