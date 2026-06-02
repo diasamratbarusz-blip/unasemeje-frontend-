@@ -1,6 +1,41 @@
 // ================= CONFIG =================
-// Points to your specific Render backend URL
-const API_URL = "https://unasemeje-backend-3.onrender.com/api";
+// Dual-API Configuration for High Availability
+const API_URLS = [
+    "https://unasemeje-backend.vercel.app/api",      // Primary: Vercel (Fastest)
+    "https://unasemeje-backend-3.onrender.com/api"   // Fallback: Render (High Availability)
+];
+
+// Kept for backward compatibility with other files that might use API_URL directly
+const API_URL = API_URLS[0]; 
+
+// Smart Fetch Wrapper for unauthenticated requests (Login/Register)
+async function apiRequest(path, options = {}) {
+    for (let i = 0; i < API_URLS.length; i++) {
+        const currentUrl = API_URLS[i] + path;
+        try {
+            const response = await fetch(currentUrl, options);
+            
+            // If successful (2xx) or client error (4xx), the server is reachable.
+            if (response.ok || (response.status >= 400 && response.status < 500)) {
+                return response;
+            }
+            
+            // If server error (5xx) and we have a fallback URL left, try the next one
+            if (response.status >= 500 && i < API_URLS.length - 1) {
+                console.warn(`Server error ${response.status} from ${API_URLS[i]}. Trying fallback...`);
+                continue;
+            }
+            
+            return response; // Return 5xx if it's the last URL
+        } catch (error) {
+            // Network error (offline, DNS failure, CORS, timeout)
+            console.warn(`Connection failed for ${API_URLS[i]}. Trying fallback...`, error);
+            if (i === API_URLS.length - 1) {
+                throw new Error("All backend servers are unreachable.");
+            }
+        }
+    }
+}
 
 // ================= TOAST NOTIFICATIONS =================
 function showToast(msg, type = "success") {
@@ -162,7 +197,8 @@ async function login() {
   showLoading();
 
   try {
-    const res = await fetch(`${API_URL}/login`, {
+    // Uses the smart apiRequest wrapper for automatic fallback
+    const res = await apiRequest('/login', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ identifier, password })
@@ -203,7 +239,8 @@ async function register() {
   showLoading();
 
   try {
-    const res = await fetch(`${API_URL}/register`, {
+    // Uses the smart apiRequest wrapper for automatic fallback
+    const res = await apiRequest('/register', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
@@ -247,7 +284,8 @@ function logoutUser() {
 // ================= AUTHORIZED FETCH WRAPPER =================
 /**
  * Global wrapper for all API calls that require authentication.
- * Automatically injects the Bearer token and handles basic JSON headers.
+ * Automatically injects the Bearer token, handles basic JSON headers,
+ * and seamlessly falls back to the secondary server if the primary fails.
  */
 async function authFetch(url, options = {}) {
   const token = getToken();
@@ -261,10 +299,33 @@ async function authFetch(url, options = {}) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  return fetch(url, {
-    ...options,
-    headers: headers
-  });
+  try {
+      // Attempt primary URL
+      const res = await fetch(url, { ...options, headers });
+      
+      // If successful (2xx) or client error (4xx like 401 Unauthorized), return immediately
+      if (res.ok || (res.status >= 400 && res.status < 500)) {
+          return res;
+      }
+      
+      // If server error (5xx), try fallback URL
+      if (res.status >= 500) {
+          const fallbackUrl = url.replace(API_URLS[0], API_URLS[1]);
+          if (fallbackUrl !== url) {
+              console.warn(`Primary API failed with ${res.status}. Trying fallback...`);
+              return fetch(fallbackUrl, { ...options, headers });
+          }
+      }
+      return res;
+  } catch (error) {
+      // Network error (offline, DNS failure, timeout), try fallback URL
+      const fallbackUrl = url.replace(API_URLS[0], API_URLS[1]);
+      if (fallbackUrl !== url) {
+          console.warn(`Primary API network error. Trying fallback...`, error);
+          return fetch(fallbackUrl, { ...options, headers });
+      }
+      throw error; // Throw if it's already the fallback or URL couldn't be swapped
+  }
 }
 
 // ================= AUTOMATIC INITIALIZATION =================
