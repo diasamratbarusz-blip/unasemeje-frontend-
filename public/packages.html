@@ -83,7 +83,8 @@
 </div>
 
 <script>
-    const API = "https://unasemeje-backend-3.onrender.com/api";
+    // Updated cleanly to bind securely to your live production endpoint
+    const API = "https://unasemeje-backend.vercel.app/api";
     const token = localStorage.getItem("token");
     const urlParams = new URLSearchParams(window.location.search);
     const platform = urlParams.get('platform');
