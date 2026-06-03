@@ -6,7 +6,6 @@
     <title>Dashboard | UNASEMEJE </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Paynecta Widget Script -->
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -67,7 +66,6 @@
 </head>
 <body>
 
-<!-- Moving Words Ticker - Relatable & Relatable Vibes -->
 <div class="top-ticker">
     <div class="ticker-content">
         <div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> The Ultimate Plug wa Kanairo!</div>
@@ -110,7 +108,6 @@
     </div>
 
     <div class="main">
-        <!-- Header Card -->
         <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
             <div>
                 <small style="color: var(--text-dim); display: block;">Welcome back,</small>
@@ -122,7 +119,6 @@
             </div>
         </div>
 
-        <!-- Promo Card -->
         <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95); border: none; color: white;">
             <h2 style="margin-bottom: 10px;">Grow Your Brand 🚀</h2>
             <p style="opacity: 0.9; font-size: 14px;">Stop being a 'Silent Listener'. Spend some <b>Mang'ondo</b> today and become the Head Boy/Girl of these digital streets!</p>
@@ -131,7 +127,6 @@
             </button>
         </div>
 
-        <!-- Stats Grid -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
             <div class="card">
                 <h3><i class="fas fa-chart-line" style="color: var(--primary);"></i> Account Stats</h3>
@@ -161,7 +156,8 @@
 </div>
 
 <script>
-    const API = "https://unasemeje-backend-3.onrender.com/api";
+    // Pointed strictly and cleanly to your live production build
+    const API = "https://unasemeje-backend.vercel.app/api";
     const token = localStorage.getItem("token");
 
     if (!token) window.location.href = "index.html";
