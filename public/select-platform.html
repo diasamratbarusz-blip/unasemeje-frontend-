@@ -154,10 +154,10 @@
         }
 
         // Logic to dynamically handle service loading can be added here
-        // If you want to fetch platforms directly from your Delixgains API integration:
+        // Configured strictly to hit your active production backend setup:
         async function loadDynamicPlatforms() {
             try {
-                const response = await fetch("https://unasemeje-backend-3.onrender.com/api/services");
+                const response = await fetch("https://unasemeje-backend.vercel.app/api/services");
                 const result = await response.json();
                 const platforms = Object.keys(result.data);
                 
