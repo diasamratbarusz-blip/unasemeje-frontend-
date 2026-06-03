@@ -1,39 +1,24 @@
 // ================= CONFIG =================
-// Dual-API Configuration for High Availability
+// Single-API Configuration pointing to your Vercel production deployment
 const API_URLS = [
-    "https://unasemeje-backend.vercel.app/api",      // Primary: Vercel (Fastest)
-    "https://unasemeje-backend-3.onrender.com/api"   // Fallback: Render (High Availability)
+    "https://unasemeje-backend.vercel.app/api"      // Primary Production Instance
 ];
 
 // Kept for backward compatibility if referenced elsewhere
 const API = API_URLS[0]; 
 
-// Smart Fetch Wrapper: Tries Primary, falls back to Secondary on network/server errors
+// Fetch Wrapper targeting the primary production endpoint
 async function smartFetch(path, options = {}) {
-    for (let i = 0; i < API_URLS.length; i++) {
-        const currentUrl = API_URLS[i] + path;
-        try {
-            const response = await fetch(currentUrl, options);
-            
-            // If successful (2xx) or client error (4xx like 401 Unauthorized), the server is reachable.
-            if (response.ok || (response.status >= 400 && response.status < 500)) {
-                return response;
-            }
-            
-            // If server error (5xx) and we have a fallback URL left, try the next one
-            if (response.status >= 500 && i < API_URLS.length - 1) {
-                console.warn(`Server error ${response.status} from ${API_URLS[i]}. Trying fallback...`);
-                continue;
-            }
-            
-            return response; // Return 5xx if it's the last URL
-        } catch (error) {
-            // Network error (offline, DNS failure, CORS, timeout)
-            console.warn(`Connection failed for ${API_URLS[i]}. Trying fallback...`, error);
-            if (i === API_URLS.length - 1) {
-                throw new Error("All backend servers are unreachable.");
-            }
-        }
+    const currentUrl = API_URLS[0] + path;
+    try {
+        const response = await fetch(currentUrl, options);
+        
+        // Return the response immediately for processing (including 4xx/5xx handling)
+        return response;
+    } catch (error) {
+        // Network error (offline, DNS failure, CORS, timeout)
+        console.error(`Connection failed for ${API_URLS[0]}.`, error);
+        throw new Error("The backend server is currently unreachable. Please check your network.");
     }
 }
 
@@ -66,7 +51,7 @@ async function syncUserProfile() {
     if (!token) return;
 
     try {
-        // Uses the smart smartFetch wrapper for automatic fallback
+        // Uses the smart smartFetch wrapper
         const res = await smartFetch("/me", {
             headers: { "Authorization": "Bearer " + token }
         });
@@ -96,7 +81,7 @@ async function loadServices() {
   try {
     list.innerHTML = "<li style='padding:10px; opacity:0.7;'>Loading services...</li>";
 
-    // Uses the smart smartFetch wrapper for automatic fallback
+    // Uses the smart smartFetch wrapper
     const res = await smartFetch("/services");
     if (!res.ok) throw new Error("Failed to load services");
 
@@ -182,7 +167,7 @@ async function placeOrder() {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     }
 
-    // Uses the smart smartFetch wrapper for automatic fallback
+    // Uses the smart smartFetch wrapper
     const res = await smartFetch("/order", {
       method: "POST",
       headers: {
