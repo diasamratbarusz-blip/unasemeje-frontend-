@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>UNASEMEJE SMM | Authentic Solutions for Kenya</title>
-  <meta name="description" content="The official UNASEMEJE SMM platform. Providing secure social media growth for Kenyan creators with manual M-Pesa verification and 24/7 WhatsApp support.">
+  <meta name="description" content="The official UNASEMEJE SMM platform. Providing secure social media growth for Kenyan creators with instant M-Pesa STK push and 24/7 WhatsApp support.">
   
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     :root {
-      --brand-primary: #10b981; /* Neon Emerald */
+      --brand-primary: #10b981; /* Neon Emerald (Trust & Money) */
       --brand-secondary: #6366f1; /* Indigo */
       --bg-main: #020617; /* Deep Navy */
       --card-bg: #0f172a;
@@ -35,8 +35,9 @@
       left: 0; 
       z-index: 2000;
     }
-    .ticker { display: flex; white-space: nowrap; animation: ticker 50s linear infinite; }
-    .ticker-item { color: var(--brand-primary); padding: 0 50px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
+    .ticker { display: flex; white-space: nowrap; animation: ticker 60s linear infinite; }
+    .ticker-item { color: var(--brand-primary); padding: 0 40px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
+    .ticker-item i { font-size: 14px; }
     @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 
     /* Unique Navigation - Adjusted for Ticker */
@@ -50,6 +51,7 @@
       top: 38px; /* Height of the ticker */
       z-index: 1000; 
       border-bottom: 1px solid #1e293b; 
+      backdrop-filter: blur(10px);
     }
     .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
@@ -69,22 +71,65 @@
     .admin-btn:hover { background: var(--brand-primary); color: #020617; }
 
     /* Hero Branding */
-    .hero { text-align: center; padding: 140px 10% 160px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
+    .hero { text-align: center; padding: 140px 10% 100px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
     .hero h1 { font-family: 'Outfit'; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; margin-bottom: 24px; color: #fff; }
-    .hero span { color: var(--brand-primary); }
+    .hero h1 span { color: var(--brand-primary); text-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
     .hero p { max-width: 700px; margin: 0 auto 40px; color: var(--text-dim); font-size: 1.2rem; }
 
+    /* Live Stats Bar */
+    .stats-bar { display: flex; justify-content: center; gap: 50px; margin-top: 50px; flex-wrap: wrap; }
+    .stat-item { text-align: center; }
+    .stat-number { font-family: 'Outfit'; font-size: 2.5rem; font-weight: 800; color: var(--brand-primary); display: block; text-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+    .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+
     /* Login Section */
-    .auth-container { max-width: 500px; margin: -120px auto 100px; padding: 0 20px; position: relative; z-index: 10; }
+    .auth-container { max-width: 500px; margin: -60px auto 100px; padding: 0 20px; position: relative; z-index: 10; }
     .auth-card { background: var(--card-bg); border-radius: 28px; padding: 45px; border: 1px solid #1e293b; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
     
     .field-group { margin-bottom: 24px; }
     .field-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 14px; color: #cbd5e1; }
     .field-group input { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #334155; background: #1e293b; color: white; transition: 0.3s; }
-    .field-group input:focus { border-color: var(--brand-primary); outline: none; }
+    .field-group input:focus { border-color: var(--brand-primary); outline: none; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
     
-    .btn-login { width: 100%; background: var(--brand-primary); color: #020617; padding: 18px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin: 25px 0; font-size: 16px; transition: 0.3s; }
-    .btn-login:hover { background: #34d399; transform: translateY(-2px); }
+    .btn-login { width: 100%; background: var(--brand-primary); color: #020617; padding: 18px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin: 25px 0; font-size: 16px; transition: 0.3s; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4); }
+    .btn-login:hover { background: #34d399; transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.5); }
+
+    /* Platforms Section */
+    .platforms-section { padding: 80px 10%; text-align: center; background: #0b1120; }
+    .platforms-grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
+    .platform-icon { width: 75px; height: 75px; background: var(--card-bg); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #fff; transition: 0.4s; border: 1px solid #1e293b; }
+    .platform-icon:hover { transform: translateY(-10px) scale(1.05); border-color: var(--brand-primary); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2); }
+
+    /* Features Section (Big Panel Info) */
+    .features-section { padding: 80px 10%; text-align: center; background: #020617; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; margin-top: 50px; }
+    .feature-card { background: linear-gradient(145deg, #0f172a, #1e293b); padding: 35px; border-radius: 20px; border: 1px solid #334155; transition: 0.4s; text-align: left; }
+    .feature-card:hover { border-color: var(--brand-primary); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    .feature-icon { width: 60px; height: 60px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+
+    /* Other Sections */
+    .trust-section { padding: 80px 10%; text-align: center; background: #0b1120; }
+    .trust-badge { display: inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px; border: 1px solid rgba(16, 185, 129, 0.2); }
+    
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; margin-top: 60px; }
+    .step-box { background: #0f172a; padding: 40px; border-radius: 24px; text-align: left; border-left: 4px solid var(--brand-primary); transition: 0.3s; }
+    .step-box:hover { transform: translateX(5px); background: #1e293b; }
+    .step-label { color: var(--brand-primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 15px; }
+
+    /* Testimonials */
+    .testimonials-section { padding: 80px 10%; text-align: center; background: #020617; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 50px; }
+    .testimonial-card { background: var(--card-bg); padding: 35px; border-radius: 20px; border: 1px solid #1e293b; position: relative; text-align: left; transition: 0.3s; }
+    .testimonial-card:hover { border-color: #334155; transform: translateY(-5px); }
+    .testimonial-card::before { content: '"'; position: absolute; top: 10px; left: 20px; font-size: 80px; color: var(--brand-primary); opacity: 0.2; font-family: serif; line-height: 1; }
+    .testimonial-text { color: #cbd5e1; font-size: 15px; margin-bottom: 25px; z-index: 1; position: relative; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: 15px; }
+    .author-avatar { width: 45px; height: 45px; background: var(--brand-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+    .author-name { font-weight: 700; color: #fff; font-size: 14px; }
+    .author-loc { font-size: 12px; color: var(--text-dim); }
+
+    .local-banner { background: #111827; padding: 40px; border-radius: 24px; margin-top: 50px; display: flex; align-items: center; gap: 30px; border: 1px solid #1e293b; }
+    .local-flag { width: 60px; border-radius: 8px; }
 
     /* Live Notification Toast */
     #notification-toast {
@@ -106,53 +151,50 @@
     #notification-toast.show { transform: translateY(0); }
     .toast-icon { width: 35px; height: 35px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); font-size: 14px; }
 
-    /* Other Sections */
-    .trust-section { padding: 80px 10%; text-align: center; }
-    .trust-badge { display: inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px; }
-    
-    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 30px; margin-top: 60px; }
-    .step-box { background: #0f172a; padding: 40px; border-radius: 24px; text-align: left; border-left: 4px solid var(--brand-primary); }
-    .step-label { color: var(--brand-primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 15px; }
-
-    .local-banner { background: #111827; padding: 40px; border-radius: 24px; margin-top: 50px; display: flex; align-items: center; gap: 30px; border: 1px solid #1e293b; }
-    .local-flag { width: 60px; border-radius: 8px; }
-
-    .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 1000; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+    .wa-float { position: fixed; bottom: 40px; right: 40px; background: #25D366; color: white; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 1000; text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: 0.3s; }
+    .wa-float:hover { transform: scale(1.1); }
 
     footer { background: #020617; padding: 60px 10%; border-top: 1px solid #1e293b; }
+
+    /* Responsive tweaks */
+    @media (max-width: 768px) {
+      .stats-bar { gap: 30px; }
+      .stat-number { font-size: 2rem; }
+      .local-banner { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
 <body>
 
+<!-- MOVING TICKER (Sheng & Hype) -->
 <div class="ticker-wrap">
   <div class="ticker">
     <div class="ticker-item"><i class="fas fa-bolt"></i> MAIN CHARACTER ENERGY ACTIVE</div>
-    <div class="ticker-item"><i class="fas fa-fire"></i> KUSOTA NI MWIKO! GET FOLLOWERS NOW Level up your **Aura** without finishing your **Lovy**! Whether you are holding a tiny **Mbao**, a crispy **Rwabe**, or a full **Draft**, we make sure your social media doesn't look like a ghost town.
-Check out these vibes for your site:
-### **The "Money" Talk (Funny & Relatable)**
- * **The "Miti" Budget:** "Even if you only have a few **Miti** (shillings) left after buying bundles, you can still buy enough likes to make your ex regret everything."
- * **The "Kapa" Hustle:** "Turn that loose **Kapa** (coins) sitting in your M-Pesa into 'Influencer Status' before the sun sets."
- * **The "Ginger" Move:** "Don’t just sit there looking at your dry notifications—throw a **Ginger** (100/-) at your profile and watch the magic happen."
- * **The "Don" Package:** "If you’re holding a **Njege** (big money), stop playing small. Buy the whole city’s attention and walk with that 100% **Steeze**."
- * **The "Mbesha" Flow:** "We handle your **Mbesha** (money) faster than a campus student finishes a HELB loan on a Friday night."
-### **The Catchy Sentences**
- * "Your profile has been 'Typing...' for too long—**weka Monchari** (put some cash) and finally go viral!"
- * "Don't let your 'Ops' have more views than you just because you’re hoarding your **Chapaa**."
- * "We offer services so cheap, you’ll think we’re paying *you* to be famous. **Leta mullah**, uone maajabu!"
- * "Our system is smoother than a Nairobi guy’s lines on the first date—no glitches, just pure **Aura**."
- * "Stop being a 'Silent Listener' on the TL. Spend some **Mang'ondo** today and become the Head Girl/Boy of these digital streets!"
-### **The Bottom Line**
-> "At **unasemeje ø dia**, we don't care if you have a **Thao** or just **Soo**—we treat every customer like a CEO. Log in, **mwaga ganji**, and let’s confuse the fans!"
-> 
-</div>
+    <div class="ticker-item"><i class="fas fa-fire"></i> KUSOTA NI MWIKO! LEVEL UP YOUR AURA</div>
+    <div class="ticker-item"><i class="fas fa-money-bill"></i> TURN LOOSE KAPA INTO INFLUENCER STATUS</div>
+    <div class="ticker-item"><i class="fas fa-pepper-hot"></i> THROW A GINGER AT YOUR PROFILE TODAY</div>
+    <div class="ticker-item"><i class="fas fa-rocket"></i> WE HANDLE MBESHA FASTER THAN HELB PAYOUT</div>
+    <div class="ticker-item"><i class="fas fa-keyboard"></i> WEKA MONCHARI AND FINALLY GO VIRAL</div>
     <div class="ticker-item"><i class="fas fa-star"></i> FORM NI UNASEMEJE SMM</div>
-    <div class="ticker-item"><i class="fas fa-check-circle"></i> M-PESA TRANSACTIONS ARE INSTANT</div>
+    <div class="ticker-item"><i class="fas fa-check-circle"></i> INSTANT STK PUSH - NO MANUAL DEPOSITS</div>
     <div class="ticker-item"><i class="fas fa-crown"></i> NO CAP, BEST RATES IN K-SIDE</div>
-    <div class="ticker-item"><i class="fas fa-rocket"></i> UNLOCK YOUR AURA TODAY</div>
     <div class="ticker-item"><i class="fas fa-heart"></i> TIKTOK VIBES ON LOCK</div>
+    <div class="ticker-item"><i class="fas fa-handshake"></i> SMOOTHER THAN A NAIROBI GUY'S LINES</div>
+    <div class="ticker-item"><i class="fas fa-coins"></i> SPEND SOME MANG'ONDO AND BECOME THE TL BOSS</div>
+    
+    <!-- Duplicates for seamless infinite scroll -->
     <div class="ticker-item"><i class="fas fa-bolt"></i> MAIN CHARACTER ENERGY ACTIVE</div>
-    <div class="ticker-item"><i class="fas fa-fire"></i> KUSOTA NI MWIKO!</div>
+    <div class="ticker-item"><i class="fas fa-fire"></i> KUSOTA NI MWIKO! LEVEL UP YOUR AURA</div>
+    <div class="ticker-item"><i class="fas fa-money-bill"></i> TURN LOOSE KAPA INTO INFLUENCER STATUS</div>
+    <div class="ticker-item"><i class="fas fa-pepper-hot"></i> THROW A GINGER AT YOUR PROFILE TODAY</div>
+    <div class="ticker-item"><i class="fas fa-rocket"></i> WE HANDLE MBESHA FASTER THAN HELB PAYOUT</div>
+    <div class="ticker-item"><i class="fas fa-keyboard"></i> WEKA MONCHARI AND FINALLY GO VIRAL</div>
     <div class="ticker-item"><i class="fas fa-star"></i> FORM NI UNASEMEJE SMM</div>
+    <div class="ticker-item"><i class="fas fa-check-circle"></i> INSTANT STK PUSH - NO MANUAL DEPOSITS</div>
+    <div class="ticker-item"><i class="fas fa-crown"></i> NO CAP, BEST RATES IN K-SIDE</div>
+    <div class="ticker-item"><i class="fas fa-heart"></i> TIKTOK VIBES ON LOCK</div>
+    <div class="ticker-item"><i class="fas fa-handshake"></i> SMOOTHER THAN A NAIROBI GUY'S LINES</div>
+    <div class="ticker-item"><i class="fas fa-coins"></i> SPEND SOME MANG'ONDO AND BECOME THE TL BOSS</div>
   </div>
 </div>
 
@@ -160,14 +202,29 @@ Check out these vibes for your site:
   <div class="logo">UNASEMEJE SMM </div>
   <div id="navActions" style="display: flex; align-items: center; gap: 20px;">
     <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
-    <i class="fas fa-bars" style="color: #fff; font-size: 22px;"></i>
+    <i class="fas fa-bars" style="color: #fff; font-size: 22px; cursor: pointer;"></i>
   </div>
 </nav>
 
 <section class="hero">
   <div class="trust-badge">AUTHENTIC KENYAN SERVICE</div>
   <h1>Grow Your <span>Digital Brand</span> In Kenya</h1>
-  <p>The original UNASEMEJE ø DIA platform for verified social media engagement. We specialize in fast, local delivery with manual verification to ensure 100% account safety.</p>
+  <p>The original UNASEMEJE ø DIA platform for verified social media engagement. We specialize in fast, local delivery with automated STK push to ensure 100% account safety and instant wallet funding.</p>
+  
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-number">15,432+</span>
+      <span class="stat-label">Orders Completed</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">3,200+</span>
+      <span class="stat-label">Active Users</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-number">24/7</span>
+      <span class="stat-label">WhatsApp Support</span>
+    </div>
+  </div>
 </section>
 
 <div class="auth-container">
@@ -194,13 +251,58 @@ Check out these vibes for your site:
   </div>
 </div>
 
+<!-- SUPPORTED PLATFORMS -->
+<section class="platforms-section">
+  <div class="trust-badge">SUPPORTED NETWORKS</div>
+  <h2 style="font-family: 'Outfit'; font-size: 2rem;">We Cover All Major Platforms</h2>
+  <div class="platforms-grid">
+    <div class="platform-icon" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);"><i class="fab fa-instagram"></i></div>
+    <div class="platform-icon" style="background: #000; border: 1px solid #333;"><i class="fab fa-tiktok"></i></div>
+    <div class="platform-icon" style="background: #1DA1F2;"><i class="fab fa-twitter"></i></div>
+    <div class="platform-icon" style="background: #FF0000;"><i class="fab fa-youtube"></i></div>
+    <div class="platform-icon" style="background: #1877F2;"><i class="fab fa-facebook-f"></i></div>
+    <div class="platform-icon" style="background: #0088cc;"><i class="fab fa-telegram-plane"></i></div>
+  </div>
+</section>
+
+<!-- BIG PANEL FEATURES -->
+<section class="features-section">
+  <div class="trust-badge">POWERFUL DASHBOARD</div>
+  <h2 style="font-family: 'Outfit'; font-size: 2rem;">Everything You Need In One Panel</h2>
+  <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">Our custom-built panel gives you total control over your social media growth with enterprise-grade features.</p>
+  
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+      <h4 style="color: #fff; margin-bottom: 10px;">Instant STK Push</h4>
+      <p style="color: var(--text-dim); font-size: 14px;">No more manual deposits! Fund your wallet instantly via automated M-Pesa prompts and start ordering in seconds.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+      <h4 style="color: #fff; margin-bottom: 10px;">Mass Order</h4>
+      <p style="color: var(--text-dim); font-size: 14px;">Have multiple links? Upload a text file and place hundreds of orders at once without breaking a sweat.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-code"></i></div>
+      <h4 style="color: #fff; margin-bottom: 10px;">Perfect API</h4>
+      <p style="color: var(--text-dim); font-size: 14px;">Connect our panel to your own website or panel. Our API is fast, well-documented, and developer-friendly.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-users"></i></div>
+      <h4 style="color: #fff; margin-bottom: 10px;">Child Panels</h4>
+      <p style="color: var(--text-dim); font-size: 14px;">Start your own SMM business! Create a child panel and sell our services at your own prices.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
 <section class="trust-section">
   <div class="trust-badge">OUR TRANSPARENT PROCESS</div>
-  <h2>How We Serve Our Clients</h2>
+  <h2 style="font-family: 'Outfit'; font-size: 2rem;">How We Serve Our Clients</h2>
   
   <div class="steps-grid">
-    <div class="step-box"><div class="step-label">01</div><h4>Account Setup</h4><p>Register securely on our Kenyan-hosted infrastructure.</p></div>
-    <div class="step-box"><div class="step-label">02</div><h4>Manual Top-Up</h4><p>Send funds via M-Pesa to 0715509440 for human-verified wallet credits.</p></div>
+    <div class="step-box"><div class="step-label">01</div><h4>Account Setup</h4><p>Register securely on our Kenyan-hosted infrastructure in less than a minute.</p></div>
+    <div class="step-box"><div class="step-label">02</div><h4>Instant STK Push</h4><p>Fund your wallet instantly via automated M-Pesa STK push. No manual verification needed!</p></div>
     <div class="step-box"><div class="step-label">03</div><h4>Curated Orders</h4><p>Select from services specifically optimized for East African algorithms.</p></div>
     <div class="step-box"><div class="step-label">04</div><h4>Verified Delivery</h4><p>Our team monitors every order to ensure 100% natural delivery patterns.</p></div>
   </div>
@@ -210,6 +312,46 @@ Check out these vibes for your site:
     <div style="text-align: left;">
       <h4 style="color: #fff;">Exclusively Optimized for Kenya</h4>
       <p style="color: var(--text-dim); font-size: 14px;">We are a locally owned service. We never use automated "bot" lists that put your accounts at risk.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="trust-badge">TESTIMONIALS</div>
+  <h2 style="font-family: 'Outfit'; font-size: 2rem;">What People Say About Us</h2>
+  <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">Join thousands of satisfied Kenyan creators, businesses, and influencers.</p>
+  
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <p class="testimonial-text">Niliam followers za IG, zikafika ndani ya dakika 5! Form ni gani? Ni UNASEMEJE! The STK push is so fast, I didn't even have to send money manually.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">KK</div>
+        <div style="text-align: left;">
+          <div class="author-name">Kevin K.</div>
+          <div class="author-loc">Nairobi, Kenya</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <p class="testimonial-text">Best rates in Kenya. I started my own child panel using their API and I'm already making a daily profit. Asante sana UNASEMEJE team!</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">SW</div>
+        <div style="text-align: left;">
+          <div class="author-name">Stacy W.</div>
+          <div class="author-loc">Mombasa, Kenya</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <p class="testimonial-text">Customer support via WhatsApp is 10/10. They helped me sort out a stuck order in record time. Very professional and the dashboard is super clean.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">BO</div>
+        <div style="text-align: left;">
+          <div class="author-name">Brian O.</div>
+          <div class="author-loc">Eldoret, Kenya</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -313,4 +455,4 @@ Check out these vibes for your site:
 <script src="auth.js"></script>
 
 </body>
-</html>
+                                                                </html>
