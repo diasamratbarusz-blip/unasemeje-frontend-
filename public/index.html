@@ -121,7 +121,7 @@
     /* Live Testimonials Carousel */
     .testimonials-section { padding: 80px 10%; text-align: center; background: #020617; overflow: hidden; }
     .testimonials-container { position: relative; max-width: 1200px; margin: 50px auto 0; }
-    .testimonials-track { display: flex; gap: 30px; animation: scrollTestimonials 40s linear infinite; }
+    .testimonials-track { display: flex; gap: 30px; animation: scrollTestimonials 80s linear infinite; }
     .testimonials-track:hover { animation-play-state: paused; }
     
     @keyframes scrollTestimonials {
@@ -456,7 +456,7 @@
   // Update counters every 3 seconds
   setInterval(updateCounters, 3000);
 
-  // EXTENDED TESTIMONIALS DATABASE
+  // EXTENDED TESTIMONIALS DATABASE - 20+ DIFFERENT PEOPLE
   const testimonials = [
     { name: "Kevin K.", loc: "Nairobi, Kenya", text: "Niliam followers za IG, zikafika ndani ya dakika 5! Form ni gani? Ni UNASEMEJE! The STK push is so fast, I didn't even have to send money manually.", avatar: "KK" },
     { name: "Stacy W.", loc: "Mombasa, Kenya", text: "Best rates in Kenya. I started my own child panel using their API and I'm already making a daily profit. Asante sana UNASEMEJE team!", avatar: "SW" },
@@ -469,7 +469,20 @@
     { name: "Peter M.", loc: "Nyeri, Kenya", text: "API integration was so smooth. I connected my website in less than an hour. Documentation is clear and support team is very helpful.", avatar: "PM" },
     { name: "Linda A.", loc: "Malindi, Kenya", text: "Best investment for my business! Instagram engagement increased by 300% in just one month. My sales have doubled since then!", avatar: "LA" },
     { name: "John K.", loc: "Garissa, Kenya", text: "Fast, reliable, and affordable. What more can you ask for? I've been using this panel for 6 months and never had a single issue.", avatar: "JK" },
-    { name: "Sarah L.", loc: "Kitale, Kenya", text: "The analytics dashboard helps me track everything. I can see exactly where my money is going and the ROI is amazing!", avatar: "SL" }
+    { name: "Sarah L.", loc: "Kitale, Kenya", text: "The analytics dashboard helps me track everything. I can see exactly where my money is going and the ROI is amazing!", avatar: "SL" },
+    { name: "Michael T.", loc: "Nairobi, Kenya", text: "Nilikuwa na wasiwasi mwanzoni lakini sasa nimeona ni real. Followers zangu za TikTok zilifika ndani ya saa moja. Form ni UNASEMEJE tu!", avatar: "MT" },
+    { name: "Ann W.", loc: "Mombasa, Kenya", text: "The child panel feature helped me start my own SMM business. Now I'm earning passive income daily. Thank you for this opportunity!", avatar: "AW" },
+    { name: "Chris O.", loc: "Kisii, Kenya", text: "Customer service ni mzuri sana. Walinisaidia midnight wakati nilikuwa na issue na order yangu. Very dedicated team!", avatar: "CO" },
+    { name: "Jane M.", loc: "Eldoret, Kenya", text: "I love how the STK push works. No more manual deposits that take hours to verify. Instant funding, instant orders. Perfect!", avatar: "JM" },
+    { name: "Paul K.", loc: "Nakuru, Kenya", text: "Been using this for my YouTube channel. Subscribers are real and active. My channel monetization was approved in record time!", avatar: "PK" },
+    { name: "Lucy N.", loc: "Thika, Kenya", text: "The prices are unbeatable. I compared with other panels and UNASEMEJE is way cheaper but the quality is premium. Best decision ever!", avatar: "LN" },
+    { name: "George M.", loc: "Nairobi, Kenya", text: "Mass order feature saved me so much time. I manage 20 client accounts and can place all orders at once. Game changer for SMM managers!", avatar: "GM" },
+    { name: "Ruth W.", loc: "Machakos, Kenya", text: "Nilipata Instagram likes zangu zote ndani ya dakika 10. Sasa post zangu zinaonekana popular na engagement imepanda sana. Asanteni!", avatar: "RW" },
+    { name: "Samuel K.", loc: "Kiambu, Kenya", text: "The API documentation is excellent. I integrated it with my website in one day. Now my customers can order directly from my platform!", avatar: "SK" },
+    { name: "Esther N.", loc: "Nyeri, Kenya", text: "Best SMM panel in Kenya hands down. Fast delivery, real engagement, and the support team is always available on WhatsApp. 10/10!", avatar: "EN" },
+    { name: "Daniel O.", loc: "Kisumu, Kenya", text: "I was skeptical at first but after my first order, I was convinced. Real followers, real likes, real views. Everything is genuine!", avatar: "DO" },
+    { name: "Mary A.", loc: "Eldoret, Kenya", text: "The anti-drop guarantee gives me peace of mind. If anything drops, they refill it automatically. No questions asked. Very professional!", avatar: "MA" },
+    { name: "Joseph K.", loc: "Nairobi, Kenya", text: "Started my own panel using their child panel feature. Now I have my own customers and I'm making good profit. Best investment ever!", avatar: "JK" }
   ];
 
   // Render testimonials (duplicated for seamless loop)
@@ -497,7 +510,8 @@
   const activityUsers = [
     "Kevin K.", "Stacy W.", "Brian O.", "Mercy M.", "James O.", "Faith N.", 
     "David K.", "Grace W.", "Peter M.", "Linda A.", "John K.", "Sarah L.",
-    "Mike T.", "Ann W.", "Chris O.", "Jane M.", "Paul K.", "Lucy N."
+    "Michael T.", "Ann W.", "Chris O.", "Jane M.", "Paul K.", "Lucy N.",
+    "George M.", "Ruth W.", "Samuel K.", "Esther N.", "Daniel O.", "Mary A."
   ];
   
   const activityActions = [
@@ -510,7 +524,12 @@
     "purchased 3,000 TikTok Followers",
     "ordered 500 Instagram Views",
     "bought 1,000 YouTube Views",
-    "purchased 200 Telegram Members"
+    "purchased 200 Telegram Members",
+    "ordered 10,000 TikTok Shares",
+    "bought 2,500 Facebook Followers",
+    "purchased 1,500 Instagram Comments",
+    "ordered 8,000 YouTube Views",
+    "bought 750 Twitter Likes"
   ];
 
   function addActivityItem() {
@@ -606,4 +625,4 @@
 <script src="auth.js"></script>
 
 </body>
-                                    </html>
+  </html>
