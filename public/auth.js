@@ -1,8 +1,7 @@
 // ================= CONFIG =================
-// Dual-API Configuration for High Availability
+// Single-API Configuration pointing to your Vercel production deployment
 const API_URLS = [
-    "https://unasemeje-backend.vercel.app/api",      // Primary: Vercel (Fastest)
-    "https://unasemeje-backend-3.onrender.com/api"   // Fallback: Render (High Availability)
+    "https://unasemeje-backend.vercel.app/api"      // Primary Production Instance
 ];
 
 // Kept for backward compatibility with other files that might use API_URL directly
@@ -10,30 +9,16 @@ const API_URL = API_URLS[0];
 
 // Smart Fetch Wrapper for unauthenticated requests (Login/Register)
 async function apiRequest(path, options = {}) {
-    for (let i = 0; i < API_URLS.length; i++) {
-        const currentUrl = API_URLS[i] + path;
-        try {
-            const response = await fetch(currentUrl, options);
-            
-            // If successful (2xx) or client error (4xx), the server is reachable.
-            if (response.ok || (response.status >= 400 && response.status < 500)) {
-                return response;
-            }
-            
-            // If server error (5xx) and we have a fallback URL left, try the next one
-            if (response.status >= 500 && i < API_URLS.length - 1) {
-                console.warn(`Server error ${response.status} from ${API_URLS[i]}. Trying fallback...`);
-                continue;
-            }
-            
-            return response; // Return 5xx if it's the last URL
-        } catch (error) {
-            // Network error (offline, DNS failure, CORS, timeout)
-            console.warn(`Connection failed for ${API_URLS[i]}. Trying fallback...`, error);
-            if (i === API_URLS.length - 1) {
-                throw new Error("All backend servers are unreachable.");
-            }
-        }
+    const currentUrl = API_URLS[0] + path;
+    try {
+        const response = await fetch(currentUrl, options);
+        
+        // Return the response immediately if reachable (including 4xx/5xx for handling)
+        return response;
+    } catch (error) {
+        // Network error (offline, DNS failure, CORS, timeout)
+        console.error(`Connection failed for ${API_URLS[0]}.`, error);
+        throw new Error("The backend server is currently unreachable. Please check your network.");
     }
 }
 
@@ -202,7 +187,7 @@ async function login() {
   showLoading();
 
   try {
-    // Uses the smart apiRequest wrapper for automatic fallback
+    // Uses the smart apiRequest wrapper
     const res = await apiRequest('/login', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -237,7 +222,7 @@ async function register() {
   const phone = document.getElementById("phone")?.value?.trim();
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  // 🆕 NEW: Payment Profile Fields
+  // Payment Profile Fields
   const firstName = document.getElementById("firstName")?.value?.trim();
   const lastName = document.getElementById("lastName")?.value?.trim();
   const paymentPhone1 = document.getElementById("paymentPhone1")?.value?.trim();
@@ -251,7 +236,7 @@ async function register() {
   showLoading();
 
   try {
-    // Uses the smart apiRequest wrapper for automatic fallback
+    // Uses the smart apiRequest wrapper
     const res = await apiRequest('/register', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -300,8 +285,7 @@ function logoutUser() {
 // ================= AUTHORIZED FETCH WRAPPER =================
 /**
  * Global wrapper for all API calls that require authentication.
- * Automatically injects the Bearer token, handles basic JSON headers,
- * and seamlessly falls back to the secondary server if the primary fails.
+ * Automatically injects the Bearer token and handles basic JSON headers.
  */
 async function authFetch(url, options = {}) {
   const token = getToken();
@@ -316,31 +300,12 @@ async function authFetch(url, options = {}) {
   }
 
   try {
-      // Attempt primary URL
+      // Execute the request directly targeting your deployment
       const res = await fetch(url, { ...options, headers });
-      
-      // If successful (2xx) or client error (4xx like 401 Unauthorized), return immediately
-      if (res.ok || (res.status >= 400 && res.status < 500)) {
-          return res;
-      }
-      
-      // If server error (5xx), try fallback URL
-      if (res.status >= 500) {
-          const fallbackUrl = url.replace(API_URLS[0], API_URLS[1]);
-          if (fallbackUrl !== url) {
-              console.warn(`Primary API failed with ${res.status}. Trying fallback...`);
-              return fetch(fallbackUrl, { ...options, headers });
-          }
-      }
       return res;
   } catch (error) {
-      // Network error (offline, DNS failure, timeout), try fallback URL
-      const fallbackUrl = url.replace(API_URLS[0], API_URLS[1]);
-      if (fallbackUrl !== url) {
-          console.warn(`Primary API network error. Trying fallback...`, error);
-          return fetch(fallbackUrl, { ...options, headers });
-      }
-      throw error; // Throw if it's already the fallback or URL couldn't be swapped
+      console.error(`Auth fetch connection exception encountered at: ${url}`, error);
+      throw error;
   }
 }
 
