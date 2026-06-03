@@ -6,8 +6,8 @@
  * Handles grouped, flat, and fallback API routes.
  */
 
-// Configuration - Matches your Render backend URL
-const API_URL = "https://unasemeje-backend-3.onrender.com/api";
+// Configuration - Pointed directly to your active Vercel production deployment
+const API_URL = "https://unasemeje-backend.vercel.app/api";
 
 // Global variable for filtering/search
 let allServices = [];
