@@ -118,15 +118,20 @@
     .step-box:hover { transform: translateX(5px); background: #1e293b; }
     .step-label { color: var(--brand-primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 15px; }
 
-    /* Live Testimonials Carousel */
-    .testimonials-section { padding: 80px 10%; text-align: center; background: #020617; overflow: hidden; }
-    .testimonials-container { position: relative; max-width: 1200px; margin: 50px auto 0; }
-    .testimonials-track { display: flex; gap: 30px; animation: scrollTestimonials 80s linear infinite; }
-    .testimonials-track:hover { animation-play-state: paused; }
-    
-    @keyframes scrollTestimonials {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    /* Live Testimonials Grid (Shows 3 people at the same time) */
+    .testimonials-section { padding: 80px 10%; text-align: center; background: #020617; }
+    .testimonials-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 30px; 
+      max-width: 1200px; 
+      margin: 50px auto 0; 
+    }
+    @media (max-width: 900px) {
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .testimonials-grid { grid-template-columns: 1fr; }
     }
     
     .testimonial-card { 
@@ -136,9 +141,13 @@
       border: 1px solid #1e293b; 
       position: relative; 
       text-align: left; 
-      transition: 0.3s; 
-      min-width: 350px;
-      flex-shrink: 0;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .testimonial-card.updating {
+      opacity: 0;
+      transform: translateY(20px);
     }
     .testimonial-card:hover { border-color: var(--brand-primary); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15); }
     .testimonial-card::before { content: '"'; position: absolute; top: 10px; left: 20px; font-size: 80px; color: var(--brand-primary); opacity: 0.2; font-family: serif; line-height: 1; }
@@ -198,7 +207,6 @@
       .stat-number { font-size: 2rem; }
       .stat-item { min-width: 120px; padding: 15px; }
       .local-banner { flex-direction: column; text-align: center; }
-      .testimonial-card { min-width: 300px; }
       .activity-item { flex-wrap: wrap; }
     }
   </style>
@@ -371,16 +379,14 @@
   </div>
 </section>
 
-<!-- LIVE TESTIMONIALS CAROUSEL -->
+<!-- LIVE TESTIMONIALS GRID (Shows 3 different people at the same time) -->
 <section class="testimonials-section">
   <div class="trust-badge">TESTIMONIALS</div>
   <h2 style="font-family: 'Outfit'; font-size: 2rem;">What People Say About Us</h2>
   <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">Join thousands of satisfied Kenyan creators, businesses, and influencers.</p>
   
-  <div class="testimonials-container">
-    <div class="testimonials-track" id="testimonialsTrack">
-      <!-- Testimonials will be duplicated via JavaScript for seamless loop -->
-    </div>
+  <div class="testimonials-grid" id="testimonialsGrid">
+    <!-- Testimonials will be injected here via JavaScript (3 at a time) -->
   </div>
 </section>
 
@@ -456,8 +462,8 @@
   // Update counters every 3 seconds
   setInterval(updateCounters, 3000);
 
-  // EXTENDED TESTIMONIALS DATABASE - 20+ DIFFERENT PEOPLE
-  const testimonials = [
+  // EXTENDED TESTIMONIALS DATABASE - 25+ DIFFERENT PEOPLE
+  const allTestimonials = [
     { name: "Kevin K.", loc: "Nairobi, Kenya", text: "Niliam followers za IG, zikafika ndani ya dakika 5! Form ni gani? Ni UNASEMEJE! The STK push is so fast, I didn't even have to send money manually.", avatar: "KK" },
     { name: "Stacy W.", loc: "Mombasa, Kenya", text: "Best rates in Kenya. I started my own child panel using their API and I'm already making a daily profit. Asante sana UNASEMEJE team!", avatar: "SW" },
     { name: "Brian O.", loc: "Eldoret, Kenya", text: "Customer support via WhatsApp is 10/10. They helped me sort out a stuck order in record time. Very professional and the dashboard is super clean.", avatar: "BO" },
@@ -482,29 +488,59 @@
     { name: "Esther N.", loc: "Nyeri, Kenya", text: "Best SMM panel in Kenya hands down. Fast delivery, real engagement, and the support team is always available on WhatsApp. 10/10!", avatar: "EN" },
     { name: "Daniel O.", loc: "Kisumu, Kenya", text: "I was skeptical at first but after my first order, I was convinced. Real followers, real likes, real views. Everything is genuine!", avatar: "DO" },
     { name: "Mary A.", loc: "Eldoret, Kenya", text: "The anti-drop guarantee gives me peace of mind. If anything drops, they refill it automatically. No questions asked. Very professional!", avatar: "MA" },
-    { name: "Joseph K.", loc: "Nairobi, Kenya", text: "Started my own panel using their child panel feature. Now I have my own customers and I'm making good profit. Best investment ever!", avatar: "JK" }
+    { name: "Joseph K.", loc: "Nairobi, Kenya", text: "Started my own panel using their child panel feature. Now I have my own customers and I'm making good profit. Best investment ever!", avatar: "JK2" }
   ];
 
-  // Render testimonials (duplicated for seamless loop)
-  const track = document.getElementById('testimonialsTrack');
-  const allTestimonials = [...testimonials, ...testimonials]; // Duplicate for infinite scroll
-  
-  allTestimonials.forEach(t => {
-    const card = document.createElement('div');
-    card.className = 'testimonial-card';
-    card.innerHTML = `
-      <p class="testimonial-text">${t.text}</p>
-      <div class="testimonial-author">
-        <div class="author-avatar">${t.avatar}</div>
-        <div style="text-align: left;">
-          <div class="author-name">${t.name}</div>
-          <div class="author-loc">${t.loc}</div>
-          <div class="testimonial-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
-        </div>
-      </div>
-    `;
-    track.appendChild(card);
-  });
+  const gridContainer = document.getElementById('testimonialsGrid');
+
+  function getRandomTestimonials(count) {
+    const shuffled = [...allTestimonials].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+    }
+
+  function updateTestimonials() {
+    // Fade out existing cards
+    const cards = gridContainer.querySelectorAll('.testimonial-card');
+    cards.forEach(card => card.classList.add('updating'));
+
+    setTimeout(() => {
+      gridContainer.innerHTML = '';
+      // Show 3 different people at the same time
+      const newTestimonials = getRandomTestimonials(3);
+      newTestimonials.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'testimonial-card';
+        // Start slightly faded and shifted for smooth entry
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.innerHTML = `
+          <p class="testimonial-text">"${t.text}"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">${t.avatar}</div>
+            <div style="text-align: left;">
+              <div class="author-name">${t.name}</div>
+              <div class="author-loc">${t.loc}</div>
+              <div class="testimonial-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+            </div>
+          </div>
+        `;
+        gridContainer.appendChild(card);
+        
+        // Trigger reflow to ensure transition happens
+        void card.offsetWidth; 
+        
+        // Animate in
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      });
+    }, 600); // Wait for fade out animation
+  }
+
+  // Initial load
+  updateTestimonials();
+
+  // Change to 3 new different people every 6 seconds
+  setInterval(updateTestimonials, 6000);
 
   // LIVE ACTIVITY FEED
   const activityUsers = [
