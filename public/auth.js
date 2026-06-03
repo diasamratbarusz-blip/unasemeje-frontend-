@@ -237,8 +237,15 @@ async function register() {
   const phone = document.getElementById("phone")?.value?.trim();
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  if (!username || !email || !password || !phone) {
-    return showToast("Username, Email, Password, and Phone are required", "error");
+  // 🆕 NEW: Payment Profile Fields
+  const firstName = document.getElementById("firstName")?.value?.trim();
+  const lastName = document.getElementById("lastName")?.value?.trim();
+  const paymentPhone1 = document.getElementById("paymentPhone1")?.value?.trim();
+  const paymentPhone2 = document.getElementById("paymentPhone2")?.value?.trim();
+
+  // Updated validation to require the new fields
+  if (!username || !email || !password || !phone || !firstName || !lastName || !paymentPhone1) {
+    return showToast("Please fill in all required fields (Name, Phone, and M-Pesa Phone 1)", "error");
   }
 
   showLoading();
@@ -253,6 +260,10 @@ async function register() {
         email, 
         password, 
         phone,
+        firstName,
+        lastName,
+        paymentPhone1,
+        paymentPhone2: paymentPhone2 || null,
         referralCode: referralCode || null 
       })
     });
@@ -263,7 +274,7 @@ async function register() {
       throw new Error(data.error || "Registration failed. Check details.");
     }
 
-    showToast("Account created! Redirecting to login...");
+    showToast("Account & Payment Profile created! Redirecting to login...");
 
     setTimeout(() => {
       window.location.href = "index.html";
