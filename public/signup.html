@@ -131,14 +131,32 @@
       <input type="text" id="username" placeholder="Unique username">
     </div>
 
+    <!-- NEW: Full Legal Name for Payment Matching -->
+    <div class="form-group">
+      <label>Full Legal Name (For M-Pesa Matching)</label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <input type="text" id="firstName" placeholder="First Name">
+        <input type="text" id="lastName" placeholder="Last Name">
+      </div>
+    </div>
+
     <div class="form-group">
       <label>Email Address</label>
       <input type="email" id="email" placeholder="example@gmail.com">
     </div>
 
     <div class="form-group">
-      <label>Phone Number</label>
+      <label>Primary Phone Number</label>
       <input type="text" id="phone" placeholder="2547XXXXXXXX">
+    </div>
+
+    <!-- NEW: M-Pesa / Funding Phone Numbers -->
+    <div class="form-group">
+      <label>M-Pesa / Funding Phone Numbers</label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <input type="text" id="paymentPhone1" placeholder="Primary (e.g. 2547...)">
+        <input type="text" id="paymentPhone2" placeholder="Secondary (Optional)">
+      </div>
     </div>
 
     <div class="form-group">
