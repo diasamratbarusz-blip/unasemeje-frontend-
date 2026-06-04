@@ -127,13 +127,13 @@
     </div>
 
     <div class="form-group">
-      <label>Create Username</label>
+      <label>Create Username <span style="color: var(--text-dim); font-weight: 400; font-size: 12px;">(Optional)</span></label>
       <input type="text" id="username" placeholder="Unique username">
     </div>
 
     <!-- NEW: Full Legal Name for Payment Matching -->
     <div class="form-group">
-      <label>Full Legal Name (For M-Pesa Matching)</label>
+      <label>Full Legal Name (For M-Pesa Matching) <span style="color: var(--text-dim); font-weight: 400; font-size: 12px;">(Optional)</span></label>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
         <input type="text" id="firstName" placeholder="First Name">
         <input type="text" id="lastName" placeholder="Last Name">
@@ -141,18 +141,18 @@
     </div>
 
     <div class="form-group">
-      <label>Email Address</label>
-      <input type="email" id="email" placeholder="example@gmail.com">
+      <label>Email Address <span style="color: #ef4444; font-weight: 700; font-size: 12px;">* Required</span></label>
+      <input type="email" id="email" placeholder="example@gmail.com" required>
     </div>
 
     <div class="form-group">
-      <label>Primary Phone Number</label>
-      <input type="text" id="phone" placeholder="2547XXXXXXXX">
+      <label>Primary Phone Number <span style="color: #ef4444; font-weight: 700; font-size: 12px;">* Required</span></label>
+      <input type="text" id="phone" placeholder="2547XXXXXXXX" required>
     </div>
 
     <!-- NEW: M-Pesa / Funding Phone Numbers -->
     <div class="form-group">
-      <label>M-Pesa / Funding Phone Numbers</label>
+      <label>M-Pesa / Funding Phone Numbers <span style="color: var(--text-dim); font-weight: 400; font-size: 12px;">(Optional)</span></label>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
         <input type="text" id="paymentPhone1" placeholder="Primary (e.g. 2547...)">
         <input type="text" id="paymentPhone2" placeholder="Secondary (Optional)">
@@ -160,7 +160,7 @@
     </div>
 
     <div class="form-group">
-      <label>Service Region</label>
+      <label>Service Region <span style="color: var(--text-dim); font-weight: 400; font-size: 12px;">(Optional)</span></label>
       <select id="country">
         <option value="KE">🇰🇪 Kenya (KES) - M-Pesa Available</option>
         <option value="UG">🇺🇬 Uganda (UGX)</option>
@@ -170,13 +170,13 @@
     </div>
 
     <div class="form-group">
-      <label>Secure Password</label>
-      <input type="password" id="password" placeholder="Min. 8 characters">
+      <label>Secure Password <span style="color: #ef4444; font-weight: 700; font-size: 12px;">* Required</span></label>
+      <input type="password" id="password" placeholder="Min. 8 characters" required>
     </div>
 
     <div class="form-group">
-      <label>Confirm Password</label>
-      <input type="password" id="confirm_password" placeholder="Repeat password">
+      <label>Confirm Password <span style="color: #ef4444; font-weight: 700; font-size: 12px;">* Required</span></label>
+      <input type="password" id="confirm_password" placeholder="Repeat password" required>
     </div>
 
     <div class="checkbox-group">
