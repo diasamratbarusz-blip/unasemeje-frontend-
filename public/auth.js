@@ -219,18 +219,28 @@ async function register() {
   const username = document.getElementById("username")?.value?.trim();
   const email = document.getElementById("email")?.value?.trim();
   const password = document.getElementById("password")?.value?.trim();
+  const confirm_password = document.getElementById("confirm_password")?.value?.trim();
   const phone = document.getElementById("phone")?.value?.trim();
   const referralCode = document.getElementById("referralCode")?.value?.trim();
 
-  // Payment Profile Fields
+  // Optional Payment Profile Fields
   const firstName = document.getElementById("firstName")?.value?.trim();
   const lastName = document.getElementById("lastName")?.value?.trim();
   const paymentPhone1 = document.getElementById("paymentPhone1")?.value?.trim();
   const paymentPhone2 = document.getElementById("paymentPhone2")?.value?.trim();
+  const country = document.getElementById("country")?.value;
 
-  // Updated validation to require the new fields
-  if (!username || !email || !password || !phone || !firstName || !lastName || !paymentPhone1) {
-    return showToast("Please fill in all required fields (Name, Phone, and M-Pesa Phone 1)", "error");
+  // ==========================================
+  // FIELD REQUIREMENTS VALIDATION
+  // COMPULSORY: email, phone, password, confirm_password
+  // OPTIONAL: username, firstName, lastName, paymentPhone1, paymentPhone2, country
+  // ==========================================
+  if (!email || !phone || !password || !confirm_password) {
+    return showToast("Please fill in all required fields (Email, Phone, Password)", "error");
+  }
+
+  if (password !== confirm_password) {
+    return showToast("Passwords do not match!", "error");
   }
 
   showLoading();
@@ -241,14 +251,15 @@ async function register() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
-        username,
+        username: username || null,
         email, 
         password, 
         phone,
-        firstName,
-        lastName,
-        paymentPhone1,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        paymentPhone1: paymentPhone1 || null,
         paymentPhone2: paymentPhone2 || null,
+        country: country || null,
         referralCode: referralCode || null 
       })
     });
