@@ -3,172 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Service List | UNASEMEJE ø DIA</title>
+    <title>Select Package | UNASEMEJE ø DIA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --primary: #7c3aed;
-            --secondary: #10b981;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; background: var(--bg-dark); color: var(--text-main); 
-            font-family: 'Plus Jakarta Sans', sans-serif; display: flex; 
-        }
-
-        /* SIDEBAR */
-        .sidebar { 
-            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
-            position: fixed; height: 100vh; display: flex; flex-direction: column; 
-        }
-        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
-        .sidebar a { 
-            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
-            text-decoration: none; border-radius: 10px; margin-bottom: 5px; 
-        }
-        .sidebar a.active { background: var(--primary); color: white; }
-
-        /* MAIN CONTENT */
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
+        /* Specific tweaks for the package selection flow */
+        .header-nav { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
         
-        .header-section { margin-bottom: 30px; }
-        .header-section h1 { font-weight: 800; font-size: 28px; margin: 0; }
+        .back-circle { 
+            width: 45px; height: 45px; background: var(--card-bg); border: 1px solid var(--border); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            color: white; text-decoration: none; transition: 0.3s; flex-shrink: 0;
+        }
+        .back-circle:hover { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
 
-        /* FILTER & SEARCH */
-        .controls { display: flex; gap: 15px; margin-bottom: 20px; }
-        .search-input { 
-            flex: 1; padding: 12px 20px; border-radius: 12px; border: 1px solid #334155; 
-            background: var(--card-bg); color: white; outline: none;
+        /* UPDATED: Ultra-flexible responsive grid for ALL screen widths (320px to 4K) */
+        .package-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); 
+            gap: 20px; 
+        }
+        
+        .package-link { text-decoration: none; display: block; height: 100%; }
+        
+        .package-card {
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            align-items: flex-start;
+            background: var(--card-bg); 
+            border: 1px solid var(--border);
+            padding: 20px; 
+            border-radius: 18px; 
+            transition: all 0.3s ease;
+            min-height: 120px;
+            box-sizing: border-box;
+            gap: 15px;
+            height: 100%;
         }
 
-        /* SERVICE TABLE */
-        .card { 
-            background: var(--card-bg); border-radius: 20px; border: 1px solid #334155; 
-            overflow: hidden; 
-        }
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th { 
-            background: rgba(0,0,0,0.2); text-align: left; padding: 15px; 
-            color: var(--text-dim); font-size: 11px; text-transform: uppercase; 
-        }
-        td { padding: 15px; border-bottom: 1px solid #1f2937; font-size: 13px; }
-
-        .category-header { 
-            background: #111827; padding: 10px 15px; font-weight: 800; 
-            color: var(--primary); font-size: 14px;
+        .package-card:hover {
+            border-color: var(--primary);
+            background: rgba(124, 58, 237, 0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .price-tag { color: var(--secondary); font-weight: 800; }
-        .order-btn {
-            background: var(--primary); color: white; border: none; padding: 6px 12px;
-            border-radius: 6px; cursor: pointer; text-decoration: none; font-size: 11px;
+        /* Switch to row layout on slightly larger screens */
+        @media (min-width: 500px) {
+            .package-card {
+                flex-direction: row;
+                align-items: center;
+            }
         }
 
-        @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 20px; }
+        .package-info {
+            flex: 1;
+            min-width: 0; /* Crucial for preventing flex item text overflow */
+        }
+
+        .package-info h3 { 
+            margin: 0; 
+            font-size: clamp(14px, 2.5vw, 16px); 
+            font-weight: 700; 
+            color: var(--text-main); 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .package-info p { 
+            margin: 6px 0 0; 
+            font-size: clamp(11px, 2vw, 13px); 
+            color: var(--text-dim); 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1.3;
+        }
+
+        .package-info p i {
+            font-size: 10px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .package-info .category-text {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: clamp(10px, 1.8vw, 11px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+
+        .package-info .limit-text {
+            color: var(--text-dim);
+            font-size: clamp(10px, 1.8vw, 12px);
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+        .count-badge {
+            background: rgba(16, 185, 129, 0.1); 
+            color: var(--secondary);
+            padding: 10px 15px; 
+            border-radius: 12px; 
+            font-size: clamp(13px, 2vw, 15px); 
+            font-weight: 800;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-align: center;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .count-badge span {
+            font-size: clamp(8px, 1.5vw, 9px);
+            font-weight: 600;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        /* Ensure loading and error states span full width */
+        .full-width-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
         }
     </style>
 </head>
 <body>
 
+<div class="dashboard">
     <div class="sidebar">
         <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="platform.html"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="services.html" class="active"><i class="fas fa-list"></i> Services</a>
-        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
-        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="platform.html" class="active"><i class="fas fa-plus-circle"></i> <span>New Order</span></a>
+            <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
+            <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+        </div>
     </div>
 
     <div class="main">
-        <div class="header-section">
-            <h1>Service List</h1>
-            <p style="color: var(--text-dim);">Browse all available social media packages and prices.</p>
+        <div class="header-nav">
+            <a href="platform.html" class="back-circle"><i class="fas fa-arrow-left"></i></a>
+            <div style="min-width: 0;">
+                <h1 id="platformTitle" style="margin:0; font-size: clamp(20px, 4vw, 24px); font-weight: 800; word-wrap: break-word;">---</h1>
+                <p style="color: var(--text-dim); margin: 2px 0 0; font-size: clamp(12px, 2vw, 14px);">Select a package to proceed</p>
+            </div>
         </div>
 
-        <div class="controls">
-            <input type="text" id="serviceSearch" class="search-input" placeholder="Search for a service (e.g. TikTok, Real, High Quality)..." onkeyup="filterServices()">
-        </div>
-
-        <div class="card">
-            <div class="table-container">
-                <table id="serviceTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Service</th>
-                            <th>Rate per 1k</th>
-                            <th>Min / Max</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="serviceListBody">
-                        </tbody>
-                </table>
+        <div class="package-container" id="packageList">
+            <div class="full-width-message">
+                <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
+                <p style="margin-top: 15px; color: var(--text-dim);">Syncing global packages...</p>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        const API = "https://unasemeje-backend.vercel.app/api";
+<script>
+    // Updated cleanly to bind securely to your live production endpoint
+    const API = "https://unasemeje-backend.vercel.app/api";
+    const token = localStorage.getItem("token");
+    const urlParams = new URLSearchParams(window.location.search);
+    const platform = urlParams.get('platform');
 
-        async function fetchAllServices() {
-            try {
-                const response = await fetch(`${API}/services`);
-                const result = await response.json();
-                const data = result.data;
-                const body = document.getElementById('serviceListBody');
-                body.innerHTML = "";
+    // Security Check
+    if (!token) window.location.href = "index.html";
+    if (!platform) window.location.href = "platform.html";
 
-                // Loop through Platforms -> Categories -> Services
-                for (const platform in data) {
-                    for (const category in data[platform]) {
-                        // Add a category header row
-                        const headerRow = document.createElement('tr');
-                        headerRow.innerHTML = `<td colspan="5" class="category-header">${platform.toUpperCase()} - ${category}</td>`;
-                        body.appendChild(headerRow);
+    // Set Title
+    document.getElementById('platformTitle').innerText = platform + " Packages";
 
-                        data[platform][category].forEach(service => {
-                            const row = document.createElement('tr');
-                            row.className = "service-row";
-                            row.innerHTML = `
-                                <td style="color: var(--text-dim);">${service.id}</td>
-                                <td style="font-weight: 600;">${service.name}</td>
-                                <td class="price-tag">KES ${service.rate}</td>
-                                <td style="color: var(--text-dim);">${service.min} / ${service.max}</td>
-                                <td><a href="new-order.html?serviceId=${service.id}" class="order-btn">Order</a></td>
-                            `;
-                            body.appendChild(row);
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Error loading services:", error);
+    async function fetchPackages() {
+        try {
+            const res = await fetch(`${API}/services`);
+            const json = await res.json();
+            
+            const categories = json.data[platform];
+            const list = document.getElementById('packageList');
+            list.innerHTML = "";
+
+            if (!categories) {
+                list.innerHTML = `<div class="card full-width-message">No services found for this platform.</div>`;
+                return;
             }
-        }
 
-        function filterServices() {
-            const input = document.getElementById("serviceSearch").value.toLowerCase();
-            const rows = document.querySelectorAll(".service-row");
-            const headers = document.querySelectorAll(".category-header");
+            let allPackages = [];
 
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(input) ? "" : "none";
+            // Flatten all services from all categories into a single list
+            Object.keys(categories).forEach(catName => {
+                categories[catName].forEach(service => {
+                    // ==========================================
+                    // FILTER LOGIC: Hide if category or service name contains 'delix'
+                    // ==========================================
+                    const nameLower = (service.name || "").toLowerCase();
+                    const catLower = (catName || "").toLowerCase();
+                    
+                    if (!nameLower.includes('delix') && !catLower.includes('delix')) {
+                        allPackages.push(service);
+                    }
+                });
             });
 
-            // Hide category headers if no visible rows follow them (optional polish)
-        }
+            if (allPackages.length === 0) {
+                list.innerHTML = `<div class="card full-width-message">No valid packages found for this platform.</div>`;
+                return;
+            }
 
-        fetchAllServices();
-    </script>
+            // Optional: Sort packages by rate (cheapest first) or name
+            // allPackages.sort((a, b) => a.rate - b.rate);
+
+            allPackages.forEach(service => {
+                const link = document.createElement('a');
+                // Link to the checkout/order page with the specific service ID
+                // Note: Change 'order.html' to your actual checkout page filename if different
+                link.href = `order.html?platform=${encodeURIComponent(platform)}&serviceId=${service.serviceId}`;
+                link.className = 'package-link';
+                
+                // Format min and max quantities safely
+                const minQty = service.min ? Number(service.min).toLocaleString() : '0';
+                const maxQty = service.max ? Number(service.max).toLocaleString() : 'Unlimited';
+                const rate = service.rate ? Number(service.rate).toFixed(2) : '0.00';
+
+                link.innerHTML = `
+                    <div class="package-card">
+                        <div class="package-info">
+                            <h3>${service.name}</h3>
+                            <p class="category-text"><i class="fas fa-layer-group"></i> ${service.category}</p>
+                            <p class="limit-text"><i class="fas fa-arrows-alt-h"></i> Min: ${minQty} | Max: ${maxQty}</p>
+                        </div>
+                        <div class="count-badge">
+                            KES ${rate}
+                            <span>/ 1K</span>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(link);
+            });
+
+        } catch (error) {
+            console.error("Package Load Error:", error);
+            document.getElementById('packageList').innerHTML = `
+                <div class="card full-width-message" style="border-color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--danger); font-size: 30px;"></i>
+                    <p style="margin-top:10px;">Failed to load packages. Please check your internet.</p>
+                    <button onclick="location.reload()" class="btn-primary" style="margin-top:15px; width:auto; padding: 10px 20px;">Retry</button>
+                </div>
+            `;
+        }
+    }
+
+    // Run
+    fetchPackages();
+</script>
+
 </body>
 </html>
