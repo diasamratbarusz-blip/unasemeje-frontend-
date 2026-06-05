@@ -18,34 +18,89 @@
         }
         .back-circle:hover { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
 
-        .package-container { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        /* UPDATED: Flexible responsive grid for all screen widths */
+        .package-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; 
+        }
         
-        .package-link { text-decoration: none; display: block; }
+        .package-link { text-decoration: none; display: block; height: 100%; }
         
         .package-card {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--card-bg); border: 1px solid var(--border);
-            padding: 22px; border-radius: 18px; transition: all 0.3s ease;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: var(--card-bg); 
+            border: 1px solid var(--border);
+            padding: 22px; 
+            border-radius: 18px; 
+            transition: all 0.3s ease;
+            height: 100%;
+            box-sizing: border-box;
         }
 
         .package-card:hover {
             border-color: var(--primary);
             background: rgba(124, 58, 237, 0.05);
-            transform: translateX(8px);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .package-info h3 { margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main); }
-        .package-info p { margin: 4px 0 0; font-size: 13px; color: var(--text-dim); }
+        .package-info {
+            flex: 1;
+            min-width: 0; /* Prevents text overflow in flexbox */
+        }
+
+        .package-info h3 { 
+            margin: 0; 
+            font-size: 17px; 
+            font-weight: 800; 
+            color: var(--text-main); 
+            word-wrap: break-word;
+        }
+        .package-info p { 
+            margin: 4px 0 0; 
+            font-size: 13px; 
+            color: var(--text-dim); 
+        }
 
         .count-badge {
-            background: rgba(16, 185, 129, 0.1); color: var(--secondary);
-            padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 800;
+            background: rgba(16, 185, 129, 0.1); 
+            color: var(--secondary);
+            padding: 6px 12px; 
+            border-radius: 10px; 
+            font-size: 12px; 
+            font-weight: 800;
             border: 1px solid rgba(16, 185, 129, 0.2);
+            white-space: nowrap;
+            margin-left: 15px;
         }
 
+        /* Tablet Optimization */
         @media (max-width: 768px) {
+            .package-container {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 15px;
+            }
             .package-card { padding: 18px; }
             .package-info h3 { font-size: 15px; }
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 480px) {
+            .package-container {
+                grid-template-columns: 1fr;
+            }
+            .package-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .count-badge {
+                margin-left: 0;
+                align-self: flex-end;
+            }
         }
     </style>
 </head>
@@ -74,7 +129,7 @@
         </div>
 
         <div class="package-container" id="packageList">
-            <div style="text-align: center; padding: 60px 20px;">
+            <div style="text-align: center; padding: 60px 20px; grid-column: 1 / -1;">
                 <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
                 <p style="margin-top: 15px; color: var(--text-dim);">Syncing global services...</p>
             </div>
@@ -106,12 +161,28 @@
             list.innerHTML = "";
 
             if (!categories) {
-                list.innerHTML = `<div class="card" style="text-align:center;">No services found for this platform.</div>`;
+                list.innerHTML = `<div class="card" style="text-align:center; grid-column: 1 / -1;">No services found for this platform.</div>`;
                 return;
             }
 
+            let hasValidCategories = false;
+
             Object.keys(categories).forEach(catName => {
-                const serviceCount = categories[catName].length;
+                // ==========================================
+                // FILTER LOGIC: Hide any category or service containing "delix"
+                // ==========================================
+                if (catName.toLowerCase().includes('delix')) return;
+
+                // Filter out individual services that contain 'delix' in their name
+                const validServices = categories[catName].filter(service => 
+                    !service.name.toLowerCase().includes('delix')
+                );
+
+                // If no valid services left in this category, hide the category entirely
+                if (validServices.length === 0) return;
+
+                hasValidCategories = true;
+                const serviceCount = validServices.length;
                 
                 const link = document.createElement('a');
                 link.href = `new-order.html?platform=${encodeURIComponent(platform)}&category=${encodeURIComponent(catName)}`;
@@ -131,10 +202,15 @@
                 list.appendChild(link);
             });
 
+            // Fallback if all categories were filtered out
+            if (!hasValidCategories) {
+                list.innerHTML = `<div class="card" style="text-align:center; grid-column: 1 / -1;">No valid services found for this platform.</div>`;
+            }
+
         } catch (error) {
             console.error("Package Load Error:", error);
             document.getElementById('packageList').innerHTML = `
-                <div class="card" style="text-align:center; border-color: var(--danger);">
+                <div class="card" style="text-align:center; border-color: var(--danger); grid-column: 1 / -1;">
                     <i class="fas fa-exclamation-triangle" style="color: var(--danger); font-size: 30px;"></i>
                     <p style="margin-top:10px;">Failed to load services. Please check your internet.</p>
                     <button onclick="location.reload()" class="btn-primary" style="margin-top:15px; width:auto; padding: 10px 20px;">Retry</button>
