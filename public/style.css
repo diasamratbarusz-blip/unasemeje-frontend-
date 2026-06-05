@@ -12,6 +12,19 @@ html, body {
   scroll-behavior: smooth;
 }
 
+/* --- GLOBAL RESPONSIVE FIXES --- */
+img, video, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+body, p, h1, h2, h3, h4, h5, h6, span, a, li, label, input, textarea, td, th {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+/* -------------------------------- */
+
 /* ================= THEME VARIABLES ================= */
 :root {
   --primary: #7c3aed;       /* Vibrant Purple */
@@ -229,12 +242,14 @@ button:active {
 .table-container {
   width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   border-radius: 15px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px; /* Forces horizontal scroll on small screens instead of squishing text */
 }
 
 th {
@@ -270,9 +285,12 @@ td {
   
   .sidebar a {
     flex-direction: column;
-    padding: 8px;
+    padding: 8px 4px;
     font-size: 10px;
     margin: 0;
+    flex: 1; /* Ensures equal distribution across the width */
+    text-align: center;
+    justify-content: center;
   }
 
   .sidebar a i {
@@ -283,17 +301,72 @@ td {
 
   .sidebar a span {
     display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .main {
     margin-left: 0;
     margin-bottom: 80px;
     padding: 20px;
+    width: 100%; /* Ensure it takes full width */
   }
 
   .container {
     margin: 30px auto;
     padding: 25px;
+    width: 95%; /* Ensure it doesn't overflow */
+  }
+  
+  .card {
+    padding: 20px;
+  }
+}
+
+/* ================= EXTRA SMALL DEVICES (Phones < 480px) ================= */
+@media (max-width: 480px) {
+  .main {
+    padding: 15px;
+    margin-bottom: 75px;
+  }
+  
+  .container {
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 18px;
+  }
+  
+  .card {
+    padding: 15px;
+    border-radius: 16px;
+  }
+  
+  .card h3 {
+    font-size: 16px;
+  }
+  
+  input, select, textarea {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+  
+  button, .btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+  
+  .sidebar {
+    height: 65px;
+  }
+  
+  .sidebar a {
+    font-size: 9px;
+  }
+  
+  .sidebar a i {
+    font-size: 16px;
   }
 }
 
@@ -378,6 +451,8 @@ body.is-admin [href="admin"] {
     font-size: 13px;
     border: 1px solid var(--border);
     animation: slideInNotif 0.5s ease-out;
+    max-width: calc(100% - 40px); /* Prevents overflow on small screens */
+    word-wrap: break-word;
 }
 
 @keyframes slideInNotif {
@@ -391,5 +466,17 @@ body.is-admin [href="admin"] {
         bottom: 90px; /* Moves it above the mobile bottom nav */
         left: 20px;
         right: 20px;
+        max-width: calc(100% - 40px); /* Ensures it never exceeds screen width */
     }
 }
+
+@media (max-width: 480px) {
+    .live-notif {
+        bottom: 85px;
+        left: 15px;
+        right: 15px;
+        padding: 12px 20px;
+        font-size: 12px;
+        max-width: calc(100% - 30px);
+    }
+    }
