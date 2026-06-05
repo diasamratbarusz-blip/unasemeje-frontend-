@@ -71,7 +71,11 @@ function toast(msg, success = true) {
             boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
             transition: "all 0.4s ease",
             textAlign: "center",
-            minWidth: "250px"
+            minWidth: "250px",
+            maxWidth: "calc(100% - 40px)", // FIXED: Prevents horizontal overflow on mobile
+            boxSizing: "border-box",       // FIXED: Includes padding in total width calculation
+            wordWrap: "break-word",        // FIXED: Wraps long text/URLs to the next line
+            overflowWrap: "break-word"     // FIXED: Standard property for wrapping
         });
     }
 
