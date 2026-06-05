@@ -93,11 +93,9 @@ function getToken() {
   return localStorage.getItem("token");
 }
 
+// FIXED: Corrected the broken string literal that was preventing tokens from saving
 function saveToken(token) {
-  localStorage.setItem("<think>
-</think>
-
-", token);
+  localStorage.setItem("token", token);
 }
 
 function removeToken() {
