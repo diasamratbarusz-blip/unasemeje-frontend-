@@ -19,6 +19,8 @@
             margin-top: 10px;
             border-left: 3px solid var(--primary);
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         textarea {
             width: 100%;
@@ -30,6 +32,7 @@
             font-family: inherit;
             resize: vertical;
             min-height: 100px;
+            box-sizing: border-box;
         }
         .badge-info {
             font-size: 11px;
@@ -38,6 +41,102 @@
             border-radius: 20px;
             color: black;
             font-weight: bold;
+        }
+
+        /* ========================================= */
+        /* GUARANTEED MOBILE SIDEBAR (BOTTOM NAV)    */
+        /* Ensures ALL links are visible on phones   */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 70px !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                padding: 10px 5px !important;
+                border-right: none !important;
+                border-top: 2px solid var(--primary, #7c3aed) !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                z-index: 1000 !important;
+                background: #111827 !important;
+                box-shadow: 0 -5px 15px rgba(0,0,0,0.5) !important;
+            }
+            .sidebar h2 { display: none !important; }
+            
+            /* Ensure both the main nav and the bottom WhatsApp div act as flex containers */
+            .sidebar .sidebar-nav, 
+            .sidebar > div:last-child {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                width: 100% !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border-top: none !important;
+            }
+            
+            .sidebar a {
+                flex-direction: column !important;
+                padding: 8px 4px !important;
+                font-size: 10px !important;
+                margin: 2px !important;
+                margin-bottom: 0 !important; /* Overrides inline margin-bottom: 15px */
+                flex: 1 1 20% !important; /* Allows wrapping if needed */
+                text-align: center !important;
+                justify-content: center !important;
+                gap: 4px !important;
+                min-width: 60px !important;
+            }
+            .sidebar a i {
+                margin-right: 0 !important;
+                margin-bottom: 0 !important;
+                font-size: 18px !important;
+            }
+            .sidebar a span {
+                font-size: 9px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: 100% !important;
+            }
+            
+            .main {
+                margin-left: 0 !important;
+                margin-bottom: 140px !important; /* Extra space so content isn't hidden behind the nav */
+                padding: 20px !important;
+                width: 100% !important;
+            }
+
+            /* Form elements responsive (Prevents iOS zoom on focus) */
+            input, select, textarea {
+                font-size: 16px !important; 
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Service details flex wrap */
+            #serviceDetails > div:first-child {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            /* Live notification above bottom nav */
+            .live-notif {
+                bottom: 150px !important;
+                left: 20px !important;
+                right: 20px !important;
+                max-width: calc(100% - 40px) !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                box-sizing: border-box !important;
+            }
         }
     </style>
 </head>
