@@ -28,6 +28,10 @@
     justify-content: center;
     gap: 10px;
     width: 100%;
+    box-sizing: border-box; /* FIXED: Ensures padding doesn't exceed 100% width */
+    word-wrap: break-word;  /* FIXED: Wraps long text to next line */
+    overflow-wrap: break-word; /* FIXED: Standard wrapping property */
+    text-align: center;
 }
 
 .btn-primary:hover {
@@ -45,6 +49,10 @@
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
+    box-sizing: border-box; /* FIXED */
+    word-wrap: break-word;  /* FIXED */
+    overflow-wrap: break-word; /* FIXED */
+    text-align: center;
 }
 
 .btn-secondary:hover {
@@ -64,6 +72,8 @@
     display: flex;
     align-items: center;
     transition: 0.3s;
+    box-sizing: border-box; /* FIXED */
+    width: 100%; /* FIXED: Ensures it takes full width in sidebar */
 }
 
 #adminSecureBtn:hover {
@@ -81,6 +91,8 @@
     font-weight: 700;
     border: none;
     cursor: pointer;
+    box-sizing: border-box; /* FIXED */
+    white-space: nowrap; /* FIXED: Prevents text from wrapping awkwardly inside the small button */
 }
 
 .btn-danger {
@@ -90,6 +102,8 @@
     padding: 6px 12px;
     border-radius: 6px;
     font-size: 12px;
+    box-sizing: border-box; /* FIXED */
+    white-space: nowrap; /* FIXED: Prevents text from wrapping awkwardly */
 }
 
 /* 5. SIDEBAR NAVIGATION LINKS (Button-style behavior) */
@@ -103,6 +117,8 @@
     border-radius: 8px;
     transition: 0.3s;
     margin-bottom: 5px;
+    box-sizing: border-box; /* FIXED */
+    overflow: hidden; /* FIXED: Prevents layout breaking if text is too long */
 }
 
 .sidebar-nav a:hover {
@@ -125,8 +141,30 @@
     text-decoration: none;
     font-weight: 600;
     transition: 0.3s;
+    box-sizing: border-box; /* FIXED */
 }
 
 .whatsapp-btn:hover {
     opacity: 0.8;
+}
+
+/* ================= RESPONSIVE BUTTON TWEAKS ================= */
+/* Ensures buttons look perfect and don't overflow on very small mobile screens */
+@media (max-width: 480px) {
+    .btn-primary, .btn-secondary {
+        padding: 12px 15px;
+        font-size: 14px;
+        gap: 8px;
+    }
+    
+    .btn-approve, .btn-danger {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+    
+    .sidebar-nav a {
+        padding: 10px 8px;
+        gap: 8px;
+        font-size: 13px;
+    }
 }
