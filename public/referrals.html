@@ -12,20 +12,52 @@
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg-dark); color: var(--text-main); display: flex; }
         
-        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #1f2937; }
+        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #1f2937; overflow-y: auto; }
         .sidebar h2 { color: var(--primary); text-align: center; font-weight: 800; margin-bottom: 30px; }
         .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); text-decoration: none; border-radius: 10px; margin-bottom: 5px; }
         .sidebar a.active { background: var(--primary); color: white; }
 
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
+        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
         .card { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #334155; text-align: center; }
         
         .ref-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px dashed var(--primary); margin: 25px 0; }
-        #refLink { color: var(--primary); font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; }
+        #refLink { color: var(--primary); font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; flex: 1; text-align: left; }
         
-        .btn-copy { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-copy { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; white-space: nowrap; }
+        
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
         .stat-item { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+
+        /* ========================================== */
+        /* RESPONSIVE DESIGN FOR ALL SCREEN WIDTHS    */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; width: 100%; padding: 20px; }
+            
+            .card { padding: 20px; }
+            .card h1 { font-size: 24px; }
+            
+            .ref-box { 
+                flex-direction: column; 
+                gap: 15px; 
+                align-items: stretch; 
+            }
+            
+            #refLink { 
+                white-space: normal; 
+                word-break: break-all; 
+                text-align: center; 
+                margin-right: 0; 
+                display: block;
+                font-size: 14px;
+            }
+            
+            .btn-copy { width: 100%; padding: 12px; }
+            
+            .stats-grid { grid-template-columns: 1fr; gap: 15px; }
+            .stat-item { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -63,20 +95,48 @@
     </div>
 
     <script>
+        // Updated to use the live production API endpoint
+        const API = "https://unasemeje-backend.vercel.app/api";
+
         async function loadRefData() {
-            const res = await fetch("/api/me", { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } });
-            const user = await res.json();
-            
-            const link = `${window.location.origin}/register.html?ref=${user.referralCode}`;
-            document.getElementById("refLink").innerText = link;
-            document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
-            document.getElementById("refCount").innerText = user.referralCount || 0;
+            try {
+                const res = await fetch(`${API}/me`, { 
+                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } 
+                });
+                
+                if (!res.ok) {
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                const user = await res.json();
+                
+                const link = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+                document.getElementById("refLink").innerText = link;
+                document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
+                document.getElementById("refCount").innerText = user.referralCount || 0;
+            } catch (error) {
+                console.error("Failed to load referral data:", error);
+                document.getElementById("refLink").innerText = "Error loading link";
+            }
         }
 
         function copyRef() {
             const link = document.getElementById("refLink").innerText;
-            navigator.clipboard.writeText(link);
-            alert("Referral Link Copied to clipboard!");
+            if (link.startsWith("Error")) return;
+            
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Referral Link Copied to clipboard!");
+            }).catch(() => {
+                // Fallback for older browsers or non-HTTPS environments
+                const textArea = document.createElement("textarea");
+                textArea.value = link;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                alert("Referral Link Copied to clipboard!");
+            });
         }
 
         loadRefData();
