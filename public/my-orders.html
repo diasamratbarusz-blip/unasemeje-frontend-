@@ -19,18 +19,27 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        /* GLOBAL RESPONSIVE FIXES */
         body { 
             margin: 0; 
             background: var(--bg-dark); 
             color: var(--text-main); 
             font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
+            overflow-x: hidden; /* Prevents horizontal page scrolling */
+        }
+        
+        td, th, p, h1, h2, h3, span, div {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         /* SIDEBAR */
         .sidebar { 
             width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
             position: fixed; height: 100vh; display: flex; flex-direction: column; 
+            z-index: 100;
         }
         .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
         .sidebar a { 
@@ -44,6 +53,7 @@
         
         .header-section { 
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; 
+            flex-wrap: wrap; gap: 15px; /* FIXED: Prevents button from overlapping title on small screens */
         }
         .header-section h1 { font-weight: 800; font-size: 28px; margin: 0; }
 
@@ -56,7 +66,11 @@
             overflow: hidden;
         }
 
-        .table-container { overflow-x: auto; }
+        .table-container { 
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            border-radius: 15px;
+        }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { 
             text-align: left; padding: 15px; color: var(--text-dim); 
@@ -69,6 +83,7 @@
         .badge { 
             padding: 5px 12px; border-radius: 6px; font-size: 11px; 
             font-weight: 800; text-transform: uppercase; display: inline-block;
+            white-space: nowrap; /* Prevents status text from wrapping awkwardly */
         }
         .bg-pending { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #6366f1; }
         .bg-completed { background: rgba(16, 185, 129, 0.2); color: var(--secondary); border: 1px solid var(--secondary); }
@@ -78,13 +93,64 @@
         .refresh-btn {
             background: var(--primary); color: white; border: none; padding: 10px 20px;
             border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.3s;
+            white-space: nowrap;
         }
         .refresh-btn:hover { opacity: 0.9; transform: scale(1.05); }
 
+        /* ========================================= */
+        /* MOBILE RESPONSIVE BOTTOM NAVIGATION       */
+        /* ========================================= */
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 20px; }
+            .sidebar {
+                display: flex; /* FIXED: Changed from display: none to a bottom navigation bar */
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 70px;
+                flex-direction: row;
+                padding: 0 5px;
+                border-right: none;
+                border-top: 1px solid #1f2937;
+                justify-content: space-around;
+                align-items: center;
+                z-index: 1000;
+            }
+            .sidebar h2 { display: none; }
+            .sidebar a {
+                flex-direction: column;
+                padding: 8px 2px;
+                font-size: 10px;
+                margin: 0;
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+                gap: 4px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .sidebar a i {
+                margin-right: 0;
+                margin-bottom: 0;
+                font-size: 18px;
+            }
+            .main {
+                margin-left: 0;
+                margin-bottom: 80px; /* Space for bottom nav */
+                padding: 20px;
+                width: 100%;
+            }
             .header-section h1 { font-size: 22px; }
+            .card { padding: 15px; border-radius: 16px; }
+        }
+        
+        @media (max-width: 480px) {
+            .main { padding: 15px; margin-bottom: 75px; }
+            .header-section h1 { font-size: 20px; }
+            .refresh-btn { padding: 8px 15px; font-size: 13px; }
+            .sidebar a { font-size: 9px; }
+            .sidebar a i { font-size: 16px; }
         }
     </style>
 </head>
@@ -155,16 +221,20 @@
                     const badgeClass = `bg-${status}`;
                     const serviceName = o.serviceName || "Social Service";
                     
+                    // FIXED: Added safety checks and word-break to prevent long URLs from breaking the table layout
+                    const linkDisplay = o.link ? o.link.substring(0, 30) + '...' : 'N/A';
+                    const quantityDisplay = o.quantity ? o.quantity.toLocaleString() : '0';
+                    
                     return `
                     <tr>
                         <td style="font-weight: 800; color: var(--primary);">#${o.orderId || '---'}</td>
                         <td>
                             <div style="font-weight: 600;">${serviceName}</div>
-                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;">
-                                <i class="fas fa-link"></i> ${o.link.substring(0, 30)}...
+                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; word-break: break-all;">
+                                <i class="fas fa-link"></i> ${linkDisplay}
                             </div>
                         </td>
-                        <td>${o.quantity.toLocaleString()}</td>
+                        <td>${quantityDisplay}</td>
                         <td><span class="badge ${badgeClass}">${status}</span></td>
                     </tr>`;
                 }).join('');
