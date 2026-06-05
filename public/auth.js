@@ -32,10 +32,13 @@ function showToast(msg, type = "success") {
     document.body.appendChild(t);
 
     // Styling updated to match the Neon Emerald & Deep Navy aesthetic
+    // UPDATED: Added maxWidth, wordWrap, and boxSizing to prevent overflow on small screens
     Object.assign(t.style, {
       position: "fixed",
       bottom: "30px",
       right: "30px", 
+      left: "30px", 
+      maxWidth: "calc(100% - 60px)", // Ensures it never exceeds screen width minus margins
       padding: "16px 24px",
       borderRadius: "14px",
       color: "#fff",
@@ -46,8 +49,19 @@ function showToast(msg, type = "success") {
       display: "none",
       boxShadow: "0 15px 30px rgba(0,0,0,0.4)",
       border: "1px solid rgba(255,255,255,0.1)",
-      transition: "all 0.3s ease"
+      transition: "all 0.3s ease",
+      wordWrap: "break-word", // Breaks long words/URLs to the next line
+      overflowWrap: "break-word",
+      boxSizing: "border-box" // Ensures padding doesn't add to the total width
     });
+    
+    // Adjust margins for smaller mobile screens
+    if (window.innerWidth <= 768) {
+        t.style.bottom = "20px";
+        t.style.right = "20px";
+        t.style.left = "20px";
+        t.style.maxWidth = "calc(100% - 40px)";
+    }
   }
 
   t.innerText = msg;
@@ -80,7 +94,10 @@ function getToken() {
 }
 
 function saveToken(token) {
-  localStorage.setItem("token", token);
+  localStorage.setItem("<think>
+</think>
+
+", token);
 }
 
 function removeToken() {
