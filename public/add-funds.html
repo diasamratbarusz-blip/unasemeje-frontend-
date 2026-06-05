@@ -17,15 +17,22 @@
         .status-success{ background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
+        /* UPDATED: Changed fixed 650px to 80vh with a max-height to prevent overflow on short mobile screens */
         .payment-frame-container {
-            width: 100%; height: 650px; border-radius: 24px;
-            overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb; background: #ffffff;
+            width: 100%; 
+            height: 80vh; 
+            max-height: 650px; 
+            border-radius: 24px;
+            overflow: hidden; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb; 
+            background: #ffffff;
         }
 
         .input-field {
             width: 100%; background: #f9fafb; border: 1px solid #e5e7eb;
             padding: 12px 16px; border-radius: 12px; outline: none; transition: 0.2s; color: #1f2937; font-weight: 500;
+            box-sizing: border-box; /* Ensures padding doesn't exceed 100% width */
         }
         .input-field:focus { border-color: #11453b; box-shadow: 0 0 0 2px rgba(17, 69, 59, 0.2); }
 
@@ -40,15 +47,17 @@
 
 <body class="min-h-screen">
 
-    <div class="bg-custom-green text-white py-16 px-4 text-center shadow-lg">
-        <h1 class="text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
+    <!-- UPDATED: Added responsive padding (py-12 md:py-16) and text scaling -->
+    <div class="bg-custom-green text-white py-12 md:py-16 px-4 text-center shadow-lg">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
         <p class="uppercase tracking-[4px] text-xs opacity-70">Live Account Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
     </div>
 
-    <div class="max-w-2xl mx-auto px-4 -mt-10 pb-20 space-y-6">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 -mt-10 pb-20 space-y-6">
         
         <!-- Important Funding Instructions Alert -->
-        <div class="bg-white rounded-3xl shadow-xl border-l-4 border-amber-500 p-6">
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <div class="bg-white rounded-3xl shadow-xl border-l-4 border-amber-500 p-4 sm:p-6">
             <div class="flex items-start gap-3">
                 <div class="flex-shrink-0 mt-1">
                     <svg class="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
@@ -59,7 +68,7 @@
                     <h3 class="text-lg font-bold text-gray-800 mb-1.5 flex items-center gap-2">
                         <span class="text-amber-500">⚠️</span> Crucial Step Before Adding Funds
                     </h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed break-words">
                         Before you proceed to the checkout portal to deposit money, you <strong class="text-gray-900">must ensure all your funding details are saved and up-to-date</strong>. 
                         Please verify that your <strong class="text-emerald-700">Funding Numbers (Payment Nodes)</strong> listed below are correctly configured. 
                         Payments sent to unregistered or incorrect numbers cannot be automatically tracked or credited to your wallet.
@@ -68,7 +77,8 @@
             </div>
         </div>
 
-        <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
             <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
                 <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
                     👤 Account Wallet Information
@@ -77,24 +87,25 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-3">
-                    <div class="grid grid-cols-2 gap-2">
+                    <!-- UPDATED: Changed grid-cols-2 to grid-cols-1 sm:grid-cols-2 to prevent squishing on tiny screens -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
-                            <p id="infoUsernameA" class="text-sm font-bold text-zinc-800">Loading...</p>
+                            <p id="infoUsernameA" class="text-sm font-bold text-zinc-800 break-words">Loading...</p>
                         </div>
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
-                            <p id="infoAccountPhoneA" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                            <p id="infoAccountPhoneA" class="text-sm font-semibold text-zinc-700 font-mono break-all">Loading...</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
-                            <p id="infoFirstNameA" class="text-sm font-medium text-zinc-700">Loading...</p>
+                            <p id="infoFirstNameA" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
                         </div>
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
-                            <p id="infoLastNameA" class="text-sm font-medium text-zinc-700">Loading...</p>
+                            <p id="infoLastNameA" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
                         </div>
                     </div>
                     <div>
@@ -116,31 +127,33 @@
             </div>
         </div>
 
-        <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 👤 Account Information & Security
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-3 border-r border-gray-100 pr-0 md:pr-4">
-                    <div class="grid grid-cols-2 gap-2">
+                <!-- UPDATED: Changed border-r to md:border-r so it doesn't cut through stacked mobile content -->
+                <div class="space-y-3 md:border-r border-gray-100 pr-0 md:pr-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
-                            <p id="infoUsernameB" class="text-sm font-bold text-zinc-800">Loading...</p>
+                            <p id="infoUsernameB" class="text-sm font-bold text-zinc-800 break-words">Loading...</p>
                         </div>
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
-                            <p id="infoAccountPhoneB" class="text-sm font-semibold text-zinc-700 font-mono">Loading...</p>
+                            <p id="infoAccountPhoneB" class="text-sm font-semibold text-zinc-700 font-mono break-all">Loading...</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
-                            <p id="infoFirstNameB" class="text-sm font-medium text-zinc-700">Loading...</p>
+                            <p id="infoFirstNameB" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
                         </div>
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
-                            <p id="infoLastNameB" class="text-sm font-medium text-zinc-700">Loading...</p>
+                            <p id="infoLastNameB" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
                         </div>
                     </div>
                     <div>
@@ -164,7 +177,8 @@
                             <div>
                                 <input type="text" id="editUsername" class="input-field !py-2 !text-xs" placeholder="Username" required>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
+                            <!-- UPDATED: Changed grid-cols-2 to grid-cols-1 sm:grid-cols-2 for better mobile touch targets -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <input type="text" id="editFirstName" class="input-field !py-2 !text-xs" placeholder="First Name">
                                 <input type="text" id="editLastName" class="input-field !py-2 !text-xs" placeholder="Last Name">
                             </div>
@@ -179,7 +193,7 @@
                                 Save Profile Changes
                             </button>
                         </form>
-                        <p id="profileFeedback" class="text-[11px] font-medium mt-1.5 hidden"></p>
+                        <p id="profileFeedback" class="text-[11px] font-medium mt-1.5 hidden break-words"></p>
                     </div>
 
                     <hr class="border-gray-100" />
@@ -197,20 +211,21 @@
                                 Update Password
                             </button>
                         </form>
-                        <p id="pwdFeedback" class="text-[11px] font-medium mt-1.5 hidden"></p>
+                        <p id="pwdFeedback" class="text-[11px] font-medium mt-1.5 hidden break-words"></p>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 hidden">
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div class="w-full">
                     <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Active Payment Profile</p>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                         <div>
-                            <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight">Loading Profile...</h3>
-                            <p id="cardDispFullName" class="text-xs text-zinc-600 font-medium mt-0.5">Name: Loading...</p>
+                            <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight break-words">Loading Profile...</h3>
+                            <p id="cardDispFullName" class="text-xs text-zinc-600 font-medium mt-0.5 break-words">Name: Loading...</p>
                         </div>
                         <div class="text-left md:text-right">
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Linked Email Target</span>
@@ -225,7 +240,8 @@
             </div>
         </div>
         
-        <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-8 hidden transform transition-all scale-105">
+        <!-- UPDATED: Responsive padding p-4 sm:p-8 and scale-105 to sm:scale-105 to prevent mobile overflow -->
+        <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-4 sm:p-8 hidden transform transition-all sm:scale-105">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
                 <span class="flex h-3 w-3 relative">
@@ -235,18 +251,20 @@
             </div>
 
             <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4 status-success">
-                <div class="text-center">
+                <div class="text-center w-full break-words">
                     <p id="sensorMessage" class="text-lg font-bold">Waiting for payment...</p>
                     <p class="text-xs opacity-75 mt-1">Details matched to account profile: <span id="matchedIdentity" class="font-bold"></span></p>
                 </div>
                 
-                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
+                <!-- UPDATED: Responsive padding px-4 sm:px-8 -->
+                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-4 sm:px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
                     Approve & Add Funds
                 </button>
             </div>
         </div>
 
-        <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+        <!-- UPDATED: Responsive padding p-4 sm:p-8 -->
+        <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-8">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
                 <p class="text-xs text-gray-500 mt-1">Portal listening exclusively to your active profile channels above.</p>
@@ -460,8 +478,9 @@
                 
                 if (serverUserProfile.phones.length > 0) {
                     serverUserProfile.phones.forEach((phone, idx) => {
+                        // UPDATED: Added break-all to prevent long numbers from overflowing
                         cardDispPhones.innerHTML += `
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200 break-all">
                                 <span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
                                 ${phone}
                             </span>`;
