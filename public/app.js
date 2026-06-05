@@ -110,10 +110,11 @@ async function loadServices() {
     services.forEach(s => {
       const li = document.createElement("li");
       
+      // UPDATED: Added flex-wrap, gap, and word-break to prevent horizontal overflow on long service names
       li.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span><strong>${s.serviceId}</strong> - ${s.name}</span>
-            <span style="color: #10b981; font-weight: bold;">KES ${s.rate}</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; width: 100%;">
+            <span style="flex: 1; min-width: 0; word-break: break-word;"><strong>${s.serviceId}</strong> - ${s.name}</span>
+            <span style="color: #10b981; font-weight: bold; white-space: nowrap;">KES ${s.rate}</span>
         </div>
       `;
       
