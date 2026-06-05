@@ -108,7 +108,8 @@
     </div>
 
     <div class="main">
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px;">
+        <!-- UPDATED: Added flex-wrap and gap to prevent squishing on small screens -->
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; flex-wrap: wrap; gap: 15px;">
             <div>
                 <small style="color: var(--text-dim); display: block;">Welcome back,</small>
                 <span id="userName" style="font-weight: 800; font-size: 20px;">---</span>
@@ -127,10 +128,12 @@
             </button>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <!-- UPDATED: Changed minmax(300px) to minmax(min(300px, 100%)) to prevent grid overflow on tiny screens -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 20px;">
             <div class="card">
                 <h3><i class="fas fa-chart-line" style="color: var(--primary);"></i> Account Stats</h3>
-                <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                <!-- UPDATED: Added flex-wrap and gap for small screens -->
+                <div style="display: flex; justify-content: space-between; margin-top: 25px; flex-wrap: wrap; gap: 15px;">
                     <div style="text-align: left;">
                         <small style="color: var(--text-dim);">Total Spent</small>
                         <p id="totalSpent" style="font-weight: 800; font-size: 22px; margin-top: 5px; color: var(--primary);">KES 0.00</p>
@@ -220,12 +223,13 @@
         const randomService = services[Math.floor(Math.random() * services.length)];
 
         const notification = document.createElement("div");
+        // UPDATED: Added left, max-width, box-sizing, and word-wrap to prevent horizontal overflow on mobile
         notification.style = `
-            position: fixed; bottom: 20px; right: 20px;
+            position: fixed; bottom: 20px; right: 20px; left: 20px; max-width: calc(100% - 40px);
             background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
             padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
-            animation: slideIn 0.5s ease-out;
+            animation: slideIn 0.5s ease-out; box-sizing: border-box; word-wrap: break-word; overflow-wrap: break-word;
         `;
         
         notification.innerHTML = `✅ <b>${randomName}</b> just ordered <b>${randomService}</b>!`;
@@ -250,4 +254,4 @@
 </style>
 
 </body>
-</html>
+    </html>
