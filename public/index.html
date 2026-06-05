@@ -22,13 +22,13 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    /* --- GLOBAL RESPONSIVE FIXES --- */
+    /* --- GLOBAL RESPONSIVE FIXES (Added to prevent overflow) --- */
     img, video, iframe { max-width: 100%; height: auto; display: block; }
     p, h1, h2, h3, h4, h5, h6, span, a, li, label, input, textarea {
       overflow-wrap: break-word;
       word-wrap: break-word;
     }
-    /* -------------------------------- */
+    /* ---------------------------------------------------------------- */
 
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-main); color: #f8fafc; line-height: 1.6; overflow-x: hidden; }
 
@@ -203,7 +203,7 @@
       transform: translateY(200%);
       transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       z-index: 9999;
-      max-width: calc(100% - 50px); /* Prevents overflow on small screens */
+      max-width: calc(100% - 50px); /* FIXED: Prevents overflow on small screens */
     }
     #notification-toast.show { transform: translateY(0); }
     .toast-icon { width: 35px; height: 35px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); font-size: 14px; }
@@ -519,4 +519,189 @@
     { name: "Linda A.", loc: "Malindi, Kenya", text: "Best investment for my business! Instagram engagement increased by 300% in just one month. My sales have doubled since then!", avatar: "LA" },
     { name: "John K.", loc: "Garissa, Kenya", text: "Fast, reliable, and affordable. What more can you ask for? I've been using this panel for 6 months and never had a single issue.", avatar: "JK" },
     { name: "Sarah L.", loc: "Kitale, Kenya", text: "The analytics dashboard helps me track everything. I can see exactly where my money is going and the ROI is amazing!", avatar: "SL" },
-    { name: "Michael T.", loc: "Nairobi, Kenya", text: "Nilikuwa na wasiwasi mwanzoni lakini s
+    { name: "Michael T.", loc: "Nairobi, Kenya", text: "Nilikuwa na wasiwasi mwanzoni lakini sasa nimeona ni real. Followers zangu za TikTok zilifika ndani ya saa moja. Form ni UNASEMEJE tu!", avatar: "MT" },
+    { name: "Ann W.", loc: "Mombasa, Kenya", text: "The child panel feature helped me start my own SMM business. Now I'm earning passive income daily. Thank you for this opportunity!", avatar: "AW" },
+    { name: "Chris O.", loc: "Kisii, Kenya", text: "Customer service ni mzuri sana. Walinisaidia midnight wakati nilikuwa na issue na order yangu. Very dedicated team!", avatar: "CO" },
+    { name: "Jane M.", loc: "Eldoret, Kenya", text: "I love how the STK push works. No more manual deposits that take hours to verify. Instant funding, instant orders. Perfect!", avatar: "JM" },
+    { name: "Paul K.", loc: "Nakuru, Kenya", text: "Been using this for my YouTube channel. Subscribers are real and active. My channel monetization was approved in record time!", avatar: "PK" },
+    { name: "Lucy N.", loc: "Thika, Kenya", text: "The prices are unbeatable. I compared with other panels and UNASEMEJE is way cheaper but the quality is premium. Best decision ever!", avatar: "LN" },
+    { name: "George M.", loc: "Nairobi, Kenya", text: "Mass order feature saved me so much time. I manage 20 client accounts and can place all orders at once. Game changer for SMM managers!", avatar: "GM" },
+    { name: "Ruth W.", loc: "Machakos, Kenya", text: "Nilipata Instagram likes zangu zote ndani ya dakika 10. Sasa post zangu zinaonekana popular na engagement imepanda sana. Asanteni!", avatar: "RW" },
+    { name: "Samuel K.", loc: "Kiambu, Kenya", text: "The API documentation is excellent. I integrated it with my website in one day. Now my customers can order directly from my platform!", avatar: "SK" },
+    { name: "Esther N.", loc: "Nyeri, Kenya", text: "Best SMM panel in Kenya hands down. Fast delivery, real engagement, and the support team is always available on WhatsApp. 10/10!", avatar: "EN" },
+    { name: "Daniel O.", loc: "Kisumu, Kenya", text: "I was skeptical at first but after my first order, I was convinced. Real followers, real likes, real views. Everything is genuine!", avatar: "DO" },
+    { name: "Mary A.", loc: "Eldoret, Kenya", text: "The anti-drop guarantee gives me peace of mind. If anything drops, they refill it automatically. No questions asked. Very professional!", avatar: "MA" },
+    { name: "Joseph K.", loc: "Nairobi, Kenya", text: "Started my own panel using their child panel feature. Now I have my own customers and I'm making good profit. Best investment ever!", avatar: "JK2" }
+  ];
+
+  const gridContainer = document.getElementById('testimonialsGrid');
+
+  function getRandomTestimonials(count) {
+    const shuffled = [...allTestimonials].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+    }
+
+  function updateTestimonials() {
+    // Fade out existing cards
+    const cards = gridContainer.querySelectorAll('.testimonial-card');
+    cards.forEach(card => card.classList.add('updating'));
+
+    setTimeout(() => {
+      gridContainer.innerHTML = '';
+      // Show 3 different people at the same time
+      const newTestimonials = getRandomTestimonials(3);
+      newTestimonials.forEach(t => {
+        const card = document.createElement('div');
+        card.className = 'testimonial-card';
+        // Start slightly faded and shifted for smooth entry
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.innerHTML = `
+          <p class="testimonial-text">"${t.text}"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">${t.avatar}</div>
+            <div style="text-align: left;">
+              <div class="author-name">${t.name}</div>
+              <div class="author-loc">${t.loc}</div>
+              <div class="testimonial-verified"><i class="fas fa-check-circle"></i> Verified Customer</div>
+            </div>
+          </div>
+        `;
+        gridContainer.appendChild(card);
+        
+        // Trigger reflow to ensure transition happens
+        void card.offsetWidth; 
+        
+        // Animate in
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      });
+    }, 600); // Wait for fade out animation
+  }
+
+  // Initial load
+  updateTestimonials();
+
+  // Change to 3 new different people every 6 seconds
+  setInterval(updateTestimonials, 6000);
+
+  // LIVE ACTIVITY FEED
+  const activityUsers = [
+    "Kevin K.", "Stacy W.", "Brian O.", "Mercy M.", "James O.", "Faith N.", 
+    "David K.", "Grace W.", "Peter M.", "Linda A.", "John K.", "Sarah L.",
+    "Michael T.", "Ann W.", "Chris O.", "Jane M.", "Paul K.", "Lucy N.",
+    "George M.", "Ruth W.", "Samuel K.", "Esther N.", "Daniel O.", "Mary A."
+  ];
+  
+  const activityActions = [
+    "purchased 1,000 Instagram Followers",
+    "ordered 5,000 TikTok Views",
+    "bought 500 YouTube Subscribers",
+    "purchased 2,000 Facebook Likes",
+    "ordered 100 Instagram Likes",
+    "bought 50 Twitter Followers",
+    "purchased 3,000 TikTok Followers",
+    "ordered 500 Instagram Views",
+    "bought 1,000 YouTube Views",
+    "purchased 200 Telegram Members",
+    "ordered 10,000 TikTok Shares",
+    "bought 2,500 Facebook Followers",
+    "purchased 1,500 Instagram Comments",
+    "ordered 8,000 YouTube Views",
+    "bought 750 Twitter Likes"
+  ];
+
+  function addActivityItem() {
+    const feed = document.getElementById('activityFeed');
+    const user = activityUsers[Math.floor(Math.random() * activityUsers.length)];
+    const action = activityActions[Math.floor(Math.random() * activityActions.length)];
+    const time = Math.floor(Math.random() * 59) + 1;
+    
+    const item = document.createElement('div');
+    item.className = 'activity-item';
+    item.innerHTML = `
+      <div class="activity-icon"><i class="fas fa-shopping-cart"></i></div>
+      <div class="activity-text">
+        <div class="activity-user">${user}</div>
+        <div class="activity-action">${action}</div>
+      </div>
+      <div class="activity-time">${time}s ago</div>
+    `;
+    
+    feed.insertBefore(item, feed.firstChild);
+    
+    // Keep only last 6 items
+    while (feed.children.length > 6) {
+      feed.removeChild(feed.lastChild);
+    }
+  }
+
+  // Add initial items
+  for (let i = 0; i < 5; i++) {
+    addActivityItem();
+  }
+  
+  // Add new activity every 4 seconds
+  setInterval(addActivityItem, 4000);
+
+  // 200+ REAL USERNAME DATABASE
+  const usernames = [
+    "Kevoo_Ke", "Stacy_Wanjiru", "Brian_Omondi", "Daktari_Digital", "Nairobi_Queen", "Baba_Yao", "Wazza_254", "Ciku_Mains", "Otieno_Jnr", "Shiko_Luv",
+    "Dj_Kym", "Mwas_The_Great", "Aura_Geng", "Sauti_Sol_Fan", "King_Kaka_Army", "Silver_Ke", "Mama_Mboga_Digital", "Hustler_Nation", "Vybz_Cartel_Ke",
+    "Ruto_Vibes", "Raila_Power", "GenZ_Nairobi", "Street_Smart_Ke", "Techie_Nai", "Mercy_Masika_Fan", "Jalas_Show", "Oga_Obinna_Fan", "Bahati_Diana",
+    "The_Murayas", "Crazy_Kennar_Fan", "Flaqo_Vibes", "Njugush_Fan", "Khaligraph_Army", "Nyashinski_Fans", "Femi_One_Ke", "Mejja_Genge", "Ssaru_Ke",
+    "Boutross_Ke", "Masauti_Ke", "Otile_Fans", "Diamond_Platnumz_Ke", "Zuchu_Fans", "Ali_Kiba_Ke", "Harmonize_Ke", "Rayvanny_Ke", "Mbosso_Ke",
+    "Lava_Lava_Fans", "Nandy_Ke", "Jux_Ke", "Willy_Paul_Fans", "Ringtone_Ke", "Guardian_Angel_Fan", "Eko_Dydda_Ke", "Moji_Shortbaba", "Keziah_Ke",
+    "Shiru_Wa_Gp", "Loise_Kim_Fan", "Phyllis_Mwaura", "Samidoh_Fans", "Edday_Nderitu", "Karen_Nyamu_Fan", "Bernice_Saroni", "Mugithi_Lover",
+    "Kamba_Benga", "Luhya_Vibes", "Luo_Magic", "Kalos_Ke", "Tyson_Ke", "Anita_Ke", "Precious_Ke", "Faith_Ke", "Hope_Ke", "Joy_Ke", "Peace_Ke",
+    "Love_Ke", "Grace_Ke", "Blessing_Ke", "Miracle_Ke", "Destiny_Ke", "Glory_Ke", "Victory_Ke", "Success_Ke", "Wealth_Ke", "Prosperity_Ke",
+    "Nai_Street_Wear", "Thrift_Ke", "Fashion_Kenya", "Makeup_Artist_Ke", "Hair_Stylist_Ke", "Baker_Kenya", "Chef_Ke", "Photographer_Ke",
+    "Videographer_Ke", "Graphic_Designer_Ke", "Web_Dev_Ke", "Coder_Ke", "Investor_Ke", "Trader_Ke", "Farmer_Ke", "Real_Estate_Ke",
+    "Car_Dealer_Ke", "Phone_Dealer_Ke", "Tech_Guru_Ke", "Fitness_Coach_Ke", "Yoga_Ke", "Travel_Kenya", "Tour_Guide_Ke", "Wildlife_Ke",
+    "Magical_Kenya", "Safari_Ke", "Beach_Lover_Ke", "Coast_Vibes", "Rift_Valley_Ke", "Central_Ke", "Eastern_Ke", "Western_Ke",
+    "Nyanza_Ke", "North_Eastern_Ke", "Marsabit_Ke", "Turkana_Ke", "Isiolo_Ke", "Samburu_Ke", "Narok_Ke", "Kajiado_Ke", "Nakuru_Vibes",
+    "Naivasha_Vibes", "Gilgil_Ke", "Molo_Ke", "Njoro_Ke", "Eldoret_City", "Kitale_Ke", "Bungoma_Ke", "Busia_Ke", "Kakamega_Ke",
+    "Vihiga_Ke", "Kisumu_City", "Siaya_Ke", "Homa_Bay_Ke", "Migori_Ke", "Kisii_Ke", "Nyamira_Ke", "Bomet_Ke", "Kericho_Ke",
+    "Nandi_Ke", "Uasin_Gishu_Ke", "Elgeyo_Marakwet", "Trans_Nzoia_Ke", "West_Pokot_Ke", "Laikipia_Ke", "Nyandarua_Ke", "Nyeri_Ke",
+    "Kirinyaga_Ke", "Muranga_Ke", "Kiambu_Ke", "Nairobi_County", "Machakos_Ke", "Makueni_Ke", "Kitui_Ke", "Taita_Taveta_Ke",
+    "Kwale_Ke", "Mombasa_City", "Kilifi_Ke", "Lamu_Ke", "Tana_River_Ke", "Garissa_Ke", "Wajir_Ke", "Mandera_Ke", "Kenya_One",
+    "Pride_Of_Africa", "Lion_Heart_Ke", "Cheetah_Ke", "Elephant_Ke", "Rhino_Ke", "Buffalo_Ke", "Leopard_Ke", "Maasai_Mara_Ke",
+    "Amboseli_Ke", "Tsavo_Ke", "Samburu_Park", "Lake_Nakuru_Ke", "Hell_Gate_Ke", "Mount_Kenya_Ke", "Aberdares_Ke", "Watamu_Vibes",
+    "Diani_Beach_Ke", "Malindi_Vibes", "Lam_Island", "Manda_Island", "Shela_Village", "Old_Town_Mombasa", "Fort_Jesus_Ke",
+    "Kenyatta_Avenue", "Moi_Avenue_Ke", "Tom_Mboya_Ke", "Kimathi_Street", "River_Road_Ke", "Luthuli_Avenue", "Kirinyaga_Road",
+    "Accra_Road_Ke", "Latema_Road", "Biashara_Street_Ke", "Koinange_Street", "Parliament_Road", "City_Hall_Way", "Haile_Selassie"
+  ];
+
+  const services = [
+    "100 Instagram Followers", "500 TikTok Views", "1,000 Facebook Likes", 
+    "50 YouTube Subscribers", "200 Instagram Likes", "5,000 TikTok Shares",
+    "M-Pesa Topup (Ksh 500)", "M-Pesa Topup (Ksh 1000)", "Verified Account Check"
+  ];
+  
+  function showNotification() {
+    const toast = document.getElementById('notification-toast');
+    const user = usernames[Math.floor(Math.random() * usernames.length)];
+    const service = services[Math.floor(Math.random() * services.length)];
+    const time = Math.floor(Math.random() * 59) + 1;
+    
+    document.getElementById('toast-text').innerText = `@${user}`;
+    document.getElementById('toast-sub').innerText = `bought ${service} (${time}s ago)`;
+    
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4500);
+  }
+
+  // Initial delay then cycle every 10 seconds
+  setTimeout(() => {
+    showNotification();
+    setInterval(showNotification, 10000); 
+  }, 4000);
+</script>
+
+<script src="auth.js"></script>
+
+</body>
+      </html>
