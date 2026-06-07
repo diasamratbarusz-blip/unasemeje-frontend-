@@ -49,6 +49,26 @@
     .ticker-item i { font-size: 14px; }
     @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 
+    /* --- NEW: Global Announcement Banner --- */
+    .announcement-banner {
+      position: fixed;
+      top: 38px;
+      left: 0;
+      right: 0;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      color: white;
+      padding: 12px 20px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 14px;
+      z-index: 1999;
+      display: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .announcement-banner.show { display: block; }
+    .announcement-banner i { margin-right: 8px; }
+    /* ---------------------------------------------------------------- */
+
     /* Unique Navigation - Adjusted for Ticker */
     nav { 
       display: flex; 
@@ -62,22 +82,46 @@
       border-bottom: 1px solid #1e293b; 
       backdrop-filter: blur(10px);
     }
+    nav.with-announcement { top: 88px; } /* Adjust when announcement is showing */
     .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
 
-    /* Admin Button Style */
-    .admin-btn {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--brand-primary);
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 13px;
-      border: 1px solid var(--brand-primary);
-      transition: 0.3s;
-      margin-right: 10px;
+    /* --- NEW: Maintenance Mode Overlay --- */
+    .maintenance-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.98);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
-    .admin-btn:hover { background: var(--brand-primary); color: #020617; }
+    .maintenance-overlay.show { display: flex; }
+    .maintenance-card {
+      background: var(--card-bg);
+      padding: 50px;
+      border-radius: 24px;
+      border: 1px solid #1e293b;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+    .maintenance-icon {
+      font-size: 60px;
+      color: var(--accent-gold);
+      margin-bottom: 20px;
+    }
+    .maintenance-card h2 {
+      font-family: 'Outfit';
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    .maintenance-card p {
+      color: var(--text-dim);
+      margin-bottom: 25px;
+    }
+    /* ---------------------------------------------------------------- */
 
     /* Hero Branding */
     .hero { text-align: center; padding: 140px 10% 100px; background: radial-gradient(circle at top, #1e1b4b 0%, #020617 100%); }
@@ -113,7 +157,6 @@
 
     /* Features Section (Big Panel Info) */
     .features-section { padding: 80px 10%; text-align: center; background: #020617; }
-    /* FIXED: Added min(260px, 100%) to prevent grid overflow on tiny screens */
     .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 30px; margin-top: 50px; }
     .feature-card { background: linear-gradient(145deg, #0f172a, #1e293b); padding: 35px; border-radius: 20px; border: 1px solid #334155; transition: 0.4s; text-align: left; }
     .feature-card:hover { border-color: var(--brand-primary); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
@@ -123,13 +166,12 @@
     .trust-section { padding: 80px 10%; text-align: center; background: #0b1120; }
     .trust-badge { display: inline-block; padding: 6px 16px; background: rgba(16, 185, 129, 0.1); color: var(--brand-primary); border-radius: 100px; font-size: 12px; font-weight: 700; margin-bottom: 20px; border: 1px solid rgba(16, 185, 129, 0.2); }
     
-    /* FIXED: Added min(240px, 100%) to prevent grid overflow on tiny screens */
     .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 30px; margin-top: 60px; }
     .step-box { background: #0f172a; padding: 40px; border-radius: 24px; text-align: left; border-left: 4px solid var(--brand-primary); transition: 0.3s; }
     .step-box:hover { transform: translateX(5px); background: #1e293b; }
     .step-label { color: var(--brand-primary); font-weight: 800; font-size: 1.5rem; margin-bottom: 15px; }
 
-    /* Live Testimonials Grid (Shows 3 people at the same time) */
+    /* Live Testimonials Grid */
     .testimonials-section { padding: 80px 10%; text-align: center; background: #020617; }
     .testimonials-grid { 
       display: grid; 
@@ -203,7 +245,7 @@
       transform: translateY(200%);
       transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       z-index: 9999;
-      max-width: calc(100% - 50px); /* FIXED: Prevents overflow on small screens */
+      max-width: calc(100% - 50px);
     }
     #notification-toast.show { transform: translateY(0); }
     .toast-icon { width: 35px; height: 35px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--brand-primary); font-size: 14px; }
@@ -237,7 +279,7 @@
       .local-banner div { text-align: center !important; }
       
       .activity-item { flex-wrap: wrap; }
-      .activity-text { min-width: 0; } /* Allows text to shrink instead of pushing layout */
+      .activity-text { min-width: 0; }
       
       .wa-float { bottom: 20px; right: 20px; width: 55px; height: 55px; font-size: 26px; }
       footer { padding: 40px 20px; }
@@ -256,7 +298,7 @@
 </head>
 <body>
 
-<!-- MOVING TICKER (Sheng & Hype) -->
+<!-- MOVING TICKER -->
 <div class="ticker-wrap">
   <div class="ticker">
     <div class="ticker-item"><i class="fas fa-bolt"></i> MAIN CHARACTER ENERGY ACTIVE</div>
@@ -288,7 +330,23 @@
   </div>
 </div>
 
-<nav>
+<!-- Global Announcement Banner -->
+<div class="announcement-banner" id="announcementBanner">
+  <i class="fas fa-bullhorn"></i>
+  <span id="announcementText"></span>
+</div>
+
+<!-- Maintenance Mode Overlay -->
+<div class="maintenance-overlay" id="maintenanceOverlay">
+  <div class="maintenance-card">
+    <div class="maintenance-icon"><i class="fas fa-tools"></i></div>
+    <h2>System Maintenance</h2>
+    <p>We're performing scheduled maintenance to improve your experience. Please check back shortly.</p>
+    <p style="color: var(--accent-gold); font-weight: 700;">Expected downtime: 15-30 minutes</p>
+  </div>
+</div>
+
+<nav id="mainNav">
   <div class="logo">UNASEMEJE SMM </div>
   <div id="navActions" style="display: flex; align-items: center; gap: 20px;">
     <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 22px;"><i class="fab fa-whatsapp"></i></a>
@@ -422,14 +480,14 @@
   </div>
 </section>
 
-<!-- LIVE TESTIMONIALS GRID (Shows 3 different people at the same time) -->
+<!-- LIVE TESTIMONIALS GRID -->
 <section class="testimonials-section">
   <div class="trust-badge">TESTIMONIALS</div>
   <h2 style="font-family: 'Outfit'; font-size: 2rem;">What People Say About Us</h2>
   <p style="color: var(--text-dim); max-width: 600px; margin: 0 auto;">Join thousands of satisfied Kenyan creators, businesses, and influencers.</p>
   
   <div class="testimonials-grid" id="testimonialsGrid">
-    <!-- Testimonials will be injected here via JavaScript (3 at a time) -->
+    <!-- Testimonials will be injected here via JavaScript -->
   </div>
 </section>
 
@@ -465,36 +523,48 @@
 </footer>
 
 <script>
-  // IDENTITY-LOCK PROTOCOL
-  (function() {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  // ==========================================
+  // FETCH SITE SETTINGS (Announcements & Maintenance)
+  // ==========================================
+  async function fetchSiteSettings() {
     try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const isOwner = payload.email === "diasamratbarusz@gmail.com" && payload.phone === "0715509440";
-      if (isOwner) {
-        const adminBtn = document.createElement("a");
-        adminBtn.href = "admin.html";
-        adminBtn.className = "admin-btn";
-        adminBtn.innerText = "ADMIN PANEL";
-        const navActions = document.getElementById("navActions");
-        navActions.insertBefore(adminBtn, navActions.firstChild);
+      const response = await fetch('https://unasemeje-backend.vercel.app/api/settings');
+      const settings = await response.json();
+      
+      // Check maintenance mode
+      if (settings.maintenance === true) {
+        document.getElementById('maintenanceOverlay').classList.add('show');
+        document.body.style.overflow = 'hidden';
       }
-    } catch (e) {}
-  })();
+      
+      // Check announcement
+      if (settings.announcement && settings.announcement.trim() !== '') {
+        const banner = document.getElementById('announcementBanner');
+        document.getElementById('announcementText').innerText = settings.announcement;
+        banner.classList.add('show');
+        document.getElementById('mainNav').classList.add('with-announcement');
+      }
+    } catch (error) {
+      console.log('Could not fetch site settings:', error);
+    }
+  }
+  
+  // Fetch settings on page load
+  fetchSiteSettings();
+  
+  // Check settings every 30 seconds
+  setInterval(fetchSiteSettings, 30000);
+  // ==========================================
 
   // LIVE COUNTERS
   let ordersCount = 15432;
   let usersCount = 3247;
   
   function updateCounters() {
-    // Randomly increment orders
     if (Math.random() > 0.7) {
       ordersCount += Math.floor(Math.random() * 3) + 1;
       document.getElementById('ordersCount').textContent = ordersCount.toLocaleString();
     }
-    
-    // Randomly fluctuate active users
     if (Math.random() > 0.5) {
       usersCount += Math.floor(Math.random() * 5) - 2;
       if (usersCount < 3000) usersCount = 3000;
@@ -502,10 +572,9 @@
     }
   }
   
-  // Update counters every 3 seconds
   setInterval(updateCounters, 3000);
 
-  // EXTENDED TESTIMONIALS DATABASE - 25+ DIFFERENT PEOPLE
+  // EXTENDED TESTIMONIALS DATABASE
   const allTestimonials = [
     { name: "Kevin K.", loc: "Nairobi, Kenya", text: "Niliam followers za IG, zikafika ndani ya dakika 5! Form ni gani? Ni UNASEMEJE! The STK push is so fast, I didn't even have to send money manually.", avatar: "KK" },
     { name: "Stacy W.", loc: "Mombasa, Kenya", text: "Best rates in Kenya. I started my own child panel using their API and I'm already making a daily profit. Asante sana UNASEMEJE team!", avatar: "SW" },
@@ -539,21 +608,18 @@
   function getRandomTestimonials(count) {
     const shuffled = [...allTestimonials].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
-    }
+  }
 
   function updateTestimonials() {
-    // Fade out existing cards
     const cards = gridContainer.querySelectorAll('.testimonial-card');
     cards.forEach(card => card.classList.add('updating'));
 
     setTimeout(() => {
       gridContainer.innerHTML = '';
-      // Show 3 different people at the same time
       const newTestimonials = getRandomTestimonials(3);
       newTestimonials.forEach(t => {
         const card = document.createElement('div');
         card.className = 'testimonial-card';
-        // Start slightly faded and shifted for smooth entry
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
         card.innerHTML = `
@@ -568,21 +634,14 @@
           </div>
         `;
         gridContainer.appendChild(card);
-        
-        // Trigger reflow to ensure transition happens
         void card.offsetWidth; 
-        
-        // Animate in
         card.style.opacity = '1';
         card.style.transform = 'translateY(0)';
       });
-    }, 600); // Wait for fade out animation
+    }, 600);
   }
 
-  // Initial load
   updateTestimonials();
-
-  // Change to 3 new different people every 6 seconds
   setInterval(updateTestimonials, 6000);
 
   // LIVE ACTIVITY FEED
@@ -629,22 +688,17 @@
     `;
     
     feed.insertBefore(item, feed.firstChild);
-    
-    // Keep only last 6 items
     while (feed.children.length > 6) {
       feed.removeChild(feed.lastChild);
     }
   }
 
-  // Add initial items
   for (let i = 0; i < 5; i++) {
     addActivityItem();
   }
   
-  // Add new activity every 4 seconds
   setInterval(addActivityItem, 4000);
 
-  // 200+ REAL USERNAME DATABASE
   const usernames = [
     "Kevoo_Ke", "Stacy_Wanjiru", "Brian_Omondi", "Daktari_Digital", "Nairobi_Queen", "Baba_Yao", "Wazza_254", "Ciku_Mains", "Otieno_Jnr", "Shiko_Luv",
     "Dj_Kym", "Mwas_The_Great", "Aura_Geng", "Sauti_Sol_Fan", "King_Kaka_Army", "Silver_Ke", "Mama_Mboga_Digital", "Hustler_Nation", "Vybz_Cartel_Ke",
@@ -688,13 +742,11 @@
     document.getElementById('toast-sub').innerText = `bought ${service} (${time}s ago)`;
     
     toast.classList.add('show');
-    
     setTimeout(() => {
       toast.classList.remove('show');
     }, 4500);
   }
 
-  // Initial delay then cycle every 10 seconds
   setTimeout(() => {
     showNotification();
     setInterval(showNotification, 10000); 
