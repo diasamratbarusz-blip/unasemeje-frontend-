@@ -139,6 +139,73 @@
     
     /* WhatsApp Float */
     .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; }
+
+    /* --- TERMS OF SERVICE MODAL STYLES --- */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 600px;
+      max-height: 80vh;
+      border-radius: 24px;
+      border: 1px solid #1e293b;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      padding: 25px 30px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { font-family: 'Outfit'; color: #fff; font-size: 1.4rem; }
+    .modal-close {
+      background: #1e293b;
+      border: none;
+      color: #fff;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.3s;
+    }
+    .modal-close:hover { background: #ef4444; }
+    .modal-body {
+      padding: 30px;
+      overflow-y: auto;
+      color: var(--text-dim);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .modal-body h4 {
+      color: var(--brand-primary);
+      margin: 20px 0 10px;
+      font-size: 16px;
+    }
+    /* --------------------------------------- */
   </style>
 </head>
 <body>
@@ -218,9 +285,10 @@
       </div>
     </div>
 
+    <!-- UPDATED CHECKBOX TO OPEN MODAL -->
     <div class="checkbox-group">
       <input type="checkbox" id="terms">
-      <label for="terms">I verify that I am a real user and agree to the <a href="#">Terms of service</a></label>
+      <label for="terms">I verify that I am a real user and agree to the <a href="#" onclick="event.preventDefault(); openModal('termsModal');" style="text-decoration: underline;">Terms of service</a></label>
     </div>
 
     <button class="btn-signup" onclick="register()">Create My Account</button>
@@ -268,6 +336,38 @@
   </div>
 </footer>
 
+<!-- TERMS OF SERVICE MODAL HTML -->
+<div class="modal-overlay" id="termsModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Terms of Service</h3>
+      <button class="modal-close" onclick="closeModal('termsModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Last Updated:</strong> June 2026</p>
+      <p>Welcome to UNASEMEJE Ø DIA. By creating an account and using our platform, you agree to be bound by the following terms:</p>
+      
+      <h4>1. Instant Account Creation</h4>
+      <p>Accounts are created and activated instantly upon successful registration. By checking the agreement box, you legally confirm that you are a real human user and not an automated bot, script, or spam account.</p>
+      
+      <h4>2. M-Pesa & Wallet Funding</h4>
+      <p>Deposits via M-Pesa STK Push are instant and fully automated. Ensure the phone number you provide is registered to an active M-Pesa account. We are not responsible for funds sent to incorrect numbers or failed network transactions.</p>
+      
+      <h4>3. SMM Services & Delivery</h4>
+      <p>We provide social media engagement services. Delivery times vary based on platform algorithms. While we offer anti-drop guarantees on specific services, we do not control social media platforms' internal purges or algorithm changes.</p>
+      
+      <h4>4. Prohibited Activities</h4>
+      <p>You may not use our services for spam, harassment, illegal activities, or violating the Terms of Service of the social media platforms we support (e.g., Instagram, TikTok, YouTube). Accounts found abusing our system or using bots will be permanently banned without a refund.</p>
+      
+      <h4>5. Refunds & Disputes</h4>
+      <p>Due to the digital nature of our services, all wallet top-ups are non-refundable to mobile money. If a service fails to deliver, contact our 24/7 WhatsApp support for an automatic refill or wallet credit.</p>
+      
+      <h4>6. Contact Us</h4>
+      <p>For any support inquiries, reach us instantly via WhatsApp at <strong>+254 715 509 440</strong> or email <strong>support@unasemeje.co.ke</strong>.</p>
+    </div>
+  </div>
+</div>
+
 <script>
   // ==========================================
   // PASSWORD VISIBILITY TOGGLES
@@ -300,6 +400,24 @@
       eyeIconConfirm.classList.toggle('fa-eye-slash');
     });
   }
+
+  // ==========================================
+  // MODAL LOGIC
+  // ==========================================
+  function openModal(id) {
+    document.getElementById(id).classList.add('active');
+  }
+  
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+  
+  // Close modal when clicking outside the white box
+  window.onclick = function(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+      event.target.classList.remove('active');
+    }
+  }
   // ==========================================
 </script>
 
@@ -307,4 +425,4 @@
 <script src="auth.js"></script>
 
 </body>
-</html>
+  </html>
