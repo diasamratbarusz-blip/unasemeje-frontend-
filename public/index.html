@@ -149,6 +149,87 @@
     .btn-login { width: 100%; background: var(--brand-primary); color: #020617; padding: 18px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; margin: 25px 0; font-size: 16px; transition: 0.3s; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4); }
     .btn-login:hover { background: #34d399; transform: translateY(-2px); box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.5); }
 
+    /* --- PASSWORD TOGGLE STYLES --- */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .password-wrapper input {
+      padding-right: 50px !important; /* Ensures typed text doesn't overlap the icon */
+    }
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+    }
+    .toggle-password:hover {
+      color: var(--brand-primary);
+    }
+    /* -------------------------------- */
+
+    /* --- JOIN NOW BUTTON STYLES --- */
+    .join-now-container {
+      text-align: center;
+      margin-top: 35px;
+      padding-top: 25px;
+      border-top: 1px solid #1e293b;
+    }
+    .join-now-text {
+      font-size: 15px;
+      color: var(--text-dim);
+      margin-bottom: 18px;
+    }
+    .btn-join-now {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--brand-primary), #059669);
+      color: #020617 !important;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 18px;
+      padding: 16px 40px;
+      border-radius: 50px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      transition: all 0.3s ease;
+      animation: attentionShake 4s infinite, pulseGlow 2s infinite;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .btn-join-now:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(16, 185, 129, 0.6);
+      animation: none; /* Stop animation on hover so it's easy to click */
+    }
+
+    @keyframes attentionShake {
+      0%, 85%, 100% { transform: translateX(0) rotate(0); }
+      87% { transform: translateX(-6px) rotate(-3deg); }
+      89% { transform: translateX(6px) rotate(3deg); }
+      91% { transform: translateX(-6px) rotate(-3deg); }
+      93% { transform: translateX(6px) rotate(3deg); }
+      95% { transform: translateX(0) rotate(0); }
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4), 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4), 0 0 0 15px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4), 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    /* -------------------------------- */
+
     /* Platforms Section */
     .platforms-section { padding: 80px 10%; text-align: center; background: #0b1120; }
     .platforms-grid { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
@@ -293,6 +374,14 @@
       .platforms-grid { gap: 15px; }
       .platform-icon { width: 60px; height: 60px; font-size: 24px; }
       #notification-toast { left: 10px; right: 10px; bottom: 10px; max-width: none; width: auto; }
+      
+      /* Join Now Button Mobile Fix */
+      .btn-join-now {
+        font-size: 16px;
+        padding: 14px 30px;
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -386,9 +475,17 @@
       <input type="text" id="identifier" placeholder="Enter account details">
     </div>
     <div class="field-group">
-      <label>Secret Password</label>
-      <a href="https://wa.me/254715509440" class="forgot-link" style="color: var(--brand-primary); text-decoration: none; font-size: 13px; float: right;">Recover Access?</a>
-      <input type="password" id="password" placeholder="••••••••">
+      <!-- Adjusted layout slightly to prevent floating issues with the input wrapper -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <label style="margin-bottom: 0;">Secret Password</label>
+        <a href="https://wa.me/254715509440" class="forgot-link" style="color: var(--brand-primary); text-decoration: none; font-size: 13px;">Recover Access?</a>
+      </div>
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="••••••••">
+        <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
+          <i class="fas fa-eye" id="eyeIcon"></i>
+        </button>
+      </div>
     </div>
     
     <label style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-dim); cursor: pointer;">
@@ -397,9 +494,13 @@
 
     <button class="btn-login" id="loginBtn" onclick="login()">Enter Dashboard</button>
     
-    <p style="text-align: center; font-size: 14px; color: var(--text-dim);">
-      New to our community? <a href="signup.html" style="color: var(--brand-primary); text-decoration: none; font-weight: 700;">Join Now</a>
-    </p>
+    <!-- Upgraded Join Now Section -->
+    <div class="join-now-container">
+      <p class="join-now-text">New to our community? Create an account today!</p>
+      <a href="signup.html" class="btn-join-now">
+        Join Now <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
   </div>
 </div>
 
@@ -751,9 +852,33 @@
     showNotification();
     setInterval(showNotification, 10000); 
   }, 4000);
+
+  // ==========================================
+  // PASSWORD VISIBILITY TOGGLE
+  // ==========================================
+  const togglePasswordBtn = document.getElementById('togglePassword');
+  const passwordInputField = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+
+  if (togglePasswordBtn && passwordInputField && eyeIcon) {
+    togglePasswordBtn.addEventListener('click', function () {
+      const type = passwordInputField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInputField.setAttribute('type', type);
+      
+      if (type === 'text') {
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    });
+  }
+  // ==========================================
+
 </script>
 
 <script src="auth.js"></script>
 
 </body>
-      </html>
+  </html>
