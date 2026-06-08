@@ -72,6 +72,35 @@
     }
     .form-group input:focus, .form-group select:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
 
+    /* --- PASSWORD TOGGLE STYLES --- */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .password-wrapper input {
+      padding-right: 50px !important; /* Ensures typed text doesn't overlap the icon */
+    }
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+    }
+    .toggle-password:hover {
+      color: var(--brand-primary);
+    }
+    /* -------------------------------- */
+
     .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 25px 0; font-size: 13px; color: var(--text-dim); }
     .checkbox-group input { width: 18px; height: 18px; cursor: pointer; }
     .checkbox-group a { color: var(--brand-primary); text-decoration: none; font-weight: 600; }
@@ -171,12 +200,22 @@
 
     <div class="form-group">
       <label>Secure Password <span style="color: #ef4444; font-weight: 700; font-size: 12px;">* Required</span></label>
-      <input type="password" id="password" placeholder="Min. 8 characters" required>
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="Min. 8 characters" required>
+        <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
+          <i class="fas fa-eye" id="eyeIcon"></i>
+        </button>
+      </div>
     </div>
 
     <div class="form-group">
       <label>Confirm Password <span style="color: #ef4444; font-weight: 700; font-size: 12px;">* Required</span></label>
-      <input type="password" id="confirm_password" placeholder="Repeat password" required>
+      <div class="password-wrapper">
+        <input type="password" id="confirm_password" placeholder="Repeat password" required>
+        <button type="button" class="toggle-password" id="toggleConfirmPassword" aria-label="Toggle confirm password visibility">
+          <i class="fas fa-eye" id="eyeIconConfirm"></i>
+        </button>
+      </div>
     </div>
 
     <div class="checkbox-group">
@@ -228,6 +267,41 @@
     <p style="font-size: 10px; margin-top: 10px; color: #334155;">We use manual verification for all new accounts to maintain network integrity.</p>
   </div>
 </footer>
+
+<script>
+  // ==========================================
+  // PASSWORD VISIBILITY TOGGLES
+  // ==========================================
+  
+  // 1. Main Password Field
+  const togglePasswordBtn = document.getElementById('togglePassword');
+  const passwordInputField = document.getElementById('password');
+  const eyeIcon = document.getElementById('eyeIcon');
+
+  if (togglePasswordBtn && passwordInputField && eyeIcon) {
+    togglePasswordBtn.addEventListener('click', function () {
+      const type = passwordInputField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInputField.setAttribute('type', type);
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+  }
+
+  // 2. Confirm Password Field
+  const toggleConfirmPasswordBtn = document.getElementById('toggleConfirmPassword');
+  const confirmPasswordInputField = document.getElementById('confirm_password');
+  const eyeIconConfirm = document.getElementById('eyeIconConfirm');
+
+  if (toggleConfirmPasswordBtn && confirmPasswordInputField && eyeIconConfirm) {
+    toggleConfirmPasswordBtn.addEventListener('click', function () {
+      const type = confirmPasswordInputField.getAttribute('type') === 'password' ? 'text' : 'password';
+      confirmPasswordInputField.setAttribute('type', type);
+      eyeIconConfirm.classList.toggle('fa-eye');
+      eyeIconConfirm.classList.toggle('fa-eye-slash');
+    });
+  }
+  // ==========================================
+</script>
 
 <script src="config.js"></script>
 <script src="auth.js"></script>
