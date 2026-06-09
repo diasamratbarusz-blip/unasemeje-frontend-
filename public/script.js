@@ -289,6 +289,10 @@ function initializePaymentDetection() {
 
 /* ================= BOOTSTRAP ================= */
 window.addEventListener('DOMContentLoaded', () => {
+    // ✅ ENFORCE MINIMUM WIDTH (360px) DYNAMICALLY
+    document.documentElement.style.minWidth = "360px";
+    document.body.style.minWidth = "360px";
+
     const token = getToken();
     const isAuthPage = window.location.pathname.includes("index.html") || window.location.pathname === "/";
 
