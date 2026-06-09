@@ -111,7 +111,8 @@
 
                 const user = await res.json();
                 
-                const link = `${window.location.origin}/register.html?ref=${user.referralCode}`;
+                // Updated referral link to point to signup.html instead of register.html
+                const link = `${window.location.origin}/signup.html?ref=${user.referralCode}`;
                 document.getElementById("refLink").innerText = link;
                 document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
                 document.getElementById("refCount").innerText = user.referralCount || 0;
