@@ -211,6 +211,10 @@ async function placeOrder() {
 
 /* ================= INIT ================= */
 document.addEventListener("DOMContentLoaded", () => {
+    // ✅ ENFORCE MINIMUM WIDTH (360px) DYNAMICALLY
+    document.documentElement.style.minWidth = "360px";
+    document.body.style.minWidth = "360px";
+
     // Run security check and sync profile
     syncUserProfile();
     
