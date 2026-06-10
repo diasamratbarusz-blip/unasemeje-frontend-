@@ -110,9 +110,76 @@
             
             .main {
                 margin-left: 0 !important;
-                margin-bottom: 140px !important;
-                padding: 20px !important;
+                margin-bottom: 160px !important; /* Extra space for bottom nav */
+                padding: 15px !important;
                 width: 100% !important;
+            }
+
+            /* ========================================= */
+            /* NEW: MOBILE BUTTON & LAYOUT PUSH-DOWN     */
+            /* Makes elements stack beautifully on phones*/
+            /* ========================================= */
+            
+            /* 1. Full-width, easy-to-tap buttons */
+            .btn-secondary, .btn-primary, button[style*="background: white"] {
+                width: 100% !important;
+                box-sizing: border-box !important;
+                font-size: 16px !important; /* Prevents iOS zoom on focus */
+                padding: 16px !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            /* 2. Stack the Welcome Card content vertically */
+            .main > .card:first-child {
+                flex-direction: column !important;
+                text-align: center !important;
+                gap: 10px !important;
+            }
+            .price-display {
+                width: 100% !important;
+                text-align: center !important;
+                box-sizing: border-box !important;
+                margin-top: 10px !important;
+            }
+
+            /* 3. Force Grids to single column on mobile */
+            .main > div[style*="grid"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            /* 4. Stack internal flex layouts in cards */
+            .card > div[style*="flex"] {
+                flex-direction: column !important;
+                text-align: center !important;
+                gap: 10px !important;
+            }
+            .card > div[style*="flex"] > div {
+                width: 100% !important;
+                text-align: center !important;
+            }
+
+            /* 5. Push AI Chat Widget above the bottom nav */
+            #chatToggleBtn {
+                bottom: 160px !important;
+                right: 20px !important;
+            }
+            #chatWindow {
+                bottom: 240px !important;
+                right: 15px !important;
+                left: 15px !important;
+                width: auto !important;
+                max-width: 100% !important;
+                height: 65vh !important;
+            }
+            
+            /* 6. Ensure live notifications don't overlap the chat button */
+            .live-notif {
+                bottom: 250px !important;
+                left: 15px !important;
+                right: 15px !important;
+                max-width: calc(100% - 30px) !important;
             }
         }
     </style>
@@ -284,11 +351,11 @@
         const randomService = services[Math.floor(Math.random() * services.length)];
 
         const notification = document.createElement("div");
-        
+        notification.className = "live-notif"; // Added class for CSS targeting
         const isMobile = window.innerWidth <= 768;
         
         notification.style = `
-            position: fixed; bottom: ${isMobile ? '150px' : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
+            position: fixed; bottom: ${isMobile ? '250px' : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
             background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
             padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
@@ -513,7 +580,10 @@
             try {
                 const response = await fetch(API_PRIMARY_BOT, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // REQUIRED FOR BALANCE, ORDERS & BAN CHECK
+                    },
                     body: JSON.stringify({ message })
                 });
                 if (response.ok) return await response.json();
@@ -525,7 +595,10 @@
             try {
                 const response = await fetch(API_FALLBACK_BOT, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // REQUIRED FOR BALANCE, ORDERS & BAN CHECK
+                    },
                     body: JSON.stringify({ message })
                 });
                 if (response.ok) return await response.json();
