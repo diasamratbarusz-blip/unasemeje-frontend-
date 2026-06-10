@@ -8,6 +8,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ========================================= */
+        /* GLOBAL RESPONSIVE FIXES                   */
+        /* ========================================= */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        .dashboard {
+            width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        .main {
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+        }
+
+        .card {
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+            overflow-wrap: break-word !important;
+            word-wrap: break-word !important;
+        }
+
         /* Extra styles for flexibility */
         .dynamic-field { margin-top: 15px; display: none; }
         .service-desc {
@@ -44,33 +70,46 @@
         }
 
         /* ========================================= */
-        /* GUARANTEED MOBILE SIDEBAR (BOTTOM NAV)    */
-        /* Ensures ALL links are visible on phones   */
+        /* PROFESSIONAL MOBILE BOTTOM NAVIGATION BAR */
         /* ========================================= */
         @media (max-width: 768px) {
+            
+            /* 1. The Sidebar Container becomes the Bottom Bar */
             .sidebar {
                 position: fixed !important;
                 bottom: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
                 height: auto !important;
-                min-height: 70px !important;
-                flex-direction: row !important;
-                flex-wrap: wrap !important;
-                padding: 10px 5px !important;
+                min-height: 65px !important;
+                flex-direction: column !important;
+                padding: 0 !important;
                 border-right: none !important;
-                border-top: 2px solid var(--primary, #7c3aed) !important;
-                justify-content: space-around !important;
-                align-items: center !important;
+                border-top: 1px solid rgba(255,255,255,0.1) !important;
                 z-index: 1000 !important;
-                background: #111827 !important;
-                box-shadow: 0 -5px 15px rgba(0,0,0,0.5) !important;
+                background: rgba(17, 24, 39, 0.98) !important;
+                backdrop-filter: blur(10px) !important;
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.3) !important;
+                transition: transform 0.3s ease-in-out !important; 
             }
-            .sidebar h2 { display: none !important; }
-            
-            /* Ensure both the main nav and the bottom WhatsApp div act as flex containers */
-            .sidebar .sidebar-nav, 
+
+            /* Class to hide the bottom nav when scrolling down */
+            .sidebar.nav-hidden {
+                transform: translateY(100%) !important;
+            }
+
+            /* 2. Hide the Logo on mobile */
+            .sidebar h2 {
+                display: none !important; 
+            }
+
+            /* 3. Hide the old utility section (we'll add new ones to nav) */
             .sidebar > div:last-child {
+                display: none !important;
+            }
+
+            /* 4. The Main Navigation - Now with 2 rows on mobile */
+            .sidebar .sidebar-nav {
                 display: flex !important;
                 flex-direction: row !important;
                 flex-wrap: wrap !important;
@@ -78,39 +117,98 @@
                 justify-content: space-around !important;
                 align-items: center !important;
                 margin: 0 !important;
-                padding: 0 !important;
-                border-top: none !important;
+                padding: 8px 0 !important;
+                gap: 0 !important;
+            }
+
+            /* 5. Individual Buttons - First row (6 items) */
+            .sidebar .sidebar-nav a {
+                flex: 1 1 calc(100% / 6) !important;
+                max-width: calc(100% / 6) !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 4px !important;
+                padding: 8px 4px !important;
+                margin: 0 !important;
+                text-align: center !important;
+                border-radius: 0 !important;
+                transition: all 0.2s ease !important;
+                min-width: 0 !important;
+            }
+
+            /* 6. Second row items (AI Support & WhatsApp) - Full width row */
+            .sidebar .sidebar-nav a.utility-link {
+                flex: 0 0 auto !important;
+                max-width: none !important;
+                flex-direction: row !important;
+                padding: 10px 20px !important;
+                gap: 8px !important;
+                border-top: 1px solid rgba(255,255,255,0.05) !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 16px !important;
+                margin: 0 !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 12px !important;
+                font-weight: 600 !important;
+            }
+
+            /* AI Support specific styling */
+            .sidebar .sidebar-nav a.utility-link.ai-support {
+                color: var(--secondary) !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.ai-support i {
+                color: var(--secondary) !important;
+            }
+
+            /* WhatsApp specific styling */
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help {
+                color: #25d366 !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help i {
+                color: #25d366 !important;
+            }
+
+            /* 7. Icon Styling for main nav */
+            .sidebar .sidebar-nav a:not(.utility-link) i {
+                font-size: 20px !important;
+                margin: 0 !important;
+                color: #9ca3af !important;
             }
             
-            .sidebar a {
-                flex-direction: column !important;
-                padding: 8px 4px !important;
+            /* ✨ ACTIVE STATE STYLING */
+            .sidebar .sidebar-nav a.active i {
+                color: var(--primary) !important;
+                transform: scale(1.1) !important;
+            }
+            .sidebar .sidebar-nav a.active span {
+                color: var(--primary) !important;
+                font-weight: 700 !important;
+            }
+
+            /* 8. Text Styling for main nav */
+            .sidebar .sidebar-nav a:not(.utility-link) span {
                 font-size: 10px !important;
-                margin: 2px !important;
-                margin-bottom: 0 !important; /* Overrides inline margin-bottom: 15px */
-                flex: 1 1 20% !important; /* Allows wrapping if needed */
-                text-align: center !important;
-                justify-content: center !important;
-                gap: 4px !important;
-                min-width: 60px !important;
-            }
-            .sidebar a i {
-                margin-right: 0 !important;
-                margin-bottom: 0 !important;
-                font-size: 18px !important;
-            }
-            .sidebar a span {
-                font-size: 9px !important;
+                font-weight: 500 !important;
+                color: #9ca3af !important;
+                margin: 0 !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
                 max-width: 100% !important;
             }
             
+            /* 9. Push main content up so it's not hidden behind the bar */
             .main {
                 margin-left: 0 !important;
-                margin-bottom: 140px !important; /* Extra space so content isn't hidden behind the nav */
-                padding: 20px !important;
+                margin-bottom: 120px !important; 
+                padding: 15px !important;
                 width: 100% !important;
             }
 
@@ -127,15 +225,150 @@
                 gap: 10px;
             }
 
-            /* Live notification above bottom nav */
-            .live-notif {
-                bottom: 150px !important;
-                left: 20px !important;
+            /* 10. Adjust floating elements so they don't overlap the new bottom bar */
+            #chatToggleBtn {
+                bottom: 140px !important;
                 right: 20px !important;
-                max-width: calc(100% - 40px) !important;
+                transition: bottom 0.3s ease-in-out !important;
+            }
+            
+            #chatToggleBtn.nav-hidden {
+                bottom: 20px !important;
+            }
+
+            #chatWindow {
+                bottom: 215px !important;
+                right: 15px !important;
+                left: 15px !important;
+                width: auto !important;
+                max-width: 100% !important;
+                height: 65vh !important;
+                transition: bottom 0.3s ease-in-out !important;
+            }
+
+            #chatWindow.nav-hidden {
+                bottom: 95px !important;
+            }
+
+            .live-notif {
+                bottom: 140px !important;
+                left: 15px !important;
+                right: 15px !important;
+                max-width: calc(100% - 30px) !important;
                 word-wrap: break-word !important;
                 overflow-wrap: break-word !important;
                 box-sizing: border-box !important;
+            }
+        }
+
+        /* ========================================= */
+        /* SMALL MOBILE (≤480px)                     */
+        /* ========================================= */
+        @media (max-width: 480px) {
+            .main {
+                padding: 12px !important;
+                margin-bottom: 115px !important;
+            }
+
+            .sidebar {
+                min-height: 60px !important;
+            }
+            .sidebar .sidebar-nav a:not(.utility-link) i {
+                font-size: 18px !important;
+            }
+            .sidebar .sidebar-nav a:not(.utility-link) span {
+                font-size: 9px !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link {
+                padding: 8px 15px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 14px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 11px !important;
+            }
+
+            #chatToggleBtn {
+                bottom: 135px !important;
+                right: 15px !important;
+                width: 50px !important;
+                height: 50px !important;
+                padding: 12px !important;
+            }
+            #chatToggleBtn.nav-hidden {
+                bottom: 15px !important;
+            }
+
+            #chatWindow {
+                bottom: 210px !important;
+                right: 10px !important;
+                left: 10px !important;
+                max-width: calc(100% - 20px) !important;
+            }
+            #chatWindow.nav-hidden {
+                bottom: 80px !important;
+            }
+
+            .live-notif {
+                bottom: 135px !important;
+                left: 10px !important;
+                right: 10px !important;
+                max-width: calc(100% - 20px) !important;
+                padding: 12px 18px !important;
+                font-size: 12px !important;
+            }
+        }
+
+        /* ========================================= */
+        /* VERY SMALL MOBILE (≤360px)                */
+        /* ========================================= */
+        @media (max-width: 360px) {
+            .main {
+                padding: 10px !important;
+                margin-bottom: 110px !important;
+            }
+
+            .sidebar {
+                min-height: 58px !important;
+            }
+            .sidebar .sidebar-nav a:not(.utility-link) i {
+                font-size: 16px !important;
+            }
+            .sidebar .sidebar-nav a:not(.utility-link) span {
+                font-size: 8px !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link {
+                padding: 7px 12px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 13px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 10px !important;
+            }
+
+            #chatToggleBtn {
+                width: 45px !important;
+                height: 45px !important;
+                padding: 10px !important;
+                bottom: 130px !important;
+            }
+            #chatToggleBtn svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+        }
+
+        /* ========================================= */
+        /* LANDSCAPE MOBILE (height < 500px)         */
+        /* ========================================= */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #chatWindow {
+                height: 80vh !important;
+                max-height: 400px !important;
             }
         }
 
@@ -160,6 +393,45 @@
         .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* CHAT WIDGET RESPONSIVE FIXES */
+        @media (max-width: 768px) {
+            #chatWindow {
+                width: calc(100vw - 30px) !important;
+                max-width: calc(100vw - 30px) !important;
+                right: 15px !important;
+                left: 15px !important;
+                box-sizing: border-box !important;
+            }
+            #chatMessages {
+                height: 280px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #chatWindow {
+                width: calc(100vw - 20px) !important;
+                max-width: calc(100vw - 20px) !important;
+                right: 10px !important;
+                left: 10px !important;
+            }
+            #chatMessages {
+                height: 250px !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            #chatWindow {
+                width: calc(100vw - 16px) !important;
+                max-width: calc(100vw - 16px) !important;
+                right: 8px !important;
+                left: 8px !important;
+            }
+            #chatMessages {
+                height: 220px !important;
+                padding: 10px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -177,20 +449,20 @@
         <h2 style="font-family: 'Plus Jakarta Sans';">unasemeje ø dia</h2>
         <div class="sidebar-nav">
             <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="platform.html" class="active"><i class="fas fa-plus-circle"></i> <span>New Order</span></a>
+            <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
             <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
             <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
             <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            
+            <!-- AI Support & WhatsApp Help at bottom of mobile nav -->
+            <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+            <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
         </div>
         
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <!-- NEW: AI Support Link -->
-            <a href="support.html" style="color: var(--secondary); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
-                <i class="fas fa-robot"></i> <span>AI Support</span>
-            </a>
-            <a href="https://wa.me/254715509440" target="_blank" style="color: var(--secondary); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
-                <i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span>
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 15px; text-decoration: none;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
         </div>
     </div>
@@ -334,6 +606,11 @@
     const token = localStorage.getItem("token");
 
     if (!token) window.location.href = "index.html";
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
 
     // --- DYNAMIC TOP TICKER LOADER ---
     async function loadTopTicker() {
@@ -578,6 +855,30 @@
 
         let isChatOpen = false;
 
+        // ==========================================
+        // AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
+        // ==========================================
+        let lastScrollTop = 0;
+        const mobileSidebar = document.querySelector('.sidebar');
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                    mobileSidebar.classList.add('nav-hidden');
+                    chatToggleBtn.classList.add('nav-hidden');
+                    chatWindow.classList.add('nav-hidden');
+                } else {
+                    mobileSidebar.classList.remove('nav-hidden');
+                    chatToggleBtn.classList.remove('nav-hidden');
+                    chatWindow.classList.remove('nav-hidden');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }
+        }, false);
+
         // --- UI TOGGLE LOGIC ---
         function toggleChat() {
             isChatOpen = !isChatOpen;
@@ -653,7 +954,10 @@
             try {
                 const response = await fetch(API_PRIMARY_BOT, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
                     body: JSON.stringify({ message })
                 });
                 if (response.ok) return await response.json();
@@ -664,7 +968,10 @@
             try {
                 const response = await fetch(API_FALLBACK_BOT, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
                     body: JSON.stringify({ message })
                 });
                 if (response.ok) return await response.json();
