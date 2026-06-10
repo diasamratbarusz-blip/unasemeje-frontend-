@@ -83,7 +83,7 @@
                 </div>
             </div>
 
-            <!-- UPDATED: HUMAN SUPPORT FORM -->
+            <!-- HUMAN SUPPORT FORM -->
             <div class="bg-emerald-50 rounded-3xl border border-emerald-100 p-6">
                 <h3 class="text-sm font-bold text-emerald-800 mb-2 flex items-center gap-2">
                     <span>👤</span> Human Support
@@ -195,6 +195,17 @@
         const API_PRIMARY = 'https://unasemeje-backend.vercel.app/api/support-bot';
         const API_FALLBACK = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
 
+        // --- MARKDOWN FORMATTER FOR BOT REPLIES ---
+        function formatBotReply(text) {
+            // Escape HTML to prevent XSS
+            let safeText = String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            // Convert **bold** to <b>bold</b>
+            safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            // Convert \n to <br>
+            safeText = safeText.replace(/\n/g, '<br>');
+            return safeText;
+        }
+
         // --- MESSAGE RENDERING ---
         function appendMessage(sender, text) {
             const msgDiv = document.createElement('div');
@@ -203,10 +214,11 @@
             const bubble = document.createElement('div');
             if (sender === 'user') {
                 bubble.className = 'bg-custom-green text-white px-4 py-3 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-md break-words';
+                bubble.innerText = text; // Keep user text plain for security
             } else {
                 bubble.className = 'bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm border border-gray-200 break-words';
+                bubble.innerHTML = formatBotReply(text); // Format bot text for bolding and line breaks
             }
-            bubble.innerText = text;
             
             msgDiv.appendChild(bubble);
             chatMessages.appendChild(msgDiv);
@@ -235,13 +247,18 @@
             if (typing) typing.remove();
         }
 
-        // --- API COMMUNICATION ---
+        // --- API COMMUNICATION (WITH AUTH TOKEN) ---
         async function sendToBackend(message) {
+            const headers = { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Required for real-time balance & security logging
+            };
+
             // Try Primary Server
             try {
                 const response = await fetch(API_PRIMARY, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: headers,
                     body: JSON.stringify({ message })
                 });
                 if (response.ok) return await response.json();
@@ -253,7 +270,7 @@
             try {
                 const response = await fetch(API_FALLBACK, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: headers,
                     body: JSON.stringify({ message })
                 });
                 if (response.ok) return await response.json();
@@ -288,6 +305,14 @@
                 // Small delay to make it feel more natural
                 setTimeout(() => {
                     appendMessage('bot', data.reply);
+                    
+                    // 🛡️ SECURITY: If the user is banned, lock the chat input
+                    if (data.isBanned) {
+                        chatInput.disabled = true;
+                        chatInput.placeholder = "Chat restricted. Use Human Support below.";
+                        chatSendBtn.disabled = true;
+                        chatInput.classList.add('bg-red-50', 'border-red-200', 'text-red-400');
+                    }
                 }, 400);
             } else {
                 appendMessage('bot', "I'm having trouble connecting to my knowledge base right now. Please try again in a moment, or contact human support.");
@@ -306,7 +331,7 @@
         }
 
         // ==========================================
-        // NEW: HUMAN SUPPORT TICKET LOGIC
+        // HUMAN SUPPORT TICKET LOGIC
         // ==========================================
         const humanForm = document.getElementById('humanSupportForm');
         const humanFeedback = document.getElementById('humanFeedback');
