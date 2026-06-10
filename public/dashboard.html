@@ -54,7 +54,7 @@
         .ticker-content {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 80s linear infinite; /* Default fallback speed */
+            animation: marquee 80s linear infinite;
             padding-left: 100%;
         }
         .ticker-item {
@@ -96,19 +96,16 @@
                 bottom: 0 !important;
                 left: 0 !important;
                 width: 100% !important;
-                height: 65px !important; /* Fixed professional height */
-                flex-direction: row !important;
+                height: auto !important;
+                min-height: 65px !important;
+                flex-direction: column !important;
                 padding: 0 !important;
                 border-right: none !important;
                 border-top: 1px solid rgba(255,255,255,0.1) !important;
-                justify-content: space-around !important;
-                align-items: center !important;
                 z-index: 1000 !important;
-                background: rgba(17, 24, 39, 0.95) !important; /* Slight transparency for pro look */
-                backdrop-filter: blur(10px) !important; /* Glassmorphism effect */
+                background: rgba(17, 24, 39, 0.98) !important;
+                backdrop-filter: blur(10px) !important;
                 box-shadow: 0 -4px 15px rgba(0,0,0,0.3) !important;
-                
-                /* NEW: Smooth transition for hiding/showing */
                 transition: transform 0.3s ease-in-out !important; 
             }
 
@@ -117,50 +114,93 @@
                 transform: translateY(100%) !important;
             }
 
-            /* 2. Hide the Logo and Secondary Links (WhatsApp, Logout, AI) on mobile to keep it clean */
-            .sidebar h2, 
-            .sidebar > div:last-child {
+            /* 2. Hide the Logo on mobile */
+            .sidebar h2 {
                 display: none !important; 
             }
 
-            /* 3. The Main Navigation becomes a single, perfect line */
+            /* 3. Hide the old utility section (we'll add new ones to nav) */
+            .sidebar > div:last-child {
+                display: none !important;
+            }
+
+            /* 4. The Main Navigation - Now with 2 rows on mobile */
             .sidebar .sidebar-nav {
                 display: flex !important;
                 flex-direction: row !important;
-                flex-wrap: nowrap !important; /* FORCE SINGLE LINE - NO WRAPPING */
+                flex-wrap: wrap !important;
                 width: 100% !important;
-                height: 100% !important;
                 justify-content: space-around !important;
                 align-items: center !important;
                 margin: 0 !important;
-                padding: 0 !important;
+                padding: 8px 0 !important;
+                gap: 0 !important;
             }
 
-            /* 4. Individual Buttons (Icons + Text) */
+            /* 5. Individual Buttons - First row (6 items) */
             .sidebar .sidebar-nav a {
-                flex: 1 !important;
+                flex: 1 1 calc(100% / 6) !important;
+                max-width: calc(100% / 6) !important;
                 flex-direction: column !important;
                 justify-content: center !important;
                 align-items: center !important;
                 gap: 4px !important;
-                padding: 8px 0 !important;
+                padding: 8px 4px !important;
                 margin: 0 !important;
                 text-align: center !important;
-                border-radius: 0 !important; /* Remove individual rounded corners for a clean bar */
+                border-radius: 0 !important;
                 transition: all 0.2s ease !important;
                 min-width: 0 !important;
             }
 
-            /* 5. Icon Styling */
-            .sidebar .sidebar-nav a i {
+            /* 6. Second row items (AI Support & WhatsApp) - Full width row */
+            .sidebar .sidebar-nav a.utility-link {
+                flex: 0 0 auto !important;
+                max-width: none !important;
+                flex-direction: row !important;
+                padding: 10px 20px !important;
+                gap: 8px !important;
+                border-top: 1px solid rgba(255,255,255,0.05) !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 16px !important;
+                margin: 0 !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 12px !important;
+                font-weight: 600 !important;
+            }
+
+            /* AI Support specific styling */
+            .sidebar .sidebar-nav a.utility-link.ai-support {
+                color: var(--secondary) !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.ai-support i {
+                color: var(--secondary) !important;
+            }
+
+            /* WhatsApp specific styling */
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help {
+                color: #25d366 !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help i {
+                color: #25d366 !important;
+            }
+
+            /* 7. Icon Styling for main nav */
+            .sidebar .sidebar-nav a:not(.utility-link) i {
                 font-size: 20px !important;
                 margin: 0 !important;
-                color: #9ca3af !important; /* Dimmed gray for inactive icons */
+                color: #9ca3af !important;
             }
             
-            /* ✨ ACTIVE STATE STYLING (The "Professional" Touch) */
+            /* ✨ ACTIVE STATE STYLING */
             .sidebar .sidebar-nav a.active i {
-                color: var(--primary) !important; /* Bright color for the active page */
+                color: var(--primary) !important;
                 transform: scale(1.1) !important;
             }
             .sidebar .sidebar-nav a.active span {
@@ -168,8 +208,8 @@
                 font-weight: 700 !important;
             }
 
-            /* 6. Text Styling */
-            .sidebar .sidebar-nav a span {
+            /* 8. Text Styling for main nav */
+            .sidebar .sidebar-nav a:not(.utility-link) span {
                 font-size: 10px !important;
                 font-weight: 500 !important;
                 color: #9ca3af !important;
@@ -180,43 +220,41 @@
                 max-width: 100% !important;
             }
             
-            /* 7. Push main content up so it's not hidden behind the bar */
+            /* 9. Push main content up so it's not hidden behind the bar */
             .main {
                 margin-left: 0 !important;
-                margin-bottom: 70px !important; 
+                margin-bottom: 120px !important; 
                 padding: 15px !important;
                 width: 100% !important;
             }
 
-            /* 8. Adjust floating elements so they don't overlap the new bottom bar */
+            /* 10. Adjust floating elements so they don't overlap the new bottom bar */
             #chatToggleBtn {
-                bottom: 85px !important;
+                bottom: 140px !important;
                 right: 20px !important;
-                transition: bottom 0.3s ease-in-out !important; /* NEW: Smooth movement */
+                transition: bottom 0.3s ease-in-out !important;
             }
             
-            /* NEW: Move chat button down when nav is hidden */
             #chatToggleBtn.nav-hidden {
                 bottom: 20px !important;
             }
 
             #chatWindow {
-                bottom: 160px !important;
+                bottom: 215px !important;
                 right: 15px !important;
                 left: 15px !important;
                 width: auto !important;
                 max-width: 100% !important;
                 height: 65vh !important;
-                transition: bottom 0.3s ease-in-out !important; /* NEW: Smooth movement */
+                transition: bottom 0.3s ease-in-out !important;
             }
 
-            /* NEW: Move chat window down when nav is hidden */
             #chatWindow.nav-hidden {
                 bottom: 95px !important;
             }
 
             .live-notif {
-                bottom: 100px !important;
+                bottom: 140px !important;
                 left: 15px !important;
                 right: 15px !important;
                 max-width: calc(100% - 30px) !important;
@@ -224,14 +262,13 @@
 
             /* ========================================= */
             /* MOBILE BUTTON & LAYOUT PUSH-DOWN          */
-            /* Makes elements stack beautifully on phones*/
             /* ========================================= */
             
             /* 1. Full-width, easy-to-tap buttons */
             .btn-secondary, .btn-primary, button[style*="background: white"] {
                 width: 100% !important;
                 box-sizing: border-box !important;
-                font-size: 16px !important; /* Prevents iOS zoom on focus */
+                font-size: 16px !important;
                 padding: 16px !important;
                 margin-left: 0 !important;
                 margin-right: 0 !important;
@@ -316,7 +353,7 @@
         @media (max-width: 480px) {
             .main {
                 padding: 12px !important;
-                margin-bottom: 65px !important;
+                margin-bottom: 115px !important;
             }
 
             .top-ticker {
@@ -328,17 +365,27 @@
             }
 
             .sidebar {
-                height: 60px !important;
+                min-height: 60px !important;
             }
-            .sidebar .sidebar-nav a i {
+            .sidebar .sidebar-nav a:not(.utility-link) i {
                 font-size: 18px !important;
             }
-            .sidebar .sidebar-nav a span {
+            .sidebar .sidebar-nav a:not(.utility-link) span {
                 font-size: 9px !important;
             }
 
+            .sidebar .sidebar-nav a.utility-link {
+                padding: 8px 15px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 14px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 11px !important;
+            }
+
             #chatToggleBtn {
-                bottom: 80px !important;
+                bottom: 135px !important;
                 right: 15px !important;
                 width: 50px !important;
                 height: 50px !important;
@@ -349,7 +396,7 @@
             }
 
             #chatWindow {
-                bottom: 145px !important;
+                bottom: 210px !important;
                 right: 10px !important;
                 left: 10px !important;
                 max-width: calc(100% - 20px) !important;
@@ -359,7 +406,7 @@
             }
 
             .live-notif {
-                bottom: 85px !important;
+                bottom: 135px !important;
                 left: 10px !important;
                 right: 10px !important;
                 max-width: calc(100% - 20px) !important;
@@ -404,6 +451,7 @@
         @media (max-width: 360px) {
             .main {
                 padding: 10px !important;
+                margin-bottom: 110px !important;
             }
 
             .top-ticker {
@@ -415,19 +463,30 @@
             }
 
             .sidebar {
-                height: 58px !important;
+                min-height: 58px !important;
             }
-            .sidebar .sidebar-nav a i {
+            .sidebar .sidebar-nav a:not(.utility-link) i {
                 font-size: 16px !important;
             }
-            .sidebar .sidebar-nav a span {
+            .sidebar .sidebar-nav a:not(.utility-link) span {
                 font-size: 8px !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link {
+                padding: 7px 12px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 13px !important;
+            }
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 10px !important;
             }
 
             #chatToggleBtn {
                 width: 45px !important;
                 height: 45px !important;
                 padding: 10px !important;
+                bottom: 130px !important;
             }
             #chatToggleBtn svg {
                 width: 20px !important;
@@ -518,16 +577,13 @@
             <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
             <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
             <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            
+            <!-- NEW: AI Support & WhatsApp Help at bottom of mobile nav -->
+            <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+            <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
         </div>
         
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <!-- NEW: AI Support Link -->
-            <a href="support.html" style="color: var(--secondary); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
-                <i class="fas fa-robot"></i> <span>AI Support</span>
-            </a>
-            <a href="https://wa.me/254715509440" target="_blank" style="color: var(--secondary); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; text-decoration: none;">
-                <i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span>
-            </a>
             <a onclick="logout()" style="color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
@@ -661,11 +717,10 @@
         notification.className = "live-notif"; 
         const isMobile = window.innerWidth <= 768;
         
-        // NEW: Check if bottom nav is currently hidden to adjust notification position
         const isNavHidden = document.querySelector('.sidebar').classList.contains('nav-hidden');
         
         notification.style = `
-            position: fixed; bottom: ${isMobile ? (isNavHidden ? '35px' : '100px') : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
+            position: fixed; bottom: ${isMobile ? (isNavHidden ? '35px' : '140px') : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
             background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
             padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
