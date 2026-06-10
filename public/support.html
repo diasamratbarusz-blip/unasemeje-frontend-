@@ -80,20 +80,47 @@
                     <button onclick="sendQuickMessage('How do I change my password?')" class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-emerald-50 hover:text-custom-green text-gray-700 text-sm font-medium rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-2">
                         <span>🔒</span> Change my password
                     </button>
-                </button>
+                </div>
             </div>
 
+            <!-- UPDATED: HUMAN SUPPORT FORM -->
             <div class="bg-emerald-50 rounded-3xl border border-emerald-100 p-6">
-                <h3 class="text-sm font-bold text-emerald-800 mb-2">Need Human Support?</h3>
+                <h3 class="text-sm font-bold text-emerald-800 mb-2 flex items-center gap-2">
+                    <span>👤</span> Human Support
+                </h3>
                 <p class="text-xs text-emerald-700 leading-relaxed mb-3">
-                    If the AI cannot resolve your issue, our human support team is available to assist you with complex account matters.
+                    If the AI cannot resolve your issue, send a direct message to the Admin. We usually reply within 1 hour.
                 </p>
-                <a href="mailto:support@unasemeje.co.ke" class="inline-flex items-center gap-2 text-xs font-bold text-custom-green hover:underline">
-                    Contact Human Support 
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                </a>
+                
+                <form id="humanSupportForm" class="space-y-3">
+                    <textarea 
+                        id="humanMessage" 
+                        rows="4" 
+                        placeholder="Describe your issue in detail..." 
+                        class="w-full p-3 rounded-xl border border-emerald-200 text-sm focus:ring-2 focus:ring-custom-green/50 outline-none resize-none bg-white text-gray-800" 
+                        required></textarea>
+                    
+                    <button 
+                        type="submit" 
+                        id="humanSendBtn"
+                        class="w-full bg-custom-green text-white py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-800 transition-colors shadow-md disabled:opacity-50 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                        Send to Admin
+                    </button>
+                    
+                    <p id="humanFeedback" class="text-xs text-center hidden font-medium break-words"></p>
+                </form>
+
+                <div class="mt-3 pt-3 border-t border-emerald-200">
+                    <a href="mailto:support@unasemeje.co.ke" class="inline-flex items-center gap-2 text-[11px] font-bold text-emerald-600 hover:underline">
+                        Or email us directly 
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -154,6 +181,10 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // --- AUTHENTICATION CHECK ---
+        const token = localStorage.getItem("token");
+        if (!token) window.location.href = "index.html";
+
         // DOM Elements
         const chatMessages = document.getElementById('chatMessages');
         const chatForm = document.getElementById('chatForm');
@@ -273,6 +304,72 @@
             chatInput.value = text;
             processMessage(text);
         }
+
+        // ==========================================
+        // NEW: HUMAN SUPPORT TICKET LOGIC
+        // ==========================================
+        const humanForm = document.getElementById('humanSupportForm');
+        const humanFeedback = document.getElementById('humanFeedback');
+        const humanSendBtn = document.getElementById('humanSendBtn');
+
+        const API_TICKET_PRIMARY = 'https://unasemeje-backend.vercel.app/api/support-ticket';
+        const API_TICKET_FALLBACK = 'https://unasemeje-backend-3.onrender.com/api/support-ticket';
+
+        humanForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = document.getElementById('humanMessage').value.trim();
+            if (!message) return;
+            
+            humanSendBtn.disabled = true;
+            humanSendBtn.innerText = "Sending...";
+            humanFeedback.classList.add('hidden');
+
+            try {
+                // Try Primary Server
+                let res = await fetch(API_TICKET_PRIMARY, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                // Fallback to Secondary Server if Primary fails
+                if (!res.ok) {
+                    res = await fetch(API_TICKET_FALLBACK, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                }
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    humanFeedback.innerText = "✅ Message sent to Admin successfully!";
+                    humanFeedback.className = "text-xs text-center text-emerald-600 font-medium";
+                    humanFeedback.classList.remove('hidden');
+                    humanForm.reset();
+                } else {
+                    throw new Error(data.error || "Failed to send");
+                }
+            } catch (err) {
+                humanFeedback.innerText = "❌ Failed to send. Please try again.";
+                humanFeedback.className = "text-xs text-center text-red-500 font-medium";
+                humanFeedback.classList.remove('hidden');
+            } finally {
+                humanSendBtn.disabled = false;
+                humanSendBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Send to Admin
+                `;
+            }
+        });
     </script>
 </body>
 </html>
