@@ -11,6 +11,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ========================================= */
+        /* GLOBAL RESPONSIVE FIXES                   */
+        /* ========================================= */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        .dashboard {
+            width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        .main {
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+        }
+
+        .card {
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+            overflow-wrap: break-word !important;
+            word-wrap: break-word !important;
+        }
+
         /* Moving Ticker Styling - Speed is now controlled dynamically via JS */
         .top-ticker {
             background: #000;
@@ -22,6 +48,8 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            width: 100%;
+            box-sizing: border-box;
         }
         .ticker-content {
             display: inline-block;
@@ -43,6 +71,18 @@
         @keyframes marquee {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
+        }
+
+        /* ========================================= */
+        /* LARGE DESKTOP (1400px+)                   */
+        /* ========================================= */
+        @media (min-width: 1400px) {
+            .main {
+                padding: 50px !important;
+            }
+            .header-section h1, .main h1 {
+                font-size: 36px !important;
+            }
         }
 
         /* ========================================= */
@@ -108,6 +148,7 @@
                 text-align: center !important;
                 border-radius: 0 !important; /* Remove individual rounded corners for a clean bar */
                 transition: all 0.2s ease !important;
+                min-width: 0 !important;
             }
 
             /* 5. Icon Styling */
@@ -224,6 +265,236 @@
             .card > div[style*="flex"] > div {
                 width: 100% !important;
                 text-align: center !important;
+            }
+
+            /* 5. Ticker adjustments for mobile */
+            .top-ticker {
+                height: 40px !important;
+            }
+            .ticker-item {
+                font-size: 12px !important;
+                padding-right: 40px !important;
+            }
+
+            /* 6. Welcome card padding */
+            .main > .card:first-child {
+                padding: 18px !important;
+            }
+            .main > .card:first-child span {
+                font-size: 18px !important;
+            }
+            .price-display b {
+                font-size: 16px !important;
+            }
+
+            /* 7. Grow brand card */
+            .main > .card:nth-child(2) {
+                padding: 20px !important;
+            }
+            .main > .card:nth-child(2) h2 {
+                font-size: 20px !important;
+            }
+            .main > .card:nth-child(2) p {
+                font-size: 13px !important;
+            }
+
+            /* 8. Stats card */
+            .main > div > .card {
+                padding: 20px !important;
+            }
+            .main > div > .card h3 {
+                font-size: 16px !important;
+            }
+            .main > div > .card p {
+                font-size: 18px !important;
+            }
+        }
+
+        /* ========================================= */
+        /* SMALL MOBILE (≤480px)                     */
+        /* ========================================= */
+        @media (max-width: 480px) {
+            .main {
+                padding: 12px !important;
+                margin-bottom: 65px !important;
+            }
+
+            .top-ticker {
+                height: 38px !important;
+            }
+            .ticker-item {
+                font-size: 11px !important;
+                padding-right: 30px !important;
+            }
+
+            .sidebar {
+                height: 60px !important;
+            }
+            .sidebar .sidebar-nav a i {
+                font-size: 18px !important;
+            }
+            .sidebar .sidebar-nav a span {
+                font-size: 9px !important;
+            }
+
+            #chatToggleBtn {
+                bottom: 80px !important;
+                right: 15px !important;
+                width: 50px !important;
+                height: 50px !important;
+                padding: 12px !important;
+            }
+            #chatToggleBtn.nav-hidden {
+                bottom: 15px !important;
+            }
+
+            #chatWindow {
+                bottom: 145px !important;
+                right: 10px !important;
+                left: 10px !important;
+                max-width: calc(100% - 20px) !important;
+            }
+            #chatWindow.nav-hidden {
+                bottom: 80px !important;
+            }
+
+            .live-notif {
+                bottom: 85px !important;
+                left: 10px !important;
+                right: 10px !important;
+                max-width: calc(100% - 20px) !important;
+                padding: 12px 18px !important;
+                font-size: 12px !important;
+            }
+
+            .main > .card:first-child {
+                padding: 15px !important;
+            }
+            .main > .card:first-child span {
+                font-size: 16px !important;
+            }
+            .price-display b {
+                font-size: 15px !important;
+            }
+
+            .main > .card:nth-child(2) {
+                padding: 18px !important;
+            }
+            .main > .card:nth-child(2) h2 {
+                font-size: 18px !important;
+            }
+            .main > .card:nth-child(2) p {
+                font-size: 12px !important;
+            }
+
+            .main > div > .card {
+                padding: 18px !important;
+            }
+            .main > div > .card h3 {
+                font-size: 15px !important;
+            }
+            .main > div > .card p {
+                font-size: 16px !important;
+            }
+        }
+
+        /* ========================================= */
+        /* VERY SMALL MOBILE (≤360px)                */
+        /* ========================================= */
+        @media (max-width: 360px) {
+            .main {
+                padding: 10px !important;
+            }
+
+            .top-ticker {
+                height: 36px !important;
+            }
+            .ticker-item {
+                font-size: 10px !important;
+                padding-right: 25px !important;
+            }
+
+            .sidebar {
+                height: 58px !important;
+            }
+            .sidebar .sidebar-nav a i {
+                font-size: 16px !important;
+            }
+            .sidebar .sidebar-nav a span {
+                font-size: 8px !important;
+            }
+
+            #chatToggleBtn {
+                width: 45px !important;
+                height: 45px !important;
+                padding: 10px !important;
+            }
+            #chatToggleBtn svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+
+            .main > .card:first-child {
+                padding: 12px !important;
+            }
+            .main > .card:first-child small {
+                font-size: 10px !important;
+            }
+            .main > .card:first-child span {
+                font-size: 15px !important;
+            }
+            .price-display b {
+                font-size: 14px !important;
+            }
+
+            .main > .card:nth-child(2) {
+                padding: 15px !important;
+            }
+            .main > .card:nth-child(2) h2 {
+                font-size: 16px !important;
+            }
+            .main > .card:nth-child(2) p {
+                font-size: 11px !important;
+            }
+
+            .main > div > .card {
+                padding: 15px !important;
+            }
+            .main > div > .card h3 {
+                font-size: 14px !important;
+            }
+            .main > div > .card p {
+                font-size: 15px !important;
+            }
+        }
+
+        /* ========================================= */
+        /* TABLET (769px - 1023px)                   */
+        /* ========================================= */
+        @media (min-width: 769px) and (max-width: 1023px) {
+            .sidebar {
+                width: 220px !important;
+            }
+            .main {
+                margin-left: 220px !important;
+                width: calc(100% - 220px) !important;
+                padding: 30px !important;
+            }
+            .main > div[style*="grid"] {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+            }
+        }
+
+        /* ========================================= */
+        /* LANDSCAPE MOBILE (height < 500px)         */
+        /* ========================================= */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #chatWindow {
+                height: 80vh !important;
+                max-height: 400px !important;
+            }
+            .top-ticker {
+                height: 35px !important;
             }
         }
     </style>
@@ -455,6 +726,57 @@
     .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ========================================= */
+    /* CHAT WIDGET RESPONSIVE FIXES              */
+    /* ========================================= */
+    @media (max-width: 768px) {
+        #chatWindow {
+            width: calc(100vw - 30px) !important;
+            max-width: calc(100vw - 30px) !important;
+            right: 15px !important;
+            left: 15px !important;
+            box-sizing: border-box !important;
+        }
+        #chatMessages {
+            height: 280px !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #chatWindow {
+            width: calc(100vw - 20px) !important;
+            max-width: calc(100vw - 20px) !important;
+            right: 10px !important;
+            left: 10px !important;
+        }
+        #chatMessages {
+            height: 250px !important;
+        }
+        #chatWindow .p-4 h3 {
+            font-size: 13px !important;
+        }
+        #chatWindow .p-4 p {
+            font-size: 9px !important;
+        }
+    }
+
+    @media (max-width: 360px) {
+        #chatWindow {
+            width: calc(100vw - 16px) !important;
+            max-width: calc(100vw - 16px) !important;
+            right: 8px !important;
+            left: 8px !important;
+        }
+        #chatMessages {
+            height: 220px !important;
+            padding: 10px !important;
+        }
+        #chatInput {
+            font-size: 13px !important;
+            padding: 8px 12px !important;
+        }
+    }
 </style>
 
 <!-- 2. FLOATING ACTION BUTTON (CHAT TOGGLE) -->
