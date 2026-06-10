@@ -17,13 +17,17 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
         body { 
             margin: 0; 
             background: var(--bg-dark); 
             color: var(--text-main); 
             font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
-            overflow-x: hidden;
         }
 
         /* SIDEBAR */
@@ -40,7 +44,7 @@
             transition: transform 0.3s ease;
         }
         .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
-        .sidebar a { 
+        .sidebar .sidebar-nav a { 
             display: flex; 
             align-items: center; 
             padding: 12px 15px; 
@@ -51,37 +55,8 @@
             transition: 0.2s; 
             font-size: 14px;
         }
-        .sidebar a i { margin-right: 12px; font-size: 16px; }
-        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
-
-        /* MOBILE MENU TOGGLE */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: var(--primary);
-            border: none;
-            color: white;
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
+        .sidebar .sidebar-nav a i { margin-right: 12px; font-size: 16px; }
+        .sidebar .sidebar-nav a:hover, .sidebar .sidebar-nav a.active { background: var(--primary); color: white; }
 
         /* MAIN CONTENT */
         .main { 
@@ -189,87 +164,294 @@
             .header-section h1 { font-size: 28px; }
         }
 
-        /* MOBILE */
+        /* ========================================= */
+        /* PROFESSIONAL MOBILE BOTTOM NAVIGATION BAR */
+        /* ========================================= */
         @media (max-width: 768px) {
-            .menu-toggle { display: flex; align-items: center; justify-content: center; }
-            .sidebar { 
-                transform: translateX(-100%); 
-                width: 260px; 
+            
+            /* 1. The Sidebar Container becomes the Bottom Bar */
+            .sidebar {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 65px !important;
+                flex-direction: column !important;
+                padding: 0 !important;
+                border-right: none !important;
+                border-top: 1px solid rgba(255,255,255,0.1) !important;
+                z-index: 1000 !important;
+                background: rgba(17, 24, 39, 0.98) !important;
+                backdrop-filter: blur(10px) !important;
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.3) !important;
+                transition: transform 0.3s ease-in-out !important; 
             }
-            .sidebar.active { transform: translateX(0); }
-            .sidebar-overlay.active { display: block; }
-            .main { 
-                margin-left: 0; 
-                padding: 80px 20px 20px; 
-                width: 100%; 
+
+            /* Class to hide the bottom nav when scrolling down */
+            .sidebar.nav-hidden {
+                transform: translateY(100%) !important;
             }
-            .header-section { margin-bottom: 30px; }
-            .header-section h1 { font-size: 26px; }
-            .header-section p { font-size: 14px; }
+
+            /* 2. Hide the Logo on mobile */
+            .sidebar h2 {
+                display: none !important; 
+            }
+
+            /* 3. Hide the old utility section (we'll add new ones to nav) */
+            .sidebar > div:last-child {
+                display: none !important;
+            }
+
+            /* 4. The Main Navigation - Now with 2 rows on mobile */
+            .sidebar .sidebar-nav {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                width: 100% !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                margin: 0 !important;
+                padding: 8px 0 !important;
+                gap: 0 !important;
+            }
+
+            /* 5. Individual Buttons - First row (6 items) */
+            .sidebar .sidebar-nav a {
+                flex: 1 1 calc(100% / 6) !important;
+                max-width: calc(100% / 6) !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 4px !important;
+                padding: 8px 4px !important;
+                margin: 0 !important;
+                text-align: center !important;
+                border-radius: 0 !important;
+                transition: all 0.2s ease !important;
+                min-width: 0 !important;
+            }
+
+            /* 6. Second row items (AI Support & WhatsApp) - Full width row */
+            .sidebar .sidebar-nav a.utility-link {
+                flex: 0 0 auto !important;
+                max-width: none !important;
+                flex-direction: row !important;
+                padding: 10px 20px !important;
+                gap: 8px !important;
+                border-top: 1px solid rgba(255,255,255,0.05) !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 16px !important;
+                margin: 0 !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 12px !important;
+                font-weight: 600 !important;
+            }
+
+            /* AI Support specific styling */
+            .sidebar .sidebar-nav a.utility-link.ai-support {
+                color: var(--secondary) !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.ai-support i {
+                color: var(--secondary) !important;
+            }
+
+            /* WhatsApp specific styling */
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help {
+                color: #25d366 !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help i {
+                color: #25d366 !important;
+            }
+
+            /* 7. Icon Styling for main nav */
+            .sidebar .sidebar-nav a:not(.utility-link) i {
+                font-size: 20px !important;
+                margin: 0 !important;
+                color: #9ca3af !important;
+            }
+            
+            /* ✨ ACTIVE STATE STYLING */
+            .sidebar .sidebar-nav a.active i {
+                color: var(--primary) !important;
+                transform: scale(1.1) !important;
+            }
+            .sidebar .sidebar-nav a.active span {
+                color: var(--primary) !important;
+                font-weight: 700 !important;
+            }
+
+            /* 8. Text Styling for main nav */
+            .sidebar .sidebar-nav a:not(.utility-link) span {
+                font-size: 10px !important;
+                font-weight: 500 !important;
+                color: #9ca3af !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: 100% !important;
+            }
+            
+            /* 9. Push main content up so it's not hidden behind the bar */
+            .main {
+                margin-left: 0 !important;
+                margin-bottom: 120px !important; 
+                padding: 25px 15px 15px !important;
+                width: 100% !important;
+            }
+
+            .header-section { margin-bottom: 25px !important; }
+            .header-section h1 { font-size: 24px !important; }
+            .header-section p { font-size: 14px !important; }
+
             .platform-grid { 
-                grid-template-columns: repeat(2, 1fr); 
-                gap: 15px; 
+                grid-template-columns: repeat(2, 1fr) !important; 
+                gap: 15px !important; 
             }
             .platform-card { 
-                padding: 30px 15px; 
-                border-radius: 20px;
+                padding: 30px 15px !important; 
+                border-radius: 20px !important;
             }
-            .platform-card i { font-size: 40px; margin-bottom: 15px; }
-            .platform-card span { font-size: 16px; }
+            .platform-card i { font-size: 40px !important; margin-bottom: 15px !important; }
+            .platform-card span { font-size: 16px !important; }
+
+            /* 10. Adjust floating elements so they don't overlap the new bottom bar */
+            #chatToggleBtn {
+                bottom: 140px !important;
+                right: 20px !important;
+                transition: bottom 0.3s ease-in-out !important;
+            }
+            
+            #chatToggleBtn.nav-hidden {
+                bottom: 20px !important;
+            }
+
+            #chatWindow {
+                bottom: 215px !important;
+                right: 15px !important;
+                left: 15px !important;
+                width: auto !important;
+                max-width: 100% !important;
+                height: 65vh !important;
+                transition: bottom 0.3s ease-in-out !important;
+            }
+
+            #chatWindow.nav-hidden {
+                bottom: 95px !important;
+            }
         }
 
         /* SMALL MOBILE */
         @media (max-width: 480px) {
-            .main { padding: 70px 15px 15px; }
-            .header-section h1 { font-size: 22px; }
-            .header-section p { font-size: 13px; }
+            .main { padding: 20px 12px 12px !important; margin-bottom: 115px !important; }
+            .header-section h1 { font-size: 22px !important; }
+            .header-section p { font-size: 13px !important; }
             .platform-grid { 
-                grid-template-columns: repeat(2, 1fr); 
-                gap: 12px; 
+                grid-template-columns: repeat(2, 1fr) !important; 
+                gap: 12px !important; 
             }
             .platform-card { 
-                padding: 25px 12px; 
-                border-radius: 18px;
+                padding: 25px 12px !important; 
+                border-radius: 18px !important;
             }
-            .platform-card i { font-size: 36px; margin-bottom: 12px; }
-            .platform-card span { font-size: 14px; }
-            .menu-toggle { 
-                top: 15px; 
-                left: 15px; 
-                width: 40px; 
-                height: 40px; 
-                font-size: 18px; 
+            .platform-card i { font-size: 36px !important; margin-bottom: 12px !important; }
+            .platform-card span { font-size: 14px !important; }
+
+            .sidebar { min-height: 60px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) i { font-size: 18px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) span { font-size: 9px !important; }
+
+            .sidebar .sidebar-nav a.utility-link { padding: 8px 15px !important; }
+            .sidebar .sidebar-nav a.utility-link i { font-size: 14px !important; }
+            .sidebar .sidebar-nav a.utility-link span { font-size: 11px !important; }
+
+            #chatToggleBtn {
+                bottom: 135px !important;
+                right: 15px !important;
+                width: 50px !important;
+                height: 50px !important;
+                padding: 12px !important;
             }
+            #chatToggleBtn.nav-hidden { bottom: 15px !important; }
+
+            #chatWindow {
+                bottom: 210px !important;
+                right: 10px !important;
+                left: 10px !important;
+                max-width: calc(100% - 20px) !important;
+            }
+            #chatWindow.nav-hidden { bottom: 80px !important; }
         }
 
         /* VERY SMALL MOBILE */
         @media (max-width: 360px) {
+            .main { padding: 18px 10px 10px !important; margin-bottom: 110px !important; }
+            .header-section h1 { font-size: 20px !important; }
             .platform-grid { 
-                grid-template-columns: 1fr; 
-                gap: 12px; 
+                grid-template-columns: 1fr !important; 
+                gap: 12px !important; 
             }
             .platform-card { 
-                padding: 25px 15px; 
+                padding: 25px 15px !important; 
             }
-            .platform-card i { font-size: 32px; }
-            .platform-card span { font-size: 15px; }
+            .platform-card i { font-size: 32px !important; }
+            .platform-card span { font-size: 15px !important; }
+
+            .sidebar { min-height: 58px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) i { font-size: 16px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) span { font-size: 8px !important; }
+
+            .sidebar .sidebar-nav a.utility-link { padding: 7px 12px !important; }
+            .sidebar .sidebar-nav a.utility-link i { font-size: 13px !important; }
+            .sidebar .sidebar-nav a.utility-link span { font-size: 10px !important; }
+
+            #chatToggleBtn {
+                width: 45px !important;
+                height: 45px !important;
+                padding: 10px !important;
+                bottom: 130px !important;
+            }
+            #chatToggleBtn svg { width: 20px !important; height: 20px !important; }
+        }
+
+        /* LANDSCAPE MOBILE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #chatWindow {
+                height: 80vh !important;
+                max-height: 400px !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <button class="menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
     <div class="sidebar">
         <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="platform.html" class="active"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
-        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
-        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="platform.html" class="active"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+            <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
+            <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            
+            <!-- AI Support & WhatsApp Help at bottom of mobile nav -->
+            <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+            <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 15px; text-decoration: none;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
     </div>
 
     <div class="main">
@@ -311,18 +493,345 @@
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
+    <!-- ========================================== -->
+
+    <!-- CUSTOM STYLES FOR THE WIDGET -->
+    <style>
+        /* Chat Window Animation */
+        #chatWindow {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: bottom right;
+        }
+        #chatWindow.hidden {
+            display: none;
+        }
+        
+        /* Custom Scrollbar for Chat Messages */
+        #chatMessages::-webkit-scrollbar { width: 6px; }
+        #chatMessages::-webkit-scrollbar-track { background: transparent; }
+        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        #chatMessages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Typing Indicator Animation */
+        @keyframes bounce-dot {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* CHAT WIDGET RESPONSIVE FIXES */
+        @media (max-width: 768px) {
+            #chatWindow {
+                width: calc(100vw - 30px) !important;
+                max-width: calc(100vw - 30px) !important;
+                right: 15px !important;
+                left: 15px !important;
+                box-sizing: border-box !important;
+            }
+            #chatMessages {
+                height: 280px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #chatWindow {
+                width: calc(100vw - 20px) !important;
+                max-width: calc(100vw - 20px) !important;
+                right: 10px !important;
+                left: 10px !important;
+            }
+            #chatMessages {
+                height: 250px !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            #chatWindow {
+                width: calc(100vw - 16px) !important;
+                max-width: calc(100vw - 16px) !important;
+                right: 8px !important;
+                left: 8px !important;
+            }
+            #chatMessages {
+                height: 220px !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+
+    <!-- FLOATING ACTION BUTTON (CHAT TOGGLE) -->
+    <button id="chatToggleBtn" style="position: fixed; bottom: 24px; right: 24px; z-index: 50; color: white; padding: 16px; border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: none; cursor: pointer; background-color: var(--primary); transition: transform 0.2s;" aria-label="Open Support Chat" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <!-- Chat Icon -->
+        <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <!-- Close Icon (Hidden by default) -->
+        <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" style="display: none; width: 24px; height: 24px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+
+    <!-- CHAT WINDOW CONTAINER -->
+    <div id="chatWindow" style="position: fixed; bottom: 96px; right: 24px; z-index: 50; width: 90vw; background: white; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); border: 1px solid #f3f4f6; flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; transform: scale(0.95); opacity: 0;">
+        
+        <!-- Chat Header -->
+        <div style="padding: 16px; border-radius: 24px 24px 0 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); color: white; background-color: var(--primary);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 style="font-weight: 700; font-size: 14px; line-height: 1.2; margin: 0;">Unasemeje Support</h3>
+                    <p style="font-size: 10px; opacity: 0.9; display: flex; align-items: center; gap: 6px; margin: 2px 0 0 0;">
+                        <span style="width: 8px; height: 8px; background: #34d399; border-radius: 50%; animation: pulse 2s infinite;"></span> AI Assistant Online
+                    </p>
+                </div>
+            </div>
+            <button id="chatCloseBtn" style="color: rgba(255,255,255,0.8); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Messages Display Area -->
+        <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 16px; background: #f9fafb; height: 320px;">
+            <!-- Messages will be dynamically injected here -->
+        </div>
+
+        <!-- Input Area -->
+        <div style="padding: 12px; border-top: 1px solid #f3f4f6; background: white; border-radius: 0 0 24px 24px;">
+            <form id="chatForm" style="display: flex; gap: 8px;">
+                <input 
+                    type="text" 
+                    id="chatInput" 
+                    placeholder="Type your question..." 
+                    style="flex: 1; background: #f3f4f6; border-radius: 12px; padding: 10px 16px; font-size: 14px; border: 1px solid #e5e7eb; outline: none; color: #1f2937;"
+                    autocomplete="off"
+                    required
+                >
+                <button 
+                    type="submit" 
+                    id="chatSendBtn"
+                    style="color: white; padding: 10px; border-radius: 12px; border: none; cursor: pointer; background-color: var(--primary); display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;"
+                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+
     <script>
-        // Redirect if not logged in
-        if (!localStorage.getItem("token")) {
+        const token = localStorage.getItem("token");
+        if (!token) window.location.href = "login.html";
+
+        function logout() {
+            localStorage.clear();
             window.location.href = "login.html";
         }
 
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
+        // ==========================================
+        // AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+            const chatCloseBtn = document.getElementById('chatCloseBtn');
+            const chatWindow = document.getElementById('chatWindow');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatForm = document.getElementById('chatForm');
+            const chatInput = document.getElementById('chatInput');
+            const chatIconOpen = document.getElementById('chatIconOpen');
+            const chatIconClose = document.getElementById('chatIconClose');
+
+            const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
+            const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+
+            let isChatOpen = false;
+
+            let lastScrollTop = 0;
+            const mobileSidebar = document.querySelector('.sidebar');
+
+            window.addEventListener('scroll', () => {
+                if (window.innerWidth <= 768) {
+                    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const isChatCurrentlyOpen = chatWindow.style.display === 'flex';
+                    
+                    if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                        mobileSidebar.classList.add('nav-hidden');
+                        chatToggleBtn.classList.add('nav-hidden');
+                        chatWindow.classList.add('nav-hidden');
+                    } else {
+                        mobileSidebar.classList.remove('nav-hidden');
+                        chatToggleBtn.classList.remove('nav-hidden');
+                        chatWindow.classList.remove('nav-hidden');
+                    }
+                    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+                }
+            }, false);
+
+            // UI TOGGLE LOGIC
+            function toggleChat() {
+                isChatOpen = !isChatOpen;
+                if (isChatOpen) {
+                    chatWindow.style.display = 'flex';
+                    setTimeout(() => {
+                        chatWindow.style.transform = 'scale(1)';
+                        chatWindow.style.opacity = '1';
+                    }, 10);
+                    chatIconOpen.style.display = 'none';
+                    chatIconClose.style.display = 'block';
+                    
+                    if (chatMessages.children.length === 0) {
+                        appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today? You can ask me about adding funds, updating your profile, or payment issues.");
+                    }
+                    setTimeout(() => chatInput.focus(), 300);
+                } else {
+                    chatWindow.style.transform = 'scale(0.95)';
+                    chatWindow.style.opacity = '0';
+                    setTimeout(() => {
+                        chatWindow.style.display = 'none';
+                    }, 300);
+                    chatIconOpen.style.display = 'block';
+                    chatIconClose.style.display = 'none';
+                }
+            }
+
+            // MESSAGE RENDERING
+            function appendMessage(sender, text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.style.display = 'flex';
+                msgDiv.style.justifyContent = sender === 'user' ? 'flex-end' : 'flex-start';
+                msgDiv.style.marginBottom = '12px';
+                
+                const bubble = document.createElement('div');
+                bubble.style.padding = '10px 16px';
+                bubble.style.borderRadius = '16px';
+                bubble.style.maxWidth = '85%';
+                bubble.style.fontSize = '14px';
+                bubble.style.wordWrap = 'break-word';
+                bubble.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                
+                if (sender === 'user') {
+                    bubble.style.backgroundColor = 'var(--primary)';
+                    bubble.style.color = 'white';
+                    bubble.style.borderBottomRightRadius = '4px';
+                } else {
+                    bubble.style.backgroundColor = 'white';
+                    bubble.style.color = '#1f2937';
+                    bubble.style.borderBottomLeftRadius = '4px';
+                    bubble.style.border = '1px solid #f3f4f6';
+                }
+                bubble.innerText = text;
+                
+                msgDiv.appendChild(bubble);
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typingIndicator';
+                typingDiv.style.display = 'flex';
+                typingDiv.style.justifyContent = 'flex-start';
+                typingDiv.style.marginBottom = '12px';
+                typingDiv.innerHTML = `
+                    <div style="background: white; color: #9ca3af; padding: 12px 16px; border-radius: 16px; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #f3f4f6; display: flex; gap: 6px;">
+                        <span style="width: 8px; height: 8px; background: #d1d5db; border-radius: 50;" class="typing-dot"></span>
+                        <span style="width: 8px; height: 8px; background: #d1d5db; border-radius: 50;" class="typing-dot"></span>
+                        <span style="width: 8px; height: 8px; background: #d1d5db; border-radius: 50;" class="typing-dot"></span>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function hideTyping() {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+            }
+
+            // API COMMUNICATION (WITH FALLBACK)
+            async function sendToBackend(message) {
+                try {
+                    const response = await fetch(API_PRIMARY_BOT, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    if (response.ok) return await response.json();
+                } catch (err) {
+                    console.warn("Primary AI server unreachable. Trying fallback...");
+                }
+
+                try {
+                    const response = await fetch(API_FALLBACK_BOT, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    if (response.ok) return await response.json();
+                } catch (err) {
+                    console.error("Both AI servers unreachable.");
+                    return null;
+                }
+            }
+
+            // FORM SUBMISSION HANDLER
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                appendMessage('user', message);
+                chatInput.value = '';
+                chatInput.disabled = true; 
+                showTyping();
+
+                const data = await sendToBackend(message);
+                
+                hideTyping();
+                chatInput.disabled = false;
+                chatInput.focus();
+
+                if (data && data.success && data.reply) {
+                    appendMessage('bot', data.reply);
+                } else {
+                    appendMessage('bot', "I'm having trouble connecting to my brain right now. Please try again in a moment!");
+                }
+            });
+
+            // EVENT LISTENERS
+            chatToggleBtn.addEventListener('click', toggleChat);
+            chatCloseBtn.addEventListener('click', toggleChat);
+            
+            document.addEventListener('click', (e) => {
+                if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
+                    toggleChat();
+                }
+            });
+        });
     </script>
 </body>
-</html>
+    </html>
