@@ -67,6 +67,14 @@
                 background: rgba(17, 24, 39, 0.95) !important; /* Slight transparency for pro look */
                 backdrop-filter: blur(10px) !important; /* Glassmorphism effect */
                 box-shadow: 0 -4px 15px rgba(0,0,0,0.3) !important;
+                
+                /* NEW: Smooth transition for hiding/showing */
+                transition: transform 0.3s ease-in-out !important; 
+            }
+
+            /* NEW: Class to hide the bottom nav when scrolling down */
+            .sidebar.nav-hidden {
+                transform: translateY(100%) !important;
             }
 
             /* 2. Hide the Logo and Secondary Links (WhatsApp, Logout, AI) on mobile to keep it clean */
@@ -143,7 +151,14 @@
             #chatToggleBtn {
                 bottom: 85px !important;
                 right: 20px !important;
+                transition: bottom 0.3s ease-in-out !important; /* NEW: Smooth movement */
             }
+            
+            /* NEW: Move chat button down when nav is hidden */
+            #chatToggleBtn.nav-hidden {
+                bottom: 20px !important;
+            }
+
             #chatWindow {
                 bottom: 160px !important;
                 right: 15px !important;
@@ -151,7 +166,14 @@
                 width: auto !important;
                 max-width: 100% !important;
                 height: 65vh !important;
+                transition: bottom 0.3s ease-in-out !important; /* NEW: Smooth movement */
             }
+
+            /* NEW: Move chat window down when nav is hidden */
+            #chatWindow.nav-hidden {
+                bottom: 95px !important;
+            }
+
             .live-notif {
                 bottom: 100px !important;
                 left: 15px !important;
@@ -299,12 +321,8 @@
     // --- DYNAMIC TOP TICKER LOADER ---
     async function loadTopTicker() {
         try {
-            // Try Primary Server
             let res = await fetch(`${API}/ticker`);
-            if (!res.ok) {
-                // Fallback to Secondary Server if Primary fails
-                res = await fetch(`${API_FALLBACK}/ticker`);
-            }
+            if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
             
             const data = await res.json();
             const tickerContent = document.getElementById('tickerContent');
@@ -314,21 +332,17 @@
                 data.items.forEach(item => {
                     html += `<div class="ticker-item">${item}</div>`;
                 });
-                // Duplicate the HTML so the CSS marquee animation loops seamlessly without jumping
                 tickerContent.innerHTML = html + html; 
             } else {
-                // Fallback if admin hasn't added any items yet
                 const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
                 tickerContent.innerHTML = fallback + fallback;
             }
             
-            // Apply dynamic speed from backend (Overrides the 80s default in CSS)
             const speed = data.speed || 80;
             tickerContent.style.animationDuration = `${speed}s`;
             
         } catch (err) {
             console.error("Failed to load top ticker:", err);
-            // Fallback content if both servers fail
             const tickerContent = document.getElementById('tickerContent');
             const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
             tickerContent.innerHTML = fallback + fallback;
@@ -373,15 +387,19 @@
         const randomService = services[Math.floor(Math.random() * services.length)];
 
         const notification = document.createElement("div");
-        notification.className = "live-notif"; // Added class for CSS targeting
+        notification.className = "live-notif"; 
         const isMobile = window.innerWidth <= 768;
         
+        // NEW: Check if bottom nav is currently hidden to adjust notification position
+        const isNavHidden = document.querySelector('.sidebar').classList.contains('nav-hidden');
+        
         notification.style = `
-            position: fixed; bottom: ${isMobile ? '100px' : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
+            position: fixed; bottom: ${isMobile ? (isNavHidden ? '35px' : '100px') : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
             background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
             padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
             animation: slideIn 0.5s ease-out; box-sizing: border-box; word-wrap: break-word; overflow-wrap: break-word;
+            transition: bottom 0.3s ease-in-out;
         `;
         
         notification.innerHTML = `✅ <b>${randomName}</b> just ordered <b>${randomService}</b>!`;
@@ -526,6 +544,35 @@
 
         let isChatOpen = false;
 
+        // ==========================================
+        // NEW: AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
+        // ==========================================
+        let lastScrollTop = 0;
+        const mobileSidebar = document.querySelector('.sidebar');
+
+        window.addEventListener('scroll', () => {
+            // Only apply this logic on mobile screens
+            if (window.innerWidth <= 768) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Check if the chat window is currently open
+                const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
+                
+                // If scrolling down (and past the first 100px) and chat is NOT open -> Hide Nav
+                if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                    mobileSidebar.classList.add('nav-hidden');
+                    chatToggleBtn.classList.add('nav-hidden');
+                    chatWindow.classList.add('nav-hidden');
+                } else {
+                    // If scrolling up -> Show Nav
+                    mobileSidebar.classList.remove('nav-hidden');
+                    chatToggleBtn.classList.remove('nav-hidden');
+                    chatWindow.classList.remove('nav-hidden');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }
+        }, false);
+
         // --- UI TOGGLE LOGIC ---
         function toggleChat() {
             isChatOpen = !isChatOpen;
@@ -538,7 +585,6 @@
                 chatIconOpen.classList.add('hidden');
                 chatIconClose.classList.remove('hidden');
                 
-                // Show welcome message if chat is empty
                 if (chatMessages.children.length === 0) {
                     appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today? You can ask me about adding funds, updating your profile, or payment issues.");
                 }
@@ -571,8 +617,6 @@
             
             msgDiv.appendChild(bubble);
             chatMessages.appendChild(msgDiv);
-            
-            // Auto-scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
@@ -598,13 +642,12 @@
 
         // --- API COMMUNICATION (WITH FALLBACK) ---
         async function sendToBackend(message) {
-            // Try Primary Server
             try {
                 const response = await fetch(API_PRIMARY_BOT, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // REQUIRED FOR BALANCE, ORDERS & BAN CHECK
+                        'Authorization': `Bearer ${token}` 
                     },
                     body: JSON.stringify({ message })
                 });
@@ -613,13 +656,12 @@
                 console.warn("Primary AI server unreachable. Trying fallback...");
             }
 
-            // Fallback to Secondary Server
             try {
                 const response = await fetch(API_FALLBACK_BOT, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // REQUIRED FOR BALANCE, ORDERS & BAN CHECK
+                        'Authorization': `Bearer ${token}` 
                     },
                     body: JSON.stringify({ message })
                 });
@@ -636,21 +678,17 @@
             const message = chatInput.value.trim();
             if (!message) return;
 
-            // 1. Show user message immediately
             appendMessage('user', message);
             chatInput.value = '';
-            chatInput.disabled = true; // Prevent spamming
+            chatInput.disabled = true; 
             showTyping();
 
-            // 2. Get AI response
             const data = await sendToBackend(message);
             
-            // 3. Clean up UI
             hideTyping();
             chatInput.disabled = false;
             chatInput.focus();
 
-            // 4. Display AI response
             if (data && data.success && data.reply) {
                 appendMessage('bot', data.reply);
             } else {
@@ -662,7 +700,6 @@
         chatToggleBtn.addEventListener('click', toggleChat);
         chatCloseBtn.addEventListener('click', toggleChat);
         
-        // Close chat if user clicks outside of it (Optional UX improvement)
         document.addEventListener('click', (e) => {
             if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
                 toggleChat();
