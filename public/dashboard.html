@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Moving Ticker Styling - Slow 60s Speed */
+        /* Moving Ticker Styling - Speed is now controlled dynamically via JS */
         .top-ticker {
             background: #000;
             border-bottom: 2px solid var(--primary);
@@ -26,7 +26,7 @@
         .ticker-content {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 80s linear infinite;
+            animation: marquee 80s linear infinite; /* Default fallback speed */
             padding-left: 100%;
         }
         .ticker-item {
@@ -119,22 +119,10 @@
 </head>
 <body>
 
+<!-- DYNAMIC TOP TICKER -->
 <div class="top-ticker">
-    <div class="ticker-content">
-        <div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> The Ultimate Plug wa Kanairo!</div>
-        <div class="ticker-item">🔥 IG Followers <span>KSh 37</span> — Usikae kinyonge, ongeza Aura!</div>
-        <div class="ticker-item">💸 <span>CHAPA IKO:</span> Refer mbeste upate 10%... Pesa ya sherehe ishapanda!</div>
-        <div class="ticker-item">⚡ TikTok Views ni <span>INSTANT</span> — Hata ukiblink zimefika!</div>
-        <div class="ticker-item">🤣 <span>FUN FACT:</span> Views zetu ni mob kuliko deni za ex wako!</div>
-        <div class="ticker-item">👑 <span>KING/QUEEN:</span> Stop being a ghost, kuwa Celeb wa mtaa today!</div>
-        <div class="ticker-item">✨ <span>AURA +1,000,000:</span> Boost socials uone vile utaitwa 'Mkubwa'!</div>
-        <div class="ticker-item">🤫 <span>SIRI NI HAPA:</span> Hata wasanii wako wa fav wanatumia hii site, shhh!</div>
-        <div class="ticker-item">💰 <span>THE MITI BUDGET:</span> Buy likes with your extra <span>Miti</span> and make them regret everything!</div>
-        <div class="ticker-item">💎 <span>KAPA HUSTLE:</span> Turn that loose <span>Kapa</span> into Influencer Status before the sun sets.</div>
-        <div class="ticker-item">🔥 <span>GINGER MOVE:</span> Throw a <span>Ginger (100/-)</span> at your profile and watch the magic!</div>
-        <div class="ticker-item">🏦 <span>MBESHA FLOW:</span> We handle your <span>Mbesha</span> faster than a campus student finishes HELB!</div>
-        <div class="ticker-item">👔 <span>THE DON PACKAGE:</span> If you're holding a <span>Njege</span>, buy the whole city's attention!</div>
-        <div class="ticker-item">🌟 <span>STEEZE 100%:</span> Level up your Aura without finishing your <span>Lovy</span>!</div>
+    <div class="ticker-content" id="tickerContent">
+        <!-- Items and speed will be injected dynamically by JS from the backend -->
     </div>
 </div>
 
@@ -214,9 +202,49 @@
 
 <script>
     const API = "https://unasemeje-backend.vercel.app/api";
+    const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
 
     if (!token) window.location.href = "index.html";
+
+    // --- DYNAMIC TOP TICKER LOADER ---
+    async function loadTopTicker() {
+        try {
+            // Try Primary Server
+            let res = await fetch(`${API}/ticker`);
+            if (!res.ok) {
+                // Fallback to Secondary Server if Primary fails
+                res = await fetch(`${API_FALLBACK}/ticker`);
+            }
+            
+            const data = await res.json();
+            const tickerContent = document.getElementById('tickerContent');
+            
+            if (data.items && data.items.length > 0) {
+                let html = '';
+                data.items.forEach(item => {
+                    html += `<div class="ticker-item">${item}</div>`;
+                });
+                // Duplicate the HTML so the CSS marquee animation loops seamlessly without jumping
+                tickerContent.innerHTML = html + html; 
+            } else {
+                // Fallback if admin hasn't added any items yet
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
+            }
+            
+            // Apply dynamic speed from backend (Overrides the 80s default in CSS)
+            const speed = data.speed || 80;
+            tickerContent.style.animationDuration = `${speed}s`;
+            
+        } catch (err) {
+            console.error("Failed to load top ticker:", err);
+            // Fallback content if both servers fail
+            const tickerContent = document.getElementById('tickerContent');
+            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
+            tickerContent.innerHTML = fallback + fallback;
+        }
+    }
 
     async function syncDashboard() {
         try {
@@ -278,6 +306,9 @@
     }
 
     setInterval(showLiveOrder, 15000);
+    
+    // Execute functions on page load
+    loadTopTicker(); 
     syncDashboard();
 </script>
 
@@ -401,8 +432,8 @@
         const chatIconClose = document.getElementById('chatIconClose');
 
         // Configuration: Your Backend URLs (Dual-API Fallback)
-        const API_PRIMARY = 'https://unasemeje-backend.vercel.app/api/support-bot';
-        const API_FALLBACK = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+        const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
+        const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
 
         let isChatOpen = false;
 
@@ -480,7 +511,7 @@
         async function sendToBackend(message) {
             // Try Primary Server
             try {
-                const response = await fetch(API_PRIMARY, {
+                const response = await fetch(API_PRIMARY_BOT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message })
@@ -492,7 +523,7 @@
 
             // Fallback to Secondary Server
             try {
-                const response = await fetch(API_FALLBACK, {
+                const response = await fetch(API_FALLBACK_BOT, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message })
