@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Support - Unasemeje</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #f5f7fb; 
+        }
+        .bg-custom-green { background: #11453b; }
+        .text-custom-green { color: #11453b; }
+        .border-custom-green { border-color: #11453b; }
+        
+        /* Custom Scrollbar for Chat Messages */
+        #chatMessages::-webkit-scrollbar { width: 6px; }
+        #chatMessages::-webkit-scrollbar-track { background: transparent; }
+        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        #chatMessages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Typing Indicator Animation */
+        @keyframes bounce-dot {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Message Fade In Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message-anim { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <div class="bg-custom-green text-white py-8 px-4 text-center shadow-lg relative">
+        <a href="index.html" class="absolute top-4 left-4 text-white/80 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Dashboard
+        </a>
+        <h1 class="text-3xl sm:text-4xl font-extrabold italic mb-2">AI Support Center</h1>
+        <p class="uppercase tracking-[3px] text-xs opacity-80">Instant Answers • 24/7 Availability • Secure</p>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-8 flex flex-col md:flex-row gap-6">
+        
+        <!-- LEFT: QUICK ACTIONS & INFO -->
+        <div class="w-full md:w-1/3 space-y-4">
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <span class="text-custom-green">💡</span> Quick Questions
+                </h2>
+                <div class="space-y-2">
+                    <button onclick="sendQuickMessage('How do I add funds to my account?')" class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-emerald-50 hover:text-custom-green text-gray-700 text-sm font-medium rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-2">
+                        <span>💰</span> How do I add funds?
+                    </button>
+                    <button onclick="sendQuickMessage('My payment was sent but not credited to my wallet.')" class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-emerald-50 hover:text-custom-green text-gray-700 text-sm font-medium rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-2">
+                        <span>⚠️</span> Payment not credited
+                    </button>
+                    <button onclick="sendQuickMessage('How can I update my payment phone numbers?')" class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-emerald-50 hover:text-custom-green text-gray-700 text-sm font-medium rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-2">
+                        <span>📱</span> Update payment numbers
+                    </button>
+                    <button onclick="sendQuickMessage('How do I change my password?')" class="w-full text-left px-4 py-3 bg-gray-50 hover:bg-emerald-50 hover:text-custom-green text-gray-700 text-sm font-medium rounded-xl transition-all border border-gray-100 hover:border-emerald-200 flex items-center gap-2">
+                        <span>🔒</span> Change my password
+                    </button>
+                </button>
+            </div>
+
+            <div class="bg-emerald-50 rounded-3xl border border-emerald-100 p-6">
+                <h3 class="text-sm font-bold text-emerald-800 mb-2">Need Human Support?</h3>
+                <p class="text-xs text-emerald-700 leading-relaxed mb-3">
+                    If the AI cannot resolve your issue, our human support team is available to assist you with complex account matters.
+                </p>
+                <a href="mailto:support@unasemeje.co.ke" class="inline-flex items-center gap-2 text-xs font-bold text-custom-green hover:underline">
+                    Contact Human Support 
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- RIGHT: CHAT INTERFACE -->
+        <div class="w-full md:w-2/3 flex flex-col h-[70vh] md:h-[600px] bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+            
+            <!-- Chat Header -->
+            <div class="bg-gray-50 border-b border-gray-100 p-4 flex items-center gap-3">
+                <div class="relative">
+                    <div class="w-10 h-10 bg-custom-green rounded-full flex items-center justify-center text-white shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 text-sm">Unasemeje Assistant</h3>
+                    <p class="text-[11px] text-gray-500">Powered by Internal AI • Always Online</p>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-white">
+                <!-- Welcome Message -->
+                <div class="flex justify-start message-anim">
+                    <div class="bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm border border-gray-200">
+                        Hello! 👋 I'm the Unasemeje AI Assistant. I can help you with adding funds, updating your profile, checking balances, or troubleshooting payment issues. What can I help you with today?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-4 border-t border-gray-100 bg-white">
+                <form id="chatForm" class="flex gap-3">
+                    <input 
+                        type="text" 
+                        id="chatInput" 
+                        placeholder="Type your question here..." 
+                        class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-custom-green/50 focus:border-custom-green transition-all text-gray-800 placeholder-gray-400" 
+                        autocomplete="off"
+                        required
+                    >
+                    <button 
+                        type="submit" 
+                        id="chatSendBtn"
+                        class="bg-custom-green text-white px-5 rounded-xl hover:bg-emerald-800 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </form>
+                <p class="text-[10px] text-gray-400 text-center mt-2">AI responses are generated based on Unasemeje's official guidelines.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DOM Elements
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatSendBtn = document.getElementById('chatSendBtn');
+
+        // Configuration: Dual-API Fallback
+        const API_PRIMARY = 'https://unasemeje-backend.vercel.app/api/support-bot';
+        const API_FALLBACK = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+
+        // --- MESSAGE RENDERING ---
+        function appendMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} message-anim`;
+            
+            const bubble = document.createElement('div');
+            if (sender === 'user') {
+                bubble.className = 'bg-custom-green text-white px-4 py-3 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-md break-words';
+            } else {
+                bubble.className = 'bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm border border-gray-200 break-words';
+            }
+            bubble.innerText = text;
+            
+            msgDiv.appendChild(bubble);
+            chatMessages.appendChild(msgDiv);
+            
+            // Auto-scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex justify-start message-anim';
+            typingDiv.innerHTML = `
+                <div class="bg-gray-100 text-gray-400 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm border border-gray-200 flex gap-1.5">
+                    <span class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        // --- API COMMUNICATION ---
+        async function sendToBackend(message) {
+            // Try Primary Server
+            try {
+                const response = await fetch(API_PRIMARY, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                if (response.ok) return await response.json();
+            } catch (err) {
+                console.warn("Primary AI server unreachable. Trying fallback...");
+            }
+
+            // Fallback to Secondary Server
+            try {
+                const response = await fetch(API_FALLBACK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                if (response.ok) return await response.json();
+            } catch (err) {
+                console.error("Both AI servers unreachable.");
+                return null;
+            }
+        }
+
+        // --- FORM SUBMISSION HANDLER ---
+        async function processMessage(message) {
+            if (!message.trim()) return;
+
+            // 1. Show user message immediately
+            appendMessage('user', message);
+            chatInput.value = '';
+            chatInput.disabled = true; 
+            chatSendBtn.disabled = true;
+            showTyping();
+
+            // 2. Get AI response
+            const data = await sendToBackend(message);
+            
+            // 3. Clean up UI
+            hideTyping();
+            chatInput.disabled = false;
+            chatSendBtn.disabled = false;
+            chatInput.focus();
+
+            // 4. Display AI response
+            if (data && data.success && data.reply) {
+                // Small delay to make it feel more natural
+                setTimeout(() => {
+                    appendMessage('bot', data.reply);
+                }, 400);
+            } else {
+                appendMessage('bot', "I'm having trouble connecting to my knowledge base right now. Please try again in a moment, or contact human support.");
+            }
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            processMessage(chatInput.value);
+        });
+
+        // --- QUICK ACTION HANDLER ---
+        function sendQuickMessage(text) {
+            chatInput.value = text;
+            processMessage(text);
+        }
+    </script>
+</body>
+</html>
