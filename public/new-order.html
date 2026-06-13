@@ -387,7 +387,7 @@
         </div>
 
         <div class="card">
-            <!-- Step 1: Category (FILTERED BY SELECTED PLATFORM) -->
+            <!-- Step 1: Category (SHOWS ALL CATEGORIES FROM SELECTED PLATFORM) -->
             <label><i class="fas fa-layer-group"></i> 1. Select Category</label>
             <select id="categorySelect" onchange="loadServices()">
                 <option value="">-- Loading Categories... --</option>
@@ -441,7 +441,7 @@
 <script>
     let allData = {};
     let selectedService = null;
-    let selectedPlatform = null; // NEW: Store selected platform
+    let selectedPlatform = null;
     const API = "https://unasemeje-backend.vercel.app/api";
     const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
@@ -507,12 +507,18 @@
     // Initialize: Fetch all services and categories
     async function init() {
         try {
-            const res = await fetch(`${API}/services`);
+            // Force refresh to get latest services from provider
+            const res = await fetch(`${API}/services?refresh=true`);
             if (!res.ok) throw new Error("Failed to fetch services");
             const json = await res.json();
             
-            // This structure handles the nested provider data flexibly
+            // Store all data from provider
             allData = json.data;
+            
+            console.log("📦 ALL PLATFORMS FROM PROVIDER:", Object.keys(allData));
+            console.log("📊 TOTAL SERVICES:", Object.values(allData).reduce((sum, platform) => {
+                return sum + Object.values(platform).reduce((catSum, cat) => catSum + cat.length, 0);
+            }, 0));
 
             // Get selected platform from URL
             selectedPlatform = getSelectedPlatform();
@@ -531,24 +537,34 @@
             const cSelect = document.getElementById("categorySelect");
             cSelect.innerHTML = '<option value="">-- Choose Category --</option>';
             
-            // FIX: Only show categories for the selected platform
+            // FIX: Show ALL categories from the selected platform
             if (selectedPlatform && allData[selectedPlatform]) {
-                // Platform-specific categories
                 const categories = allData[selectedPlatform];
-                Object.keys(categories).forEach(category => {
+                const categoryNames = Object.keys(categories);
+                
+                console.log(`📂 ALL ${selectedPlatform} CATEGORIES:`, categoryNames);
+                console.log(`📊 TOTAL ${selectedPlatform} CATEGORIES:`, categoryNames.length);
+                
+                // Show ALL categories from this platform
+                categoryNames.forEach(category => {
                     const opt = document.createElement("option");
                     opt.value = `${selectedPlatform}||${category}`;
-                    // FIX: Display category name EXACTLY as it comes from provider
+                    // Display category name EXACTLY as it comes from provider
                     opt.innerText = category;
                     cSelect.appendChild(opt);
                 });
+                
+                // Count total services for this platform
+                const totalServices = categoryNames.reduce((sum, cat) => sum + categories[cat].length, 0);
+                console.log(`📊 TOTAL ${selectedPlatform} SERVICES:`, totalServices);
+                
             } else {
                 // Fallback: Show all platforms if no platform selected
+                console.log("⚠️ No platform selected, showing all platforms");
                 Object.keys(allData).forEach(platform => {
                     Object.keys(allData[platform]).forEach(category => {
                         const opt = document.createElement("option");
                         opt.value = `${platform}||${category}`;
-                        // FIX: Display category name EXACTLY as it comes from provider
                         opt.innerText = `${platform} - ${category}`;
                         cSelect.appendChild(opt);
                     });
@@ -572,13 +588,18 @@
         const [platform, category] = catValue.split("||");
         const services = allData[platform][category];
 
-        services.forEach(s => {
+        console.log(`📋 Loading ${services.length} services for ${platform} > ${category}`);
+
+        // Show ALL services in this category
+        services.forEach((s, index) => {
             const opt = document.createElement("option");
             opt.value = s.serviceId;
-            // Display service name exactly as it comes from provider
+            // Display service name EXACTLY as it comes from provider
             opt.innerText = `${s.name} (KES ${s.rate}/1k)`;
             sSelect.appendChild(opt);
         });
+        
+        console.log(`✅ Loaded ${services.length} services successfully`);
     }
 
     // Update UI based on chosen service type (Quantity vs Comments)
@@ -726,4 +747,4 @@
 </script>
 
 </body>
-</html>
+    </html>
