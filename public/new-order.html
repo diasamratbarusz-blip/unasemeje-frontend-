@@ -69,6 +69,24 @@
             font-weight: bold;
         }
 
+        /* Platform Badge */
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), #4c1d95);
+            border-radius: 12px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        .platform-badge i {
+            font-size: 24px;
+        }
+
         /* ========================================= */
         /* PROFESSIONAL MOBILE BOTTOM NAVIGATION BAR */
         /* ========================================= */
@@ -234,6 +252,14 @@
                 overflow-wrap: break-word !important;
                 box-sizing: border-box !important;
             }
+
+            .platform-badge {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            .platform-badge i {
+                font-size: 20px;
+            }
         }
 
         /* ========================================= */
@@ -272,6 +298,14 @@
                 max-width: calc(100% - 20px) !important;
                 padding: 12px 18px !important;
                 font-size: 12px !important;
+            }
+
+            .platform-badge {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            .platform-badge i {
+                font-size: 18px;
             }
         }
 
@@ -346,8 +380,14 @@
             <p style="color: var(--text-dim); margin-top: 5px; font-size: 14px;">Chagua package yako, uanze ku-trend instantly!</p>
         </div>
 
+        <!-- Platform Selection Badge -->
+        <div id="platformBadge" class="platform-badge" style="display: none;">
+            <i id="platformIcon" class="fab fa-facebook"></i>
+            <span id="platformName">Facebook</span>
+        </div>
+
         <div class="card">
-            <!-- Step 1: Category (More flexible than Platform) -->
+            <!-- Step 1: Category (FILTERED BY SELECTED PLATFORM) -->
             <label><i class="fas fa-layer-group"></i> 1. Select Category</label>
             <select id="categorySelect" onchange="loadServices()">
                 <option value="">-- Loading Categories... --</option>
@@ -401,6 +441,7 @@
 <script>
     let allData = {};
     let selectedService = null;
+    let selectedPlatform = null; // NEW: Store selected platform
     const API = "https://unasemeje-backend.vercel.app/api";
     const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
     const token = localStorage.getItem("token");
@@ -410,6 +451,26 @@
     function logout() {
         localStorage.clear();
         window.location.href = "index.html";
+    }
+
+    // --- GET PLATFORM FROM URL ---
+    function getSelectedPlatform() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('platform');
+    }
+
+    // --- GET PLATFORM ICON ---
+    function getPlatformIcon(platform) {
+        const icons = {
+            'TikTok': 'fa-tiktok',
+            'Instagram': 'fa-instagram',
+            'Facebook': 'fa-facebook',
+            'YouTube': 'fa-youtube',
+            'Telegram': 'fa-telegram',
+            'Twitter': 'fa-twitter',
+            'Twitter/X': 'fa-twitter'
+        };
+        return icons[platform] || 'fa-globe';
     }
 
     // --- DYNAMIC TOP TICKER LOADER ---
@@ -453,18 +514,46 @@
             // This structure handles the nested provider data flexibly
             allData = json.data;
 
+            // Get selected platform from URL
+            selectedPlatform = getSelectedPlatform();
+            
+            // Show platform badge if platform is selected
+            if (selectedPlatform) {
+                const badge = document.getElementById('platformBadge');
+                const icon = document.getElementById('platformIcon');
+                const name = document.getElementById('platformName');
+                
+                icon.className = `fab ${getPlatformIcon(selectedPlatform)}`;
+                name.textContent = selectedPlatform;
+                badge.style.display = 'inline-flex';
+            }
+
             const cSelect = document.getElementById("categorySelect");
             cSelect.innerHTML = '<option value="">-- Choose Category --</option>';
             
-            // Get all categories from all platforms
-            Object.keys(allData).forEach(platform => {
-                Object.keys(allData[platform]).forEach(category => {
+            // FIX: Only show categories for the selected platform
+            if (selectedPlatform && allData[selectedPlatform]) {
+                // Platform-specific categories
+                const categories = allData[selectedPlatform];
+                Object.keys(categories).forEach(category => {
                     const opt = document.createElement("option");
-                    opt.value = `${platform}||${category}`; // Store both to find easily
-                    opt.innerText = `${platform} - ${category}`;
+                    opt.value = `${selectedPlatform}||${category}`;
+                    // FIX: Display category name EXACTLY as it comes from provider
+                    opt.innerText = category;
                     cSelect.appendChild(opt);
                 });
-            });
+            } else {
+                // Fallback: Show all platforms if no platform selected
+                Object.keys(allData).forEach(platform => {
+                    Object.keys(allData[platform]).forEach(category => {
+                        const opt = document.createElement("option");
+                        opt.value = `${platform}||${category}`;
+                        // FIX: Display category name EXACTLY as it comes from provider
+                        opt.innerText = `${platform} - ${category}`;
+                        cSelect.appendChild(opt);
+                    });
+                });
+            }
 
         } catch (e) { 
             console.error("Service Loading Error:", e);
@@ -486,6 +575,7 @@
         services.forEach(s => {
             const opt = document.createElement("option");
             opt.value = s.serviceId;
+            // Display service name exactly as it comes from provider
             opt.innerText = `${s.name} (KES ${s.rate}/1k)`;
             sSelect.appendChild(opt);
         });
@@ -511,10 +601,10 @@
             details.style.display = "block";
             document.getElementById("minQty").innerText = Number(selectedService.min).toLocaleString();
             document.getElementById("maxQty").innerText = Number(selectedService.max).toLocaleString();
+            // Display description exactly as it comes from provider
             document.getElementById("serviceDesc").innerHTML = selectedService.description || "Hakuna maelezo zaidi. Plug is ready!";
 
             // CHECK FLEXIBILITY: Is this a comment service?
-            // Usually, SMM providers flag these as "Custom Comments" or "Package"
             const type = (selectedService.type || "").toLowerCase();
             if (type.includes("comment") || type.includes("custom")) {
                 qtyGroup.style.display = "none";
@@ -543,7 +633,7 @@
         if (!selectedService) return;
         const lines = document.getElementById("customComments").value.split('\n').filter(l => l.trim().length > 0);
         const qty = lines.length;
-        document.getElementById("quantity").value = qty; // Hidden but kept for logic
+        document.getElementById("quantity").value = qty;
         
         const total = (selectedService.rate / 1000) * qty;
         updatePriceUI(total);
@@ -581,7 +671,6 @@
                 quantity: qty 
             };
             
-            // Add comments to payload if they exist
             if(comments) payload.comments = comments;
 
             const res = await fetch(`${API}/order`, {
