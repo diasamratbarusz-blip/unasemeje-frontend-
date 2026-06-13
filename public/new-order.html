@@ -585,7 +585,11 @@
         
         if (!catValue) return;
 
-        const [platform, category] = catValue.split("||");
+        // FIXED: Use indexOf instead of split to handle category names with special characters
+        const separatorIndex = catValue.indexOf("||");
+        const platform = catValue.substring(0, separatorIndex);
+        const category = catValue.substring(separatorIndex + 2);
+        
         const services = allData[platform][category];
 
         console.log(`📋 Loading ${services.length} services for ${platform} > ${category}`);
@@ -615,8 +619,12 @@
             return;
         }
 
-        const [p, c] = catValue.split("||");
-        selectedService = allData[p][c].find(x => x.serviceId == sId);
+        // FIXED: Use indexOf instead of split to handle category names with special characters
+        const separatorIndex = catValue.indexOf("||");
+        const platform = catValue.substring(0, separatorIndex);
+        const category = catValue.substring(separatorIndex + 2);
+        
+        selectedService = allData[platform][category].find(x => x.serviceId == sId);
 
         if (selectedService) {
             details.style.display = "block";
@@ -747,4 +755,4 @@
 </script>
 
 </body>
-    </html>
+</html>
