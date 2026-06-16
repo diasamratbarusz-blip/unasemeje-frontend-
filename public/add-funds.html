@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Funds - Unasemeje</title>
+    <title>Add Money - Unasemeje</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -55,14 +55,14 @@
 
     <!-- UPDATED: Added responsive padding (py-12 md:py-16) and text scaling -->
     <div class="bg-custom-green text-white py-12 md:py-16 px-4 text-center shadow-lg">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold italic mb-3">Add Funds</h1>
-        <p class="uppercase tracking-[4px] text-xs opacity-70">Live Account Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold italic mb-3">Add Money</h1>
+        <p class="uppercase tracking-[4px] text-xs opacity-70">Current Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
     </div>
 
     <div class="max-w-2xl mx-auto px-4 sm:px-6 -mt-10 pb-20 space-y-6">
         
         <!-- Important Funding Instructions Alert -->
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified text -->
         <div class="bg-white rounded-3xl shadow-xl border-l-4 border-amber-500 p-4 sm:p-6">
             <div class="flex items-start gap-3">
                 <div class="flex-shrink-0 mt-1">
@@ -72,22 +72,20 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-gray-800 mb-1.5 flex items-center gap-2">
-                        <span class="text-amber-500">⚠️</span> Crucial Step Before Adding Funds
+                        <span class="text-amber-500">⚠️</span> Important: Read Before Adding Money
                     </h3>
                     <p class="text-sm text-gray-600 leading-relaxed break-words">
-                        Before you proceed to the checkout portal to deposit money, you <strong class="text-gray-900">must ensure all your funding details are saved and up-to-date</strong>. 
-                        Please verify that your <strong class="text-emerald-700">Funding Numbers (Payment Nodes)</strong> listed below are correctly configured. 
-                        Payments sent to unregistered or incorrect numbers cannot be automatically tracked or credited to your wallet.
+                        Before you add money, please make sure your payment details are correct and saved. Check that your <strong class="text-emerald-700">Registered Phone Numbers</strong> listed below are right. If you send money to a phone number that is not registered, we cannot track it or add it to your wallet.
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified labels -->
         <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
             <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
                 <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                    👤 Account Wallet Information
+                    👤 Your Account Details
                 </h2>
             </div>
             
@@ -100,7 +98,7 @@
                             <p id="infoUsernameA" class="text-sm font-bold text-zinc-800 break-words">Loading...</p>
                         </div>
                         <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Main Phone Number</span>
                             <p id="infoAccountPhoneA" class="text-sm font-semibold text-zinc-700 font-mono break-all">Loading...</p>
                         </div>
                     </div>
@@ -115,28 +113,28 @@
                         </div>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Email Address</span>
                         <p id="infoEmailA" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
                     </div>
                 </div>
 
                 <div class="space-y-3 md:border-l md:border-gray-100 md:pl-6 flex flex-col justify-between">
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Available Book Wallet Balance</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Current Wallet Balance</span>
                         <p id="infoBalanceA" class="text-2xl font-extrabold text-custom-green">KES 0.00</p>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Registered Funding Channels</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Registered Phone Numbers for Deposits</span>
                         <p id="infoPhonesA" class="text-xs text-gray-500 font-mono flex flex-col gap-1">Loading channels...</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified labels -->
         <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                👤 Account Information & Security
+                👤 Account Settings & Security
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -148,7 +146,7 @@
                             <p id="infoUsernameB" class="text-sm font-bold text-zinc-800 break-words">Loading...</p>
                         </div>
                         <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Phone</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Main Phone Number</span>
                             <p id="infoAccountPhoneB" class="text-sm font-semibold text-zinc-700 font-mono break-all">Loading...</p>
                         </div>
                     </div>
@@ -163,22 +161,22 @@
                         </div>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Account Identity Email</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Email Address</span>
                         <p id="infoEmailB" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Available Book Wallet Balance</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Current Wallet Balance</span>
                         <p id="infoBalanceB" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
                     </div>
                     <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Funding Channels</span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Phone Numbers for Deposits</span>
                         <p id="infoPhonesB" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</p>
                     </div>
                 </div>
 
                 <div class="space-y-5">
                     <div>
-                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Modify Account Profile</span>
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Update Your Details</span>
                         <form id="profileUpdateForm" class="space-y-2" onsubmit="updateProfileData(event)">
                             <div>
                                 <input type="text" id="editUsername" class="input-field !py-2 !text-xs" placeholder="Username" required>
@@ -189,14 +187,14 @@
                                 <input type="text" id="editLastName" class="input-field !py-2 !text-xs" placeholder="Last Name">
                             </div>
                             <div>
-                                <span class="text-[9px] font-bold text-zinc-400 uppercase block my-1">Alternative Funding Nodes (Max 2)</span>
+                                <span class="text-[9px] font-bold text-zinc-400 uppercase block my-1">Extra Phone Numbers for Deposits (Maximum 2)</span>
                                 <div class="space-y-2">
-                                    <input type="text" id="editPhone1" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 1 (e.g. 2547...)">
-                                    <input type="text" id="editPhone2" class="input-field !py-2 !text-xs font-mono" placeholder="Funding Number 2 (e.g. 2547...)">
+                                    <input type="text" id="editPhone1" class="input-field !py-2 !text-xs font-mono" placeholder="Extra Phone Number 1 (e.g., 2547...)">
+                                    <input type="text" id="editPhone2" class="input-field !py-2 !text-xs font-mono" placeholder="Extra Phone Number 2 (e.g., 2547...)">
                                 </div>
                             </div>
                             <button type="submit" id="profileBtn" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
-                                Save Profile Changes
+                                Save Changes
                             </button>
                         </form>
                         <p id="profileFeedback" class="text-[11px] font-medium mt-1.5 hidden break-words"></p>
@@ -205,7 +203,7 @@
                     <hr class="border-gray-100" />
 
                     <div>
-                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Modify Security Gateway</span>
+                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Change Your Password</span>
                         <form id="passwordChangeForm" class="space-y-2" onsubmit="changePassword(event)">
                             <div>
                                 <input type="password" id="currentPassword" class="input-field !py-2 !text-xs" placeholder="Current Password" required>
@@ -214,7 +212,7 @@
                                 <input type="password" id="newPassword" class="input-field !py-2 !text-xs" placeholder="New Password" required>
                             </div>
                             <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
-                                Update Password
+                                Change Password
                             </button>
                         </form>
                         <p id="pwdFeedback" class="text-[11px] font-medium mt-1.5 hidden break-words"></p>
@@ -223,25 +221,25 @@
             </div>
         </div>
         
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 -->
+        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified labels -->
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div class="w-full">
-                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Active Payment Profile</p>
+                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Your Active Payment Profile</p>
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                         <div>
                             <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight break-words">Loading Profile...</h3>
                             <p id="cardDispFullName" class="text-xs text-zinc-600 font-medium mt-0.5 break-words">Name: Loading...</p>
                         </div>
                         <div class="text-left md:text-right">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Linked Email Target</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Linked Email</span>
                             <p id="cardDispEmail" class="text-xs text-gray-700 font-semibold break-all"></p>
                         </div>
                     </div>
                 </div>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Registered Funding Gates:</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Registered Phone Numbers for Deposits:</p>
                 <div id="cardDispPhones" class="flex flex-wrap gap-2"></div>
             </div>
         </div>
@@ -249,7 +247,7 @@
         <!-- UPDATED: Responsive padding p-4 sm:p-8 and scale-105 to sm:scale-105 to prevent mobile overflow -->
         <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-4 sm:p-8 hidden transform transition-all sm:scale-105">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Payment Detected!</h2>
+                <h2 class="text-xl font-bold text-gray-800">Payment Received!</h2>
                 <span class="flex h-3 w-3 relative">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -259,21 +257,21 @@
             <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4 status-success">
                 <div class="text-center w-full break-words">
                     <p id="sensorMessage" class="text-lg font-bold">Waiting for payment...</p>
-                    <p class="text-xs opacity-75 mt-1">Details matched to account profile: <span id="matchedIdentity" class="font-bold"></span></p>
+                    <p class="text-xs opacity-75 mt-1">Account matched: <span id="matchedIdentity" class="font-bold"></span></p>
                 </div>
                 
                 <!-- UPDATED: Responsive padding px-4 sm:px-8 -->
                 <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-4 sm:px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
-                    Approve & Add Funds
+                    Confirm and Add Money
                 </button>
             </div>
         </div>
 
-        <!-- UPDATED: Responsive padding p-4 sm:p-8 -->
+        <!-- UPDATED: Responsive padding p-4 sm:p-8 and simplified text -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-8">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Checkout Portal</h2>
-                <p class="text-xs text-gray-500 mt-1">Portal listening exclusively to your active profile channels above.</p>
+                <h2 class="text-2xl font-bold text-gray-800">Payment Portal</h2>
+                <p class="text-xs text-gray-500 mt-1">This portal only accepts payments from the phone numbers registered above.</p>
                 <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
             </div>
 
@@ -375,7 +373,7 @@
         // 1. MANDATORY AUTHENTICATION & SECURITY INITIALIZATION LOOPS
         window.onload = async () => {
             if (!token) {
-                console.warn("No authentication token localized. Routing to entry node...");
+                console.warn("Not logged in. Redirecting to login...");
                 window.location.href = 'index.html';
                 return;
             }
@@ -391,7 +389,7 @@
                 
                 // 🔒 ONLY redirect if the server explicitly rejects the token (401 Unauthorized or 403 Forbidden)
                 if (response.status === 401 || response.status === 403) {
-                    console.warn("Token rejected by server. Logging out...");
+                    console.warn("Session expired. Please log in again.");
                     localStorage.removeItem('token');
                     window.location.href = 'index.html';
                     return;
@@ -400,7 +398,7 @@
                 // ⚠️ If it's a 500 server error or network issue, DO NOT log the user out!
                 // Just log the warning and let the dual-API fallback handle it.
                 if (!response.ok) {
-                    console.warn("Profile sync failed with status:", response.status, "- Keeping user logged in.");
+                    console.warn("Could not load profile. Keeping user logged in.");
                     return; 
                 }
                 
@@ -442,8 +440,8 @@
                 
                 const processChannelsHTML = (arr) => {
                     return arr.length > 0 
-                        ? arr.map((p, i) => `<span>🔹 Gate ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Alt)'}</span>`).join('')
-                        : '<span class="text-zinc-400 italic">No custom funding channels linked.</span>';
+                        ? arr.map((p, i) => `<span>🔹 Phone ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Extra)'}</span>`).join('')
+                        : '<span class="text-zinc-400 italic">No extra phone numbers added.</span>';
                 };
 
                 if (infoPhonesA) infoPhonesA.innerHTML = processChannelsHTML(activePhones);
@@ -451,7 +449,7 @@
 
                 // Inject processing context state
                 serverUserProfile = {
-                    username: user.username || user.name || "Client Account",
+                    username: user.username || user.name || "User Account",
                     firstName: user.firstName || '',
                     lastName: user.lastName || '',
                     email: user.email,
@@ -461,7 +459,7 @@
                 renderProfileInterface();
 
             } catch (err) {
-                console.error("Critical identity lookup transaction failure:", err);
+                console.error("Error loading your account details:", err);
                 // Do not redirect to login page on network/server errors. 
                 // Keep the user on the page so they can retry or use the fallback.
             }
@@ -476,7 +474,7 @@
                 if (serverUserProfile.firstName || serverUserProfile.lastName) {
                     cardDispFullName.innerText = `Real Name: ${serverUserProfile.firstName} ${serverUserProfile.lastName}`.trim();
                 } else {
-                    cardDispFullName.innerText = "Real Name: Not configured";
+                    cardDispFullName.innerText = "Real Name: Not set";
                 }
                 
                 cardDispEmail.innerText = serverUserProfile.email;
@@ -492,7 +490,7 @@
                             </span>`;
                     });
                 } else {
-                    cardDispPhones.innerHTML = `<span class="text-xs text-zinc-400 italic">No custom funding gateways configured.</span>`;
+                    cardDispPhones.innerHTML = `<span class="text-xs text-zinc-400 italic">No extra phone numbers added.</span>`;
                 }
             }
         }
@@ -505,7 +503,7 @@
 
             feedback.classList.add('hidden');
             btn.disabled = true;
-            btn.innerText = "Saving Profile...";
+            btn.innerText = "Saving...";
 
             const payload = {
                 username: editUsername.value.trim(),
@@ -530,19 +528,19 @@
 
                 if (response.ok) {
                     feedback.className = "text-[11px] font-medium mt-1.5 text-emerald-600";
-                    feedback.innerText = "✓ Profile metadata synced and updated.";
+                    feedback.innerText = "✓ Profile updated successfully.";
                     await fetchUserProfileFromServer();
                 } else {
                     feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || data.message || "Modification denied by node server."}`;
+                    feedback.innerText = `⚠ ${data.error || data.message || "Could not update profile. Please try again."}`;
                 }
             } catch (err) {
                 feedback.classList.remove('hidden');
                 feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
-                feedback.innerText = "⚠ Network anomaly during identity transmission.";
+                feedback.innerText = "⚠ Network error. Please check your internet and try again.";
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Save Profile Changes";
+                btn.innerText = "Save Changes";
             }
         }
 
@@ -556,7 +554,7 @@
 
             feedback.classList.add('hidden');
             btn.disabled = true;
-            btn.innerText = "Processing Update...";
+            btn.innerText = "Updating...";
 
             try {
                 const response = await apiRequest('/user/change-password', {
@@ -573,19 +571,19 @@
                 
                 if (response.ok) {
                     feedback.className = "text-[11px] font-medium mt-2 text-emerald-600";
-                    feedback.innerText = "✓ Password updated successfully.";
+                    feedback.innerText = "✓ Password changed successfully.";
                     document.getElementById('passwordChangeForm').reset();
                 } else {
                     feedback.className = "text-[11px] font-medium mt-2 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || data.message || "Update rejected by server."}`;
+                    feedback.innerText = `⚠ ${data.error || data.message || "Could not change password. Please check your current password."}`;
                 }
             } catch (err) {
                 feedback.classList.remove('hidden');
                 feedback.className = "text-[11px] font-medium mt-2 text-red-500";
-                feedback.innerText = "⚠ Network error during update.";
+                feedback.innerText = "⚠ Network error. Please try again.";
             } finally {
                 btn.disabled = false;
-                btn.innerText = "Update Password";
+                btn.innerText = "Change Password";
             }
         }
 
@@ -606,19 +604,19 @@
         // 4. MANUAL REAL-TIME BALANCE APPROVAL INTERCEPTOR
         function showSensorPopup(amount, reference) {
             statusCard.classList.remove('hidden');
-            document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.username : "Client Account";
+            document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.username : "User Account";
             
             const formattedAmount = Number(amount).toLocaleString('en-KE', {
                 style: 'currency',
                 currency: 'KES'
             });
 
-            sensorMessage.innerHTML = `Successfully verified <span class="text-2xl block text-emerald-800 font-extrabold mt-1">${formattedAmount}</span>`;
+            sensorMessage.innerHTML = `Payment verified: <span class="text-2xl block text-emerald-800 font-extrabold mt-1">${formattedAmount}</span>`;
             statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             approveBtn.onclick = async () => {
                 approveBtn.disabled = true;
-                approveBtn.innerHTML = `<span class="spinner"></span> Syncing Balance...`;
+                approveBtn.innerHTML = `<span class="spinner"></span> Adding Money...`;
 
                 try {
                     const response = await apiRequest('/deposit', {
@@ -634,17 +632,17 @@
                     });
 
                     if (response.ok) {
-                        sensorMessage.innerHTML = `🎉 Deposit Logged! Updating balance...`;
+                        sensorMessage.innerHTML = `🎉 Success! Updating your balance...`;
                         approveBtn.style.display = 'none';
                         setTimeout(() => window.location.reload(), 2500);
                     } else {
                         const errData = await response.json();
-                        sensorMessage.innerText = "Error: " + (errData.error || errData.message || "Failed to credit.");
-                        approveBtn.innerHTML = "Retry Sync";
+                        sensorMessage.innerText = "Error: " + (errData.error || errData.message || "Could not add money. Please try again.");
+                        approveBtn.innerHTML = "Retry";
                         approveBtn.disabled = false;
                     }
                 } catch (err) {
-                    sensorMessage.innerText = "Sync failed. Please refresh the page.";
+                    sensorMessage.innerText = "Failed to update. Please refresh the page.";
                     approveBtn.disabled = false;
                 }
             };
