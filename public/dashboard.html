@@ -68,6 +68,163 @@
             border-color: #1e3a5f !important;
         }
 
+        /* ========================================= */
+        /* IMPORTANT WARNING BANNER STYLES           */
+        /* ========================================= */
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444) !important;
+            color: white !important;
+            padding: 12px 20px !important;
+            text-align: center !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1001 !important;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            flex-wrap: wrap !important;
+        }
+
+        .warning-banner i {
+            color: #fbbf24 !important;
+            font-size: 16px !important;
+        }
+
+        .warning-banner a {
+            color: #fbbf24 !important;
+            text-decoration: underline !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            margin-left: 5px !important;
+        }
+
+        .warning-banner a:hover {
+            color: #ffffff !important;
+        }
+
+        /* Modal Styles for Instructions */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 24px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .modal-header h3 {
+            font-family: 'Plus Jakarta Sans';
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: #1e293b;
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+
+        .modal-body h4 {
+            color: #1e3a5f;
+            margin: 20px 0 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+            color: #64748b;
+        }
+
+        .modal-body strong {
+            color: #1e3a5f;
+        }
+
+        .modal-body .step {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #f97316;
+        }
+
+        .modal-body .step-number {
+            background: #f97316;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 10px;
+        }
+
         /* Moving Ticker Styling - Professional White Theme */
         .top-ticker {
             background: #1e3a5f !important;
@@ -77,7 +234,7 @@
             display: flex;
             align-items: center;
             position: sticky;
-            top: 0;
+            top: 45px; /* Below warning banner */
             z-index: 1000;
             width: 100%;
             box-sizing: border-box;
@@ -240,6 +397,15 @@
         /* ========================================= */
         @media (max-width: 768px) {
             
+            /* Warning Banner Mobile */
+            .warning-banner {
+                font-size: 12px !important;
+                padding: 10px 15px !important;
+            }
+            .warning-banner br {
+                display: none !important;
+            }
+
             /* 1. The Sidebar Container becomes the Bottom Bar */
             .sidebar {
                 position: fixed !important;
@@ -457,6 +623,7 @@
             /* 5. Ticker adjustments for mobile */
             .top-ticker {
                 height: 40px !important;
+                top: 40px !important; /* Adjust for smaller warning banner */
             }
             .ticker-item {
                 font-size: 12px !important;
@@ -508,6 +675,7 @@
 
             .top-ticker {
                 height: 38px !important;
+                top: 38px !important;
             }
             .ticker-item {
                 font-size: 11px !important;
@@ -606,6 +774,7 @@
 
             .top-ticker {
                 height: 36px !important;
+                top: 36px !important;
             }
             .ticker-item {
                 font-size: 10px !important;
@@ -710,10 +879,69 @@
 </head>
 <body>
 
+<!-- IMPORTANT WARNING BANNER -->
+<div class="warning-banner">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+    <a onclick="showFlagInstructions()">Click Here to See How</a>
+</div>
+
 <!-- DYNAMIC TOP TICKER -->
 <div class="top-ticker">
     <div class="ticker-content" id="tickerContent">
         <!-- Items and speed will be injected dynamically by JS from the backend -->
+    </div>
+</div>
+
+<!-- MODAL FOR FLAG INSTRUCTIONS -->
+<div class="modal-overlay" id="flagModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>Important: Turn Off Flag for Review</h3>
+            <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+            
+            <h4>Step-by-Step Instructions:</h4>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Go to Settings</strong><br>
+                Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Find Follow Settings</strong><br>
+                Scroll down and tap <strong>"Follow and invite friends"</strong>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Disable Flag for Review</strong><br>
+                Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+            </div>
+            
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Confirm</strong><br>
+                Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+            </div>
+            
+            <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+            <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+            
+            <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+            </p>
+            
+            <p style="text-align: center; margin-top: 25px;">
+                <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                </a>
+            </p>
+        </div>
     </div>
 </div>
 
@@ -794,6 +1022,24 @@
     const token = localStorage.getItem("token");
 
     if (!token) window.location.href = "index.html";
+
+    // --- MODAL FUNCTIONS FOR FLAG INSTRUCTIONS ---
+    function showFlagInstructions() {
+        document.getElementById('flagModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFlagInstructions() {
+        document.getElementById('flagModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('flagModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFlagInstructions();
+        }
+    });
 
     // --- DYNAMIC TOP TICKER LOADER ---
     async function loadTopTicker() {
