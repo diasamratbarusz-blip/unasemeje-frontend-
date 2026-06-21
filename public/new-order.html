@@ -3,11 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>New Order | UNASEMEJE ø DIA</title>
+    <title>New Order | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ========================================= */
+        /* PROFESSIONAL WHITE THEME                  */
+        /* ========================================= */
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #f97316;
+            --bg-main: #ffffff;
+            --bg-soft: #fafbfc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --border-light: #e2e8f0;
+        }
+
         /* ========================================= */
         /* GLOBAL RESPONSIVE FIXES                   */
         /* ========================================= */
@@ -15,6 +29,8 @@
             overflow-x: hidden !important;
             max-width: 100% !important;
             width: 100% !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%) !important;
+            color: var(--text-main) !important;
         }
 
         .dashboard {
@@ -32,6 +48,267 @@
             max-width: 100% !important;
             overflow-wrap: break-word !important;
             word-wrap: break-word !important;
+            background: #ffffff !important;
+            border: 2px solid var(--border-light) !important;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08) !important;
+            color: var(--text-main) !important;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.12) !important;
+            border-color: var(--secondary) !important;
+        }
+
+        /* ========================================= */
+        /* IMPORTANT WARNING BANNER STYLES           */
+        /* ========================================= */
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444) !important;
+            color: white !important;
+            padding: 12px 20px !important;
+            text-align: center !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1001 !important;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            flex-wrap: wrap !important;
+        }
+
+        .warning-banner i {
+            color: #fbbf24 !important;
+            font-size: 16px !important;
+        }
+
+        .warning-banner a {
+            color: #fbbf24 !important;
+            text-decoration: underline !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            margin-left: 5px !important;
+        }
+
+        .warning-banner a:hover {
+            color: #ffffff !important;
+        }
+
+        /* Modal Styles for Instructions */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 58, 95, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 24px;
+            border: 2px solid var(--border-light);
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .modal-header h3 {
+            font-family: 'Plus Jakarta Sans';
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+
+        .modal-body h4 {
+            color: var(--primary);
+            margin: 20px 0 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+            color: var(--text-dim);
+        }
+
+        .modal-body strong {
+            color: var(--primary);
+        }
+
+        .modal-body .step {
+            background: var(--bg-soft);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .modal-body .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 10px;
+        }
+
+        /* Moving Ticker Styling - Continuous Animation */
+        .top-ticker {
+            background: var(--primary) !important;
+            border-bottom: 3px solid var(--secondary) !important;
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 45px;
+            z-index: 1000;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff !important;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span {
+            color: var(--secondary) !important;
+            font-weight: 800;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* SIDEBAR */
+        .sidebar { 
+            width: 260px; 
+            background: #ffffff; 
+            padding: 25px; 
+            border-right: 2px solid var(--border-light);
+            position: fixed; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.08);
+        }
+        .sidebar h2 { 
+            color: var(--primary); 
+            font-size: 20px; 
+            margin-bottom: 30px; 
+            text-align: center; 
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .sidebar h2 span { color: var(--secondary); }
+        .sidebar .sidebar-nav a { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            border-radius: 10px; 
+            margin-bottom: 5px; 
+            transition: 0.3s; 
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .sidebar .sidebar-nav a i { margin-right: 12px; font-size: 16px; }
+        .sidebar .sidebar-nav a:hover { 
+            background: rgba(249, 115, 22, 0.1); 
+            color: var(--secondary);
+        }
+        .sidebar .sidebar-nav a.active { 
+            background: linear-gradient(135deg, var(--secondary), #ea580c); 
+            color: white;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+        .sidebar .sidebar-nav a.active i { color: white; }
+
+        /* MAIN CONTENT */
+        .main { 
+            margin-left: 260px; 
+            padding: 40px; 
+            width: calc(100% - 260px); 
+            min-height: 100vh; 
+            position: relative;
         }
 
         /* Extra styles for flexibility */
@@ -39,33 +316,39 @@
         .service-desc {
             font-size: 12px;
             color: var(--text-dim);
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-soft);
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
-            border-left: 3px solid var(--primary);
+            border-left: 3px solid var(--secondary);
             line-height: 1.4;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
         textarea {
             width: 100%;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            color: white;
+            background: var(--bg-soft);
+            border: 2px solid var(--border-light);
+            color: var(--text-main);
             padding: 12px;
             border-radius: 10px;
             font-family: inherit;
             resize: vertical;
             min-height: 100px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
         }
         .badge-info {
             font-size: 11px;
             padding: 2px 8px;
-            background: var(--primary);
+            background: var(--secondary);
             border-radius: 20px;
-            color: black;
+            color: white;
             font-weight: bold;
         }
 
@@ -75,16 +358,95 @@
             align-items: center;
             gap: 10px;
             padding: 12px 20px;
-            background: linear-gradient(135deg, var(--primary), #4c1d95);
+            background: linear-gradient(135deg, var(--primary), #2d5a87);
             border-radius: 12px;
             color: white;
             font-weight: 700;
             font-size: 16px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.2);
         }
         .platform-badge i {
             font-size: 24px;
+        }
+
+        /* Form Elements */
+        input, select {
+            width: 100%;
+            background: var(--bg-soft);
+            border: 2px solid var(--border-light);
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+            background: #ffffff;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+        }
+        label i {
+            color: var(--secondary);
+            margin-right: 8px;
+        }
+
+        /* Price Display */
+        .price-display {
+            background: linear-gradient(135deg, var(--primary), #2d5a87);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.2);
+        }
+        .price-display small {
+            display: block;
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        .price-display b {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        /* Submit Button */
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(249, 115, 22, 0.5);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* ========================================= */
@@ -92,6 +454,15 @@
         /* ========================================= */
         @media (max-width: 768px) {
             
+            /* Warning Banner Mobile */
+            .warning-banner {
+                font-size: 12px !important;
+                padding: 10px 15px !important;
+            }
+            .warning-banner br {
+                display: none !important;
+            }
+
             /* 1. The Sidebar Container becomes the Bottom Bar */
             .sidebar {
                 position: fixed !important;
@@ -103,11 +474,11 @@
                 flex-direction: column !important;
                 padding: 0 !important;
                 border-right: none !important;
-                border-top: 1px solid rgba(255,255,255,0.1) !important;
+                border-top: 2px solid var(--border-light) !important;
                 z-index: 1000 !important;
-                background: rgba(17, 24, 39, 0.98) !important;
+                background: rgba(255, 255, 255, 0.98) !important;
                 backdrop-filter: blur(10px) !important;
-                box-shadow: 0 -4px 15px rgba(0,0,0,0.3) !important;
+                box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1) !important;
                 transition: transform 0.3s ease-in-out !important; 
             }
 
@@ -162,7 +533,7 @@
                 flex-direction: row !important;
                 padding: 10px 20px !important;
                 gap: 8px !important;
-                border-top: 1px solid rgba(255,255,255,0.05) !important;
+                border-top: 1px solid var(--border-light) !important;
                 width: 100% !important;
                 justify-content: center !important;
             }
@@ -197,16 +568,16 @@
             .sidebar .sidebar-nav a:not(.utility-link) i {
                 font-size: 20px !important;
                 margin: 0 !important;
-                color: #9ca3af !important;
+                color: #64748b !important;
             }
             
             /* ✨ ACTIVE STATE STYLING */
             .sidebar .sidebar-nav a.active i {
-                color: var(--primary) !important;
+                color: white !important;
                 transform: scale(1.1) !important;
             }
             .sidebar .sidebar-nav a.active span {
-                color: var(--primary) !important;
+                color: white !important;
                 font-weight: 700 !important;
             }
 
@@ -214,7 +585,7 @@
             .sidebar .sidebar-nav a:not(.utility-link) span {
                 font-size: 10px !important;
                 font-weight: 500 !important;
-                color: #9ca3af !important;
+                color: #64748b !important;
                 margin: 0 !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
@@ -226,7 +597,7 @@
             .main {
                 margin-left: 0 !important;
                 margin-bottom: 120px !important; 
-                padding: 15px !important;
+                padding: 25px 15px 15px !important;
                 width: 100% !important;
             }
 
@@ -259,6 +630,16 @@
             }
             .platform-badge i {
                 font-size: 20px;
+            }
+
+            /* Ticker adjustments for mobile */
+            .top-ticker {
+                height: 40px !important;
+                top: 40px !important;
+            }
+            .ticker-item {
+                font-size: 12px !important;
+                padding-right: 40px !important;
             }
         }
 
@@ -307,6 +688,15 @@
             .platform-badge i {
                 font-size: 18px;
             }
+
+            .top-ticker {
+                height: 38px !important;
+                top: 38px !important;
+            }
+            .ticker-item {
+                font-size: 11px !important;
+                padding-right: 30px !important;
+            }
         }
 
         /* ========================================= */
@@ -337,10 +727,26 @@
             .sidebar .sidebar-nav a.utility-link span {
                 font-size: 10px !important;
             }
+
+            .top-ticker {
+                height: 36px !important;
+                top: 36px !important;
+            }
+            .ticker-item {
+                font-size: 10px !important;
+                padding-right: 25px !important;
+            }
         }
     </style>
 </head>
 <body>
+
+<!-- IMPORTANT WARNING BANNER -->
+<div class="warning-banner">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+    <a onclick="showFlagInstructions()">Click Here to See How</a>
+</div>
 
 <!-- DYNAMIC MOVING WORDS TICKER -->
 <div class="top-ticker">
@@ -349,10 +755,62 @@
     </div>
 </div>
 
+<!-- MODAL FOR FLAG INSTRUCTIONS -->
+<div class="modal-overlay" id="flagModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>Important: Turn Off Flag for Review</h3>
+            <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+            
+            <h4>Step-by-Step Instructions:</h4>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Go to Settings</strong><br>
+                Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Find Follow Settings</strong><br>
+                Scroll down and tap <strong>"Follow and invite friends"</strong>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Disable Flag for Review</strong><br>
+                Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+            </div>
+            
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Confirm</strong><br>
+                Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+            </div>
+            
+            <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+            <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+            
+            <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+            </p>
+            
+            <p style="text-align: center; margin-top: 25px;">
+                <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
 <div class="dashboard">
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <h2 style="font-family: 'Plus Jakarta Sans';">unasemeje ø dia</h2>
+        <h2>Unasemeje <span>SMM Gains</span></h2>
         <div class="sidebar-nav">
             <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
@@ -366,8 +824,8 @@
             <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
         </div>
         
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 15px; text-decoration: none;">
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-light);">
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 15px; text-decoration: none; font-weight: 600;">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
         </div>
@@ -375,8 +833,8 @@
 
     <!-- Main Content Area -->
     <div class="main">
-        <div class="card" style="border-left: 5px solid var(--primary);">
-            <h2 style="margin:0;">Boost Your Socials 🚀</h2>
+        <div class="card" style="border-left: 5px solid var(--secondary);">
+            <h2 style="margin:0; color: var(--primary);">Boost Your Socials 🚀</h2>
             <p style="color: var(--text-dim); margin-top: 5px; font-size: 14px;">Chagua package yako, uanze ku-trend instantly!</p>
         </div>
 
@@ -402,8 +860,8 @@
             <!-- Service Details & Description -->
             <div id="serviceDetails" style="display: none; margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
-                    <span>Min Order: <b id="minQty" style="color: var(--primary);">0</b></span>
-                    <span>Max Order: <b id="maxQty" style="color: var(--primary);">0</b></span>
+                    <span>Min Order: <b id="minQty" style="color: var(--secondary);">0</b></span>
+                    <span>Max Order: <b id="maxQty" style="color: var(--secondary);">0</b></span>
                 </div>
                 <div id="serviceDesc" class="service-desc"></div>
             </div>
@@ -453,6 +911,24 @@
         window.location.href = "index.html";
     }
 
+    // --- MODAL FUNCTIONS FOR FLAG INSTRUCTIONS ---
+    function showFlagInstructions() {
+        document.getElementById('flagModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFlagInstructions() {
+        document.getElementById('flagModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('flagModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFlagInstructions();
+        }
+    });
+
     // --- GET PLATFORM FROM URL ---
     function getSelectedPlatform() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -473,7 +949,7 @@
         return icons[platform] || 'fa-globe';
     }
 
-    // --- DYNAMIC TOP TICKER LOADER ---
+    // --- CONTINUOUS MOVING TICKER LOADER ---
     async function loadTopTicker() {
         try {
             let res = await fetch(`${API}/ticker`);
@@ -489,18 +965,34 @@
                 });
                 tickerContent.innerHTML = html + html; 
             } else {
-                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
                 tickerContent.innerHTML = fallback + fallback;
             }
             
             const speed = data.speed || 80;
-            tickerContent.style.animationDuration = `${speed}s`;
+            
+            // CONTINUOUS TICKER: Calculate position based on time
+            const tickerStartTime = localStorage.getItem('tickerStartTime');
+            const currentTime = Date.now();
+            
+            if (!tickerStartTime) {
+                // First visit - set start time
+                localStorage.setItem('tickerStartTime', currentTime);
+                tickerContent.style.animationDuration = `${speed}s`;
+            } else {
+                // Calculate elapsed time and set animation delay to continue from that position
+                const elapsedSeconds = (currentTime - parseInt(tickerStartTime)) / 1000;
+                const animationDelay = -(elapsedSeconds % speed);
+                tickerContent.style.animationDuration = `${speed}s`;
+                tickerContent.style.animationDelay = `${animationDelay}s`;
+            }
             
         } catch (err) {
             console.error("Failed to load top ticker:", err);
             const tickerContent = document.getElementById('tickerContent');
-            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
+            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
             tickerContent.innerHTML = fallback + fallback;
+            tickerContent.style.animationDuration = '80s';
         }
     }
 
@@ -738,11 +1230,31 @@
 
         const notification = document.createElement("div");
         notification.className = "live-notif"; 
-        notification.innerHTML = `🔥 <b>${randomName}</b> amebuy <b>${randomService}</b>!`;
+        notification.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ffffff;
+            color: var(--text-main);
+            border-left: 4px solid var(--secondary);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.15);
+            z-index: 10000;
+            font-family: 'Plus Jakarta Sans';
+            font-size: 13px;
+            animation: slideIn 0.5s ease-out;
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            border: 2px solid var(--border-light);
+        `;
+        notification.innerHTML = `🔥 <b style="color: var(--primary);">${randomName}</b> amebuy <b style="color: var(--secondary);">${randomService}</b>!`;
         document.body.appendChild(notification);
 
         setTimeout(() => {
             notification.style.opacity = "0";
+            notification.style.transition = "0.5s";
             setTimeout(() => notification.remove(), 500);
         }, 4000);
     }
@@ -754,5 +1266,12 @@
     init();
 </script>
 
+<style>
+    @keyframes slideIn {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+</style>
+
 </body>
-</html>
+    </html>
