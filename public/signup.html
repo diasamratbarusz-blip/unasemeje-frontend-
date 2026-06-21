@@ -3,31 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Join unasemeje ø dia | Authentic SMM Registration</title>
+  <title>Join Unasemeje SMM Gains | Authentic SMM Registration</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     :root {
-      --brand-primary: #10b981; /* Neon Emerald */
-      --brand-secondary: #6366f1; /* Indigo */
-      --bg-main: #020617; /* Deep Navy */
-      --card-bg: #0f172a;
-      --input-bg: #1e293b;
+      --brand-primary: #1e3a5f; /* Navy Blue */
+      --brand-secondary: #f97316; /* Orange */
+      --bg-main: #ffffff; /* White */
+      --bg-soft: #fafbfc;
+      --card-bg: #ffffff;
+      --input-bg: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
       --text-dim: #94a3b8;
-      --accent-gold: #fbbf24;
+      --border-light: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgba(30, 58, 95, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(30, 58, 95, 0.1), 0 2px 4px -1px rgba(30, 58, 95, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(30, 58, 95, 0.1), 0 4px 6px -2px rgba(30, 58, 95, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(30, 58, 95, 0.1), 0 10px 10px -5px rgba(30, 58, 95, 0.04);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-main); color: #f8fafc; line-height: 1.6; }
+    body { 
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+      color: var(--text-primary); 
+      line-height: 1.6;
+      min-height: 100vh;
+    }
 
     /* HEADER */
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(2, 6, 23, 0.95); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #1e293b; }
-    .logo { color: var(--brand-primary); font-family: 'Outfit'; font-weight: 800; font-size: 1.3rem; text-transform: uppercase; letter-spacing: -0.5px; }
+    nav { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 20px 8%; 
+      background: rgba(255, 255, 255, 0.98); 
+      position: sticky; 
+      top: 0; 
+      z-index: 100; 
+      border-bottom: 2px solid var(--border-light);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-sm);
+    }
+    .logo { 
+      color: var(--brand-primary); 
+      font-family: 'Outfit'; 
+      font-weight: 800; 
+      font-size: 1.3rem; 
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo span { color: var(--brand-secondary); }
+    .logo-icon {
+      width: 35px;
+      height: 35px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    }
 
     /* SIGNUP BOX */
-    .main-content { padding: 60px 20px; display: flex; justify-content: center; background: radial-gradient(circle at top, #1e1b4b, #020617); min-height: 80vh; }
+    .main-content { 
+      padding: 60px 20px; 
+      display: flex; 
+      justify-content: center; 
+      background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+      min-height: 80vh;
+      position: relative;
+    }
+    .main-content::before {
+      content: '';
+      position: absolute;
+      top: 10%;
+      right: 10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.05) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .main-content::after {
+      content: '';
+      position: absolute;
+      bottom: 10%;
+      left: 10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(30, 58, 95, 0.05) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
     
     .signup-card { 
       background: var(--card-bg); 
@@ -35,17 +110,49 @@
       max-width: 480px; 
       border-radius: 28px; 
       padding: 45px; 
-      border: 1px solid #1e293b;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border: 2px solid var(--border-light);
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .signup-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--brand-primary), var(--brand-secondary), var(--brand-primary));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
-    .info-box { text-align: center; margin-bottom: 30px; padding: 20px; background: rgba(99, 102, 241, 0.05); border-radius: 18px; border: 1px dashed var(--brand-secondary); }
-    .info-box p { color: var(--text-dim); font-size: 14px; margin-bottom: 12px; }
+    .info-box { 
+      text-align: center; 
+      margin-bottom: 30px; 
+      padding: 20px; 
+      background: rgba(249, 115, 22, 0.05); 
+      border-radius: 18px; 
+      border: 2px dashed var(--brand-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+    .info-box p { 
+      color: var(--text-secondary); 
+      font-size: 14px; 
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
     .btn-info { 
-      background: var(--brand-secondary); 
+      background: linear-gradient(135deg, var(--brand-secondary), #ea580c);
       color: white; 
       border: none; 
-      padding: 10px 24px; 
+      padding: 12px 24px; 
       border-radius: 12px; 
       font-size: 13px; 
       font-weight: 700;
@@ -53,24 +160,44 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: 0.3s;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
     }
-    .btn-info:hover { background: #4f46e5; transform: scale(1.05); }
+    .btn-info:hover { 
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
+    }
 
     .form-group { margin-bottom: 22px; }
-    .form-group label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 600; color: #cbd5e1; }
+    .form-group label { 
+      display: block; 
+      margin-bottom: 10px; 
+      font-size: 14px; 
+      font-weight: 700; 
+      color: var(--brand-primary);
+    }
     .form-group input, .form-group select { 
       width: 100%; 
       padding: 16px; 
       border-radius: 14px; 
-      border: 1px solid #334155; 
+      border: 2px solid var(--border-light); 
       background: var(--input-bg); 
-      color: white; 
+      color: var(--text-primary); 
       font-size: 15px;
+      font-weight: 600;
       outline: none;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
-    .form-group input:focus, .form-group select:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+    .form-group input:focus, .form-group select:focus { 
+      border-color: var(--brand-secondary); 
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+      background: #ffffff;
+    }
+    .form-group input::placeholder {
+      color: var(--text-dim);
+      font-weight: 500;
+    }
 
     /* --- PASSWORD TOGGLE STYLES --- */
     .password-wrapper {
@@ -78,7 +205,7 @@
       width: 100%;
     }
     .password-wrapper input {
-      padding-right: 50px !important; /* Ensures typed text doesn't overlap the icon */
+      padding-right: 50px !important;
     }
     .toggle-password {
       position: absolute;
@@ -87,7 +214,7 @@
       transform: translateY(-50%);
       background: transparent;
       border: none;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       cursor: pointer;
       font-size: 16px;
       padding: 5px;
@@ -97,18 +224,40 @@
       transition: color 0.3s;
     }
     .toggle-password:hover {
-      color: var(--brand-primary);
+      color: var(--brand-secondary);
     }
     /* -------------------------------- */
 
-    .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin: 25px 0; font-size: 13px; color: var(--text-dim); }
-    .checkbox-group input { width: 18px; height: 18px; cursor: pointer; }
-    .checkbox-group a { color: var(--brand-primary); text-decoration: none; font-weight: 600; }
+    .checkbox-group { 
+      display: flex; 
+      align-items: flex-start; 
+      gap: 12px; 
+      margin: 25px 0; 
+      font-size: 13px; 
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .checkbox-group input { 
+      width: 18px; 
+      height: 18px; 
+      cursor: pointer;
+      accent-color: var(--brand-secondary);
+      flex-shrink: 0;
+    }
+    .checkbox-group a { 
+      color: var(--brand-secondary); 
+      text-decoration: none; 
+      font-weight: 700;
+      transition: color 0.3s;
+    }
+    .checkbox-group a:hover {
+      color: var(--brand-primary);
+    }
 
     .btn-signup { 
       width: 100%; 
-      background: var(--brand-primary); 
-      color: #020617; 
+      background: linear-gradient(135deg, var(--brand-secondary), #ea580c);
+      color: #ffffff; 
       padding: 18px; 
       border: none; 
       border-radius: 14px; 
@@ -116,36 +265,125 @@
       font-size: 16px; 
       cursor: pointer; 
       text-transform: uppercase;
-      transition: 0.3s;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
     }
-    .btn-signup:hover { background: #34d399; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
+    .btn-signup:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -5px rgba(249, 115, 22, 0.5);
+    }
 
-    .login-footer { text-align: center; margin-top: 25px; font-size: 14px; color: var(--text-dim); }
-    .login-footer a { color: var(--brand-primary); text-decoration: none; font-weight: 700; }
+    .login-footer { 
+      text-align: center; 
+      margin-top: 25px; 
+      font-size: 14px; 
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .login-footer a { 
+      color: var(--brand-primary); 
+      text-decoration: none; 
+      font-weight: 700;
+      transition: color 0.3s;
+    }
+    .login-footer a:hover {
+      color: var(--brand-secondary);
+    }
 
     /* FOOTER */
-    footer { background: #020617; padding: 80px 10% 40px; border-top: 1px solid #1e293b; }
-    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 50px; margin-bottom: 60px; }
-    .footer-col h4 { color: var(--brand-secondary); margin-bottom: 25px; font-size: 15px; text-transform: uppercase; font-family: 'Outfit'; }
+    footer { 
+      background: linear-gradient(135deg, var(--brand-primary), #2d5a87);
+      padding: 80px 10% 40px; 
+      border-top: 4px solid var(--brand-secondary);
+    }
+    .footer-content { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      gap: 50px; 
+      margin-bottom: 60px; 
+    }
+    .footer-col h4 { 
+      color: var(--brand-secondary); 
+      margin-bottom: 25px; 
+      font-size: 15px; 
+      text-transform: uppercase; 
+      font-family: 'Outfit';
+      font-weight: 700;
+    }
     .footer-col ul { list-style: none; }
-    .footer-col ul li { margin-bottom: 12px; color: var(--text-dim); font-size: 14px; transition: 0.3s; }
-    .footer-col ul li:hover { color: #fff; cursor: pointer; }
+    .footer-col ul li { 
+      margin-bottom: 12px; 
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px; 
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .footer-col ul li:hover { 
+      color: #fff;
+      transform: translateX(5px);
+    }
     
     .social-icons { display: flex; gap: 12px; margin-top: 25px; }
-    .social-icons i { background: #0f172a; padding: 12px; border-radius: 12px; color: var(--brand-primary); font-size: 16px; border: 1px solid #1e293b; transition: 0.3s; }
-    .social-icons i:hover { background: var(--brand-primary); color: #000; transform: translateY(-3px); }
+    .social-icons i { 
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px; 
+      border-radius: 12px; 
+      color: white;
+      font-size: 16px; 
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    .social-icons i:hover { 
+      background: var(--brand-secondary);
+      color: white;
+      transform: translateY(-3px);
+      border-color: var(--brand-secondary);
+    }
 
-    .bottom-bar { border-top: 1px solid #1e293b; padding-top: 40px; text-align: center; color: #475569; font-size: 12px; }
+    .bottom-bar { 
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 40px; 
+      text-align: center; 
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+    }
     
     /* WhatsApp Float */
-    .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; }
+    .wa-float { 
+      position: fixed; 
+      bottom: 30px; 
+      right: 30px; 
+      background: #25D366; 
+      color: white; 
+      width: 60px; 
+      height: 60px; 
+      border-radius: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 30px; 
+      box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+      z-index: 1000; 
+      text-decoration: none;
+      transition: all 0.3s ease;
+      animation: waPulse 2s ease-in-out infinite;
+    }
+    @keyframes waPulse {
+      0%, 100% { box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); }
+      50% { box-shadow: 0 10px 40px rgba(37, 211, 102, 0.6); }
+    }
+    .wa-float:hover {
+      transform: scale(1.1) rotate(10deg);
+    }
 
     /* --- TERMS OF SERVICE MODAL STYLES --- */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.85);
+      background: rgba(30, 58, 95, 0.85);
       backdrop-filter: blur(5px);
       z-index: 10000;
       align-items: center;
@@ -159,8 +397,8 @@
       max-width: 600px;
       max-height: 80vh;
       border-radius: 24px;
-      border: 1px solid #1e293b;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      border: 2px solid var(--brand-primary);
+      box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -172,14 +410,20 @@
     }
     .modal-header {
       padding: 25px 30px;
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 2px solid var(--border-light);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: var(--bg-soft);
     }
-    .modal-header h3 { font-family: 'Outfit'; color: #fff; font-size: 1.4rem; }
+    .modal-header h3 { 
+      font-family: 'Outfit'; 
+      color: var(--brand-primary);
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
     .modal-close {
-      background: #1e293b;
+      background: var(--brand-primary);
       border: none;
       color: #fff;
       width: 35px;
@@ -192,27 +436,59 @@
       justify-content: center;
       transition: 0.3s;
     }
-    .modal-close:hover { background: #ef4444; }
+    .modal-close:hover { 
+      background: #ef4444;
+      transform: rotate(90deg);
+    }
     .modal-body {
       padding: 30px;
       overflow-y: auto;
-      color: var(--text-dim);
+      color: var(--text-secondary);
       font-size: 14px;
       line-height: 1.8;
+      background: #ffffff;
     }
     .modal-body h4 {
       color: var(--brand-primary);
       margin: 20px 0 10px;
       font-size: 16px;
+      font-weight: 700;
+    }
+    .modal-body p {
+      margin-bottom: 12px;
+    }
+    .modal-body strong {
+      color: var(--brand-primary);
     }
     /* --------------------------------------- */
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 15px 20px; }
+      .main-content { padding: 40px 15px; }
+      .signup-card { padding: 30px 25px; }
+      footer { padding: 60px 20px 30px; }
+      .footer-content { gap: 30px; }
+    }
+
+    @media (max-width: 480px) {
+      .signup-card { padding: 25px 20px; }
+      .form-group input, .form-group select { padding: 14px; font-size: 14px; }
+      .btn-signup { padding: 16px; font-size: 15px; }
+      .wa-float { bottom: 20px; right: 20px; width: 55px; height: 55px; font-size: 26px; }
+    }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">UNASEMEJE Ø DIA</div>
-  <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 24px;"><i class="fab fa-whatsapp"></i></a>
+  <div class="logo">
+    <div class="logo-icon">U</div>
+    <span>Unasemeje</span> SMM Gains
+  </div>
+  <a href="https://wa.me/254715509440" style="color: #25D366; font-size: 24px; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+    <i class="fab fa-whatsapp"></i>
+  </a>
 </nav>
 
 <section class="main-content">
@@ -306,8 +582,10 @@
 <footer>
   <div class="footer-content">
     <div class="footer-col">
-      <div class="logo" style="margin-bottom: 25px;">UNASEMEJE Ø DIA</div>
-      <p style="font-size: 13px; color: var(--text-dim); line-height: 1.8;">
+      <div class="logo" style="margin-bottom: 25px; color: white;">
+        <span>Unasemeje</span> SMM Gains
+      </div>
+      <p style="font-size: 13px; color: rgba(255, 255, 255, 0.7); line-height: 1.8;">
         Building authentic digital growth across Kenya. We provide secure, human-verified SMM services for creators who value safety and real results.
       </p>
       <div class="social-icons">
@@ -324,15 +602,15 @@
     <div class="footer-col">
       <h4>Verified Support</h4>
       <ul>
-        <li><i class="fas fa-location-dot" style="color:var(--brand-primary); margin-right:10px;"></i> Nairobi, Kenya</li>
-        <li><i class="fas fa-phone" style="color:var(--brand-primary); margin-right:10px;"></i> +254 715 509 440</li>
-        <li><i class="fas fa-envelope" style="color:var(--brand-primary); margin-right:10px;"></i> support@unasemeje.co.ke</li>
+        <li><i class="fas fa-location-dot" style="color:var(--brand-secondary); margin-right:10px;"></i> Nairobi, Kenya</li>
+        <li><i class="fas fa-phone" style="color:var(--brand-secondary); margin-right:10px;"></i> +254 715 509 440</li>
+        <li><i class="fas fa-envelope" style="color:var(--brand-secondary); margin-right:10px;"></i> support@unasemeje.co.ke</li>
       </ul>
     </div>
   </div>
   <div class="bottom-bar">
-    © 2026 unasemeje ø dia | Secure Kenyan SMM Solutions.
-    <p style="font-size: 10px; margin-top: 10px; color: #334155;">We use manual verification for all new accounts to maintain network integrity.</p>
+    © 2026 Unasemeje SMM Gains | Secure Kenyan SMM Solutions.
+    <p style="font-size: 10px; margin-top: 10px; color: rgba(255, 255, 255, 0.5);">We use manual verification for all new accounts to maintain network integrity.</p>
   </div>
 </footer>
 
@@ -345,7 +623,7 @@
     </div>
     <div class="modal-body">
       <p><strong>Last Updated:</strong> June 2026</p>
-      <p>Welcome to UNASEMEJE Ø DIA. By creating an account and using our platform, you agree to be bound by the following terms:</p>
+      <p>Welcome to Unasemeje SMM Gains. By creating an account and using our platform, you agree to be bound by the following terms:</p>
       
       <h4>1. Instant Account Creation</h4>
       <p>Accounts are created and activated instantly upon successful registration. By checking the agreement box, you legally confirm that you are a real human user and not an automated bot, script, or spam account.</p>
