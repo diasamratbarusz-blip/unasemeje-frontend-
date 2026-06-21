@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Select Platform | Unasemeje SMM Gains</title>
+    <title>All Services | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -92,7 +92,7 @@
             position: relative;
         }
         
-        .header-section { margin-bottom: 40px; }
+        .header-section { margin-bottom: 30px; }
         .header-section h1 { 
             font-weight: 800; 
             font-size: 32px; 
@@ -102,94 +102,186 @@
         .header-section h1 span { color: var(--secondary); }
         .header-section p { color: var(--text-dim); margin-top: 10px; font-size: 16px; }
 
-        /* PLATFORM GRID */
-        .platform-grid {
+        /* FILTER TABS */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: var(--bg-soft);
+            border-radius: 16px;
+            border: 2px solid var(--border-light);
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            border: 2px solid var(--border-light);
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-tab:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+
+        .filter-tab i {
+            font-size: 16px;
+        }
+
+        /* SERVICES GRID */
+        .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
             width: 100%;
         }
 
-        .platform-card {
+        .service-card {
             background: var(--card-bg);
             border: 2px solid var(--border-light);
-            border-radius: 24px;
-            padding: 40px 20px;
-            text-align: center;
+            border-radius: 20px;
+            padding: 25px;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
         }
 
-        .platform-card::before {
+        .service-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(249, 115, 22, 0.03));
-            z-index: 0;
-            transition: all 0.4s ease;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--secondary), var(--primary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .platform-card:hover {
-            transform: translateY(-10px);
+        .service-card:hover {
+            transform: translateY(-5px);
             border-color: var(--secondary);
-            box-shadow: 0 20px 40px rgba(30, 58, 95, 0.15);
+            box-shadow: 0 15px 35px rgba(30, 58, 95, 0.12);
         }
 
-        .platform-card:hover::before {
-            background: linear-gradient(45deg, transparent, rgba(249, 115, 22, 0.08));
+        .service-card:hover::before {
+            opacity: 1;
         }
 
-        .platform-card i {
-            font-size: 48px;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-            transition: all 0.3s ease;
+        .service-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
         }
 
-        .platform-card:hover i {
-            transform: scale(1.1);
-        }
-
-        .platform-card span {
-            font-weight: 800;
-            font-size: 18px;
-            position: relative;
-            z-index: 1;
-            letter-spacing: 0.5px;
+        .service-platform {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
             color: var(--primary);
         }
 
+        .service-platform i {
+            font-size: 20px;
+        }
+
+        .service-price {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .service-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .service-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .service-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .service-detail i {
+            color: var(--secondary);
+            font-size: 14px;
+            width: 16px;
+        }
+
+        .service-detail strong {
+            color: var(--text-main);
+        }
+
+        .order-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #2d5a87);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .order-btn:hover {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+        }
+
         /* PLATFORM COLORS */
-        .fa-tiktok { color: #ff0050; filter: drop-shadow(0 0 10px rgba(255, 0, 80, 0.3)); }
-        .fa-instagram { color: #e1306c; filter: drop-shadow(0 0 10px rgba(225, 48, 108, 0.3)); }
-        .fa-facebook { color: #1877f2; filter: drop-shadow(0 0 10px rgba(24, 119, 242, 0.3)); }
-        .fa-youtube { color: #ff0000; filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.3)); }
-        .fa-telegram { color: #0088cc; filter: drop-shadow(0 0 10px rgba(0, 136, 204, 0.3)); }
-        .fa-twitter { color: #1da1f2; filter: drop-shadow(0 0 10px rgba(29, 161, 242, 0.3)); }
+        .platform-tiktok { color: #ff0050; }
+        .platform-instagram { color: #e1306c; }
+        .platform-facebook { color: #1877f2; }
+        .platform-youtube { color: #ff0000; }
+        .platform-telegram { color: #0088cc; }
+        .platform-twitter { color: #1da1f2; }
 
         /* LARGE DESKTOP */
         @media (min-width: 1400px) {
-            .platform-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            .services-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
                 gap: 25px;
-            }
-            .platform-card {
-                padding: 50px 25px;
-            }
-            .platform-card i {
-                font-size: 56px;
-            }
-            .platform-card span {
-                font-size: 20px;
             }
         }
 
@@ -197,7 +289,7 @@
         @media (max-width: 1024px) and (min-width: 769px) {
             .sidebar { width: 220px; padding: 20px; }
             .main { margin-left: 220px; padding: 30px; width: calc(100% - 220px); }
-            .platform-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
+            .services-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
             .header-section h1 { font-size: 28px; }
         }
 
@@ -344,20 +436,28 @@
                 width: 100% !important;
             }
 
-            .header-section { margin-bottom: 25px !important; }
+            .header-section { margin-bottom: 20px !important; }
             .header-section h1 { font-size: 24px !important; }
             .header-section p { font-size: 14px !important; }
 
-            .platform-grid { 
-                grid-template-columns: repeat(2, 1fr) !important; 
+            .filter-tabs {
+                padding: 15px;
+                gap: 8px;
+            }
+
+            .filter-tab {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .services-grid { 
+                grid-template-columns: 1fr !important; 
                 gap: 15px !important; 
             }
-            .platform-card { 
-                padding: 30px 15px !important; 
-                border-radius: 20px !important;
+
+            .service-card {
+                padding: 20px;
             }
-            .platform-card i { font-size: 40px !important; margin-bottom: 15px !important; }
-            .platform-card span { font-size: 16px !important; }
 
             /* 10. Adjust floating elements so they don't overlap the new bottom bar */
             #chatToggleBtn {
@@ -390,16 +490,29 @@
             .main { padding: 20px 12px 12px !important; margin-bottom: 115px !important; }
             .header-section h1 { font-size: 22px !important; }
             .header-section p { font-size: 13px !important; }
-            .platform-grid { 
-                grid-template-columns: repeat(2, 1fr) !important; 
+
+            .filter-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .filter-tab {
+                flex-shrink: 0;
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            .services-grid { 
+                grid-template-columns: 1fr !important; 
                 gap: 12px !important; 
             }
-            .platform-card { 
-                padding: 25px 12px !important; 
-                border-radius: 18px !important;
+            .service-card { 
+                padding: 18px !important; 
+                border-radius: 16px !important;
             }
-            .platform-card i { font-size: 36px !important; margin-bottom: 12px !important; }
-            .platform-card span { font-size: 14px !important; }
+            .service-name { font-size: 15px !important; }
+            .service-price { font-size: 13px !important; }
 
             .sidebar { min-height: 60px !important; }
             .sidebar .sidebar-nav a:not(.utility-link) i { font-size: 18px !important; }
@@ -431,15 +544,15 @@
         @media (max-width: 360px) {
             .main { padding: 18px 10px 10px !important; margin-bottom: 110px !important; }
             .header-section h1 { font-size: 20px !important; }
-            .platform-grid { 
+
+            .services-grid { 
                 grid-template-columns: 1fr !important; 
                 gap: 12px !important; 
             }
-            .platform-card { 
-                padding: 25px 15px !important; 
+            .service-card { 
+                padding: 16px !important; 
             }
-            .platform-card i { font-size: 32px !important; }
-            .platform-card span { font-size: 15px !important; }
+            .service-name { font-size: 14px !important; }
 
             .sidebar { min-height: 58px !important; }
             .sidebar .sidebar-nav a:not(.utility-link) i { font-size: 16px !important; }
@@ -473,7 +586,8 @@
         <h2>Unasemeje <span>SMM Gains</span></h2>
         <div class="sidebar-nav">
             <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="platform.html" class="active"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+            <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+            <a href="all-services.html" class="active"><i class="fas fa-th-large"></i> <span>All Services</span></a>
             <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
             <a href="services.html"><i class="fas fa-list"></i> <span>Services</span></a>
             <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
@@ -493,40 +607,38 @@
 
     <div class="main">
         <div class="header-section">
-            <h1>Select <span>Platform</span></h1>
-            <p>Step 1: Choose a platform to start your growth journey.</p>
+            <h1>All <span>Services</span></h1>
+            <p>Browse all available services across all platforms in one place.</p>
         </div>
 
-        <div class="platform-grid">
-            <a href="new-order.html?platform=TikTok" class="platform-card">
-                <i class="fab fa-tiktok"></i>
-                <span>TikTok</span>
-            </a>
+        <!-- FILTER TABS -->
+        <div class="filter-tabs">
+            <div class="filter-tab active" onclick="filterServices('all')">
+                <i class="fas fa-th"></i> All Services
+            </div>
+            <div class="filter-tab" onclick="filterServices('tiktok')">
+                <i class="fab fa-tiktok platform-tiktok"></i> TikTok
+            </div>
+            <div class="filter-tab" onclick="filterServices('instagram')">
+                <i class="fab fa-instagram platform-instagram"></i> Instagram
+            </div>
+            <div class="filter-tab" onclick="filterServices('facebook')">
+                <i class="fab fa-facebook platform-facebook"></i> Facebook
+            </div>
+            <div class="filter-tab" onclick="filterServices('youtube')">
+                <i class="fab fa-youtube platform-youtube"></i> YouTube
+            </div>
+            <div class="filter-tab" onclick="filterServices('telegram')">
+                <i class="fab fa-telegram platform-telegram"></i> Telegram
+            </div>
+            <div class="filter-tab" onclick="filterServices('twitter')">
+                <i class="fab fa-twitter platform-twitter"></i> Twitter
+            </div>
+        </div>
 
-            <a href="new-order.html?platform=Instagram" class="platform-card">
-                <i class="fab fa-instagram"></i>
-                <span>Instagram</span>
-            </a>
-
-            <a href="new-order.html?platform=Facebook" class="platform-card">
-                <i class="fab fa-facebook"></i>
-                <span>Facebook</span>
-            </a>
-
-            <a href="new-order.html?platform=YouTube" class="platform-card">
-                <i class="fab fa-youtube"></i>
-                <span>YouTube</span>
-            </a>
-
-            <a href="new-order.html?platform=Telegram" class="platform-card">
-                <i class="fab fa-telegram"></i>
-                <span>Telegram</span>
-            </a>
-
-            <a href="new-order.html?platform=Twitter" class="platform-card">
-                <i class="fab fa-twitter"></i>
-                <span>Twitter / X</span>
-            </a>
+        <!-- SERVICES GRID -->
+        <div class="services-grid" id="servicesGrid">
+            <!-- Services will be loaded dynamically -->
         </div>
     </div>
 
@@ -682,6 +794,97 @@
             localStorage.clear();
             window.location.href = "login.html";
         }
+
+        // Sample services data (replace with actual API call)
+        const allServices = [
+            // TikTok Services
+            { id: 1, platform: 'tiktok', name: 'TikTok Followers', price: 'KES 150', min: 100, max: 10000, delivery: 'Instant - 24 hours', icon: 'fa-tiktok' },
+            { id: 2, platform: 'tiktok', name: 'TikTok Views', price: 'KES 50', min: 1000, max: 1000000, delivery: 'Instant', icon: 'fa-tiktok' },
+            { id: 3, platform: 'tiktok', name: 'TikTok Likes', price: 'KES 100', min: 100, max: 50000, delivery: '1-6 hours', icon: 'fa-tiktok' },
+            
+            // Instagram Services
+            { id: 4, platform: 'instagram', name: 'Instagram Followers', price: 'KES 200', min: 100, max: 50000, delivery: 'Instant - 24 hours', icon: 'fa-instagram' },
+            { id: 5, platform: 'instagram', name: 'Instagram Likes', price: 'KES 80', min: 50, max: 20000, delivery: 'Instant', icon: 'fa-instagram' },
+            { id: 6, platform: 'instagram', name: 'Instagram Views', price: 'KES 60', min: 1000, max: 500000, delivery: 'Instant', icon: 'fa-instagram' },
+            
+            // Facebook Services
+            { id: 7, platform: 'facebook', name: 'Facebook Page Likes', price: 'KES 250', min: 100, max: 10000, delivery: '1-3 days', icon: 'fa-facebook' },
+            { id: 8, platform: 'facebook', name: 'Facebook Post Likes', price: 'KES 100', min: 100, max: 5000, delivery: 'Instant - 24 hours', icon: 'fa-facebook' },
+            
+            // YouTube Services
+            { id: 9, platform: 'youtube', name: 'YouTube Subscribers', price: 'KES 300', min: 100, max: 10000, delivery: '3-7 days', icon: 'fa-youtube' },
+            { id: 10, platform: 'youtube', name: 'YouTube Views', price: 'KES 150', min: 1000, max: 100000, delivery: '1-3 days', icon: 'fa-youtube' },
+            
+            // Telegram Services
+            { id: 11, platform: 'telegram', name: 'Telegram Members', price: 'KES 180', min: 100, max: 50000, delivery: 'Instant - 24 hours', icon: 'fa-telegram' },
+            { id: 12, platform: 'telegram', name: 'Telegram Views', price: 'KES 40', min: 1000, max: 1000000, delivery: 'Instant', icon: 'fa-telegram' },
+            
+            // Twitter Services
+            { id: 13, platform: 'twitter', name: 'Twitter Followers', price: 'KES 220', min: 100, max: 20000, delivery: '1-3 days', icon: 'fa-twitter' },
+            { id: 14, platform: 'twitter', name: 'Twitter Likes', price: 'KES 120', min: 100, max: 10000, delivery: 'Instant - 24 hours', icon: 'fa-twitter' },
+        ];
+
+        let currentFilter = 'all';
+
+        function filterServices(platform) {
+            currentFilter = platform;
+            
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.closest('.filter-tab').classList.add('active');
+            
+            renderServices();
+        }
+
+        function renderServices() {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            
+            const filtered = currentFilter === 'all' 
+                ? allServices 
+                : allServices.filter(s => s.platform === currentFilter);
+            
+            filtered.forEach(service => {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.innerHTML = `
+                    <div class="service-header">
+                        <div class="service-platform">
+                            <i class="fab ${service.icon} platform-${service.platform}"></i>
+                            <span>${service.platform.charAt(0).toUpperCase() + service.platform.slice(1)}</span>
+                        </div>
+                        <div class="service-price">${service.price}</div>
+                    </div>
+                    <div class="service-name">${service.name}</div>
+                    <div class="service-details">
+                        <div class="service-detail">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Min: <strong>${service.min}</strong> | Max: <strong>${service.max}</strong></span>
+                        </div>
+                        <div class="service-detail">
+                            <i class="fas fa-clock"></i>
+                            <span>Delivery: <strong>${service.delivery}</strong></span>
+                        </div>
+                    </div>
+                    <button class="order-btn" onclick="orderService(${service.id})">
+                        <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i>Order Now
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function orderService(serviceId) {
+            const service = allServices.find(s => s.id === serviceId);
+            if (service) {
+                window.location.href = `new-order.html?platform=${service.platform}&service=${serviceId}`;
+            }
+        }
+
+        // Initialize
+        renderServices();
 
         // ==========================================
         // AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
