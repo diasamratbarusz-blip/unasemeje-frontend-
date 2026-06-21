@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard | UNASEMEJE </title>
+    <title>Dashboard | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
@@ -11,6 +11,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ========================================= */
+        /* NEW PROFESSIONAL WHITE THEME OVERRIDES    */
+        /* ========================================= */
+        :root {
+            --primary: #1e3a5f !important;
+            --secondary: #f97316 !important;
+            --bg-main: #ffffff !important;
+            --card-bg: #ffffff !important;
+            --text-dim: #64748b !important;
+            --danger: #ef4444 !important;
+            --warning: #f97316 !important;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%) !important;
+            color: #1e293b !important;
+        }
+
+        .dashboard {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%) !important;
+        }
+
         /* ========================================= */
         /* GLOBAL RESPONSIVE FIXES                   */
         /* ========================================= */
@@ -35,12 +57,21 @@
             max-width: 100% !important;
             overflow-wrap: break-word !important;
             word-wrap: break-word !important;
+            background: #ffffff !important;
+            border: 2px solid #e2e8f0 !important;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08) !important;
+            color: #1e293b !important;
         }
 
-        /* Moving Ticker Styling - Speed is now controlled dynamically via JS */
+        .card:hover {
+            box-shadow: 0 10px 30px rgba(30, 58, 95, 0.12) !important;
+            border-color: #1e3a5f !important;
+        }
+
+        /* Moving Ticker Styling - Professional White Theme */
         .top-ticker {
-            background: #000;
-            border-bottom: 2px solid var(--primary);
+            background: #1e3a5f !important;
+            border-bottom: 3px solid #f97316 !important;
             overflow: hidden;
             height: 45px;
             display: flex;
@@ -59,18 +90,137 @@
         }
         .ticker-item {
             display: inline-block;
-            color: #fff;
+            color: #ffffff !important;
             font-weight: 600;
             font-size: 13px;
             padding-right: 60px;
         }
         .ticker-item span {
-            color: var(--primary);
+            color: #f97316 !important;
             font-weight: 800;
         }
         @keyframes marquee {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
+        }
+
+        /* Sidebar Styling - White Theme */
+        .sidebar {
+            background: #ffffff !important;
+            border-right: 2px solid #e2e8f0 !important;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.08) !important;
+        }
+
+        .sidebar h2 {
+            color: #1e3a5f !important;
+        }
+
+        .sidebar .sidebar-nav a {
+            color: #1e293b !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .sidebar .sidebar-nav a:hover {
+            background: rgba(249, 115, 22, 0.1) !important;
+            color: #f97316 !important;
+        }
+
+        .sidebar .sidebar-nav a.active {
+            background: linear-gradient(135deg, #f97316, #ea580c) !important;
+            color: #ffffff !important;
+        }
+
+        .sidebar .sidebar-nav a.active i,
+        .sidebar .sidebar-nav a.active span {
+            color: #ffffff !important;
+        }
+
+        .sidebar .sidebar-nav a:not(.utility-link) i {
+            color: #64748b !important;
+        }
+
+        .sidebar .sidebar-nav a:not(.utility-link):hover i {
+            color: #f97316 !important;
+        }
+
+        .sidebar .sidebar-nav a.utility-link.ai-support {
+            color: #f97316 !important;
+        }
+
+        .sidebar .sidebar-nav a.utility-link.whatsapp-help {
+            color: #25d366 !important;
+        }
+
+        /* Main Content Area */
+        .main {
+            background: transparent !important;
+        }
+
+        .main .card h3 {
+            color: #1e3a5f !important;
+        }
+
+        .main .card p {
+            color: #64748b !important;
+        }
+
+        .price-display {
+            background: linear-gradient(135deg, #1e3a5f, #2d5a87) !important;
+            color: #ffffff !important;
+        }
+
+        /* Grow Your Brand Card */
+        .main > .card:nth-child(2) {
+            background: linear-gradient(135deg, #1e3a5f, #2d5a87) !important;
+            border: none !important;
+            color: #ffffff !important;
+        }
+
+        .main > .card:nth-child(2) h2 {
+            color: #ffffff !important;
+        }
+
+        .main > .card:nth-child(2) p {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .main > .card:nth-child(2) button {
+            background: #f97316 !important;
+            color: #ffffff !important;
+        }
+
+        .main > .card:nth-child(2) button:hover {
+            background: #ea580c !important;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #f97316, #ea580c) !important;
+            color: #ffffff !important;
+            border: none !important;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c) !important;
+        }
+
+        .btn-secondary {
+            background: #1e3a5f !important;
+            color: #ffffff !important;
+        }
+
+        .btn-secondary:hover {
+            background: #2d5a87 !important;
+        }
+
+        /* System Status Card */
+        .main .card div[style*="border-left: 4px solid"] {
+            border-left: 4px solid #f97316 !important;
+            background: rgba(249, 115, 22, 0.08) !important;
+        }
+
+        .main .card div[style*="border-left: 4px solid"] small {
+            color: #f97316 !important;
         }
 
         /* ========================================= */
@@ -101,11 +251,11 @@
                 flex-direction: column !important;
                 padding: 0 !important;
                 border-right: none !important;
-                border-top: 1px solid rgba(255,255,255,0.1) !important;
+                border-top: 2px solid #e2e8f0 !important;
                 z-index: 1000 !important;
-                background: rgba(17, 24, 39, 0.98) !important;
+                background: rgba(255, 255, 255, 0.98) !important;
                 backdrop-filter: blur(10px) !important;
-                box-shadow: 0 -4px 15px rgba(0,0,0,0.3) !important;
+                box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1) !important;
                 transition: transform 0.3s ease-in-out !important; 
             }
 
@@ -160,7 +310,7 @@
                 flex-direction: row !important;
                 padding: 10px 20px !important;
                 gap: 8px !important;
-                border-top: 1px solid rgba(255,255,255,0.05) !important;
+                border-top: 1px solid #e2e8f0 !important;
                 width: 100% !important;
                 justify-content: center !important;
             }
@@ -177,10 +327,10 @@
 
             /* AI Support specific styling */
             .sidebar .sidebar-nav a.utility-link.ai-support {
-                color: var(--secondary) !important;
+                color: #f97316 !important;
             }
             .sidebar .sidebar-nav a.utility-link.ai-support i {
-                color: var(--secondary) !important;
+                color: #f97316 !important;
             }
 
             /* WhatsApp specific styling */
@@ -195,16 +345,16 @@
             .sidebar .sidebar-nav a:not(.utility-link) i {
                 font-size: 20px !important;
                 margin: 0 !important;
-                color: #9ca3af !important;
+                color: #64748b !important;
             }
             
             /* ✨ ACTIVE STATE STYLING */
             .sidebar .sidebar-nav a.active i {
-                color: var(--primary) !important;
+                color: #f97316 !important;
                 transform: scale(1.1) !important;
             }
             .sidebar .sidebar-nav a.active span {
-                color: var(--primary) !important;
+                color: #f97316 !important;
                 font-weight: 700 !important;
             }
 
@@ -212,7 +362,7 @@
             .sidebar .sidebar-nav a:not(.utility-link) span {
                 font-size: 10px !important;
                 font-weight: 500 !important;
-                color: #9ca3af !important;
+                color: #64748b !important;
                 margin: 0 !important;
                 white-space: nowrap !important;
                 overflow: hidden !important;
@@ -569,7 +719,7 @@
 
 <div class="dashboard">
     <div class="sidebar">
-        <h2 style="font-family: 'Plus Jakarta Sans';">unasemeje ø dia</h2>
+        <h2 style="font-family: 'Plus Jakarta Sans';">Unasemeje SMM Gains</h2>
         <div class="sidebar-nav" id="sidebarNav">
             <a href="dashboard.html" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
             <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
@@ -583,8 +733,8 @@
             <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
         </div>
         
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <a onclick="logout()" style="color: var(--danger); cursor: pointer; display: flex; align-items: center; gap: 10px;">
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px;">
                 <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
             </a>
         </div>
@@ -593,44 +743,44 @@
     <div class="main">
         <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; flex-wrap: wrap; gap: 15px;">
             <div>
-                <small style="color: var(--text-dim); display: block;">Welcome back,</small>
-                <span id="userName" style="font-weight: 800; font-size: 20px;">---</span>
+                <small style="color: #64748b; display: block;">Welcome back,</small>
+                <span id="userName" style="font-weight: 800; font-size: 20px; color: #1e3a5f;">---</span>
             </div>
             <div class="price-display" style="margin: 0; padding: 12px 25px; border-radius: 15px;">
-                <small style="display: block; font-size: 11px; opacity: 0.8;">Wallet Balance</small>
+                <small style="display: block; font-size: 11px; opacity: 0.9;">Wallet Balance</small>
                 <b id="userBalance" style="font-size: 18px;">KES 0.00</b>
             </div>
         </div>
 
-        <div class="card" style="background: linear-gradient(135deg, var(--primary), #4c1d95); border: none; color: white;">
+        <div class="card" style="background: linear-gradient(135deg, #1e3a5f, #2d5a87); border: none; color: white;">
             <h2 style="margin-bottom: 10px;">Grow Your Brand 🚀</h2>
             <p style="opacity: 0.9; font-size: 14px;">Stop being a 'Silent Listener'. Spend some <b>Mang'ondo</b> today and become the Head Boy/Girl of these digital streets!</p>
-            <button onclick="window.location.href='platform.html'" class="btn-secondary" style="width: auto; margin-top: 20px; padding: 12px 35px; background: white; color: var(--primary); font-weight: 800; border-radius: 10px; border: none; cursor: pointer;">
+            <button onclick="window.location.href='platform.html'" class="btn-secondary" style="width: auto; margin-top: 20px; padding: 12px 35px; background: #f97316; color: #ffffff; font-weight: 800; border-radius: 10px; border: none; cursor: pointer;">
                 START BOOSTING
             </button>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 20px;">
             <div class="card">
-                <h3><i class="fas fa-chart-line" style="color: var(--primary);"></i> Account Stats</h3>
+                <h3><i class="fas fa-chart-line" style="color: #f97316;"></i> Account Stats</h3>
                 <div style="display: flex; justify-content: space-between; margin-top: 25px; flex-wrap: wrap; gap: 15px;">
                     <div style="text-align: left;">
-                        <small style="color: var(--text-dim);">Total Spent</small>
-                        <p id="totalSpent" style="font-weight: 800; font-size: 22px; margin-top: 5px; color: var(--primary);">KES 0.00</p>
+                        <small style="color: #64748b;">Total Spent</small>
+                        <p id="totalSpent" style="font-weight: 800; font-size: 22px; margin-top: 5px; color: #f97316;">KES 0.00</p>
                     </div>
                     <div style="text-align: right;">
-                        <small style="color: var(--text-dim);">Active Orders</small>
-                        <p id="activeOrders" style="font-weight: 800; font-size: 22px; margin-top: 5px;">0</p>
+                        <small style="color: #64748b;">Active Orders</small>
+                        <p id="activeOrders" style="font-weight: 800; font-size: 22px; margin-top: 5px; color: #1e3a5f;">0</p>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-bell" style="color: var(--warning);"></i> System Status</h3>
+                <h3><i class="fas fa-bell" style="color: #f97316;"></i> System Status</h3>
                 <div style="margin-top: 15px;">
-                    <div style="padding: 12px; border-left: 4px solid var(--secondary); background: rgba(16, 185, 129, 0.08); border-radius: 0 10px 10px 0;">
-                        <small style="color: var(--secondary); font-weight: 800;">AUTO-VERIFY ACTIVE</small>
-                        <p style="font-size: 13px; margin-top: 5px; color: var(--text-dim);">M-Pesa deposits are processed instantly. Mwaga ganji, uone maajabu!</p>
+                    <div style="padding: 12px; border-left: 4px solid #f97316; background: rgba(249, 115, 22, 0.08); border-radius: 0 10px 10px 0;">
+                        <small style="color: #f97316; font-weight: 800;">AUTO-VERIFY ACTIVE</small>
+                        <p style="font-size: 13px; margin-top: 5px; color: #64748b;">M-Pesa deposits are processed instantly. Mwaga ganji, uone maajabu!</p>
                     </div>
                 </div>
             </div>
@@ -661,7 +811,7 @@
                 });
                 tickerContent.innerHTML = html + html; 
             } else {
-                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
                 tickerContent.innerHTML = fallback + fallback;
             }
             
@@ -671,7 +821,7 @@
         } catch (err) {
             console.error("Failed to load top ticker:", err);
             const tickerContent = document.getElementById('tickerContent');
-            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM:</span> Welcome to the Ultimate Plug!</div>`;
+            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
             tickerContent.innerHTML = fallback + fallback;
         }
     }
@@ -721,14 +871,14 @@
         
         notification.style = `
             position: fixed; bottom: ${isMobile ? (isNavHidden ? '35px' : '140px') : '20px'}; right: 20px; left: 20px; max-width: calc(100% - 40px);
-            background: #1a1a1a; color: white; border-left: 4px solid #38bdf8;
-            padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #ffffff; color: #1e293b; border-left: 4px solid #f97316;
+            padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(30, 58, 95, 0.15);
             z-index: 10000; font-family: 'Plus Jakarta Sans'; font-size: 13px;
             animation: slideIn 0.5s ease-out; box-sizing: border-box; word-wrap: break-word; overflow-wrap: break-word;
-            transition: bottom 0.3s ease-in-out;
+            transition: bottom 0.3s ease-in-out; border: 2px solid #e2e8f0;
         `;
         
-        notification.innerHTML = `✅ <b>${randomName}</b> just ordered <b>${randomService}</b>!`;
+        notification.innerHTML = `✅ <b style="color: #1e3a5f;">${randomName}</b> just ordered <b style="color: #f97316;">${randomService}</b>!`;
         document.body.appendChild(notification);
 
         setTimeout(() => {
@@ -835,7 +985,7 @@
 </style>
 
 <!-- 2. FLOATING ACTION BUTTON (CHAT TOGGLE) -->
-<button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: var(--primary);">
+<button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: #f97316;">
     <!-- Chat Icon -->
     <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -850,7 +1000,7 @@
 <div id="chatWindow" class="fixed bottom-24 right-6 z-50 w-[90vw] bg-white rounded-3xl shadow-2xl border border-gray-100 flex-col hidden scale-95 opacity-0" style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none;">
     
     <!-- Chat Header -->
-    <div class="p-4 rounded-t-3xl flex justify-between items-center shadow-md text-white" style="background-color: var(--primary);">
+    <div class="p-4 rounded-t-3xl flex justify-between items-center shadow-md text-white" style="background-color: #1e3a5f;">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
@@ -892,7 +1042,7 @@
                 type="submit" 
                 id="chatSendBtn"
                 class="text-white p-2.5 rounded-xl hover:opacity-90 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                style="background-color: var(--primary);"
+                style="background-color: #f97316;"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -986,7 +1136,7 @@
             const bubble = document.createElement('div');
             if (sender === 'user') {
                 bubble.className = 'text-white px-4 py-2.5 rounded-2xl rounded-br-sm max-w-[85%] text-sm shadow-md break-words';
-                bubble.style.backgroundColor = 'var(--primary)';
+                bubble.style.backgroundColor = '#1e3a5f';
             } else {
                 bubble.className = 'bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-bl-sm max-w-[85%] text-sm shadow-sm border border-gray-100 break-words';
             }
