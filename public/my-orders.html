@@ -6,7 +6,7 @@
     <title>My Orders | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         /* ========================================= */
@@ -20,29 +20,33 @@
             --text-main: #1e293b;
             --text-dim: #64748b;
             --danger: #ef4444;
-            --warning: #f97316;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --info: #6366f1;
             --border-color: #e2e8f0;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        body { 
-            margin: 0; 
+        body {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
-            color: var(--text-main); 
+            color: var(--text-main);
             font-family: 'Plus Jakarta Sans', sans-serif;
-            display: flex;
             overflow-x: hidden;
-        }
-        
-        td, th, p, h1, h2, h3, span, div {
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            line-height: 1.6;
         }
 
         /* ========================================= */
-        /* IMPORTANT WARNING BANNER STYLES           */
+        /* STICKY TOP HEADER (INSTRUCTIONS & TICKER) */
         /* ========================================= */
+        .sticky-header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
         .warning-banner {
             background: linear-gradient(90deg, #dc2626, #ef4444);
             color: white;
@@ -50,10 +54,6 @@
             text-align: center;
             font-weight: 600;
             font-size: 14px;
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -61,10 +61,289 @@
             flex-wrap: wrap;
         }
         .warning-banner i { color: #fbbf24; font-size: 16px; }
-        .warning-banner a { color: #fbbf24; text-decoration: underline; font-weight: 700; cursor: pointer; margin-left: 5px; }
+        .warning-banner a { 
+            color: #fbbf24; 
+            text-decoration: underline; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
         .warning-banner a:hover { color: #ffffff; }
 
-        /* Modal Styles for Instructions */
+        .top-ticker {
+            background: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span { color: var(--secondary); font-weight: 800; }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* ========================================= */
+        /* PAGE LAYOUT WRAPPER                       */
+        /* ========================================= */
+        .page-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 90px);
+        }
+
+        /* ========================================= */
+        /* SIDEBAR NAVIGATION                        */
+        /* ========================================= */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 2px solid var(--border-color);
+            position: fixed;
+            top: 90px; /* Below sticky header */
+            height: calc(100vh - 90px);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.05);
+            padding: 30px 20px;
+        }
+        .sidebar h2 {
+            color: var(--primary);
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 5px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            gap: 12px;
+            font-weight: 500;
+        }
+        .sidebar-nav a i {
+            color: var(--text-dim);
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--secondary);
+        }
+        .sidebar-nav a:hover i { color: var(--secondary); }
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+        }
+        .sidebar-nav a.active i, .sidebar-nav a.active span { color: #ffffff !important; }
+
+        .sidebar-nav a.utility-link.ai-support { color: var(--secondary); }
+        .sidebar-nav a.utility-link.whatsapp-help { color: #25d366; }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .sidebar-footer a {
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .sidebar-footer a:hover { background: rgba(239, 68, 68, 0.08); }
+
+        /* ========================================= */
+        /* MAIN CONTENT AREA                         */
+        /* ========================================= */
+        .main {
+            margin-left: 260px;
+            padding: 40px;
+            width: calc(100% - 260px);
+            min-height: 100%;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-section h1 {
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        /* ========================================= */
+        /* TABLE CARD STYLES                         */
+        /* ========================================= */
+        .card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(30, 58, 95, 0.06);
+            overflow: hidden;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+        th {
+            text-align: left;
+            padding: 16px 20px;
+            color: var(--text-dim);
+            background: #f8fafc;
+            border-bottom: 2px solid var(--border-color);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+        td {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+        tr:last-child td { border-bottom: none; }
+        tbody tr { transition: background 0.2s; }
+        tbody tr:hover { background: rgba(249, 115, 22, 0.03); }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 15px;
+        }
+        .service-name {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        .service-link {
+            font-size: 12px;
+            color: var(--text-dim);
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .service-link i { font-size: 10px; }
+        .quantity {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+        .bg-pending { background: rgba(99, 102, 241, 0.12); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.3); }
+        .bg-completed, .bg-complete { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .bg-processing, .bg-inprogress { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .bg-canceled, .bg-cancelled, .bg-refunded { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.4);
+        }
+        .refresh-btn:active { transform: translateY(0); }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+            display: block;
+        }
+        .empty-state p {
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* ========================================= */
+        /* MODAL STYLES                              */
+        /* ========================================= */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -81,7 +360,7 @@
             background: #ffffff;
             width: 100%;
             max-width: 600px;
-            max-height: 80vh;
+            max-height: 85vh;
             border-radius: 24px;
             border: 2px solid var(--border-color);
             box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
@@ -103,7 +382,7 @@
             background: linear-gradient(135deg, #dc2626, #ef4444);
             color: white;
         }
-        .modal-header h3 { font-size: 1.4rem; font-weight: 800; margin: 0; }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
         .modal-close {
             background: rgba(255, 255, 255, 0.2);
             border: none;
@@ -133,209 +412,36 @@
         .modal-body .step {
             background: #f8fafc;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin: 10px 0;
             border-left: 4px solid var(--secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
         }
         .modal-body .step-number {
             background: var(--secondary);
             color: white;
-            width: 28px;
+            min-width: 28px;
             height: 28px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            margin-right: 10px;
+            font-size: 14px;
         }
+        .modal-body .step-content { flex: 1; }
 
         /* ========================================= */
-        /* MOVING TICKER STYLING                     */
-        /* ========================================= */
-        .top-ticker {
-            background: var(--primary);
-            border-bottom: 3px solid var(--secondary);
-            overflow: hidden;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            position: sticky;
-            top: 45px;
-            z-index: 1000;
-            width: 100%;
-        }
-        .ticker-content {
-            display: inline-block;
-            white-space: nowrap;
-            animation: marquee 80s linear infinite;
-            padding-left: 100%;
-        }
-        .ticker-item {
-            display: inline-block;
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 13px;
-            padding-right: 60px;
-        }
-        .ticker-item span { color: var(--secondary); font-weight: 800; }
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
-
-        /* ========================================= */
-        /* SIDEBAR STYLING                           */
-        /* ========================================= */
-        .sidebar { 
-            width: 260px; 
-            background: #ffffff; 
-            padding: 25px; 
-            border-right: 2px solid var(--border-color); 
-            position: fixed; 
-            height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            z-index: 100;
-            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.08);
-        }
-        .sidebar h2 { 
-            color: var(--primary); 
-            font-size: 20px; 
-            margin-bottom: 30px; 
-            text-align: center; 
-            font-weight: 800; 
-        }
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-        .sidebar a { 
-            display: flex; 
-            align-items: center; 
-            padding: 12px 15px; 
-            color: var(--text-main); 
-            text-decoration: none; 
-            border-radius: 10px; 
-            margin-bottom: 5px; 
-            transition: 0.3s; 
-            gap: 10px;
-        }
-        .sidebar a i { color: var(--text-dim); width: 20px; text-align: center; transition: 0.3s; }
-        .sidebar a:hover { background: rgba(249, 115, 22, 0.1); color: var(--secondary); }
-        .sidebar a:hover i { color: var(--secondary); }
-        .sidebar a.active { 
-            background: linear-gradient(135deg, var(--secondary), #ea580c); 
-            color: #ffffff; 
-        }
-        .sidebar a.active i, .sidebar a.active span { color: #ffffff !important; }
-
-        .sidebar a.utility-link.ai-support { color: var(--secondary); }
-        .sidebar a.utility-link.ai-support i { color: var(--secondary); }
-        .sidebar a.utility-link.whatsapp-help { color: #25d366; }
-        .sidebar a.utility-link.whatsapp-help i { color: #25d366; }
-
-        /* ========================================= */
-        /* MAIN CONTENT AREA                         */
-        /* ========================================= */
-        .main { 
-            margin-left: 260px; 
-            padding: 40px; 
-            width: calc(100% - 260px); 
-            min-height: 100vh; 
-        }
-        
-        .header-section { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 30px; 
-            flex-wrap: wrap; 
-            gap: 15px; 
-        }
-        .header-section h1 { 
-            font-weight: 800; 
-            font-size: 28px; 
-            margin: 0; 
-            color: var(--primary);
-        }
-
-        /* TABLE CARD STYLES */
-        .card { 
-            background: var(--card-bg); 
-            border: 2px solid var(--border-color); 
-            border-radius: 20px; 
-            padding: 20px; 
-            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
-            overflow: hidden;
-        }
-
-        .table-container { 
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; 
-            border-radius: 15px;
-        }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { 
-            text-align: left; 
-            padding: 15px; 
-            color: var(--text-dim); 
-            border-bottom: 2px solid var(--border-color); 
-            font-size: 12px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px;
-            font-weight: 700;
-            background: #f8fafc;
-        }
-        td { 
-            padding: 15px; 
-            border-bottom: 1px solid var(--border-color); 
-            font-size: 14px; 
-            color: var(--text-main); 
-        }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(249, 115, 22, 0.03); }
-
-        /* STATUS BADGES */
-        .badge { 
-            padding: 6px 14px; 
-            border-radius: 20px; 
-            font-size: 11px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            display: inline-block;
-            white-space: nowrap; 
-        }
-        .bg-pending { background: rgba(99, 102, 241, 0.15); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.3); }
-        .bg-completed { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .bg-processing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-        .bg-canceled, .bg-cancelled, .bg-refunded { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-
-        .refresh-btn {
-            background: linear-gradient(135deg, var(--secondary), #ea580c);
-            color: white; 
-            border: none; 
-            padding: 12px 24px;
-            border-radius: 12px; 
-            cursor: pointer; 
-            font-weight: 700; 
-            transition: 0.3s;
-            white-space: nowrap;
-            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
-        }
-        .refresh-btn:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.4); 
-        }
-
-        /* ========================================= */
-        /* PROFESSIONAL MOBILE BOTTOM NAVIGATION     */
+        /* MOBILE RESPONSIVE BOTTOM NAVIGATION       */
         /* ========================================= */
         @media (max-width: 768px) {
-            .warning-banner { font-size: 12px; padding: 10px 15px; }
-            .warning-banner br { display: none; }
-
+            .warning-banner { font-size: 12px; padding: 10px 15px; height: auto; min-height: 40px; }
+            .top-ticker { height: 40px; }
+            
+            .page-wrapper { flex-direction: column; }
+            
             .sidebar {
                 position: fixed;
                 bottom: 0;
@@ -343,6 +449,7 @@
                 width: 100%;
                 height: auto;
                 min-height: 65px;
+                top: auto;
                 flex-direction: column;
                 padding: 0;
                 border-right: none;
@@ -351,11 +458,11 @@
                 background: rgba(255, 255, 255, 0.98);
                 backdrop-filter: blur(10px);
                 box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1);
-                transition: transform 0.3s ease-in-out; 
+                transition: transform 0.3s ease-in-out;
             }
             .sidebar.nav-hidden { transform: translateY(100%); }
             .sidebar h2 { display: none; }
-            .sidebar > div:last-child { display: none; }
+            .sidebar-footer { display: none; }
 
             .sidebar-nav {
                 display: flex;
@@ -368,7 +475,6 @@
                 padding: 8px 0;
                 gap: 0;
             }
-
             .sidebar-nav a {
                 flex: 1 1 calc(100% / 6);
                 max-width: calc(100% / 6);
@@ -380,10 +486,8 @@
                 margin: 0;
                 text-align: center;
                 border-radius: 0;
-                transition: all 0.2s ease;
                 min-width: 0;
             }
-
             .sidebar-nav a.utility-link {
                 flex: 0 0 auto;
                 max-width: none;
@@ -394,31 +498,12 @@
                 width: 100%;
                 justify-content: center;
             }
-            .sidebar-nav a.utility-link i { font-size: 16px; margin: 0; }
-            .sidebar-nav a.utility-link span { font-size: 12px; font-weight: 600; }
-
-            .sidebar-nav a:not(.utility-link) i {
-                font-size: 20px;
-                margin: 0;
-                color: var(--text-dim);
-            }
-            .sidebar-nav a.active i { color: var(--secondary); transform: scale(1.1); }
-            .sidebar-nav a.active span { color: var(--secondary); font-weight: 700; }
-
-            .sidebar-nav a:not(.utility-link) span {
-                font-size: 10px;
-                font-weight: 500;
-                color: var(--text-dim);
-                margin: 0;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 100%;
-            }
+            .sidebar-nav a:not(.utility-link) i { font-size: 20px; margin: 0; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 10px; font-weight: 500; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
             
             .main {
                 margin-left: 0;
-                margin-bottom: 120px; 
+                margin-bottom: 120px;
                 padding: 20px;
                 width: 100%;
             }
@@ -426,7 +511,7 @@
             .card { padding: 15px; border-radius: 16px; }
             .table-container { border-radius: 12px; }
             table { min-width: 550px; }
-            th, td { padding: 12px; font-size: 13px; }
+            th, td { padding: 12px 15px; font-size: 13px; }
 
             #chatToggleBtn { bottom: 140px !important; right: 20px !important; transition: bottom 0.3s ease-in-out !important; }
             #chatToggleBtn.nav-hidden { bottom: 20px !important; }
@@ -436,8 +521,6 @@
 
         @media (max-width: 480px) {
             .main { padding: 15px; margin-bottom: 115px; }
-            .top-ticker { height: 40px; top: 40px; }
-            .ticker-item { font-size: 12px; padding-right: 40px; }
             .sidebar { min-height: 60px; }
             .sidebar-nav a:not(.utility-link) i { font-size: 18px; }
             .sidebar-nav a:not(.utility-link) span { font-size: 9px; }
@@ -453,8 +536,6 @@
 
         @media (max-width: 360px) {
             .main { padding: 10px; margin-bottom: 110px; }
-            .top-ticker { height: 36px; top: 36px; }
-            .ticker-item { font-size: 10px; padding-right: 25px; }
             .sidebar { min-height: 58px; }
             .sidebar-nav a:not(.utility-link) i { font-size: 16px; }
             .sidebar-nav a:not(.utility-link) span { font-size: 8px; }
@@ -504,428 +585,465 @@
 </head>
 <body>
 
-<!-- IMPORTANT WARNING BANNER -->
-<div class="warning-banner">
-    <i class="fas fa-exclamation-triangle"></i>
-    <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
-    <a onclick="showFlagInstructions()">Click Here to See How</a>
-</div>
-
-<!-- DYNAMIC TOP TICKER -->
-<div class="top-ticker">
-    <div class="ticker-content" id="tickerContent">
-        <!-- Items and speed will be injected dynamically by JS -->
-    </div>
-</div>
-
-<!-- MODAL FOR FLAG INSTRUCTIONS -->
-<div class="modal-overlay" id="flagModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>Important: Turn Off Flag for Review</h3>
-            <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+    <!-- STICKY HEADER: INSTRUCTIONS & MOVING TICKER -->
+    <div class="sticky-header-wrapper">
+        <div class="warning-banner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+            <a onclick="showFlagInstructions()">Click Here to See How</a>
         </div>
-        <div class="modal-body">
-            <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
-            <h4>Step-by-Step Instructions:</h4>
-            <div class="step">
-                <span class="step-number">1</span>
-                <strong>Go to Settings</strong><br>
-                Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
-            </div>
-            <div class="step">
-                <span class="step-number">2</span>
-                <strong>Find Follow Settings</strong><br>
-                Scroll down and tap <strong>"Follow and invite friends"</strong>
-            </div>
-            <div class="step">
-                <span class="step-number">3</span>
-                <strong>Disable Flag for Review</strong><br>
-                Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
-            </div>
-            <div class="step">
-                <span class="step-number">4</span>
-                <strong>Confirm</strong><br>
-                Once disabled, you can safely order Instagram followers and they will be delivered automatically.
-            </div>
-            <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
-            <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
-            <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
-                <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
-            </p>
-            <p style="text-align: center; margin-top: 25px;">
-                <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
-                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
-                </a>
-            </p>
-        </div>
-    </div>
-</div>
-
-<div class="dashboard" style="display: flex; width: 100%;">
-    <div class="sidebar">
-        <h2 style="font-family: 'Plus Jakarta Sans';">Unasemeje SMM Gains</h2>
-        <div class="sidebar-nav" id="sidebarNav">
-            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
-            <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
-            <a href="my-orders.html" class="active"><i class="fas fa-history"></i> <span>My Orders</span></a>
-            <a href="services.html"><i class="fas fa-list"></i> <span>All Services</span></a>
-            <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
-            <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
-            
-            <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
-            <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
-        </div>
-        
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-            </a>
-        </div>
-    </div>
-
-    <div class="main">
-        <div class="header-section">
-            <h1>Order History</h1>
-            <button class="refresh-btn" onclick="loadOrders()">
-                <i class="fas fa-sync-alt"></i> Refresh
-            </button>
-        </div>
-
-        <div class="card">
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Service Details</th>
-                            <th>Quantity</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersList">
-                        <tr>
-                            <td colspan="4" style="text-align:center; padding: 40px; color: var(--text-dim);">
-                                <i class="fas fa-spinner fa-spin"></i> Loading your orders...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="top-ticker">
+            <div class="ticker-content" id="tickerContent">
+                <!-- Items injected by JS -->
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    const API = "https://unasemeje-backend.vercel.app/api";
-    const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
-    const token = localStorage.getItem("token");
-
-    if (!token) window.location.href = "index.html";
-
-    // --- MODAL FUNCTIONS ---
-    function showFlagInstructions() {
-        document.getElementById('flagModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeFlagInstructions() {
-        document.getElementById('flagModal').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-    document.getElementById('flagModal').addEventListener('click', function(e) {
-        if (e.target === this) closeFlagInstructions();
-    });
-
-    // --- DYNAMIC TOP TICKER LOADER ---
-    async function loadTopTicker() {
-        try {
-            let res = await fetch(`${API}/ticker`);
-            if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
-            
-            const data = await res.json();
-            const tickerContent = document.getElementById('tickerContent');
-            
-            if (data.items && data.items.length > 0) {
-                let html = '';
-                data.items.forEach(item => {
-                    html += `<div class="ticker-item">${item}</div>`;
-                });
-                tickerContent.innerHTML = html + html; 
-            } else {
-                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
-                tickerContent.innerHTML = fallback + fallback;
-            }
-            
-            const speed = data.speed || 80;
-            tickerContent.style.animationDuration = `${speed}s`;
-            
-        } catch (err) {
-            const tickerContent = document.getElementById('tickerContent');
-            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
-            tickerContent.innerHTML = fallback + fallback;
-        }
-    }
-
-    // --- LOAD ORDERS ---
-    async function loadOrders() {
-        const list = document.getElementById("ordersList");
-        list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-dim);"><i class="fas fa-spinner fa-spin"></i> Syncing your orders...</td></tr>`;
-
-        try {
-            let res = await fetch(`${API}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
-            if (!res.ok) res = await fetch(`${API_FALLBACK}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
-            
-            const orders = await res.json();
-
-            if (!orders || orders.length === 0) {
-                list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-dim);">No orders found. Start growing today!</td></tr>`;
-                return;
-            }
-
-            list.innerHTML = orders.map(o => {
-                const status = (o.status || 'pending').toLowerCase();
-                let badgeClass = 'bg-pending';
-                if (status === 'completed' || status === 'complete') badgeClass = 'bg-completed';
-                else if (status === 'processing' || status === 'inprogress') badgeClass = 'bg-processing';
-                else if (status === 'canceled' || status === 'cancelled' || status === 'refunded') badgeClass = 'bg-canceled';
-                
-                const serviceName = o.serviceName || o.service || "Social Service";
-                const linkDisplay = o.link ? (o.link.length > 30 ? o.link.substring(0, 30) + '...' : o.link) : 'N/A';
-                const quantityDisplay = o.quantity ? Number(o.quantity).toLocaleString() : '0';
-                const orderId = o.orderId || o.id || '---';
-                
-                return `
-                <tr>
-                    <td style="font-weight: 700; color: var(--primary);">#${orderId}</td>
-                    <td>
-                        <div style="font-weight: 600; color: var(--text-main);">${serviceName}</div>
-                        <div style="font-size: 12px; color: var(--text-dim); margin-top: 4px; word-break: break-all;">
-                            <i class="fas fa-link" style="margin-right: 4px;"></i> ${linkDisplay}
-                        </div>
-                    </td>
-                    <td style="font-weight: 600;">${quantityDisplay}</td>
-                    <td><span class="badge ${badgeClass}">${status}</span></td>
-                </tr>`;
-            }).join('');
-
-        } catch (e) {
-            console.error("Order Load Error", e);
-            list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Failed to sync orders. Please try again.</td></tr>`;
-        }
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = "index.html";
-    }
-
-    // Execute on load
-    loadTopTicker(); 
-    loadOrders();
-</script>
-
-<!-- ========================================== -->
-<!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
-<!-- ========================================== -->
-<button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: #f97316; position: fixed;">
-    <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-    </svg>
-    <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-</button>
-
-<div id="chatWindow" class="fixed bottom-24 right-6 z-50 w-[90vw] bg-white rounded-3xl shadow-2xl border border-gray-100 flex-col hidden scale-95 opacity-0" style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; position: fixed;">
-    <div class="p-4 rounded-t-3xl flex justify-between items-center shadow-md text-white" style="background-color: #1e3a5f;">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
+    <!-- MODAL FOR FLAG INSTRUCTIONS -->
+    <div class="modal-overlay" id="flagModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
+                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
             </div>
-            <div>
-                <h3 class="font-bold text-sm leading-tight">Unasemeje Support</h3>
-                <p class="text-[10px] opacity-90 flex items-center gap-1.5 mt-0.5">
-                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> AI Assistant Online
+            <div class="modal-body">
+                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+                <h4>Step-by-Step Instructions:</h4>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Go to Settings</strong><br>
+                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Find Follow Settings</strong><br>
+                        Scroll down and tap <strong>"Follow and invite friends"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Disable Flag for Review</strong><br>
+                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Confirm</strong><br>
+                        Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+                    </div>
+                </div>
+                <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+                <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+                <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                    <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+                </p>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                    </a>
                 </p>
             </div>
         </div>
-        <button id="chatCloseBtn" class="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
     </div>
 
-    <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style="height: 320px;"></div>
+    <!-- PAGE LAYOUT -->
+    <div class="page-wrapper">
+        <div class="sidebar">
+            <h2>Unasemeje SMM Gains</h2>
+            <div class="sidebar-nav" id="sidebarNav">
+                <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+                <a href="my-orders.html" class="active"><i class="fas fa-history"></i> <span>My Orders</span></a>
+                <a href="services.html"><i class="fas fa-list"></i> <span>All Services</span></a>
+                <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+                <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+                
+                <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+                <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </div>
 
-    <div class="p-3 border-t border-gray-100 bg-white rounded-b-3xl">
-        <form id="chatForm" class="flex gap-2">
-            <input type="text" id="chatInput" placeholder="Type your question..." class="flex-1 bg-gray-100 rounded-xl px-4 py-2.5 text-sm outline-none transition-all text-gray-800 placeholder-gray-400" style="border: 1px solid #e5e7eb;" autocomplete="off" required>
-            <button type="submit" id="chatSendBtn" class="text-white p-2.5 rounded-xl hover:opacity-90 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" style="background-color: #f97316;">
+        <div class="main">
+            <div class="header-section">
+                <h1>Order History</h1>
+                <button class="refresh-btn" onclick="loadOrders()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Service Details</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersList">
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Syncing your orders...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const API = "https://unasemeje-backend.vercel.app/api";
+        const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
+        const token = localStorage.getItem("token");
+
+        if (!token) window.location.href = "index.html";
+
+        // --- MODAL FUNCTIONS ---
+        function showFlagInstructions() {
+            document.getElementById('flagModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFlagInstructions() {
+            document.getElementById('flagModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('flagModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFlagInstructions();
+        });
+
+        // --- DYNAMIC TOP TICKER LOADER ---
+        async function loadTopTicker() {
+            try {
+                let res = await fetch(`${API}/ticker`);
+                if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
+                
+                const data = await res.json();
+                const tickerContent = document.getElementById('tickerContent');
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `<div class="ticker-item">${item}</div>`;
+                    });
+                    tickerContent.innerHTML = html + html; 
+                } else {
+                    const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                    tickerContent.innerHTML = fallback + fallback;
+                }
+                
+                const speed = data.speed || 80;
+                tickerContent.style.animationDuration = `${speed}s`;
+                
+            } catch (err) {
+                const tickerContent = document.getElementById('tickerContent');
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
+            }
+        }
+
+        // --- LOAD ORDERS ---
+        async function loadOrders() {
+            const list = document.getElementById("ordersList");
+            list.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Syncing your orders...</p>
+                        </div>
+                    </td>
+                </tr>`;
+
+            try {
+                let res = await fetch(`${API}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
+                if (!res.ok) res = await fetch(`${API_FALLBACK}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
+                
+                const orders = await res.json();
+
+                if (!orders || orders.length === 0) {
+                    list.innerHTML = `
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No orders found. Start growing today!</p>
+                                </div>
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                list.innerHTML = orders.map(o => {
+                    const status = (o.status || 'pending').toLowerCase();
+                    let badgeClass = 'bg-pending';
+                    if (status === 'completed' || status === 'complete') badgeClass = 'bg-completed';
+                    else if (status === 'processing' || status === 'inprogress' || status === 'in progress') badgeClass = 'bg-processing';
+                    else if (status === 'canceled' || status === 'cancelled' || status === 'refunded') badgeClass = 'bg-canceled';
+                    
+                    const serviceName = o.serviceName || o.service || "Social Service";
+                    const linkDisplay = o.link ? (o.link.length > 35 ? o.link.substring(0, 35) + '...' : o.link) : 'N/A';
+                    const quantityDisplay = o.quantity ? Number(o.quantity).toLocaleString() : '0';
+                    const orderId = o.orderId || o.id || '---';
+                    
+                    return `
+                    <tr>
+                        <td><span class="order-id">#${orderId}</span></td>
+                        <td>
+                            <div class="service-name">${serviceName}</div>
+                            <div class="service-link">
+                                <i class="fas fa-link"></i> ${linkDisplay}
+                            </div>
+                        </td>
+                        <td><span class="quantity">${quantityDisplay}</span></td>
+                        <td><span class="badge ${badgeClass}">${status}</span></td>
+                    </tr>`;
+                }).join('');
+
+            } catch (e) {
+                console.error("Order Load Error", e);
+                list.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                                <p style="color: var(--danger);">Failed to sync orders. Please try again.</p>
+                            </div>
+                        </td>
+                    </tr>`;
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        // Execute on load
+        loadTopTicker(); 
+        loadOrders();
+    </script>
+
+    <!-- ========================================== -->
+    <!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
+    <!-- ========================================== -->
+    <button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: #f97316; position: fixed;">
+        <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+
+    <div id="chatWindow" class="fixed bottom-24 right-6 z-50 w-[90vw] bg-white rounded-3xl shadow-2xl border border-gray-100 flex-col hidden scale-95 opacity-0" style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; position: fixed;">
+        <div class="p-4 rounded-t-3xl flex justify-between items-center shadow-md text-white" style="background-color: #1e3a5f;">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">Unasemeje Support</h3>
+                    <p class="text-[10px] opacity-90 flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> AI Assistant Online
+                    </p>
+                </div>
+            </div>
+            <button id="chatCloseBtn" class="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-        </form>
+        </div>
+
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style="height: 320px;"></div>
+
+        <div class="p-3 border-t border-gray-100 bg-white rounded-b-3xl">
+            <form id="chatForm" class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Type your question..." class="flex-1 bg-gray-100 rounded-xl px-4 py-2.5 text-sm outline-none transition-all text-gray-800 placeholder-gray-400" style="border: 1px solid #e5e7eb;" autocomplete="off" required>
+                <button type="submit" id="chatSendBtn" class="text-white p-2.5 rounded-xl hover:opacity-90 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" style="background-color: #f97316;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const chatToggleBtn = document.getElementById('chatToggleBtn');
-        const chatCloseBtn = document.getElementById('chatCloseBtn');
-        const chatWindow = document.getElementById('chatWindow');
-        const chatMessages = document.getElementById('chatMessages');
-        const chatForm = document.getElementById('chatForm');
-        const chatInput = document.getElementById('chatInput');
-        const chatIconOpen = document.getElementById('chatIconOpen');
-        const chatIconClose = document.getElementById('chatIconClose');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+            const chatCloseBtn = document.getElementById('chatCloseBtn');
+            const chatWindow = document.getElementById('chatWindow');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatForm = document.getElementById('chatForm');
+            const chatInput = document.getElementById('chatInput');
+            const chatIconOpen = document.getElementById('chatIconOpen');
+            const chatIconClose = document.getElementById('chatIconClose');
 
-        const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
-        const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+            const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
+            const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
 
-        let isChatOpen = false;
+            let isChatOpen = false;
 
-        let lastScrollTop = 0;
-        const mobileSidebar = document.querySelector('.sidebar');
+            let lastScrollTop = 0;
+            const mobileSidebar = document.querySelector('.sidebar');
 
-        window.addEventListener('scroll', () => {
-            if (window.innerWidth <= 768) {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
-                
-                if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
-                    mobileSidebar.classList.add('nav-hidden');
-                    chatToggleBtn.classList.add('nav-hidden');
-                    chatWindow.classList.add('nav-hidden');
+            window.addEventListener('scroll', () => {
+                if (window.innerWidth <= 768) {
+                    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
+                    
+                    if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                        mobileSidebar.classList.add('nav-hidden');
+                        chatToggleBtn.classList.add('nav-hidden');
+                        chatWindow.classList.add('nav-hidden');
+                    } else {
+                        mobileSidebar.classList.remove('nav-hidden');
+                        chatToggleBtn.classList.remove('nav-hidden');
+                        chatWindow.classList.remove('nav-hidden');
+                    }
+                    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+                }
+            }, false);
+
+            function toggleChat() {
+                isChatOpen = !isChatOpen;
+                if (isChatOpen) {
+                    chatWindow.style.display = 'flex';
+                    setTimeout(() => {
+                        chatWindow.classList.remove('hidden', 'scale-95', 'opacity-0');
+                        chatWindow.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                    chatIconOpen.classList.add('hidden');
+                    chatIconClose.classList.remove('hidden');
+                    
+                    if (chatMessages.children.length === 0) {
+                        appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today?");
+                    }
+                    setTimeout(() => chatInput.focus(), 300);
                 } else {
-                    mobileSidebar.classList.remove('nav-hidden');
-                    chatToggleBtn.classList.remove('nav-hidden');
-                    chatWindow.classList.remove('nav-hidden');
+                    chatWindow.classList.add('scale-95', 'opacity-0');
+                    chatWindow.classList.remove('scale-100', 'opacity-100');
+                    setTimeout(() => {
+                        chatWindow.style.display = 'none';
+                        chatWindow.classList.add('hidden');
+                    }, 300);
+                    chatIconOpen.classList.remove('hidden');
+                    chatIconClose.classList.add('hidden');
                 }
-                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
             }
-        }, false);
 
-        function toggleChat() {
-            isChatOpen = !isChatOpen;
-            if (isChatOpen) {
-                chatWindow.style.display = 'flex';
-                setTimeout(() => {
-                    chatWindow.classList.remove('hidden', 'scale-95', 'opacity-0');
-                    chatWindow.classList.add('scale-100', 'opacity-100');
-                }, 10);
-                chatIconOpen.classList.add('hidden');
-                chatIconClose.classList.remove('hidden');
-                
-                if (chatMessages.children.length === 0) {
-                    appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today?");
+            function appendMessage(sender, text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                const bubble = document.createElement('div');
+                if (sender === 'user') {
+                    bubble.className = 'text-white px-4 py-2.5 rounded-2xl rounded-br-sm max-w-[85%] text-sm shadow-md break-words';
+                    bubble.style.backgroundColor = '#1e3a5f';
+                } else {
+                    bubble.className = 'bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-bl-sm max-w-[85%] text-sm shadow-sm border border-gray-100 break-words';
                 }
-                setTimeout(() => chatInput.focus(), 300);
-            } else {
-                chatWindow.classList.add('scale-95', 'opacity-0');
-                chatWindow.classList.remove('scale-100', 'opacity-100');
-                setTimeout(() => {
-                    chatWindow.style.display = 'none';
-                    chatWindow.classList.add('hidden');
-                }, 300);
-                chatIconOpen.classList.remove('hidden');
-                chatIconClose.classList.add('hidden');
+                bubble.innerText = text;
+                msgDiv.appendChild(bubble);
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
-        }
 
-        function appendMessage(sender, text) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
-            const bubble = document.createElement('div');
-            if (sender === 'user') {
-                bubble.className = 'text-white px-4 py-2.5 rounded-2xl rounded-br-sm max-w-[85%] text-sm shadow-md break-words';
-                bubble.style.backgroundColor = '#1e3a5f';
-            } else {
-                bubble.className = 'bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-bl-sm max-w-[85%] text-sm shadow-sm border border-gray-100 break-words';
+            function showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typingIndicator';
+                typingDiv.className = 'flex justify-start';
+                typingDiv.innerHTML = `
+                    <div class="bg-white text-gray-400 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100 flex gap-1.5">
+                        <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                        <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                        <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
-            bubble.innerText = text;
-            msgDiv.appendChild(bubble);
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
 
-        function showTyping() {
-            const typingDiv = document.createElement('div');
-            typingDiv.id = 'typingIndicator';
-            typingDiv.className = 'flex justify-start';
-            typingDiv.innerHTML = `
-                <div class="bg-white text-gray-400 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100 flex gap-1.5">
-                    <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
-                    <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
-                    <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
-                </div>
-            `;
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function hideTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
-        }
-
-        async function sendToBackend(message) {
-            try {
-                const response = await fetch(API_PRIMARY_BOT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ message })
-                });
-                if (response.ok) return await response.json();
-            } catch (err) { console.warn("Primary AI server unreachable. Trying fallback..."); }
-
-            try {
-                const response = await fetch(API_FALLBACK_BOT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify({ message })
-                });
-                if (response.ok) return await response.json();
-            } catch (err) { console.error("Both AI servers unreachable."); return null; }
-        }
-
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const message = chatInput.value.trim();
-            if (!message) return;
-
-            appendMessage('user', message);
-            chatInput.value = '';
-            chatInput.disabled = true; 
-            showTyping();
-
-            const data = await sendToBackend(message);
-            hideTyping();
-            chatInput.disabled = false;
-            chatInput.focus();
-
-            if (data && data.success && data.reply) {
-                appendMessage('bot', data.reply);
-            } else {
-                appendMessage('bot', "I'm having trouble connecting to my brain right now. Please try again in a moment!");
+            function hideTyping() {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
             }
+
+            async function sendToBackend(message) {
+                try {
+                    const response = await fetch(API_PRIMARY_BOT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ message })
+                    });
+                    if (response.ok) return await response.json();
+                } catch (err) { console.warn("Primary AI server unreachable. Trying fallback..."); }
+
+                try {
+                    const response = await fetch(API_FALLBACK_BOT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ message })
+                    });
+                    if (response.ok) return await response.json();
+                } catch (err) { console.error("Both AI servers unreachable."); return null; }
+            }
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                appendMessage('user', message);
+                chatInput.value = '';
+                chatInput.disabled = true; 
+                showTyping();
+
+                const data = await sendToBackend(message);
+                hideTyping();
+                chatInput.disabled = false;
+                chatInput.focus();
+
+                if (data && data.success && data.reply) {
+                    appendMessage('bot', data.reply);
+                } else {
+                    appendMessage('bot', "I'm having trouble connecting to my brain right now. Please try again in a moment!");
+                }
+            });
+
+            chatToggleBtn.addEventListener('click', toggleChat);
+            chatCloseBtn.addEventListener('click', toggleChat);
+            
+            document.addEventListener('click', (e) => {
+                if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
+                    toggleChat();
+                }
+            });
         });
-
-        chatToggleBtn.addEventListener('click', toggleChat);
-        chatCloseBtn.addEventListener('click', toggleChat);
-        
-        document.addEventListener('click', (e) => {
-            if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
-                toggleChat();
-            }
-        });
-    });
-</script>
+    </script>
 
 </body>
     </html>
