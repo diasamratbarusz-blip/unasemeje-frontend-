@@ -1,183 +1,871 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-KE">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Support - Unasemeje</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>AI Support | Unasemeje SMM Gains</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #f5f7fb; 
+        /* ========================================= */
+        /* PROFESSIONAL WHITE THEME VARIABLES        */
+        /* ========================================= */
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #f97316;
+            --bg-main: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border-color: #e2e8f0;
         }
-        .bg-custom-green { background: #11453b; }
-        .text-custom-green { color: #11453b; }
-        .border-custom-green { border-color: #11453b; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        /* Custom Scrollbar for Chat Messages */
-        #chatMessages::-webkit-scrollbar { width: 6px; }
-        #chatMessages::-webkit-scrollbar-track { background: transparent; }
-        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
-        #chatMessages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
-
-        /* Hide scrollbar for Quick Questions horizontal scroll */
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Typing Indicator Animation */
-        @keyframes bounce-dot {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
-        .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-        /* Message Fade In Animation */
+        /* ========================================= */
+        /* STICKY TOP HEADER (INSTRUCTIONS & TICKER) */
+        /* ========================================= */
+        .sticky-header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .warning-banner i { color: #fbbf24; font-size: 16px; }
+        .warning-banner a { 
+            color: #fbbf24; 
+            text-decoration: underline; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .warning-banner a:hover { color: #ffffff; }
+
+        .top-ticker {
+            background: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span { color: var(--secondary); font-weight: 800; }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* ========================================= */
+        /* PAGE LAYOUT WRAPPER                       */
+        /* ========================================= */
+        .page-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 90px);
+        }
+
+        /* ========================================= */
+        /* SIDEBAR NAVIGATION                        */
+        /* ========================================= */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 2px solid var(--border-color);
+            position: fixed;
+            top: 90px;
+            height: calc(100vh - 90px);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.05);
+            padding: 30px 20px;
+        }
+        .sidebar h2 {
+            color: var(--primary);
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 5px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            gap: 12px;
+            font-weight: 500;
+        }
+        .sidebar-nav a i {
+            color: var(--text-dim);
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--secondary);
+        }
+        .sidebar-nav a:hover i { color: var(--secondary); }
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+        }
+        .sidebar-nav a.active i, .sidebar-nav a.active span { color: #ffffff !important; }
+
+        .sidebar-nav a.utility-link.ai-support { color: var(--secondary); }
+        .sidebar-nav a.utility-link.whatsapp-help { color: #25d366; }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .sidebar-footer a {
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .sidebar-footer a:hover { background: rgba(239, 68, 68, 0.08); }
+
+        /* ========================================= */
+        /* MAIN CONTENT AREA                         */
+        /* ========================================= */
+        .main {
+            margin-left: 260px;
+            padding: 40px;
+            width: calc(100% - 260px);
+            min-height: 100%;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .page-header h1 {
+            font-weight: 800;
+            font-size: 32px;
+            color: var(--primary);
+            margin: 0;
+        }
+        .page-header p {
+            color: var(--text-dim);
+            margin-top: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ========================================= */
+        /* CARDS & COMPONENTS                        */
+        /* ========================================= */
+        .card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(30, 58, 95, 0.06);
+        }
+
+        .human-support-card {
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.02), rgba(249, 115, 22, 0.02));
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+        }
+        .human-support-card h3 {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .human-support-card p {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .input-field {
+            width: 100%; 
+            background: #f9fafb; 
+            border: 1px solid var(--border-color);
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            outline: none; 
+            transition: 0.2s; 
+            color: var(--text-main); 
+            font-weight: 500;
+            font-family: inherit;
+            font-size: 14px;
+            resize: none;
+        }
+        .input-field:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.1); 
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.4);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========================================= */
+        /* CHAT INTERFACE                            */
+        /* ========================================= */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 75vh;
+            min-height: 600px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #f8fafc;
+        }
+        .chat-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), #2d5a87);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            position: relative;
+        }
+        .chat-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+        .chat-header-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0;
+        }
+        .chat-header-info p {
+            font-size: 12px;
+            color: var(--text-dim);
+            margin: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+            word-wrap: break-word;
+        }
+        .message-bubble.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--primary), #2d5a87);
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 10px rgba(30, 58, 95, 0.15);
+        }
+        .message-bubble.bot {
+            align-self: flex-start;
+            background: #f8fafc;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .message-anim { animation: fadeIn 0.3s ease-out forwards; }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 14px 18px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+            width: fit-content;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-dim);
+            border-radius: 50%;
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .quick-questions {
+            padding: 15px 25px;
+            border-top: 1px solid var(--border-color);
+            background: #f8fafc;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .quick-questions::-webkit-scrollbar { display: none; }
+        .quick-q-btn {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dim);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .quick-q-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            background: rgba(249, 115, 22, 0.05);
+        }
+
+        .chat-input-area {
+            padding: 20px 25px;
+            border-top: 2px solid var(--border-color);
+            background: white;
+            display: flex;
+            gap: 15px;
+        }
+        .chat-input {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.1);
+        }
+        .send-btn {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+        }
+        .send-btn:hover { transform: scale(1.05); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* ========================================= */
+        /* MODAL STYLES                              */
+        /* ========================================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+        .modal-body h4 { color: var(--primary); margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
+        .modal-body p { margin-bottom: 12px; color: var(--text-dim); }
+        .modal-body strong { color: var(--primary); }
+        .modal-body .step {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .modal-body .step-number {
+            background: var(--secondary);
+            color: white;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .modal-body .step-content { flex: 1; }
+
+        /* ========================================= */
+        /* MOBILE RESPONSIVE BOTTOM NAVIGATION       */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            .warning-banner { font-size: 12px; padding: 10px 15px; height: auto; min-height: 40px; }
+            .top-ticker { height: 40px; }
+            
+            .page-wrapper { flex-direction: column; }
+            
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: auto;
+                min-height: 65px;
+                top: auto;
+                flex-direction: column;
+                padding: 0;
+                border-right: none;
+                border-top: 2px solid var(--border-color);
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1);
+                transition: transform 0.3s ease-in-out;
+            }
+            .sidebar.nav-hidden { transform: translateY(100%); }
+            .sidebar h2 { display: none; }
+            .sidebar-footer { display: none; }
+
+            .sidebar-nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                width: 100%;
+                justify-content: space-around;
+                align-items: center;
+                margin: 0;
+                padding: 8px 0;
+                gap: 0;
+            }
+            .sidebar-nav a {
+                flex: 1 1 calc(100% / 6);
+                max-width: calc(100% / 6);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 4px;
+                padding: 8px 4px;
+                margin: 0;
+                text-align: center;
+                border-radius: 0;
+                min-width: 0;
+            }
+            .sidebar-nav a.utility-link {
+                flex: 0 0 auto;
+                max-width: none;
+                flex-direction: row;
+                padding: 10px 20px;
+                gap: 8px;
+                border-top: 1px solid var(--border-color);
+                width: 100%;
+                justify-content: center;
+            }
+            .sidebar-nav a:not(.utility-link) i { font-size: 20px; margin: 0; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 10px; font-weight: 500; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            
+            .main {
+                margin-left: 0;
+                margin-bottom: 120px;
+                padding: 20px;
+                width: 100%;
+            }
+            .page-header h1 { font-size: 24px; }
+            
+            .support-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .human-support-card {
+                position: static;
+            }
+            .chat-container {
+                height: 70vh;
+                min-height: 500px;
+            }
+            .chat-messages { padding: 15px; }
+            .message-bubble { max-width: 90%; font-size: 13px; }
+            .quick-questions { padding: 10px 15px; }
+            .chat-input-area { padding: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .main { padding: 15px; margin-bottom: 115px; }
+            .sidebar { min-height: 60px; }
+            .sidebar-nav a:not(.utility-link) i { font-size: 18px; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 9px; }
+            .sidebar-nav a.utility-link { padding: 8px 15px; }
+            .sidebar-nav a.utility-link i { font-size: 14px; }
+            .sidebar-nav a.utility-link span { font-size: 11px; }
+        }
+
+        @media (max-width: 360px) {
+            .main { padding: 10px; margin-bottom: 110px; }
+            .sidebar { min-height: 58px; }
+            .sidebar-nav a:not(.utility-link) i { font-size: 16px; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 8px; }
+            .sidebar-nav a.utility-link { padding: 7px 12px; }
+            .sidebar-nav a.utility-link i { font-size: 13px; }
+            .sidebar-nav a.utility-link span { font-size: 10px; }
+        }
     </style>
 </head>
+<body>
 
-<body class="min-h-screen flex flex-col">
-
-    <!-- HEADER -->
-    <div class="bg-custom-green text-white py-8 px-4 text-center shadow-lg relative">
-        <a href="index.html" class="absolute top-4 left-4 text-white/80 hover:text-white flex items-center gap-2 text-sm font-medium transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to Dashboard
-        </a>
-        <h1 class="text-3xl sm:text-4xl font-extrabold italic mb-2">AI Support Center</h1>
-        <p class="uppercase tracking-[3px] text-xs opacity-80">Instant Answers • 24/7 Availability • Secure</p>
+    <!-- STICKY HEADER: INSTRUCTIONS & MOVING TICKER -->
+    <div class="sticky-header-wrapper">
+        <div class="warning-banner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+            <a onclick="showFlagInstructions()">Click Here to See How</a>
+        </div>
+        <div class="top-ticker">
+            <div class="ticker-content" id="tickerContent">
+                <!-- Items injected by JS -->
+            </div>
+        </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-8 flex flex-col md:flex-row gap-6">
-        
-        <!-- LEFT: HUMAN SUPPORT (Quick questions moved to chat area for easier access) -->
-        <div class="w-full md:w-1/3 space-y-4">
-            <!-- HUMAN SUPPORT FORM -->
-            <div class="bg-emerald-50 rounded-3xl border border-emerald-100 p-6">
-                <h3 class="text-sm font-bold text-emerald-800 mb-2 flex items-center gap-2">
-                    <span>👤</span> Human Support
-                </h3>
-                <p class="text-xs text-emerald-700 leading-relaxed mb-3">
-                    If the AI cannot resolve your issue, send a direct message to the Admin. We usually reply within 1 hour.
-                </p>
-                
-                <form id="humanSupportForm" class="space-y-3">
-                    <textarea 
-                        id="humanMessage" 
-                        rows="4" 
-                        placeholder="Describe your issue in detail..." 
-                        class="w-full p-3 rounded-xl border border-emerald-200 text-sm focus:ring-2 focus:ring-custom-green/50 outline-none resize-none bg-white text-gray-800" 
-                        required></textarea>
-                    
-                    <button 
-                        type="submit" 
-                        id="humanSendBtn"
-                        class="w-full bg-custom-green text-white py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-800 transition-colors shadow-md disabled:opacity-50 flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                        Send to Admin
-                    </button>
-                    
-                    <p id="humanFeedback" class="text-xs text-center hidden font-medium break-words"></p>
-                </form>
-
-                <div class="mt-3 pt-3 border-t border-emerald-200">
-                    <a href="mailto:support@unasemeje.co.ke" class="inline-flex items-center gap-2 text-[11px] font-bold text-emerald-600 hover:underline">
-                        Or email us directly 
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
+    <!-- MODAL FOR FLAG INSTRUCTIONS -->
+    <div class="modal-overlay" id="flagModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
+                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+                <h4>Step-by-Step Instructions:</h4>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Go to Settings</strong><br>
+                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+                    </div>
                 </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Find Follow Settings</strong><br>
+                        Scroll down and tap <strong>"Follow and invite friends"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Disable Flag for Review</strong><br>
+                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Confirm</strong><br>
+                        Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+                    </div>
+                </div>
+                <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+                <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+                <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                    <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+                </p>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE LAYOUT -->
+    <div class="page-wrapper">
+        <div class="sidebar">
+            <h2>Unasemeje SMM Gains</h2>
+            <div class="sidebar-nav" id="sidebarNav">
+                <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+                <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
+                <a href="services.html"><i class="fas fa-list"></i> <span>All Services</span></a>
+                <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+                <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+                
+                <a href="support.html" class="active utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+                <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
             </div>
         </div>
 
-        <!-- RIGHT: CHAT INTERFACE -->
-        <div class="w-full md:w-2/3 flex flex-col h-[70vh] md:h-[600px] bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-            
-            <!-- Chat Header -->
-            <div class="bg-gray-50 border-b border-gray-100 p-4 flex items-center gap-3">
-                <div class="relative">
-                    <div class="w-10 h-10 bg-custom-green rounded-full flex items-center justify-center text-white shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
+        <div class="main">
+            <div class="page-header">
+                <h1>AI Support Center</h1>
+                <p>Instant Answers • 24/7 Availability • Secure</p>
+            </div>
+
+            <div class="support-grid">
+                <!-- LEFT: HUMAN SUPPORT -->
+                <div class="card human-support-card">
+                    <h3><i class="fas fa-user-shield" style="color: var(--secondary);"></i> Human Support</h3>
+                    <p>If the AI cannot resolve your issue, send a direct message to the Admin. We usually reply within 1 hour.</p>
+                    
+                    <form id="humanSupportForm" style="display: flex; flex-direction: column; gap: 15px;">
+                        <textarea 
+                            id="humanMessage" 
+                            rows="5" 
+                            placeholder="Describe your issue in detail..." 
+                            class="input-field" 
+                            required></textarea>
+                        
+                        <button type="submit" id="humanSendBtn" class="btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send to Admin
+                        </button>
+                        
+                        <p id="humanFeedback" style="font-size: 12px; text-align: center; font-weight: 600; display: none;"></p>
+                    </form>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center;">
+                        <a href="mailto:support@unasemeje.co.ke" style="font-size: 12px; font-weight: 700; color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-envelope"></i> Or email us directly
+                        </a>
                     </div>
-                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full"></span>
                 </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 text-sm">Unasemeje Assistant</h3>
-                    <p class="text-[11px] text-gray-500">Powered by Internal AI • Always Online</p>
-                </div>
-            </div>
 
-            <!-- Messages Area -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-white">
-                <!-- Welcome Message -->
-                <div class="flex justify-start message-anim">
-                    <div class="bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm border border-gray-200">
-                        Hello! 👋 I'm the Unasemeje AI Assistant. I can help you with adding funds, updating your profile, checking balances, or troubleshooting payment issues. What can I help you with today?
+                <!-- RIGHT: CHAT INTERFACE -->
+                <div class="card chat-container">
+                    <!-- Chat Header -->
+                    <div class="chat-header">
+                        <div class="chat-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="chat-header-info">
+                            <h3>Unasemeje Assistant</h3>
+                            <p>Powered by Internal AI • Always Online</p>
+                        </div>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div id="chatMessages" class="chat-messages">
+                        <div class="message-bubble bot">
+                            Hello! 👋 I'm the Unasemeje AI Assistant. I can help you with adding funds, updating your profile, checking balances, or troubleshooting payment issues. What can I help you with today?
+                        </div>
+                    </div>
+
+                    <!-- Quick Questions -->
+                    <div class="quick-questions">
+                        <button onclick="sendQuickMessage('How do I add funds to my account?')" class="quick-q-btn">💰 Add funds</button>
+                        <button onclick="sendQuickMessage('My payment was sent but not credited to my wallet.')" class="quick-q-btn">⚠️ Payment issue</button>
+                        <button onclick="sendQuickMessage('How can I update my payment phone numbers?')" class="quick-q-btn">📱 Update numbers</button>
+                        <button onclick="sendQuickMessage('How do I change my password?')" class="quick-q-btn">🔒 Change password</button>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="chat-input-area">
+                        <input 
+                            type="text" 
+                            id="chatInput" 
+                            placeholder="Type your question here..." 
+                            class="chat-input" 
+                            autocomplete="off"
+                            required
+                        >
+                        <button type="button" id="chatSendBtn" class="send-btn" onclick="processMessage(document.getElementById('chatInput').value)">
+                            <i class="fas fa-paper-plane" style="color: white; font-size: 16px;"></i>
+                        </button>
                     </div>
                 </div>
-            </div>
-
-            <!-- NEW: QUICK QUESTIONS (Moved here for easier access near typing) -->
-            <div class="px-4 py-3 border-t border-gray-100 bg-gray-50/80 backdrop-blur-sm">
-                <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase whitespace-nowrap tracking-wider">Quick:</span>
-                    <button onclick="sendQuickMessage('How do I add funds to my account?')" class="whitespace-nowrap px-3 py-1.5 bg-white hover:bg-emerald-50 hover:text-custom-green text-gray-600 text-xs font-medium rounded-full transition-all border border-gray-200 hover:border-emerald-200 shadow-sm flex-shrink-0">
-                        💰 Add funds
-                    </button>
-                    <button onclick="sendQuickMessage('My payment was sent but not credited to my wallet.')" class="whitespace-nowrap px-3 py-1.5 bg-white hover:bg-emerald-50 hover:text-custom-green text-gray-600 text-xs font-medium rounded-full transition-all border border-gray-200 hover:border-emerald-200 shadow-sm flex-shrink-0">
-                        ⚠️ Payment issue
-                    </button>
-                    <button onclick="sendQuickMessage('How can I update my payment phone numbers?')" class="whitespace-nowrap px-3 py-1.5 bg-white hover:bg-emerald-50 hover:text-custom-green text-gray-600 text-xs font-medium rounded-full transition-all border border-gray-200 hover:border-emerald-200 shadow-sm flex-shrink-0">
-                        📱 Update numbers
-                    </button>
-                    <button onclick="sendQuickMessage('How do I change my password?')" class="whitespace-nowrap px-3 py-1.5 bg-white hover:bg-emerald-50 hover:text-custom-green text-gray-600 text-xs font-medium rounded-full transition-all border border-gray-200 hover:border-emerald-200 shadow-sm flex-shrink-0">
-                        🔒 Change password
-                    </button>
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="p-4 border-t border-gray-100 bg-white">
-                <form id="chatForm" class="flex gap-3">
-                    <input 
-                        type="text" 
-                        id="chatInput" 
-                        placeholder="Type your question here..." 
-                        class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-custom-green/50 focus:border-custom-green transition-all text-gray-800 placeholder-gray-400" 
-                        autocomplete="off"
-                        required
-                    >
-                    <button 
-                        type="submit" 
-                        id="chatSendBtn"
-                        class="bg-custom-green text-white px-5 rounded-xl hover:bg-emerald-800 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                    </button>
-                </form>
-                <p class="text-[10px] text-gray-400 text-center mt-2">AI responses are generated based on Unasemeje's official guidelines.</p>
             </div>
         </div>
     </div>
@@ -188,58 +876,137 @@
         const token = localStorage.getItem("token");
         if (!token) window.location.href = "index.html";
 
-        // DOM Elements
+        // --- DOM ELEMENTS ---
         const chatMessages = document.getElementById('chatMessages');
-        const chatForm = document.getElementById('chatForm');
         const chatInput = document.getElementById('chatInput');
         const chatSendBtn = document.getElementById('chatSendBtn');
+        const humanForm = document.getElementById('humanSupportForm');
+        const humanFeedback = document.getElementById('humanFeedback');
+        const humanSendBtn = document.getElementById('humanSendBtn');
 
-        // Configuration: Dual-API Fallback
-        const API_PRIMARY = 'https://unasemeje-backend.vercel.app/api/support-bot';
-        const API_FALLBACK = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+        // --- CONFIGURATION ---
+        const API = "https://unasemeje-backend.vercel.app/api";
+        const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
+        const API_PRIMARY_BOT = `${API}/support-bot`;
+        const API_FALLBACK_BOT = `${API_FALLBACK}/support-bot`;
+        const API_TICKET_PRIMARY = `${API}/support-ticket`;
+        const API_TICKET_FALLBACK = `${API_FALLBACK}/support-ticket`;
 
-        // --- MARKDOWN FORMATTER FOR BOT REPLIES ---
+        // ==========================================
+        // AUDIO FEEDBACK (WEB AUDIO API)
+        // ==========================================
+        function playAISound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                
+                // First tone
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(600, ctx.currentTime);
+                gain1.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                osc1.start(ctx.currentTime);
+                osc1.stop(ctx.currentTime + 0.2);
+
+                // Second tone (pleasant chime)
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(850, ctx.currentTime + 0.1);
+                gain2.gain.setValueAtTime(0.0001, ctx.currentTime);
+                gain2.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
+                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                osc2.start(ctx.currentTime + 0.1);
+                osc2.stop(ctx.currentTime + 0.4);
+            } catch (e) {
+                console.warn("Audio playback failed:", e);
+            }
+        }
+
+        // ==========================================
+        // MODAL & TICKER LOGIC
+        // ==========================================
+        function showFlagInstructions() {
+            document.getElementById('flagModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFlagInstructions() {
+            document.getElementById('flagModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('flagModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFlagInstructions();
+        });
+
+        async function loadTopTicker() {
+            try {
+                let res = await fetch(`${API}/ticker`);
+                if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
+                
+                const data = await res.json();
+                const tickerContent = document.getElementById('tickerContent');
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `<div class="ticker-item">${item}</div>`;
+                    });
+                    tickerContent.innerHTML = html + html; 
+                } else {
+                    const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                    tickerContent.innerHTML = fallback + fallback;
+                }
+                
+                const speed = data.speed || 80;
+                tickerContent.style.animationDuration = `${speed}s`;
+            } catch (err) {
+                const tickerContent = document.getElementById('tickerContent');
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
+            }
+        }
+
+        // ==========================================
+        // CHAT LOGIC
+        // ==========================================
         function formatBotReply(text) {
-            // Escape HTML to prevent XSS
             let safeText = String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            // Convert **bold** to <b>bold</b>
             safeText = safeText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            // Convert \n to <br>
             safeText = safeText.replace(/\n/g, '<br>');
             return safeText;
         }
 
-        // --- MESSAGE RENDERING ---
         function appendMessage(sender, text) {
             const msgDiv = document.createElement('div');
-            msgDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} message-anim`;
+            msgDiv.className = `message-bubble ${sender}`;
             
-            const bubble = document.createElement('div');
             if (sender === 'user') {
-                bubble.className = 'bg-custom-green text-white px-4 py-3 rounded-2xl rounded-tr-sm max-w-[85%] text-sm shadow-md break-words';
-                bubble.innerText = text; // Keep user text plain for security
+                msgDiv.innerText = text;
             } else {
-                bubble.className = 'bg-gray-100 text-gray-800 px-4 py-3 rounded-2xl rounded-tl-sm max-w-[85%] text-sm shadow-sm border border-gray-200 break-words';
-                bubble.innerHTML = formatBotReply(text); // Format bot text for bolding and line breaks
+                msgDiv.innerHTML = formatBotReply(text);
             }
             
-            msgDiv.appendChild(bubble);
             chatMessages.appendChild(msgDiv);
-            
-            // Auto-scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function showTyping() {
             const typingDiv = document.createElement('div');
             typingDiv.id = 'typingIndicator';
-            typingDiv.className = 'flex justify-start message-anim';
+            typingDiv.className = 'typing-indicator';
             typingDiv.innerHTML = `
-                <div class="bg-gray-100 text-gray-400 px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm border border-gray-200 flex gap-1.5">
-                    <span class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></span>
-                    <span class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></span>
-                    <span class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></span>
-                </div>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
             `;
             chatMessages.appendChild(typingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -250,71 +1017,51 @@
             if (typing) typing.remove();
         }
 
-        // --- API COMMUNICATION (WITH AUTH TOKEN) ---
         async function sendToBackend(message) {
             const headers = { 
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` // Required for real-time balance & security logging
+                'Authorization': `Bearer ${token}`
             };
 
-            // Try Primary Server
             try {
-                const response = await fetch(API_PRIMARY, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({ message })
-                });
+                const response = await fetch(API_PRIMARY_BOT, { method: 'POST', headers, body: JSON.stringify({ message }) });
                 if (response.ok) return await response.json();
-            } catch (err) {
-                console.warn("Primary AI server unreachable. Trying fallback...");
-            }
+            } catch (err) { console.warn("Primary AI server unreachable. Trying fallback..."); }
 
-            // Fallback to Secondary Server
             try {
-                const response = await fetch(API_FALLBACK, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({ message })
-                });
+                const response = await fetch(API_FALLBACK_BOT, { method: 'POST', headers, body: JSON.stringify({ message }) });
                 if (response.ok) return await response.json();
-            } catch (err) {
-                console.error("Both AI servers unreachable.");
-                return null;
-            }
+            } catch (err) { console.error("Both AI servers unreachable."); return null; }
         }
 
-        // --- FORM SUBMISSION HANDLER ---
-        async function processMessage(message) {
-            if (!message.trim()) return;
+        async function processMessage(text) {
+            const message = text.trim();
+            if (!message) return;
 
-            // 1. Show user message immediately
             appendMessage('user', message);
             chatInput.value = '';
             chatInput.disabled = true; 
             chatSendBtn.disabled = true;
             showTyping();
 
-            // 2. Get AI response
             const data = await sendToBackend(message);
             
-            // 3. Clean up UI
             hideTyping();
             chatInput.disabled = false;
             chatSendBtn.disabled = false;
             chatInput.focus();
 
-            // 4. Display AI response
             if (data && data.success && data.reply) {
-                // Small delay to make it feel more natural
                 setTimeout(() => {
+                    playAISound(); // Play sound when AI replies
                     appendMessage('bot', data.reply);
                     
-                    // 🛡️ SECURITY: If the user is banned, lock the chat input
                     if (data.isBanned) {
                         chatInput.disabled = true;
-                        chatInput.placeholder = "Chat restricted. Use Human Support below.";
+                        chatInput.placeholder = "Chat restricted. Use Human Support.";
                         chatSendBtn.disabled = true;
-                        chatInput.classList.add('bg-red-50', 'border-red-200', 'text-red-400');
+                        chatInput.style.background = '#fef2f2';
+                        chatInput.style.borderColor = '#fecaca';
                     }
                 }, 400);
             } else {
@@ -322,55 +1069,40 @@
             }
         }
 
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            processMessage(chatInput.value);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                processMessage(chatInput.value);
+            }
         });
 
-        // --- QUICK ACTION HANDLER ---
         function sendQuickMessage(text) {
-            chatInput.value = text;
             processMessage(text);
         }
 
         // ==========================================
         // HUMAN SUPPORT TICKET LOGIC
         // ==========================================
-        const humanForm = document.getElementById('humanSupportForm');
-        const humanFeedback = document.getElementById('humanFeedback');
-        const humanSendBtn = document.getElementById('humanSendBtn');
-
-        const API_TICKET_PRIMARY = 'https://unasemeje-backend.vercel.app/api/support-ticket';
-        const API_TICKET_FALLBACK = 'https://unasemeje-backend-3.onrender.com/api/support-ticket';
-
         humanForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const message = document.getElementById('humanMessage').value.trim();
             if (!message) return;
             
             humanSendBtn.disabled = true;
-            humanSendBtn.innerText = "Sending...";
-            humanFeedback.classList.add('hidden');
+            humanSendBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Sending...`;
+            humanFeedback.style.display = 'none';
 
             try {
-                // Try Primary Server
                 let res = await fetch(API_TICKET_PRIMARY, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ message })
                 });
 
-                // Fallback to Secondary Server if Primary fails
                 if (!res.ok) {
                     res = await fetch(API_TICKET_FALLBACK, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                         body: JSON.stringify({ message })
                     });
                 }
@@ -378,26 +1110,48 @@
                 const data = await res.json();
                 if (res.ok && data.success) {
                     humanFeedback.innerText = "✅ Message sent to Admin successfully!";
-                    humanFeedback.className = "text-xs text-center text-emerald-600 font-medium";
-                    humanFeedback.classList.remove('hidden');
+                    humanFeedback.style.color = 'var(--success)';
+                    humanFeedback.style.display = 'block';
                     humanForm.reset();
                 } else {
                     throw new Error(data.error || "Failed to send");
                 }
             } catch (err) {
                 humanFeedback.innerText = "❌ Failed to send. Please try again.";
-                humanFeedback.className = "text-xs text-center text-red-500 font-medium";
-                humanFeedback.classList.remove('hidden');
+                humanFeedback.style.color = 'var(--danger)';
+                humanFeedback.style.display = 'block';
             } finally {
                 humanSendBtn.disabled = false;
-                humanSendBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                    Send to Admin
-                `;
+                humanSendBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Send to Admin`;
             }
         });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        // ==========================================
+        // MOBILE NAV AUTO-HIDE ON SCROLL
+        // ==========================================
+        let lastScrollTop = 0;
+        const mobileSidebar = document.querySelector('.sidebar');
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    mobileSidebar.classList.add('nav-hidden');
+                } else {
+                    mobileSidebar.classList.remove('nav-hidden');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }
+        }, false);
+
+        // Initialize
+        loadTopTicker();
     </script>
+
 </body>
-</html>
+            </html>
