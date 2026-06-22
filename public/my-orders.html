@@ -23,6 +23,7 @@
             --warning: #f59e0b;
             --success: #10b981;
             --info: #6366f1;
+            --partial: #a855f7;
             --border-color: #e2e8f0;
         }
 
@@ -299,6 +300,7 @@
         .bg-completed, .bg-complete { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
         .bg-processing, .bg-inprogress { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
         .bg-canceled, .bg-cancelled, .bg-refunded { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .bg-partial { background: rgba(168, 85, 247, 0.12); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
 
         /* Refresh Button */
         .refresh-btn {
@@ -677,7 +679,7 @@
         <div class="main">
             <div class="header-section">
                 <h1>Order History</h1>
-                <button class="refresh-btn" onclick="loadOrders()">
+                <button class="refresh-btn" onclick="manualRefresh()">
                     <i class="fas fa-sync-alt"></i> Refresh
                 </button>
             </div>
@@ -762,18 +764,22 @@
             }
         }
 
-        // --- LOAD ORDERS ---
-        async function loadOrders() {
+        // --- LOAD ORDERS (WITH REAL STATUS MAPPING) ---
+        async function loadOrders(isAutoRefresh = false) {
             const list = document.getElementById("ordersList");
-            list.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        <div class="empty-state">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <p>Syncing your orders...</p>
-                        </div>
-                    </td>
-                </tr>`;
+            
+            // Only show loading spinner on manual refresh or initial load
+            if (!isAutoRefresh) {
+                list.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Syncing your orders...</p>
+                            </div>
+                        </td>
+                    </tr>`;
+            }
 
             try {
                 let res = await fetch(`${API}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
@@ -782,24 +788,39 @@
                 const orders = await res.json();
 
                 if (!orders || orders.length === 0) {
-                    list.innerHTML = `
-                        <tr>
-                            <td colspan="4">
-                                <div class="empty-state">
-                                    <i class="fas fa-inbox"></i>
-                                    <p>No orders found. Start growing today!</p>
-                                </div>
-                            </td>
-                        </tr>`;
+                    if (!isAutoRefresh) {
+                        list.innerHTML = `
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No orders found. Start growing today!</p>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
                     return;
                 }
 
                 list.innerHTML = orders.map(o => {
-                    const status = (o.status || 'pending').toLowerCase();
+                    // Robust status mapping for provider statuses
+                    const statusLower = (o.status || 'pending').toLowerCase().trim();
                     let badgeClass = 'bg-pending';
-                    if (status === 'completed' || status === 'complete') badgeClass = 'bg-completed';
-                    else if (status === 'processing' || status === 'inprogress' || status === 'in progress') badgeClass = 'bg-processing';
-                    else if (status === 'canceled' || status === 'cancelled' || status === 'refunded') badgeClass = 'bg-canceled';
+                    let displayStatus = 'Pending';
+
+                    if (statusLower.includes('complete')) {
+                        badgeClass = 'bg-completed';
+                        displayStatus = 'Completed';
+                    } else if (statusLower.includes('progress') || statusLower.includes('processing')) {
+                        badgeClass = 'bg-processing';
+                        displayStatus = 'In Progress';
+                    } else if (statusLower.includes('cancel') || statusLower.includes('refund')) {
+                        badgeClass = 'bg-canceled';
+                        displayStatus = 'Canceled';
+                    } else if (statusLower.includes('partial')) {
+                        badgeClass = 'bg-partial';
+                        displayStatus = 'Partial';
+                    }
                     
                     const serviceName = o.serviceName || o.service || "Social Service";
                     const linkDisplay = o.link ? (o.link.length > 35 ? o.link.substring(0, 35) + '...' : o.link) : 'N/A';
@@ -816,22 +837,28 @@
                             </div>
                         </td>
                         <td><span class="quantity">${quantityDisplay}</span></td>
-                        <td><span class="badge ${badgeClass}">${status}</span></td>
+                        <td><span class="badge ${badgeClass}">${displayStatus}</span></td>
                     </tr>`;
                 }).join('');
 
             } catch (e) {
                 console.error("Order Load Error", e);
-                list.innerHTML = `
-                    <tr>
-                        <td colspan="4">
-                            <div class="empty-state">
-                                <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
-                                <p style="color: var(--danger);">Failed to sync orders. Please try again.</p>
-                            </div>
-                        </td>
-                    </tr>`;
+                if (!isAutoRefresh) {
+                    list.innerHTML = `
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                                    <p style="color: var(--danger);">Failed to sync orders. Please try again.</p>
+                                </div>
+                            </td>
+                        </tr>`;
+                }
             }
+        }
+
+        function manualRefresh() {
+            loadOrders(false);
         }
 
         function logout() {
@@ -841,7 +868,10 @@
 
         // Execute on load
         loadTopTicker(); 
-        loadOrders();
+        loadOrders(false);
+
+        // AUTO-REFRESH: Silently updates orders every 30 seconds
+        setInterval(() => loadOrders(true), 30000);
     </script>
 
     <!-- ========================================== -->
@@ -1046,4 +1076,4 @@
     </script>
 
 </body>
-    </html>
+                    </html>
