@@ -1,33 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-KE">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Orders | UNASEMEJE ø DIA</title>
+    <title>My Orders | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* ========================================= */
+        /* PROFESSIONAL WHITE THEME VARIABLES        */
+        /* ========================================= */
         :root {
-            --primary: #7c3aed;
-            --secondary: #10b981;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
+            --primary: #1e3a5f;
+            --secondary: #f97316;
+            --bg-main: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
             --danger: #ef4444;
-            --warning: #f59e0b;
+            --warning: #f97316;
+            --border-color: #e2e8f0;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* GLOBAL RESPONSIVE FIXES */
         body { 
             margin: 0; 
-            background: var(--bg-dark); 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
             color: var(--text-main); 
             font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
-            overflow-x: hidden; /* Prevents horizontal page scrolling */
+            overflow-x: hidden;
         }
         
         td, th, p, h1, h2, h3, span, div {
@@ -35,134 +40,548 @@
             overflow-wrap: break-word;
         }
 
-        /* SIDEBAR */
-        .sidebar { 
-            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
-            position: fixed; height: 100vh; display: flex; flex-direction: column; 
-            z-index: 100;
+        /* ========================================= */
+        /* IMPORTANT WARNING BANNER STYLES           */
+        /* ========================================= */
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
-        .sidebar a { 
-            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
-            text-decoration: none; border-radius: 10px; margin-bottom: 5px; transition: 0.2s; 
-        }
-        .sidebar a:hover, .sidebar a.active { background: var(--primary); color: white; }
+        .warning-banner i { color: #fbbf24; font-size: 16px; }
+        .warning-banner a { color: #fbbf24; text-decoration: underline; font-weight: 700; cursor: pointer; margin-left: 5px; }
+        .warning-banner a:hover { color: #ffffff; }
 
-        /* MAIN CONTENT */
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
+        /* Modal Styles for Instructions */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+        .modal-header h3 { font-size: 1.4rem; font-weight: 800; margin: 0; }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+        .modal-body h4 { color: var(--primary); margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
+        .modal-body p { margin-bottom: 12px; color: var(--text-dim); }
+        .modal-body strong { color: var(--primary); }
+        .modal-body .step {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+        }
+        .modal-body .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 10px;
+        }
+
+        /* ========================================= */
+        /* MOVING TICKER STYLING                     */
+        /* ========================================= */
+        .top-ticker {
+            background: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 45px;
+            z-index: 1000;
+            width: 100%;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span { color: var(--secondary); font-weight: 800; }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* ========================================= */
+        /* SIDEBAR STYLING                           */
+        /* ========================================= */
+        .sidebar { 
+            width: 260px; 
+            background: #ffffff; 
+            padding: 25px; 
+            border-right: 2px solid var(--border-color); 
+            position: fixed; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 100;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.08);
+        }
+        .sidebar h2 { 
+            color: var(--primary); 
+            font-size: 20px; 
+            margin-bottom: 30px; 
+            text-align: center; 
+            font-weight: 800; 
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .sidebar a { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            color: var(--text-main); 
+            text-decoration: none; 
+            border-radius: 10px; 
+            margin-bottom: 5px; 
+            transition: 0.3s; 
+            gap: 10px;
+        }
+        .sidebar a i { color: var(--text-dim); width: 20px; text-align: center; transition: 0.3s; }
+        .sidebar a:hover { background: rgba(249, 115, 22, 0.1); color: var(--secondary); }
+        .sidebar a:hover i { color: var(--secondary); }
+        .sidebar a.active { 
+            background: linear-gradient(135deg, var(--secondary), #ea580c); 
+            color: #ffffff; 
+        }
+        .sidebar a.active i, .sidebar a.active span { color: #ffffff !important; }
+
+        .sidebar a.utility-link.ai-support { color: var(--secondary); }
+        .sidebar a.utility-link.ai-support i { color: var(--secondary); }
+        .sidebar a.utility-link.whatsapp-help { color: #25d366; }
+        .sidebar a.utility-link.whatsapp-help i { color: #25d366; }
+
+        /* ========================================= */
+        /* MAIN CONTENT AREA                         */
+        /* ========================================= */
+        .main { 
+            margin-left: 260px; 
+            padding: 40px; 
+            width: calc(100% - 260px); 
+            min-height: 100vh; 
+        }
         
         .header-section { 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; 
-            flex-wrap: wrap; gap: 15px; /* FIXED: Prevents button from overlapping title on small screens */
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            flex-wrap: wrap; 
+            gap: 15px; 
         }
-        .header-section h1 { font-weight: 800; font-size: 28px; margin: 0; }
+        .header-section h1 { 
+            font-weight: 800; 
+            font-size: 28px; 
+            margin: 0; 
+            color: var(--primary);
+        }
 
-        /* TABLE STYLES */
+        /* TABLE CARD STYLES */
         .card { 
             background: var(--card-bg); 
-            border: 1px solid #334155; 
+            border: 2px solid var(--border-color); 
             border-radius: 20px; 
             padding: 20px; 
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
             overflow: hidden;
         }
 
         .table-container { 
             overflow-x: auto; 
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch; 
             border-radius: 15px;
         }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { 
-            text-align: left; padding: 15px; color: var(--text-dim); 
-            border-bottom: 1px solid #334155; font-size: 12px; text-transform: uppercase; 
+            text-align: left; 
+            padding: 15px; 
+            color: var(--text-dim); 
+            border-bottom: 2px solid var(--border-color); 
+            font-size: 12px; 
+            text-transform: uppercase; 
             letter-spacing: 1px;
+            font-weight: 700;
+            background: #f8fafc;
         }
-        td { padding: 15px; border-bottom: 1px solid #1f2937; font-size: 14px; }
+        td { 
+            padding: 15px; 
+            border-bottom: 1px solid var(--border-color); 
+            font-size: 14px; 
+            color: var(--text-main); 
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(249, 115, 22, 0.03); }
 
         /* STATUS BADGES */
         .badge { 
-            padding: 5px 12px; border-radius: 6px; font-size: 11px; 
-            font-weight: 800; text-transform: uppercase; display: inline-block;
-            white-space: nowrap; /* Prevents status text from wrapping awkwardly */
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            display: inline-block;
+            white-space: nowrap; 
         }
-        .bg-pending { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #6366f1; }
-        .bg-completed { background: rgba(16, 185, 129, 0.2); color: var(--secondary); border: 1px solid var(--secondary); }
-        .bg-processing { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
-        .bg-canceled { background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .bg-pending { background: rgba(99, 102, 241, 0.15); color: #6366f1; border: 1px solid rgba(99, 102, 241, 0.3); }
+        .bg-completed { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .bg-processing { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .bg-canceled, .bg-cancelled, .bg-refunded { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 
         .refresh-btn {
-            background: var(--primary); color: white; border: none; padding: 10px 20px;
-            border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.3s;
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white; 
+            border: none; 
+            padding: 12px 24px;
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: 0.3s;
             white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
         }
-        .refresh-btn:hover { opacity: 0.9; transform: scale(1.05); }
+        .refresh-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.4); 
+        }
 
         /* ========================================= */
-        /* MOBILE RESPONSIVE BOTTOM NAVIGATION       */
+        /* PROFESSIONAL MOBILE BOTTOM NAVIGATION     */
         /* ========================================= */
         @media (max-width: 768px) {
+            .warning-banner { font-size: 12px; padding: 10px 15px; }
+            .warning-banner br { display: none; }
+
             .sidebar {
-                display: flex; /* FIXED: Changed from display: none to a bottom navigation bar */
                 position: fixed;
                 bottom: 0;
                 left: 0;
                 width: 100%;
-                height: 70px;
-                flex-direction: row;
-                padding: 0 5px;
+                height: auto;
+                min-height: 65px;
+                flex-direction: column;
+                padding: 0;
                 border-right: none;
-                border-top: 1px solid #1f2937;
+                border-top: 2px solid var(--border-color);
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1);
+                transition: transform 0.3s ease-in-out; 
+            }
+            .sidebar.nav-hidden { transform: translateY(100%); }
+            .sidebar h2 { display: none; }
+            .sidebar > div:last-child { display: none; }
+
+            .sidebar-nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                width: 100%;
                 justify-content: space-around;
                 align-items: center;
-                z-index: 1000;
-            }
-            .sidebar h2 { display: none; }
-            .sidebar a {
-                flex-direction: column;
-                padding: 8px 2px;
-                font-size: 10px;
                 margin: 0;
-                flex: 1;
-                text-align: center;
+                padding: 8px 0;
+                gap: 0;
+            }
+
+            .sidebar-nav a {
+                flex: 1 1 calc(100% / 6);
+                max-width: calc(100% / 6);
+                flex-direction: column;
                 justify-content: center;
+                align-items: center;
                 gap: 4px;
+                padding: 8px 4px;
+                margin: 0;
+                text-align: center;
+                border-radius: 0;
+                transition: all 0.2s ease;
+                min-width: 0;
+            }
+
+            .sidebar-nav a.utility-link {
+                flex: 0 0 auto;
+                max-width: none;
+                flex-direction: row;
+                padding: 10px 20px;
+                gap: 8px;
+                border-top: 1px solid var(--border-color);
+                width: 100%;
+                justify-content: center;
+            }
+            .sidebar-nav a.utility-link i { font-size: 16px; margin: 0; }
+            .sidebar-nav a.utility-link span { font-size: 12px; font-weight: 600; }
+
+            .sidebar-nav a:not(.utility-link) i {
+                font-size: 20px;
+                margin: 0;
+                color: var(--text-dim);
+            }
+            .sidebar-nav a.active i { color: var(--secondary); transform: scale(1.1); }
+            .sidebar-nav a.active span { color: var(--secondary); font-weight: 700; }
+
+            .sidebar-nav a:not(.utility-link) span {
+                font-size: 10px;
+                font-weight: 500;
+                color: var(--text-dim);
+                margin: 0;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                max-width: 100%;
             }
-            .sidebar a i {
-                margin-right: 0;
-                margin-bottom: 0;
-                font-size: 18px;
-            }
+            
             .main {
                 margin-left: 0;
-                margin-bottom: 80px; /* Space for bottom nav */
+                margin-bottom: 120px; 
                 padding: 20px;
                 width: 100%;
             }
             .header-section h1 { font-size: 22px; }
             .card { padding: 15px; border-radius: 16px; }
+            .table-container { border-radius: 12px; }
+            table { min-width: 550px; }
+            th, td { padding: 12px; font-size: 13px; }
+
+            #chatToggleBtn { bottom: 140px !important; right: 20px !important; transition: bottom 0.3s ease-in-out !important; }
+            #chatToggleBtn.nav-hidden { bottom: 20px !important; }
+            #chatWindow { bottom: 215px !important; right: 15px !important; left: 15px !important; width: auto !important; max-width: 100% !important; height: 65vh !important; transition: bottom 0.3s ease-in-out !important; }
+            #chatWindow.nav-hidden { bottom: 95px !important; }
         }
-        
+
         @media (max-width: 480px) {
-            .main { padding: 15px; margin-bottom: 75px; }
-            .header-section h1 { font-size: 20px; }
-            .refresh-btn { padding: 8px 15px; font-size: 13px; }
-            .sidebar a { font-size: 9px; }
-            .sidebar a i { font-size: 16px; }
+            .main { padding: 15px; margin-bottom: 115px; }
+            .top-ticker { height: 40px; top: 40px; }
+            .ticker-item { font-size: 12px; padding-right: 40px; }
+            .sidebar { min-height: 60px; }
+            .sidebar-nav a:not(.utility-link) i { font-size: 18px; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 9px; }
+            .sidebar-nav a.utility-link { padding: 8px 15px; }
+            .sidebar-nav a.utility-link i { font-size: 14px; }
+            .sidebar-nav a.utility-link span { font-size: 11px; }
+            
+            #chatToggleBtn { bottom: 135px !important; right: 15px !important; width: 50px !important; height: 50px !important; padding: 12px !important; }
+            #chatToggleBtn.nav-hidden { bottom: 15px !important; }
+            #chatWindow { bottom: 210px !important; right: 10px !important; left: 10px !important; max-width: calc(100% - 20px) !important; }
+            #chatWindow.nav-hidden { bottom: 80px !important; }
+        }
+
+        @media (max-width: 360px) {
+            .main { padding: 10px; margin-bottom: 110px; }
+            .top-ticker { height: 36px; top: 36px; }
+            .ticker-item { font-size: 10px; padding-right: 25px; }
+            .sidebar { min-height: 58px; }
+            .sidebar-nav a:not(.utility-link) i { font-size: 16px; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 8px; }
+            .sidebar-nav a.utility-link { padding: 7px 12px; }
+            .sidebar-nav a.utility-link i { font-size: 13px; }
+            .sidebar-nav a.utility-link span { font-size: 10px; }
+            
+            #chatToggleBtn { width: 45px !important; height: 45px !important; padding: 10px !important; bottom: 130px !important; }
+            #chatToggleBtn.nav-hidden { bottom: 15px !important; }
+            #chatWindow { bottom: 205px !important; right: 8px !important; left: 8px !important; max-width: calc(100% - 16px) !important; }
+            #chatWindow.nav-hidden { bottom: 75px !important; }
+        }
+
+        /* ========================================= */
+        /* CHAT WIDGET STYLES                        */
+        /* ========================================= */
+        #chatWindow { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: bottom right; }
+        #chatWindow.hidden { display: none; }
+        #chatMessages::-webkit-scrollbar { width: 6px; }
+        #chatMessages::-webkit-scrollbar-track { background: transparent; }
+        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        #chatMessages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        @keyframes bounce-dot {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @media (max-width: 768px) {
+            #chatWindow { width: calc(100vw - 30px) !important; max-width: calc(100vw - 30px) !important; right: 15px !important; left: 15px !important; box-sizing: border-box !important; }
+            #chatMessages { height: 280px !important; }
+        }
+        @media (max-width: 480px) {
+            #chatWindow { width: calc(100vw - 20px) !important; max-width: calc(100vw - 20px) !important; right: 10px !important; left: 10px !important; }
+            #chatMessages { height: 250px !important; }
+            #chatWindow .p-4 h3 { font-size: 13px !important; }
+            #chatWindow .p-4 p { font-size: 9px !important; }
+        }
+        @media (max-width: 360px) {
+            #chatWindow { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; right: 8px !important; left: 8px !important; }
+            #chatMessages { height: 220px !important; padding: 10px !important; }
+            #chatInput { font-size: 13px !important; padding: 8px 12px !important; }
         }
     </style>
 </head>
 <body>
 
+<!-- IMPORTANT WARNING BANNER -->
+<div class="warning-banner">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+    <a onclick="showFlagInstructions()">Click Here to See How</a>
+</div>
+
+<!-- DYNAMIC TOP TICKER -->
+<div class="top-ticker">
+    <div class="ticker-content" id="tickerContent">
+        <!-- Items and speed will be injected dynamically by JS -->
+    </div>
+</div>
+
+<!-- MODAL FOR FLAG INSTRUCTIONS -->
+<div class="modal-overlay" id="flagModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>Important: Turn Off Flag for Review</h3>
+            <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+            <h4>Step-by-Step Instructions:</h4>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Go to Settings</strong><br>
+                Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Find Follow Settings</strong><br>
+                Scroll down and tap <strong>"Follow and invite friends"</strong>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Disable Flag for Review</strong><br>
+                Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Confirm</strong><br>
+                Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+            </div>
+            <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+            <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+            <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+            </p>
+            <p style="text-align: center; margin-top: 25px;">
+                <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard" style="display: flex; width: 100%;">
     <div class="sidebar">
-        <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="select-platform.html"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="my-orders.html" class="active"><i class="fas fa-history"></i> My Orders</a>
-        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
-        <a href="referrals.html"><i class="fas fa-users"></i> Referrals</a>
+        <h2 style="font-family: 'Plus Jakarta Sans';">Unasemeje SMM Gains</h2>
+        <div class="sidebar-nav" id="sidebarNav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+            <a href="my-orders.html" class="active"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a href="services.html"><i class="fas fa-list"></i> <span>All Services</span></a>
+            <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            
+            <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+            <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
     </div>
 
     <div class="main">
@@ -195,58 +614,318 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Updated pointing precisely to your live Vercel endpoint layer
-        const API = "https://unasemeje-backend.vercel.app/api";
-        const token = localStorage.getItem("token");
+<script>
+    const API = "https://unasemeje-backend.vercel.app/api";
+    const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
+    const token = localStorage.getItem("token");
 
-        if (!token) window.location.href = "index.html";
+    if (!token) window.location.href = "index.html";
 
-        async function loadOrders() {
-            try {
-                const res = await fetch(`${API}/sync-orders`, { 
-                    headers: { "Authorization": `Bearer ${token}` }
+    // --- MODAL FUNCTIONS ---
+    function showFlagInstructions() {
+        document.getElementById('flagModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFlagInstructions() {
+        document.getElementById('flagModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.getElementById('flagModal').addEventListener('click', function(e) {
+        if (e.target === this) closeFlagInstructions();
+    });
+
+    // --- DYNAMIC TOP TICKER LOADER ---
+    async function loadTopTicker() {
+        try {
+            let res = await fetch(`${API}/ticker`);
+            if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
+            
+            const data = await res.json();
+            const tickerContent = document.getElementById('tickerContent');
+            
+            if (data.items && data.items.length > 0) {
+                let html = '';
+                data.items.forEach(item => {
+                    html += `<div class="ticker-item">${item}</div>`;
                 });
-                const orders = await res.json();
-                const list = document.getElementById("ordersList");
+                tickerContent.innerHTML = html + html; 
+            } else {
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
+            }
+            
+            const speed = data.speed || 80;
+            tickerContent.style.animationDuration = `${speed}s`;
+            
+        } catch (err) {
+            const tickerContent = document.getElementById('tickerContent');
+            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+            tickerContent.innerHTML = fallback + fallback;
+        }
+    }
 
-                if (!orders || orders.length === 0) {
-                    list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-dim);">No orders found. Start growing today!</td></tr>`;
-                    return;
+    // --- LOAD ORDERS ---
+    async function loadOrders() {
+        const list = document.getElementById("ordersList");
+        list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-dim);"><i class="fas fa-spinner fa-spin"></i> Syncing your orders...</td></tr>`;
+
+        try {
+            let res = await fetch(`${API}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
+            if (!res.ok) res = await fetch(`${API_FALLBACK}/sync-orders`, { headers: { "Authorization": `Bearer ${token}` } });
+            
+            const orders = await res.json();
+
+            if (!orders || orders.length === 0) {
+                list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--text-dim);">No orders found. Start growing today!</td></tr>`;
+                return;
+            }
+
+            list.innerHTML = orders.map(o => {
+                const status = (o.status || 'pending').toLowerCase();
+                let badgeClass = 'bg-pending';
+                if (status === 'completed' || status === 'complete') badgeClass = 'bg-completed';
+                else if (status === 'processing' || status === 'inprogress') badgeClass = 'bg-processing';
+                else if (status === 'canceled' || status === 'cancelled' || status === 'refunded') badgeClass = 'bg-canceled';
+                
+                const serviceName = o.serviceName || o.service || "Social Service";
+                const linkDisplay = o.link ? (o.link.length > 30 ? o.link.substring(0, 30) + '...' : o.link) : 'N/A';
+                const quantityDisplay = o.quantity ? Number(o.quantity).toLocaleString() : '0';
+                const orderId = o.orderId || o.id || '---';
+                
+                return `
+                <tr>
+                    <td style="font-weight: 700; color: var(--primary);">#${orderId}</td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--text-main);">${serviceName}</div>
+                        <div style="font-size: 12px; color: var(--text-dim); margin-top: 4px; word-break: break-all;">
+                            <i class="fas fa-link" style="margin-right: 4px;"></i> ${linkDisplay}
+                        </div>
+                    </td>
+                    <td style="font-weight: 600;">${quantityDisplay}</td>
+                    <td><span class="badge ${badgeClass}">${status}</span></td>
+                </tr>`;
+            }).join('');
+
+        } catch (e) {
+            console.error("Order Load Error", e);
+            list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 40px; color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> Failed to sync orders. Please try again.</td></tr>`;
+        }
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+
+    // Execute on load
+    loadTopTicker(); 
+    loadOrders();
+</script>
+
+<!-- ========================================== -->
+<!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
+<!-- ========================================== -->
+<button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: #f97316; position: fixed;">
+    <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+    <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+</button>
+
+<div id="chatWindow" class="fixed bottom-24 right-6 z-50 w-[90vw] bg-white rounded-3xl shadow-2xl border border-gray-100 flex-col hidden scale-95 opacity-0" style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; position: fixed;">
+    <div class="p-4 rounded-t-3xl flex justify-between items-center shadow-md text-white" style="background-color: #1e3a5f;">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="font-bold text-sm leading-tight">Unasemeje Support</h3>
+                <p class="text-[10px] opacity-90 flex items-center gap-1.5 mt-0.5">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> AI Assistant Online
+                </p>
+            </div>
+        </div>
+        <button id="chatCloseBtn" class="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style="height: 320px;"></div>
+
+    <div class="p-3 border-t border-gray-100 bg-white rounded-b-3xl">
+        <form id="chatForm" class="flex gap-2">
+            <input type="text" id="chatInput" placeholder="Type your question..." class="flex-1 bg-gray-100 rounded-xl px-4 py-2.5 text-sm outline-none transition-all text-gray-800 placeholder-gray-400" style="border: 1px solid #e5e7eb;" autocomplete="off" required>
+            <button type="submit" id="chatSendBtn" class="text-white p-2.5 rounded-xl hover:opacity-90 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" style="background-color: #f97316;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatIconOpen = document.getElementById('chatIconOpen');
+        const chatIconClose = document.getElementById('chatIconClose');
+
+        const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
+        const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+
+        let isChatOpen = false;
+
+        let lastScrollTop = 0;
+        const mobileSidebar = document.querySelector('.sidebar');
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                    mobileSidebar.classList.add('nav-hidden');
+                    chatToggleBtn.classList.add('nav-hidden');
+                    chatWindow.classList.add('nav-hidden');
+                } else {
+                    mobileSidebar.classList.remove('nav-hidden');
+                    chatToggleBtn.classList.remove('nav-hidden');
+                    chatWindow.classList.remove('nav-hidden');
                 }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }
+        }, false);
 
-                list.innerHTML = orders.map(o => {
-                    const status = (o.status || 'pending').toLowerCase();
-                    const badgeClass = `bg-${status}`;
-                    const serviceName = o.serviceName || "Social Service";
-                    
-                    // FIXED: Added safety checks and word-break to prevent long URLs from breaking the table layout
-                    const linkDisplay = o.link ? o.link.substring(0, 30) + '...' : 'N/A';
-                    const quantityDisplay = o.quantity ? o.quantity.toLocaleString() : '0';
-                    
-                    return `
-                    <tr>
-                        <td style="font-weight: 800; color: var(--primary);">#${o.orderId || '---'}</td>
-                        <td>
-                            <div style="font-weight: 600;">${serviceName}</div>
-                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px; word-break: break-all;">
-                                <i class="fas fa-link"></i> ${linkDisplay}
-                            </div>
-                        </td>
-                        <td>${quantityDisplay}</td>
-                        <td><span class="badge ${badgeClass}">${status}</span></td>
-                    </tr>`;
-                }).join('');
-
-            } catch (e) {
-                console.error("Order Load Error", e);
-                document.getElementById("ordersList").innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--danger);">Failed to sync orders. Please try again.</td></tr>`;
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            if (isChatOpen) {
+                chatWindow.style.display = 'flex';
+                setTimeout(() => {
+                    chatWindow.classList.remove('hidden', 'scale-95', 'opacity-0');
+                    chatWindow.classList.add('scale-100', 'opacity-100');
+                }, 10);
+                chatIconOpen.classList.add('hidden');
+                chatIconClose.classList.remove('hidden');
+                
+                if (chatMessages.children.length === 0) {
+                    appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today?");
+                }
+                setTimeout(() => chatInput.focus(), 300);
+            } else {
+                chatWindow.classList.add('scale-95', 'opacity-0');
+                chatWindow.classList.remove('scale-100', 'opacity-100');
+                setTimeout(() => {
+                    chatWindow.style.display = 'none';
+                    chatWindow.classList.add('hidden');
+                }, 300);
+                chatIconOpen.classList.remove('hidden');
+                chatIconClose.classList.add('hidden');
             }
         }
 
-        // Initial Load
-        loadOrders();
-    </script>
+        function appendMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            const bubble = document.createElement('div');
+            if (sender === 'user') {
+                bubble.className = 'text-white px-4 py-2.5 rounded-2xl rounded-br-sm max-w-[85%] text-sm shadow-md break-words';
+                bubble.style.backgroundColor = '#1e3a5f';
+            } else {
+                bubble.className = 'bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-bl-sm max-w-[85%] text-sm shadow-sm border border-gray-100 break-words';
+            }
+            bubble.innerText = text;
+            msgDiv.appendChild(bubble);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex justify-start';
+            typingDiv.innerHTML = `
+                <div class="bg-white text-gray-400 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100 flex gap-1.5">
+                    <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                    <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                    <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        async function sendToBackend(message) {
+            try {
+                const response = await fetch(API_PRIMARY_BOT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ message })
+                });
+                if (response.ok) return await response.json();
+            } catch (err) { console.warn("Primary AI server unreachable. Trying fallback..."); }
+
+            try {
+                const response = await fetch(API_FALLBACK_BOT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ message })
+                });
+                if (response.ok) return await response.json();
+            } catch (err) { console.error("Both AI servers unreachable."); return null; }
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            appendMessage('user', message);
+            chatInput.value = '';
+            chatInput.disabled = true; 
+            showTyping();
+
+            const data = await sendToBackend(message);
+            hideTyping();
+            chatInput.disabled = false;
+            chatInput.focus();
+
+            if (data && data.success && data.reply) {
+                appendMessage('bot', data.reply);
+            } else {
+                appendMessage('bot', "I'm having trouble connecting to my brain right now. Please try again in a moment!");
+            }
+        });
+
+        chatToggleBtn.addEventListener('click', toggleChat);
+        chatCloseBtn.addEventListener('click', toggleChat);
+        
+        document.addEventListener('click', (e) => {
+            if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
+                toggleChat();
+            }
+        });
+    });
+</script>
+
 </body>
-</html>
+    </html>
