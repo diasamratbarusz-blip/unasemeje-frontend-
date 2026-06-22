@@ -217,134 +217,63 @@
         }
 
         /* ========================================= */
-        /* PRE-ORDER CHECKLIST STYLES                */
+        /* AUTO-FILL NOTIFICATION                    */
         /* ========================================= */
-        .order-checklist {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border: 2px solid #f59e0b;
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .order-checklist::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(180deg, #f59e0b, #d97706);
-        }
-
-        .checklist-header {
-            display: flex;
+        .autofill-notice {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: none;
             align-items: center;
             gap: 12px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+            animation: slideDown 0.5s ease;
         }
 
-        .checklist-header i {
-            font-size: 24px;
-            color: #d97706;
-        }
-
-        .checklist-header h3 {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 0;
-        }
-
-        .checklist-header p {
-            font-size: 12px;
-            color: var(--text-dim);
-            margin: 2px 0 0 0;
-        }
-
-        .checklist-item {
+        .autofill-notice.show {
             display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
         }
 
-        .checklist-item:hover {
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(245, 158, 11, 0.3);
-            transform: translateX(3px);
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .checklist-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin: 0;
-            cursor: pointer;
-            accent-color: #f59e0b;
+        .autofill-notice i {
+            font-size: 24px;
+            color: #059669;
             flex-shrink: 0;
-            margin-top: 2px;
         }
 
-        .checklist-item label {
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            line-height: 1.5;
-            margin: 0;
+        .autofill-notice .notice-content {
             flex: 1;
         }
 
-        .checklist-item label strong {
-            color: var(--primary);
+        .autofill-notice .notice-content strong {
+            color: #065f46;
             display: block;
-            font-size: 13px;
+            font-size: 14px;
             margin-bottom: 2px;
         }
 
-        .checklist-item label small {
-            color: var(--text-dim);
-            font-weight: 500;
+        .autofill-notice .notice-content small {
+            color: #047857;
             font-size: 12px;
         }
 
-        .checklist-item.checked {
-            background: rgba(34, 197, 94, 0.1);
-            border-color: rgba(34, 197, 94, 0.3);
+        .autofill-notice .close-notice {
+            background: transparent;
+            border: none;
+            color: #059669;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+            transition: transform 0.3s;
         }
 
-        .checklist-item.checked label {
-            color: #166534;
-        }
-
-        .checklist-counter {
-            text-align: center;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            margin-top: 12px;
-            font-weight: 700;
-            font-size: 13px;
-            color: var(--primary);
-        }
-
-        .checklist-counter.complete {
-            background: rgba(34, 197, 94, 0.15);
-            color: #166534;
-        }
-
-        .checklist-counter i {
-            margin-right: 8px;
+        .autofill-notice .close-notice:hover {
+            transform: rotate(90deg);
         }
 
         /* Moving Ticker Styling - Continuous Animation */
@@ -570,15 +499,14 @@
             transition: all 0.3s ease;
             box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.4);
         }
-        .btn-primary:hover:not(:disabled) {
+        .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 30px -5px rgba(249, 115, 22, 0.5);
         }
         .btn-primary:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            background: #9ca3af;
         }
 
         /* ========================================= */
@@ -764,28 +692,17 @@
                 font-size: 20px;
             }
 
-            /* Checklist Mobile */
-            .order-checklist {
-                padding: 15px !important;
+            /* Autofill notice mobile */
+            .autofill-notice {
+                padding: 12px 15px !important;
             }
-
-            .checklist-header h3 {
-                font-size: 14px !important;
+            .autofill-notice i {
+                font-size: 20px !important;
             }
-
-            .checklist-item {
-                padding: 10px !important;
-            }
-
-            .checklist-item label {
+            .autofill-notice .notice-content strong {
                 font-size: 13px !important;
             }
-
-            .checklist-item label strong {
-                font-size: 12px !important;
-            }
-
-            .checklist-item label small {
+            .autofill-notice .notice-content small {
                 font-size: 11px !important;
             }
 
@@ -1001,6 +918,18 @@
             <span id="platformName">Facebook</span>
         </div>
 
+        <!-- AUTO-FILL NOTICE -->
+        <div class="autofill-notice" id="autofillNotice">
+            <i class="fas fa-check-circle"></i>
+            <div class="notice-content">
+                <strong id="autofillTitle">Service Auto-Selected!</strong>
+                <small id="autofillDesc">Your selected service has been loaded. Just enter the link and quantity.</small>
+            </div>
+            <button class="close-notice" onclick="document.getElementById('autofillNotice').classList.remove('show')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
         <div class="card">
             <!-- Step 1: Category (SHOWS ALL CATEGORIES FROM SELECTED PLATFORM) -->
             <label><i class="fas fa-layer-group"></i> 1. Select Category</label>
@@ -1039,64 +968,6 @@
                 <input type="number" id="quantity" placeholder="E.g 1000" oninput="calculateTotal()">
             </div>
 
-            <!-- ========================================= -->
-            <!-- PRE-ORDER CHECKLIST - NEW!                -->
-            <!-- ========================================= -->
-            <div class="order-checklist">
-                <div class="checklist-header">
-                    <i class="fas fa-clipboard-check"></i>
-                    <div>
-                        <h3>Pre-Order Verification Checklist</h3>
-                        <p>You must confirm all items below before placing your order</p>
-                    </div>
-                </div>
-
-                <div class="checklist-item" onclick="toggleChecklistItem(this)">
-                    <input type="checkbox" id="check-public" class="checklist-checkbox">
-                    <label for="check-public">
-                        <strong>Profile/Post is PUBLIC</strong>
-                        <small>Make sure your account or post is set to PUBLIC. Private profiles cannot receive followers or engagement. <b style="color: #dc2626;">Orders on private profiles will NOT be delivered.</b></small>
-                    </label>
-                </div>
-
-                <div class="checklist-item" onclick="toggleChecklistItem(this)">
-                    <input type="checkbox" id="check-link" class="checklist-checkbox">
-                    <label for="check-link">
-                        <strong>Link is Correct & Accessible</strong>
-                        <small>I have verified the link works and leads to the correct profile or post. Wrong links cannot be refunded.</small>
-                    </label>
-                </div>
-
-                <div class="checklist-item" onclick="toggleChecklistItem(this)">
-                    <input type="checkbox" id="check-flag" class="checklist-checkbox">
-                    <label for="check-flag">
-                        <strong>Instagram: "Flag for Review" is OFF</strong>
-                        <small>For Instagram follower orders, I have disabled the "Flag for Review" feature in my settings (required for delivery).</small>
-                    </label>
-                </div>
-
-                <div class="checklist-item" onclick="toggleChecklistItem(this)">
-                    <input type="checkbox" id="check-age" class="checklist-checkbox">
-                    <label for="check-age">
-                        <strong>Account Meets Age Requirements</strong>
-                        <small>My account is at least 30 days old and has no active restrictions or bans from the platform.</small>
-                    </label>
-                </div>
-
-                <div class="checklist-item" onclick="toggleChecklistItem(this)">
-                    <input type="checkbox" id="check-terms" class="checklist-checkbox">
-                    <label for="check-terms">
-                        <strong>I Agree to Terms & No Refund Policy</strong>
-                        <small>I understand that digital services are non-refundable once processing begins. Failed orders will be credited back to my wallet.</small>
-                    </label>
-                </div>
-
-                <div class="checklist-counter" id="checklistCounter">
-                    <i class="fas fa-info-circle"></i>
-                    <span id="checklistText">0 of 5 items confirmed</span>
-                </div>
-            </div>
-
             <!-- Price Display -->
             <div class="price-display">
                 <small id="priceLabel">Order Total</small>
@@ -1104,8 +975,8 @@
             </div>
 
             <!-- Submit Button -->
-            <button class="btn-primary" id="orderBtn" onclick="placeOrder()" disabled>
-                <i class="fas fa-lock"></i> COMPLETE CHECKLIST TO CONFIRM BOOST
+            <button class="btn-primary" id="orderBtn" onclick="placeOrder()">
+                <i class="fas fa-fire"></i> CONFIRM BOOST
             </button>
         </div>
     </div>
@@ -1137,58 +1008,11 @@
         document.body.style.overflow = 'auto';
     }
 
+    // Close modal when clicking outside
     document.getElementById('flagModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeFlagInstructions();
         }
-    });
-
-    // --- CHECKLIST FUNCTIONS ---
-    function toggleChecklistItem(item) {
-        const checkbox = item.querySelector('input[type="checkbox"]');
-        checkbox.checked = !checkbox.checked;
-        updateChecklistUI();
-    }
-
-    function updateChecklistUI() {
-        const checkboxes = document.querySelectorAll('.checklist-checkbox');
-        const items = document.querySelectorAll('.checklist-item');
-        const counter = document.getElementById('checklistCounter');
-        const counterText = document.getElementById('checklistText');
-        const orderBtn = document.getElementById('orderBtn');
-        
-        let checkedCount = 0;
-        
-        checkboxes.forEach((cb, index) => {
-            if (cb.checked) {
-                checkedCount++;
-                items[index].classList.add('checked');
-            } else {
-                items[index].classList.remove('checked');
-            }
-        });
-        
-        const total = checkboxes.length;
-        counterText.textContent = `${checkedCount} of ${total} items confirmed`;
-        
-        if (checkedCount === total) {
-            counter.classList.add('complete');
-            counter.innerHTML = '<i class="fas fa-check-circle"></i><span>All items verified! You can now place your order.</span>';
-            orderBtn.disabled = false;
-            orderBtn.innerHTML = '<i class="fas fa-fire"></i> CONFIRM BOOST';
-        } else {
-            counter.classList.remove('complete');
-            counter.innerHTML = `<i class="fas fa-info-circle"></i><span>${checkedCount} of ${total} items confirmed</span>`;
-            orderBtn.disabled = true;
-            orderBtn.innerHTML = '<i class="fas fa-lock"></i> COMPLETE CHECKLIST TO CONFIRM BOOST';
-        }
-    }
-
-    // Add event listeners to checkboxes for direct clicking
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.checklist-checkbox').forEach(cb => {
-            cb.addEventListener('change', updateChecklistUI);
-        });
     });
 
     // --- GET PLATFORM FROM URL ---
@@ -1233,13 +1057,16 @@
             
             const speed = data.speed || 80;
             
+            // CONTINUOUS TICKER: Calculate position based on time
             const tickerStartTime = localStorage.getItem('tickerStartTime');
             const currentTime = Date.now();
             
             if (!tickerStartTime) {
+                // First visit - set start time
                 localStorage.setItem('tickerStartTime', currentTime);
                 tickerContent.style.animationDuration = `${speed}s`;
             } else {
+                // Calculate elapsed time and set animation delay to continue from that position
                 const elapsedSeconds = (currentTime - parseInt(tickerStartTime)) / 1000;
                 const animationDelay = -(elapsedSeconds % speed);
                 tickerContent.style.animationDuration = `${speed}s`;
@@ -1255,13 +1082,123 @@
         }
     }
 
+    // ==========================================
+    // AUTO-FILL FROM ALL SERVICES PAGE
+    // ==========================================
+    function tryAutoFill() {
+        const prefillData = localStorage.getItem('prefillOrder');
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlServiceId = urlParams.get('serviceId');
+        
+        if (!prefillData && !urlServiceId) return false;
+        
+        let data = null;
+        if (prefillData) {
+            try {
+                data = JSON.parse(prefillData);
+                // Check if data is fresh (less than 5 minutes old)
+                if (Date.now() - data.timestamp > 5 * 60 * 1000) {
+                    localStorage.removeItem('prefillOrder');
+                    return false;
+                }
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        const targetPlatform = data ? data.platform : getSelectedPlatform();
+        const targetCategory = data ? data.category : null;
+        const targetServiceId = urlServiceId || (data ? data.serviceId : null);
+        
+        if (!targetPlatform || !targetServiceId) return false;
+        
+        // Auto-select category
+        const cSelect = document.getElementById("categorySelect");
+        const categoryValue = `${targetPlatform}||${targetCategory}`;
+        
+        // Check if category option exists
+        let categoryExists = false;
+        for (let option of cSelect.options) {
+            if (option.value === categoryValue) {
+                categoryExists = true;
+                break;
+            }
+        }
+        
+        if (categoryExists) {
+            cSelect.value = categoryValue;
+            loadServices();
+            
+            // Auto-select service after a short delay
+            setTimeout(() => {
+                const sSelect = document.getElementById("serviceSelect");
+                let serviceFound = false;
+                
+                for (let option of sSelect.options) {
+                    if (option.value == targetServiceId) {
+                        serviceFound = true;
+                        break;
+                    }
+                }
+                
+                if (serviceFound) {
+                    sSelect.value = targetServiceId;
+                    updateServiceInfo();
+                    
+                    // Show success notice
+                    showAutofillNotice(targetPlatform, targetCategory, targetServiceId);
+                    
+                    // Clear prefill data
+                    localStorage.removeItem('prefillOrder');
+                    
+                    // Scroll to quantity input
+                    setTimeout(() => {
+                        document.getElementById('link').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center' 
+                        });
+                    }, 500);
+                }
+            }, 300);
+            
+            return true;
+        }
+        
+        return false;
+    }
+
+    function showAutofillNotice(platform, category, serviceId) {
+        const notice = document.getElementById('autofillNotice');
+        const title = document.getElementById('autofillTitle');
+        const desc = document.getElementById('autofillDesc');
+        
+        // Find service name
+        let serviceName = 'Selected Service';
+        if (allData[platform] && allData[platform][category]) {
+            const service = allData[platform][category].find(s => s.serviceId == serviceId);
+            if (service) serviceName = service.name;
+        }
+        
+        title.textContent = '✨ Service Auto-Selected!';
+        desc.textContent = `${platform} → ${category} → ${serviceName}`;
+        
+        notice.classList.add('show');
+        
+        // Auto-hide after 6 seconds
+        setTimeout(() => {
+            notice.classList.remove('show');
+        }, 6000);
+    }
+
     // Initialize: Fetch all services and categories
     async function init() {
         try {
+            // Force refresh to get latest services from provider
             const res = await fetch(`${API}/services?refresh=true`);
             if (!res.ok) throw new Error("Failed to fetch services");
             const json = await res.json();
             
+            // Store all data from provider
             allData = json.data;
             
             console.log("📦 ALL PLATFORMS FROM PROVIDER:", Object.keys(allData));
@@ -1269,8 +1206,10 @@
                 return sum + Object.values(platform).reduce((catSum, cat) => catSum + cat.length, 0);
             }, 0));
 
+            // Get selected platform from URL
             selectedPlatform = getSelectedPlatform();
             
+            // Show platform badge if platform is selected
             if (selectedPlatform) {
                 const badge = document.getElementById('platformBadge');
                 const icon = document.getElementById('platformIcon');
@@ -1284,6 +1223,7 @@
             const cSelect = document.getElementById("categorySelect");
             cSelect.innerHTML = '<option value="">-- Choose Category --</option>';
             
+            // Show ALL categories from the selected platform
             if (selectedPlatform && allData[selectedPlatform]) {
                 const categories = allData[selectedPlatform];
                 const categoryNames = Object.keys(categories);
@@ -1291,17 +1231,21 @@
                 console.log(`📂 ALL ${selectedPlatform} CATEGORIES:`, categoryNames);
                 console.log(`📊 TOTAL ${selectedPlatform} CATEGORIES:`, categoryNames.length);
                 
+                // Show ALL categories from this platform
                 categoryNames.forEach(category => {
                     const opt = document.createElement("option");
                     opt.value = `${selectedPlatform}||${category}`;
+                    // Display category name EXACTLY as it comes from provider
                     opt.innerText = category;
                     cSelect.appendChild(opt);
                 });
                 
+                // Count total services for this platform
                 const totalServices = categoryNames.reduce((sum, cat) => sum + categories[cat].length, 0);
                 console.log(`📊 TOTAL ${selectedPlatform} SERVICES:`, totalServices);
                 
             } else {
+                // Fallback: Show all platforms if no platform selected
                 console.log("⚠️ No platform selected, showing all platforms");
                 Object.keys(allData).forEach(platform => {
                     Object.keys(allData[platform]).forEach(category => {
@@ -1313,12 +1257,18 @@
                 });
             }
 
+            // Try to auto-fill after categories are loaded
+            setTimeout(() => {
+                tryAutoFill();
+            }, 100);
+
         } catch (e) { 
             console.error("Service Loading Error:", e);
             document.getElementById("categorySelect").innerHTML = '<option>Error loading services. Refresh!</option>';
         }
     }
 
+    // Load Services for selected category
     function loadServices() {
         const catValue = document.getElementById("categorySelect").value;
         const sSelect = document.getElementById("serviceSelect");
@@ -1326,6 +1276,7 @@
         
         if (!catValue) return;
 
+        // Use indexOf instead of split to handle category names with special characters
         const separatorIndex = catValue.indexOf("||");
         const platform = catValue.substring(0, separatorIndex);
         const category = catValue.substring(separatorIndex + 2);
@@ -1334,9 +1285,11 @@
 
         console.log(`📋 Loading ${services.length} services for ${platform} > ${category}`);
 
+        // Show ALL services in this category
         services.forEach((s, index) => {
             const opt = document.createElement("option");
             opt.value = s.serviceId;
+            // Display service name EXACTLY as it comes from provider
             opt.innerText = `${s.name} (KES ${s.rate}/1k)`;
             sSelect.appendChild(opt);
         });
@@ -1344,6 +1297,7 @@
         console.log(`✅ Loaded ${services.length} services successfully`);
     }
 
+    // Update UI based on chosen service type (Quantity vs Comments)
     function updateServiceInfo() {
         const catValue = document.getElementById("categorySelect").value;
         const sId = document.getElementById("serviceSelect").value;
@@ -1356,6 +1310,7 @@
             return;
         }
 
+        // Use indexOf instead of split to handle category names with special characters
         const separatorIndex = catValue.indexOf("||");
         const platform = catValue.substring(0, separatorIndex);
         const category = catValue.substring(separatorIndex + 2);
@@ -1366,8 +1321,10 @@
             details.style.display = "block";
             document.getElementById("minQty").innerText = Number(selectedService.min).toLocaleString();
             document.getElementById("maxQty").innerText = Number(selectedService.max).toLocaleString();
+            // Display description exactly as it comes from provider
             document.getElementById("serviceDesc").innerHTML = selectedService.description || "Hakuna maelezo zaidi. Plug is ready!";
 
+            // CHECK FLEXIBILITY: Is this a comment service?
             const type = (selectedService.type || "").toLowerCase();
             if (type.includes("comment") || type.includes("custom")) {
                 qtyGroup.style.display = "none";
@@ -1383,6 +1340,7 @@
         }
     }
 
+    // Calculate total for normal quantity
     function calculateTotal() {
         if (!selectedService) return;
         const qty = parseFloat(document.getElementById("quantity").value) || 0;
@@ -1390,6 +1348,7 @@
         updatePriceUI(total);
     }
 
+    // Calculate quantity and total for comments
     function calculateCommentsQty() {
         if (!selectedService) return;
         const lines = document.getElementById("customComments").value.split('\n').filter(l => l.trim().length > 0);
@@ -1408,21 +1367,13 @@
         });
     }
 
+    // Submit Order
     async function placeOrder() {
         const sId = document.getElementById("serviceSelect").value;
         const link = document.getElementById("link").value.trim();
         const qty = parseInt(document.getElementById("quantity").value);
         const comments = document.getElementById("customComments").value.trim();
         const btn = document.getElementById("orderBtn");
-
-        // Verify checklist is complete
-        const checkboxes = document.querySelectorAll('.checklist-checkbox');
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-        
-        if (!allChecked) {
-            alert("Please complete all checklist items before placing your order!");
-            return;
-        }
 
         if (!sId || !link) return alert("Weka link kwanza boss!");
         if (!qty || qty <= 0) return alert("Weka quantity ama comments!");
@@ -1468,6 +1419,7 @@
         }
     }
 
+    // Live Notification Ticker
     function showLiveOrder() {
         const names = ["Brian", "Mercy", "Kevin", "Stacy", "Juma", "Anita", "Otieno", "Faith", "Kamau", "Wanjiku", "Chalo", "Dancan", "Sharon", "Kibet", "Omondi", "Aura", "Plug", "King", "Queen"];
         const services = ["1,000 TikTok Views", "500 IG Followers", "2,500 YouTube Views", "200 Post Likes", "50 TikTok Shares", "100 IG Reel Likes"];
@@ -1508,9 +1460,9 @@
 
     setInterval(showLiveOrder, 10000);
     
+    // Execute functions on page load
     loadTopTicker();
     init();
-    updateChecklistUI(); // Initialize checklist state
 </script>
 
 <style>
@@ -1521,4 +1473,4 @@
 </style>
 
 </body>
-                </html>
+    </html>
