@@ -3,273 +3,1803 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Service List | UNASEMEJE ø DIA</title>
+    <title>All Services | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
+        /* ========================================= */
+        /* PROFESSIONAL WHITE THEME                  */
+        /* ========================================= */
         :root {
-            --primary: #7c3aed;
-            --secondary: #10b981;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
+            --primary: #1e3a5f;
+            --secondary: #f97316;
+            --bg-main: #ffffff;
+            --bg-soft: #fafbfc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --border-light: #e2e8f0;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; background: var(--bg-dark); color: var(--text-main); 
-            font-family: 'Plus Jakarta Sans', sans-serif; display: flex; 
+        /* ========================================= */
+        /* GLOBAL RESPONSIVE FIXES                   */
+        /* ========================================= */
+        html, body {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%) !important;
+            color: var(--text-main) !important;
+        }
+
+        .dashboard {
+            width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        .main {
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+        }
+
+        /* ========================================= */
+        /* IMPORTANT WARNING BANNER STYLES           */
+        /* ========================================= */
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444) !important;
+            color: white !important;
+            padding: 12px 20px !important;
+            text-align: center !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1001 !important;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            flex-wrap: wrap !important;
+        }
+
+        .warning-banner i {
+            color: #fbbf24 !important;
+            font-size: 16px !important;
+        }
+
+        .warning-banner a {
+            color: #fbbf24 !important;
+            text-decoration: underline !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            margin-left: 5px !important;
+        }
+
+        .warning-banner a:hover {
+            color: #ffffff !important;
+        }
+
+        /* Modal Styles for Instructions */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 58, 95, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            border-radius: 24px;
+            border: 2px solid var(--border-light);
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .modal-header h3 {
+            font-family: 'Plus Jakarta Sans';
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+
+        .modal-body h4 {
+            color: var(--primary);
+            margin: 20px 0 10px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-body p {
+            margin-bottom: 12px;
+            color: var(--text-dim);
+        }
+
+        .modal-body strong {
+            color: var(--primary);
+        }
+
+        .modal-body .step {
+            background: var(--bg-soft);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .modal-body .step-number {
+            background: var(--secondary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin-right: 10px;
+        }
+
+        /* Moving Ticker Styling - Continuous Animation */
+        .top-ticker {
+            background: var(--primary) !important;
+            border-bottom: 3px solid var(--secondary) !important;
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            position: sticky;
+            top: 45px;
+            z-index: 1000;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff !important;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span {
+            color: var(--secondary) !important;
+            font-weight: 800;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
         }
 
         /* SIDEBAR */
         .sidebar { 
-            width: 260px; background: #111827; padding: 25px; border-right: 1px solid #1f2937; 
-            position: fixed; height: 100vh; display: flex; flex-direction: column; 
+            width: 260px; 
+            background: #ffffff; 
+            padding: 25px; 
+            border-right: 2px solid var(--border-light);
+            position: fixed; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.08);
         }
-        .sidebar h2 { color: var(--primary); font-size: 20px; margin-bottom: 30px; text-align: center; font-weight: 800; }
-        .sidebar a { 
-            display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); 
-            text-decoration: none; border-radius: 10px; margin-bottom: 5px; 
+        .sidebar h2 { 
+            color: var(--primary); 
+            font-size: 20px; 
+            margin-bottom: 30px; 
+            text-align: center; 
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        .sidebar a.active { background: var(--primary); color: white; }
+        .sidebar h2 span { color: var(--secondary); }
+        .sidebar .sidebar-nav a { 
+            display: flex; 
+            align-items: center; 
+            padding: 12px 15px; 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            border-radius: 10px; 
+            margin-bottom: 5px; 
+            transition: 0.3s; 
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .sidebar .sidebar-nav a i { margin-right: 12px; font-size: 16px; }
+        .sidebar .sidebar-nav a:hover { 
+            background: rgba(249, 115, 22, 0.1); 
+            color: var(--secondary);
+        }
+        .sidebar .sidebar-nav a.active { 
+            background: linear-gradient(135deg, var(--secondary), #ea580c); 
+            color: white;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+        .sidebar .sidebar-nav a.active i { color: white; }
 
         /* MAIN CONTENT */
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
-        
-        .header-section { margin-bottom: 30px; }
-        .header-section h1 { font-weight: 800; font-size: 28px; margin: 0; }
-
-        /* FILTER & SEARCH */
-        .controls { display: flex; gap: 15px; margin-bottom: 20px; }
-        .search-input { 
-            flex: 1; padding: 12px 20px; border-radius: 12px; border: 1px solid #334155; 
-            background: var(--card-bg); color: white; outline: none;
+        .main { 
+            margin-left: 260px; 
+            padding: 40px; 
+            width: calc(100% - 260px); 
+            min-height: 100vh; 
+            position: relative;
         }
 
-        /* SERVICE TABLE */
-        .card { 
-            background: var(--card-bg); border-radius: 20px; border: 1px solid #334155; 
-            overflow: hidden; 
-        }
-        .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; }
-        
-        /* Desktop/Tablet minimum width to prevent squishing */
-        @media (min-width: 769px) {
-            table { min-width: 800px; }
+        /* Header Section */
+        .header-section {
+            margin-bottom: 30px;
         }
 
-        th { 
-            background: rgba(0,0,0,0.2); text-align: left; padding: 15px; 
-            color: var(--text-dim); font-size: 11px; text-transform: uppercase; 
+        .header-section h1 {
+            font-weight: 800;
+            font-size: 32px;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .header-section h1 span {
+            color: var(--secondary);
+        }
+
+        .header-section p {
+            color: var(--text-dim);
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid var(--border-light);
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--secondary);
+            box-shadow: 0 10px 25px rgba(30, 58, 95, 0.12);
+        }
+
+        .stat-card i {
+            font-size: 24px;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+            margin: 5px 0;
+        }
+
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Search & Filter Section */
+        .filter-section {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid var(--border-light);
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            background: var(--bg-soft);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+            background: #ffffff;
+        }
+
+        /* Platform Filter Tabs */
+        .platform-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .platform-tab {
+            padding: 10px 18px;
+            border: 2px solid var(--border-light);
+            background: #ffffff;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+        }
+
+        .platform-tab:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .platform-tab.active {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+
+        .platform-tab i {
+            font-size: 16px;
+        }
+
+        .platform-tab .count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .platform-tab:not(.active) .count {
+            background: var(--bg-soft);
+            color: var(--text-dim);
+        }
+
+        /* Sort Options */
+        .sort-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sort-options label {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .sort-select {
+            padding: 8px 14px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .service-card {
+            background: #ffffff;
+            border: 2px solid var(--border-light);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--secondary), var(--primary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+            box-shadow: 0 15px 35px rgba(30, 58, 95, 0.12);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        .service-platform {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .service-platform i {
+            font-size: 22px;
+        }
+
+        .service-price {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 13px;
             white-space: nowrap;
         }
-        td { 
-            padding: 15px; border-bottom: 1px solid #1f2937; font-size: 13px; 
-            word-break: break-word; vertical-align: middle;
+
+        .service-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            line-height: 1.4;
         }
 
-        .category-header { 
-            background: #111827; padding: 10px 15px; font-weight: 800; 
-            color: var(--primary); font-size: 14px;
-        }
-
-        .price-tag { color: var(--secondary); font-weight: 800; }
-        .order-btn {
-            background: var(--primary); color: white; border: none; padding: 8px 16px;
-            border-radius: 8px; cursor: pointer; text-decoration: none; font-size: 12px; font-weight: 600;
+        .service-category {
             display: inline-block;
+            background: var(--bg-soft);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* ========================================== */
-        /* RESPONSIVE TABLE FOR MOBILE (CARD LAYOUT)  */
-        /* ========================================== */
+        .service-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .service-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .service-detail i {
+            color: var(--secondary);
+            font-size: 14px;
+            width: 16px;
+        }
+
+        .service-detail strong {
+            color: var(--text-main);
+        }
+
+        .order-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #2d5a87);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .order-btn:hover {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        /* Platform Colors */
+        .platform-tiktok { color: #ff0050; }
+        .platform-instagram { color: #e1306c; }
+        .platform-facebook { color: #1877f2; }
+        .platform-youtube { color: #ff0000; }
+        .platform-telegram { color: #0088cc; }
+        .platform-twitter { color: #1da1f2; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 2px dashed var(--border-light);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: var(--border-light);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-dim);
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========================================= */
+        /* PROFESSIONAL MOBILE BOTTOM NAVIGATION BAR */
+        /* ========================================= */
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 20px; }
             
-            /* Transform table elements into blocks */
-            table, thead, tbody, th, td, tr { display: block; }
-            
-            /* Hide table headers on mobile */
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            
-            /* Style service rows as cards */
-            tr.service-row { 
-                border: 1px solid #334155; 
-                margin-bottom: 15px; 
-                border-radius: 12px; 
-                overflow: hidden; 
-                background: rgba(0,0,0,0.1);
+            /* Warning Banner Mobile */
+            .warning-banner {
+                font-size: 12px !important;
+                padding: 10px 15px !important;
+            }
+
+            /* 1. The Sidebar Container becomes the Bottom Bar */
+            .sidebar {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                min-height: 65px !important;
+                flex-direction: column !important;
+                padding: 0 !important;
+                border-right: none !important;
+                border-top: 2px solid var(--border-light) !important;
+                z-index: 1000 !important;
+                background: rgba(255, 255, 255, 0.98) !important;
+                backdrop-filter: blur(10px) !important;
+                box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1) !important;
+                transition: transform 0.3s ease-in-out !important; 
+            }
+
+            .sidebar.nav-hidden {
+                transform: translateY(100%) !important;
+            }
+
+            .sidebar h2 {
+                display: none !important; 
+            }
+
+            .sidebar > div:last-child {
+                display: none !important;
+            }
+
+            .sidebar .sidebar-nav {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                width: 100% !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                margin: 0 !important;
+                padding: 8px 0 !important;
+                gap: 0 !important;
+            }
+
+            .sidebar .sidebar-nav a {
+                flex: 1 1 calc(100% / 6) !important;
+                max-width: calc(100% / 6) !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 4px !important;
+                padding: 8px 4px !important;
+                margin: 0 !important;
+                text-align: center !important;
+                border-radius: 0 !important;
+                transition: all 0.2s ease !important;
+                min-width: 0 !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link {
+                flex: 0 0 auto !important;
+                max-width: none !important;
+                flex-direction: row !important;
+                padding: 10px 20px !important;
+                gap: 8px !important;
+                border-top: 1px solid var(--border-light) !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link i {
+                font-size: 16px !important;
+                margin: 0 !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link span {
+                font-size: 12px !important;
+                font-weight: 600 !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link.ai-support {
+                color: var(--secondary) !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.ai-support i {
+                color: var(--secondary) !important;
+            }
+
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help {
+                color: #25d366 !important;
+            }
+            .sidebar .sidebar-nav a.utility-link.whatsapp-help i {
+                color: #25d366 !important;
+            }
+
+            .sidebar .sidebar-nav a:not(.utility-link) i {
+                font-size: 20px !important;
+                margin: 0 !important;
+                color: #64748b !important;
             }
             
-            tr.service-row td { 
-                border: none; 
-                border-bottom: 1px solid #1f2937; 
-                position: relative; 
-                padding: 15px 15px 15px 45%; 
-                white-space: normal; 
-                text-align: left; 
+            .sidebar .sidebar-nav a.active i {
+                color: white !important;
+                transform: scale(1.1) !important;
+            }
+            .sidebar .sidebar-nav a.active span {
+                color: white !important;
+                font-weight: 700 !important;
+            }
+
+            .sidebar .sidebar-nav a:not(.utility-link) span {
+                font-size: 10px !important;
+                font-weight: 500 !important;
+                color: #64748b !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: 100% !important;
             }
             
-            tr.service-row td:last-child { border-bottom: none; }
-            
-            /* Inject column titles using CSS pseudo-elements */
-            tr.service-row td:before { 
-                position: absolute; 
-                top: 15px; 
-                left: 15px; 
-                width: 40%; 
-                padding-right: 10px; 
-                white-space: nowrap; 
-                font-weight: 800; 
-                color: var(--text-dim); 
-                font-size: 11px; 
-                text-transform: uppercase;
-                content: attr(data-title); 
+            .main {
+                margin-left: 0 !important;
+                margin-bottom: 120px !important; 
+                padding: 20px 15px 15px !important;
+                width: 100% !important;
+            }
+
+            .header-section { margin-bottom: 20px !important; }
+            .header-section h1 { font-size: 24px !important; }
+            .header-section p { font-size: 14px !important; }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+
+            .stat-card {
+                padding: 15px !important;
+            }
+
+            .stat-card .stat-number {
+                font-size: 20px !important;
+            }
+
+            .filter-section {
+                padding: 18px !important;
+            }
+
+            .platform-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 5px;
+            }
+
+            .platform-tab {
+                flex-shrink: 0;
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .services-grid { 
+                grid-template-columns: 1fr !important; 
+                gap: 15px !important; 
+            }
+
+            .service-card {
+                padding: 20px !important;
+            }
+
+            /* Ticker adjustments for mobile */
+            .top-ticker {
+                height: 40px !important;
+                top: 40px !important;
+            }
+            .ticker-item {
+                font-size: 12px !important;
+                padding-right: 40px !important;
+            }
+
+            /* Chat widget adjustments */
+            #chatToggleBtn {
+                bottom: 140px !important;
+                right: 20px !important;
+                transition: bottom 0.3s ease-in-out !important;
             }
             
-            /* Style category headers on mobile */
-            .category-header-row td { 
-                padding: 10px 15px !important; 
-                background: #111827; 
-                border-radius: 8px; 
-                margin-bottom: 10px; 
-                display: block;
+            #chatToggleBtn.nav-hidden {
+                bottom: 20px !important;
             }
-            .category-header-row td:before { display: none; }
-            
-            /* Make order button full width on mobile */
-            .order-btn { width: 100%; text-align: center; box-sizing: border-box; }
+
+            #chatWindow {
+                bottom: 215px !important;
+                right: 15px !important;
+                left: 15px !important;
+                width: auto !important;
+                max-width: 100% !important;
+                height: 65vh !important;
+                transition: bottom 0.3s ease-in-out !important;
+            }
+
+            #chatWindow.nav-hidden {
+                bottom: 95px !important;
+            }
+        }
+
+        /* SMALL MOBILE */
+        @media (max-width: 480px) {
+            .main { padding: 15px 12px 12px !important; margin-bottom: 115px !important; }
+            .header-section h1 { font-size: 22px !important; }
+            .header-section p { font-size: 13px !important; }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            .services-grid { 
+                grid-template-columns: 1fr !important; 
+                gap: 12px !important; 
+            }
+            .service-card { 
+                padding: 18px !important; 
+                border-radius: 16px !important;
+            }
+            .service-name { font-size: 15px !important; }
+            .service-price { font-size: 12px !important; }
+
+            .sidebar { min-height: 60px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) i { font-size: 18px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) span { font-size: 9px !important; }
+
+            .sidebar .sidebar-nav a.utility-link { padding: 8px 15px !important; }
+            .sidebar .sidebar-nav a.utility-link i { font-size: 14px !important; }
+            .sidebar .sidebar-nav a.utility-link span { font-size: 11px !important; }
+
+            .top-ticker {
+                height: 38px !important;
+                top: 38px !important;
+            }
+            .ticker-item {
+                font-size: 11px !important;
+                padding-right: 30px !important;
+            }
+
+            #chatToggleBtn {
+                bottom: 135px !important;
+                right: 15px !important;
+                width: 50px !important;
+                height: 50px !important;
+                padding: 12px !important;
+            }
+            #chatToggleBtn.nav-hidden { bottom: 15px !important; }
+
+            #chatWindow {
+                bottom: 210px !important;
+                right: 10px !important;
+                left: 10px !important;
+                max-width: calc(100% - 20px) !important;
+            }
+            #chatWindow.nav-hidden { bottom: 80px !important; }
+        }
+
+        /* VERY SMALL MOBILE */
+        @media (max-width: 360px) {
+            .main { padding: 12px 10px 10px !important; margin-bottom: 110px !important; }
+            .header-section h1 { font-size: 20px !important; }
+
+            .stats-bar {
+                grid-template-columns: 1fr !important;
+            }
+
+            .services-grid { 
+                grid-template-columns: 1fr !important; 
+                gap: 12px !important; 
+            }
+            .service-card { 
+                padding: 16px !important; 
+            }
+            .service-name { font-size: 14px !important; }
+
+            .top-ticker {
+                height: 36px !important;
+                top: 36px !important;
+            }
+            .ticker-item {
+                font-size: 10px !important;
+                padding-right: 25px !important;
+            }
+
+            .sidebar { min-height: 58px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) i { font-size: 16px !important; }
+            .sidebar .sidebar-nav a:not(.utility-link) span { font-size: 8px !important; }
+
+            .sidebar .sidebar-nav a.utility-link { padding: 7px 12px !important; }
+            .sidebar .sidebar-nav a.utility-link i { font-size: 13px !important; }
+            .sidebar .sidebar-nav a.utility-link span { font-size: 10px !important; }
+
+            #chatToggleBtn {
+                width: 45px !important;
+                height: 45px !important;
+                padding: 10px !important;
+                bottom: 130px !important;
+            }
+            #chatToggleBtn svg { width: 20px !important; height: 20px !important; }
+        }
+
+        /* LANDSCAPE MOBILE */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #chatWindow {
+                height: 80vh !important;
+                max-height: 400px !important;
+            }
         }
     </style>
 </head>
 <body>
 
+<!-- IMPORTANT WARNING BANNER -->
+<div class="warning-banner">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+    <a onclick="showFlagInstructions()">Click Here to See How</a>
+</div>
+
+<!-- DYNAMIC MOVING WORDS TICKER -->
+<div class="top-ticker">
+    <div class="ticker-content" id="tickerContent">
+        <!-- Items will be injected dynamically by JS from the backend -->
+    </div>
+</div>
+
+<!-- MODAL FOR FLAG INSTRUCTIONS -->
+<div class="modal-overlay" id="flagModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>Important: Turn Off Flag for Review</h3>
+            <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+            
+            <h4>Step-by-Step Instructions:</h4>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Go to Settings</strong><br>
+                Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+            </div>
+            
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Find Follow Settings</strong><br>
+                Scroll down and tap <strong>"Follow and invite friends"</strong>
+            </div>
+            
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Disable Flag for Review</strong><br>
+                Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+            </div>
+            
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Confirm</strong><br>
+                Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+            </div>
+            
+            <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+            <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+            
+            <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+            </p>
+            
+            <p style="text-align: center; margin-top: 25px;">
+                <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard">
+    <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="platform.html"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="services.html" class="active"><i class="fas fa-list"></i> Services</a>
-        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
-        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
+        <h2>Unasemeje <span>SMM Gains</span></h2>
+        <div class="sidebar-nav">
+            <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+            <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+            <a href="all-services.html" class="active"><i class="fas fa-th-large"></i> <span>All Services</span></a>
+            <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
+            <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+            <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
+            
+            <!-- AI Support & WhatsApp Help at bottom of mobile nav -->
+            <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+            <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-light);">
+            <a onclick="logout()" style="color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 15px; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
     </div>
 
+    <!-- Main Content Area -->
     <div class="main">
         <div class="header-section">
-            <h1>Service List</h1>
-            <p style="color: var(--text-dim);">Browse all available social media packages and prices.</p>
+            <h1>All <span>Services</span></h1>
+            <p>Browse and order any service from all platforms in one place. Click any service to place an order instantly.</p>
         </div>
 
-        <div class="controls">
-            <input type="text" id="serviceSearch" class="search-input" placeholder="Search for a service (e.g. TikTok, Real, High Quality)..." onkeyup="filterServices()">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <i class="fas fa-layer-group"></i>
+                <span class="stat-number" id="totalServices">0</span>
+                <span class="stat-label">Total Services</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-globe"></i>
+                <span class="stat-number" id="totalPlatforms">0</span>
+                <span class="stat-label">Platforms</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-tags"></i>
+                <span class="stat-number" id="totalCategories">0</span>
+                <span class="stat-label">Categories</span>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-bolt"></i>
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Instant Delivery</span>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="table-container">
-                <table id="serviceTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Service</th>
-                            <th>Rate per 1k</th>
-                            <th>Min / Max</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="serviceListBody">
-                        </tbody>
-                </table>
+        <!-- Search & Filter Section -->
+        <div class="filter-section">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search services... (e.g., 'TikTok followers', 'Instagram likes')">
+            </div>
+
+            <div class="platform-tabs" id="platformTabs">
+                <div class="platform-tab active" data-platform="all" onclick="filterByPlatform('all')">
+                    <i class="fas fa-th"></i> All <span class="count" id="count-all">0</span>
+                </div>
+                <div class="platform-tab" data-platform="TikTok" onclick="filterByPlatform('TikTok')">
+                    <i class="fab fa-tiktok platform-tiktok"></i> TikTok <span class="count" id="count-TikTok">0</span>
+                </div>
+                <div class="platform-tab" data-platform="Instagram" onclick="filterByPlatform('Instagram')">
+                    <i class="fab fa-instagram platform-instagram"></i> Instagram <span class="count" id="count-Instagram">0</span>
+                </div>
+                <div class="platform-tab" data-platform="Facebook" onclick="filterByPlatform('Facebook')">
+                    <i class="fab fa-facebook platform-facebook"></i> Facebook <span class="count" id="count-Facebook">0</span>
+                </div>
+                <div class="platform-tab" data-platform="YouTube" onclick="filterByPlatform('YouTube')">
+                    <i class="fab fa-youtube platform-youtube"></i> YouTube <span class="count" id="count-YouTube">0</span>
+                </div>
+                <div class="platform-tab" data-platform="Telegram" onclick="filterByPlatform('Telegram')">
+                    <i class="fab fa-telegram platform-telegram"></i> Telegram <span class="count" id="count-Telegram">0</span>
+                </div>
+                <div class="platform-tab" data-platform="Twitter" onclick="filterByPlatform('Twitter')">
+                    <i class="fab fa-twitter platform-twitter"></i> Twitter <span class="count" id="count-Twitter">0</span>
+                </div>
+            </div>
+
+            <div class="sort-options">
+                <label><i class="fas fa-sort" style="margin-right: 5px;"></i>Sort by:</label>
+                <select class="sort-select" id="sortSelect" onchange="renderServices()">
+                    <option value="default">Default</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="name-az">Name: A to Z</option>
+                    <option value="name-za">Name: Z to A</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid" id="servicesGrid">
+            <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <h3 style="color: var(--primary);">Loading Services...</h3>
+                <p style="color: var(--text-dim);">Fetching all available services from our provider</p>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        const API = "https://unasemeje-backend.vercel.app/api";
+<!-- ========================================== -->
+<!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
+<!-- ========================================== -->
 
-        async function fetchAllServices() {
-            try {
-                const response = await fetch(`${API}/services`);
-                const result = await response.json();
-                const data = result.data;
-                const body = document.getElementById('serviceListBody');
-                body.innerHTML = "";
+<style>
+    #chatWindow {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: bottom right;
+    }
+    #chatWindow.hidden {
+        display: none;
+    }
+    
+    #chatMessages::-webkit-scrollbar { width: 6px; }
+    #chatMessages::-webkit-scrollbar-track { background: transparent; }
+    #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+    #chatMessages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-                // Loop through Platforms -> Categories -> Services
-                for (const platform in data) {
-                    for (const category in data[platform]) {
-                        
-                        // ==========================================
-                        // FILTER LOGIC: Hide any service named 'delix'
-                        // ==========================================
-                        const validServices = data[platform][category].filter(service => 
-                            !service.name.toLowerCase().includes('delix')
-                        );
+    @keyframes bounce-dot {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+    }
+    .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-                        // If no valid services left in this category, skip it entirely
-                        if (validServices.length === 0) continue;
+    @media (max-width: 768px) {
+        #chatWindow {
+            width: calc(100vw - 30px) !important;
+            max-width: calc(100vw - 30px) !important;
+            right: 15px !important;
+            left: 15px !important;
+            box-sizing: border-box !important;
+        }
+        #chatMessages {
+            height: 280px !important;
+        }
+    }
 
-                        // Add a category header row
-                        const headerRow = document.createElement('tr');
-                        headerRow.className = "category-header-row";
-                        headerRow.innerHTML = `<td colspan="5" class="category-header">${platform.toUpperCase()} - ${category}</td>`;
-                        body.appendChild(headerRow);
+    @media (max-width: 480px) {
+        #chatWindow {
+            width: calc(100vw - 20px) !important;
+            max-width: calc(100vw - 20px) !important;
+            right: 10px !important;
+            left: 10px !important;
+        }
+        #chatMessages {
+            height: 250px !important;
+        }
+    }
 
-                        validServices.forEach(service => {
-                            const row = document.createElement('tr');
-                            row.className = "service-row";
-                            
-                            // Fallback for service ID property name
-                            const sId = service.serviceId || service.id;
-                            
-                            row.innerHTML = `
-                                <td data-title="ID" style="color: var(--text-dim);">${sId}</td>
-                                <td data-title="Service" style="font-weight: 600;">${service.name}</td>
-                                <td data-title="Rate" class="price-tag">KES ${Number(service.rate).toFixed(2)}</td>
-                                <td data-title="Min / Max" style="color: var(--text-dim);">${service.min} / ${service.max}</td>
-                                <td data-title="Action"><a href="new-order.html?serviceId=${sId}" class="order-btn">Order</a></td>
-                            `;
-                            body.appendChild(row);
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Error loading services:", error);
+    @media (max-width: 360px) {
+        #chatWindow {
+            width: calc(100vw - 16px) !important;
+            max-width: calc(100vw - 16px) !important;
+            right: 8px !important;
+            left: 8px !important;
+        }
+        #chatMessages {
+            height: 220px !important;
+            padding: 10px !important;
+        }
+    }
+</style>
+
+<!-- FLOATING ACTION BUTTON (CHAT TOGGLE) -->
+<button id="chatToggleBtn" style="position: fixed; bottom: 24px; right: 24px; z-index: 50; color: white; padding: 16px; border-radius: 50%; box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4); border: none; cursor: pointer; background-color: var(--secondary); transition: transform 0.2s;" aria-label="Open Support Chat" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+    <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" style="display: none; width: 24px; height: 24px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+</button>
+
+<!-- CHAT WINDOW CONTAINER -->
+<div id="chatWindow" style="position: fixed; bottom: 96px; right: 24px; z-index: 50; width: 90vw; background: white; border-radius: 24px; box-shadow: 0 25px 50px rgba(30, 58, 95, 0.15); border: 2px solid var(--border-light); flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; transform: scale(0.95); opacity: 0;">
+    
+    <div style="padding: 16px; border-radius: 24px 24px 0 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(30, 58, 95, 0.1); color: white; background-color: var(--primary);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+            </div>
+            <div>
+                <h3 style="font-weight: 700; font-size: 14px; line-height: 1.2; margin: 0;">Unasemeje Support</h3>
+                <p style="font-size: 10px; opacity: 0.9; display: flex; align-items: center; gap: 6px; margin: 2px 0 0 0;">
+                    <span style="width: 8px; height: 8px; background: #34d399; border-radius: 50%; animation: pulse 2s infinite;"></span> AI Assistant Online
+                </p>
+            </div>
+        </div>
+        <button id="chatCloseBtn" style="color: rgba(255,255,255,0.8); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 50%; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='none'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 16px; background: #f9fafb; height: 320px;">
+    </div>
+
+    <div style="padding: 12px; border-top: 1px solid var(--border-light); background: white; border-radius: 0 0 24px 24px;">
+        <form id="chatForm" style="display: flex; gap: 8px;">
+            <input 
+                type="text" 
+                id="chatInput" 
+                placeholder="Type your question..." 
+                style="flex: 1; background: #f3f4f6; border-radius: 12px; padding: 10px 16px; font-size: 14px; border: 1px solid var(--border-light); outline: none; color: #1f2937;"
+                autocomplete="off"
+                required
+            >
+            <button 
+                type="submit" 
+                id="chatSendBtn"
+                style="color: white; padding: 10px; border-radius: 12px; border: none; cursor: pointer; background-color: var(--secondary); display: flex; align-items: center; justify-content: center; transition: opacity 0.2s;"
+                onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+
+<script>
+    let allData = {};
+    let allServicesList = [];
+    let currentPlatformFilter = 'all';
+    const API = "https://unasemeje-backend.vercel.app/api";
+    const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
+    const token = localStorage.getItem("token");
+
+    if (!token) window.location.href = "index.html";
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+
+    // --- MODAL FUNCTIONS ---
+    function showFlagInstructions() {
+        document.getElementById('flagModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFlagInstructions() {
+        document.getElementById('flagModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    document.getElementById('flagModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeFlagInstructions();
+        }
+    });
+
+    // --- CONTINUOUS MOVING TICKER LOADER ---
+    async function loadTopTicker() {
+        try {
+            let res = await fetch(`${API}/ticker`);
+            if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
+            
+            const data = await res.json();
+            const tickerContent = document.getElementById('tickerContent');
+            
+            if (data.items && data.items.length > 0) {
+                let html = '';
+                data.items.forEach(item => {
+                    html += `<div class="ticker-item">${item}</div>`;
+                });
+                tickerContent.innerHTML = html + html; 
+            } else {
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Browse All Services!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
             }
+            
+            const speed = data.speed || 80;
+            
+            const tickerStartTime = localStorage.getItem('tickerStartTime');
+            const currentTime = Date.now();
+            
+            if (!tickerStartTime) {
+                localStorage.setItem('tickerStartTime', currentTime);
+                tickerContent.style.animationDuration = `${speed}s`;
+            } else {
+                const elapsedSeconds = (currentTime - parseInt(tickerStartTime)) / 1000;
+                const animationDelay = -(elapsedSeconds % speed);
+                tickerContent.style.animationDuration = `${speed}s`;
+                tickerContent.style.animationDelay = `${animationDelay}s`;
+            }
+            
+        } catch (err) {
+            console.error("Failed to load top ticker:", err);
+            const tickerContent = document.getElementById('tickerContent');
+            const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Browse All Services!</div>`;
+            tickerContent.innerHTML = fallback + fallback;
+            tickerContent.style.animationDuration = '80s';
+        }
+    }
+
+    // --- GET PLATFORM ICON ---
+    function getPlatformIcon(platform) {
+        const icons = {
+            'TikTok': 'fa-tiktok',
+            'Instagram': 'fa-instagram',
+            'Facebook': 'fa-facebook',
+            'YouTube': 'fa-youtube',
+            'Telegram': 'fa-telegram',
+            'Twitter': 'fa-twitter',
+            'Twitter/X': 'fa-twitter'
+        };
+        return icons[platform] || 'fa-globe';
+    }
+
+    // --- GET PLATFORM CLASS ---
+    function getPlatformClass(platform) {
+        const classes = {
+            'TikTok': 'platform-tiktok',
+            'Instagram': 'platform-instagram',
+            'Facebook': 'platform-facebook',
+            'YouTube': 'platform-youtube',
+            'Telegram': 'platform-telegram',
+            'Twitter': 'platform-twitter',
+            'Twitter/X': 'platform-twitter'
+        };
+        return classes[platform] || '';
+    }
+
+    // --- FLATTEN ALL SERVICES INTO LIST ---
+    function flattenServices() {
+        allServicesList = [];
+        let totalCategories = 0;
+        
+        Object.keys(allData).forEach(platform => {
+            const categories = allData[platform];
+            const categoryNames = Object.keys(categories);
+            totalCategories += categoryNames.length;
+            
+            categoryNames.forEach(category => {
+                const services = categories[category];
+                services.forEach(service => {
+                    allServicesList.push({
+                        ...service,
+                        platform: platform,
+                        category: category
+                    });
+                });
+            });
+        });
+
+        // Update stats
+        document.getElementById('totalServices').textContent = allServicesList.length.toLocaleString();
+        document.getElementById('totalPlatforms').textContent = Object.keys(allData).length;
+        document.getElementById('totalCategories').textContent = totalCategories;
+        document.getElementById('count-all').textContent = allServicesList.length;
+
+        // Update platform counts
+        Object.keys(allData).forEach(platform => {
+            const count = Object.values(allData[platform]).reduce((sum, cat) => sum + cat.length, 0);
+            const countEl = document.getElementById(`count-${platform}`);
+            if (countEl) countEl.textContent = count;
+        });
+    }
+
+    // --- FILTER BY PLATFORM ---
+    function filterByPlatform(platform) {
+        currentPlatformFilter = platform;
+        
+        // Update active tab
+        document.querySelectorAll('.platform-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`[data-platform="${platform}"]`).classList.add('active');
+        
+        renderServices();
+    }
+
+    // --- RENDER SERVICES ---
+    function renderServices() {
+        const grid = document.getElementById('servicesGrid');
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+        const sortValue = document.getElementById('sortSelect').value;
+        
+        // Filter by platform
+        let filtered = currentPlatformFilter === 'all' 
+            ? allServicesList 
+            : allServicesList.filter(s => s.platform === currentPlatformFilter);
+        
+        // Filter by search
+        if (searchTerm) {
+            filtered = filtered.filter(s => 
+                s.name.toLowerCase().includes(searchTerm) ||
+                s.platform.toLowerCase().includes(searchTerm) ||
+                s.category.toLowerCase().includes(searchTerm) ||
+                (s.description && s.description.toLowerCase().includes(searchTerm))
+            );
         }
 
-        function filterServices() {
-            const input = document.getElementById("serviceSearch").value.toLowerCase();
-            const allRows = document.querySelectorAll("#serviceListBody tr");
-            
-            let lastHeader = null;
-            let headerHasVisibleChild = false;
+        // Sort
+        switch(sortValue) {
+            case 'price-low':
+                filtered.sort((a, b) => a.rate - b.rate);
+                break;
+            case 'price-high':
+                filtered.sort((a, b) => b.rate - a.rate);
+                break;
+            case 'name-az':
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'name-za':
+                filtered.sort((a, b) => b.name.localeCompare(a.name));
+                break;
+        }
 
-            allRows.forEach(row => {
-                if (row.classList.contains('category-header-row')) {
-                    // If we have a previous header, decide its visibility based on its children
-                    if (lastHeader) {
-                        lastHeader.style.display = headerHasVisibleChild ? "" : "none";
-                    }
-                    lastHeader = row;
-                    headerHasVisibleChild = false;
-                } else {
-                    const text = row.innerText.toLowerCase();
-                    const isVisible = text.includes(input);
-                    row.style.display = isVisible ? "" : "none";
-                    
-                    if (isVisible) headerHasVisibleChild = true;
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <i class="fas fa-search"></i>
+                    <h3>No Services Found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = '';
+        
+        filtered.forEach(service => {
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.innerHTML = `
+                <div class="service-header">
+                    <div class="service-platform">
+                        <i class="fab ${getPlatformIcon(service.platform)} ${getPlatformClass(service.platform)}"></i>
+                        <span>${service.platform}</span>
+                    </div>
+                    <div class="service-price">KES ${service.rate}/1k</div>
+                </div>
+                <span class="service-category">${service.category}</span>
+                <div class="service-name">${service.name}</div>
+                <div class="service-details">
+                    <div class="service-detail">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Min: <strong>${Number(service.min).toLocaleString()}</strong> | Max: <strong>${Number(service.max).toLocaleString()}</strong></span>
+                    </div>
+                    ${service.description ? `
+                    <div class="service-detail">
+                        <i class="fas fa-info-circle"></i>
+                        <span style="font-size: 12px; line-height: 1.4;">${service.description.substring(0, 100)}${service.description.length > 100 ? '...' : ''}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                <button class="order-btn" onclick="orderService('${service.platform}', '${service.category.replace(/'/g, "\\'")}', ${service.serviceId})">
+                    <i class="fas fa-shopping-cart"></i> Order Now
+                </button>
+            `;
+            
+            // Click entire card to order
+            card.addEventListener('click', function(e) {
+                if (!e.target.closest('.order-btn')) {
+                    orderService(service.platform, service.category, service.serviceId);
                 }
             });
             
-            // Handle the very last header in the list
-            if (lastHeader) {
-                lastHeader.style.display = headerHasVisibleChild ? "" : "none";
+            grid.appendChild(card);
+        });
+    }
+
+    // --- ORDER SERVICE (Redirects to new-order page with pre-filled data) ---
+    function orderService(platform, category, serviceId) {
+        // Store service data in localStorage for the new-order page to pick up
+        const orderData = {
+            platform: platform,
+            category: category,
+            serviceId: serviceId,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('prefillOrder', JSON.stringify(orderData));
+        
+        // Navigate to new-order page
+        window.location.href = `new-order.html?platform=${encodeURIComponent(platform)}&serviceId=${serviceId}`;
+    }
+
+    // --- INITIALIZE ---
+    async function init() {
+        try {
+            const res = await fetch(`${API}/services?refresh=true`);
+            if (!res.ok) throw new Error("Failed to fetch services");
+            const json = await res.json();
+            
+            allData = json.data;
+            flattenServices();
+            renderServices();
+            
+        } catch (e) { 
+            console.error("Service Loading Error:", e);
+            document.getElementById('servicesGrid').innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                    <h3>Error Loading Services</h3>
+                    <p>Unable to fetch services. Please refresh the page.</p>
+                    <button onclick="location.reload()" style="margin-top: 15px; padding: 10px 20px; background: var(--secondary); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;">
+                        <i class="fas fa-redo"></i> Refresh Page
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // Search input handler
+    document.getElementById('searchInput').addEventListener('input', function() {
+        renderServices();
+    });
+
+    // Execute on page load
+    loadTopTicker();
+    init();
+
+    // ==========================================
+    // AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        const chatCloseBtn = document.getElementById('chatCloseBtn');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatIconOpen = document.getElementById('chatIconOpen');
+        const chatIconClose = document.getElementById('chatIconClose');
+
+        const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
+        const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+
+        let isChatOpen = false;
+
+        let lastScrollTop = 0;
+        const mobileSidebar = document.querySelector('.sidebar');
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const isChatCurrentlyOpen = chatWindow.style.display === 'flex';
+                
+                if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                    mobileSidebar.classList.add('nav-hidden');
+                    chatToggleBtn.classList.add('nav-hidden');
+                    chatWindow.classList.add('nav-hidden');
+                } else {
+                    mobileSidebar.classList.remove('nav-hidden');
+                    chatToggleBtn.classList.remove('nav-hidden');
+                    chatWindow.classList.remove('nav-hidden');
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }
+        }, false);
+
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            if (isChatOpen) {
+                chatWindow.style.display = 'flex';
+                setTimeout(() => {
+                    chatWindow.style.transform = 'scale(1)';
+                    chatWindow.style.opacity = '1';
+                }, 10);
+                chatIconOpen.style.display = 'none';
+                chatIconClose.style.display = 'block';
+                
+                if (chatMessages.children.length === 0) {
+                    appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today? You can ask me about services, adding funds, or placing orders.");
+                }
+                setTimeout(() => chatInput.focus(), 300);
+            } else {
+                chatWindow.style.transform = 'scale(0.95)';
+                chatWindow.style.opacity = '0';
+                setTimeout(() => {
+                    chatWindow.style.display = 'none';
+                }, 300);
+                chatIconOpen.style.display = 'block';
+                chatIconClose.style.display = 'none';
             }
         }
 
-        fetchAllServices();
-    </script>
+        function appendMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.style.display = 'flex';
+            msgDiv.style.justifyContent = sender === 'user' ? 'flex-end' : 'flex-start';
+            msgDiv.style.marginBottom = '12px';
+            
+            const bubble = document.createElement('div');
+            bubble.style.padding = '10px 16px';
+            bubble.style.borderRadius = '16px';
+            bubble.style.maxWidth = '85%';
+            bubble.style.fontSize = '14px';
+            bubble.style.wordWrap = 'break-word';
+            bubble.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+            
+            if (sender === 'user') {
+                bubble.style.backgroundColor = 'var(--primary)';
+                bubble.style.color = 'white';
+                bubble.style.borderBottomRightRadius = '4px';
+            } else {
+                bubble.style.backgroundColor = 'white';
+                bubble.style.color = '#1f2937';
+                bubble.style.borderBottomLeftRadius = '4px';
+                bubble.style.border = '1px solid var(--border-light)';
+            }
+            bubble.innerText = text;
+            
+            msgDiv.appendChild(bubble);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.style.display = 'flex';
+            typingDiv.style.justifyContent = 'flex-start';
+            typingDiv.style.marginBottom = '12px';
+            typingDiv.innerHTML = `
+                <div style="background: white; color: #9ca3af; padding: 12px 16px; border-radius: 16px; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid var(--border-light); display: flex; gap: 6px;">
+                    <span style="width: 8px; height: 8px; background: #d1d5db; border-radius: 50%;" class="typing-dot"></span>
+                    <span style="width: 8px; height: 8px; background: #d1d5db; border-radius: 50%;" class="typing-dot"></span>
+                    <span style="width: 8px; height: 8px; background: #d1d5db; border-radius: 50%;" class="typing-dot"></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        async function sendToBackend(message) {
+            try {
+                const response = await fetch(API_PRIMARY_BOT, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ message })
+                });
+                if (response.ok) return await response.json();
+            } catch (err) {
+                console.warn("Primary AI server unreachable. Trying fallback...");
+            }
+
+            try {
+                const response = await fetch(API_FALLBACK_BOT, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ message })
+                });
+                if (response.ok) return await response.json();
+            } catch (err) {
+                console.error("Both AI servers unreachable.");
+                return null;
+            }
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            appendMessage('user', message);
+            chatInput.value = '';
+            chatInput.disabled = true; 
+            showTyping();
+
+            const data = await sendToBackend(message);
+            
+            hideTyping();
+            chatInput.disabled = false;
+            chatInput.focus();
+
+            if (data && data.success && data.reply) {
+                appendMessage('bot', data.reply);
+            } else {
+                appendMessage('bot', "I'm having trouble connecting to my brain right now. Please try again in a moment!");
+            }
+        });
+
+        chatToggleBtn.addEventListener('click', toggleChat);
+        chatCloseBtn.addEventListener('click', toggleChat);
+        
+        document.addEventListener('click', (e) => {
+            if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
+                toggleChat();
+            }
+        });
+    });
+</script>
+
 </body>
-</html>
+    </html>
