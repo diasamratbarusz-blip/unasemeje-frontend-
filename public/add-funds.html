@@ -1,23 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-KE">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Money - Unasemeje</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Add Money | Unasemeje SMM Gains</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
     <style>
-        body{ font-family:'Plus Jakarta Sans',sans-serif; background:#f5f7fb; }
-        .bg-custom-green{ background:#11453b; }
-        .status-success{ background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; }
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #f97316;
+            --bg-main: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .bg-custom-green { background: var(--primary); }
+        .status-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        
-        /* UPDATED: Changed fixed 650px to 80vh with a max-height to prevent overflow on short mobile screens */
+
+        /* ========================================= */
+        /* STICKY TOP HEADER (INSTRUCTIONS & TICKER) */
+        /* ========================================= */
+        .sticky-header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .warning-banner i { color: #fbbf24; font-size: 16px; }
+        .warning-banner a { 
+            color: #fbbf24; 
+            text-decoration: underline; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .warning-banner a:hover { color: #ffffff; }
+
+        .top-ticker {
+            background: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span { color: var(--secondary); font-weight: 800; }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* Payment Frame */
         .payment-frame-container {
             width: 100%; 
             height: 80vh; 
@@ -25,35 +106,210 @@
             border-radius: 24px;
             overflow: hidden; 
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb; 
-            background: #ffffff;
+            border: 2px solid var(--border-color); 
+            background: var(--card-bg);
         }
 
-        /* NEW FIX: the bottom 100px of the Paynecta iframe to crop out the bottom to ensure to have good shape */
         #paymentPortalFrame {
             height: calc(100% + 100px) !important;
             margin-bottom: -100px;
         }
 
         .input-field {
-            width: 100%; background: #f9fafb; border: 1px solid #e5e7eb;
-            padding: 12px 16px; border-radius: 12px; outline: none; transition: 0.2s; color: #1f2937; font-weight: 500;
-            box-sizing: border-box; /* Ensures padding doesn't exceed 100% width */
+            width: 100%; 
+            background: #f9fafb; 
+            border: 1px solid #e5e7eb;
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            outline: none; 
+            transition: 0.2s; 
+            color: #1f2937; 
+            font-weight: 500;
+            box-sizing: border-box;
         }
-        .input-field:focus { border-color: #11453b; box-shadow: 0 0 0 2px rgba(17, 69, 59, 0.2); }
+        .input-field:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.2); 
+        }
 
         .spinner {
             width: 18px; height: 18px; border: 2px solid #ffffff;
             border-bottom-color: transparent; border-radius: 50%;
             display: inline-block; animation: rotation 1s linear infinite;
         }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes rotation { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+        .modal-body h4 { color: var(--primary); margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
+        .modal-body p { margin-bottom: 12px; color: var(--text-dim); }
+        .modal-body strong { color: var(--primary); }
+        .modal-body .step {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .modal-body .step-number {
+            background: var(--secondary);
+            color: white;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .modal-body .step-content { flex: 1; }
+
+        /* MOBILE RESPONSIVE FIXES */
+        @media (max-width: 768px) {
+            .warning-banner { font-size: 12px; padding: 10px 15px; }
+            .top-ticker { height: 40px; }
+            .payment-frame-container { height: 70vh; max-height: 500px; }
+        }
     </style>
 </head>
 
 <body class="min-h-screen">
 
-    <!-- UPDATED: Added responsive padding (py-12 md:py-16) and text scaling -->
+    <!-- STICKY HEADER: INSTRUCTIONS & MOVING TICKER -->
+    <div class="sticky-header-wrapper">
+        <div class="warning-banner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+            <a onclick="showFlagInstructions()">Click Here to See How</a>
+        </div>
+        <div class="top-ticker">
+            <div class="ticker-content" id="tickerContent">
+                <!-- Items injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FOR FLAG INSTRUCTIONS -->
+    <div class="modal-overlay" id="flagModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
+                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+                <h4>Step-by-Step Instructions:</h4>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Go to Settings</strong><br>
+                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Find Follow Settings</strong><br>
+                        Scroll down and tap <strong>"Follow and invite friends"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Disable Flag for Review</strong><br>
+                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Confirm</strong><br>
+                        Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+                    </div>
+                </div>
+                <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+                <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+                <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                    <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+                </p>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
     <div class="bg-custom-green text-white py-12 md:py-16 px-4 text-center shadow-lg">
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold italic mb-3">Add Money</h1>
         <p class="uppercase tracking-[4px] text-xs opacity-70">Current Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
@@ -62,7 +318,6 @@
     <div class="max-w-2xl mx-auto px-4 sm:px-6 -mt-10 pb-20 space-y-6">
         
         <!-- Important Funding Instructions Alert -->
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified text -->
         <div class="bg-white rounded-3xl shadow-xl border-l-4 border-amber-500 p-4 sm:p-6">
             <div class="flex items-start gap-3">
                 <div class="flex-shrink-0 mt-1">
@@ -81,7 +336,7 @@
             </div>
         </div>
 
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified labels -->
+        <!-- Account Details Card A -->
         <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
             <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
                 <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -91,7 +346,6 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-3">
-                    <!-- UPDATED: Changed grid-cols-2 to grid-cols-1 sm:grid-cols-2 to prevent squishing on tiny screens -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
                             <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
@@ -131,14 +385,13 @@
             </div>
         </div>
 
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified labels -->
+        <!-- Account Details Card B -->
         <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 👤 Account Settings & Security
             </h2>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- UPDATED: Changed border-r to md:border-r so it doesn't cut through stacked mobile content -->
                 <div class="space-y-3 md:border-r border-gray-100 pr-0 md:pr-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
@@ -181,7 +434,6 @@
                             <div>
                                 <input type="text" id="editUsername" class="input-field !py-2 !text-xs" placeholder="Username" required>
                             </div>
-                            <!-- UPDATED: Changed grid-cols-2 to grid-cols-1 sm:grid-cols-2 for better mobile touch targets -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <input type="text" id="editFirstName" class="input-field !py-2 !text-xs" placeholder="First Name">
                                 <input type="text" id="editLastName" class="input-field !py-2 !text-xs" placeholder="Last Name">
@@ -221,7 +473,7 @@
             </div>
         </div>
         
-        <!-- UPDATED: Responsive padding p-4 sm:p-6 and simplified labels -->
+        <!-- Profile Card -->
         <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 hidden">
             <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
                 <div class="w-full">
@@ -244,7 +496,7 @@
             </div>
         </div>
         
-        <!-- UPDATED: Responsive padding p-4 sm:p-8 and scale-105 to sm:scale-105 to prevent mobile overflow -->
+        <!-- Status Card -->
         <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-4 sm:p-8 hidden transform transition-all sm:scale-105">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Payment Received!</h2>
@@ -260,14 +512,13 @@
                     <p class="text-xs opacity-75 mt-1">Account matched: <span id="matchedIdentity" class="font-bold"></span></p>
                 </div>
                 
-                <!-- UPDATED: Responsive padding px-4 sm:px-8 -->
                 <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-4 sm:px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
                     Confirm and Add Money
                 </button>
             </div>
         </div>
 
-        <!-- UPDATED: Responsive padding p-4 sm:p-8 and simplified text -->
+        <!-- Payment Portal -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-8">
             <div class="mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Payment Portal</h2>
@@ -286,13 +537,13 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        // DOM Elements
         const statusCard = document.getElementById('statusCard');
         const sensorMessage = document.getElementById('sensorMessage');
         const approveBtn = document.getElementById('approveBtn');
         const portalFrameWrapper = document.getElementById('portalFrameWrapper');
-        
-        // Profile Summary Display DOM Links
         const profileCard = document.getElementById('profileCard');
         const cardDispName = document.getElementById('cardDispName');
         const cardDispFullName = document.getElementById('cardDispFullName');
@@ -334,39 +585,78 @@
         // DUAL-API FALLBACK CONFIGURATION
         // ==========================================
         const API_URLS = [
-            'https://unasemeje-backend.vercel.app/api',      // Primary: Vercel (Fastest)
-            'https://unasemeje-backend-3.onrender.com/api'   // Fallback: Render (High Availability)
+            'https://unasemeje-backend.vercel.app/api',
+            'https://unasemeje-backend-3.onrender.com/api'
         ];
         let ACTIVE_API_URL = API_URLS[0];
         const token = localStorage.getItem('token');
 
-        // Smart Fetch Wrapper: Tries Primary, falls back to Secondary on network/server errors
+        // Smart Fetch Wrapper
         async function apiRequest(path, options = {}) {
             for (let i = 0; i < API_URLS.length; i++) {
                 const currentUrl = API_URLS[i] + path;
                 try {
                     const response = await fetch(currentUrl, options);
-                    
-                    // If successful (2xx) or client error (4xx like 401 Unauthorized), the server is reachable.
                     if (response.ok || (response.status >= 400 && response.status < 500)) {
-                        ACTIVE_API_URL = API_URLS[i]; // Lock in the working URL for future requests
+                        ACTIVE_API_URL = API_URLS[i];
                         return response;
                     }
-                    
-                    // If server error (5xx) and we have a fallback URL left, try the next one
                     if (response.status >= 500 && i < API_URLS.length - 1) {
                         console.warn(`Server error ${response.status} from ${API_URLS[i]}. Trying fallback...`);
                         continue;
                     }
-                    
-                    return response; // Return 5xx if it's the last URL
+                    return response;
                 } catch (error) {
-                    // Network error (offline, DNS failure, CORS, timeout)
                     console.warn(`Connection failed for ${API_URLS[i]}. Trying fallback...`, error);
                     if (i === API_URLS.length - 1) {
                         throw new Error("All backend servers are unreachable.");
                     }
                 }
+            }
+        }
+
+        // --- MODAL FUNCTIONS ---
+        function showFlagInstructions() {
+            document.getElementById('flagModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFlagInstructions() {
+            document.getElementById('flagModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('flagModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFlagInstructions();
+        });
+
+        // --- DYNAMIC TOP TICKER LOADER ---
+        async function loadTopTicker() {
+            try {
+                let res = await fetch(`${API_URLS[0]}/ticker`);
+                if (!res.ok) res = await fetch(`${API_URLS[1]}/ticker`);
+                
+                const data = await res.json();
+                const tickerContent = document.getElementById('tickerContent');
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `<div class="ticker-item">${item}</div>`;
+                    });
+                    tickerContent.innerHTML = html + html; 
+                } else {
+                    const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                    tickerContent.innerHTML = fallback + fallback;
+                }
+                
+                const speed = data.speed || 80;
+                tickerContent.style.animationDuration = `${speed}s`;
+                
+            } catch (err) {
+                const tickerContent = document.getElementById('tickerContent');
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
             }
         }
 
@@ -378,6 +668,7 @@
                 return;
             }
             await fetchUserProfileFromServer();
+            loadTopTicker();
         };
 
         async function fetchUserProfileFromServer() {
@@ -387,7 +678,6 @@
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
-                // 🔒 ONLY redirect if the server explicitly rejects the token (401 Unauthorized or 403 Forbidden)
                 if (response.status === 401 || response.status === 403) {
                     console.warn("Session expired. Please log in again.");
                     localStorage.removeItem('token');
@@ -395,20 +685,14 @@
                     return;
                 }
 
-                // ⚠️ If it's a 500 server error or network issue, DO NOT log the user out!
-                // Just log the warning and let the dual-API fallback handle it.
                 if (!response.ok) {
                     console.warn("Could not load profile. Keeping user logged in.");
                     return; 
                 }
                 
                 const user = await response.json();
-                
-                // Formulate standardized balance calculations
                 const formattedBalance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
                 if (liveBalance) liveBalance.innerText = formattedBalance;
-                
-                // Mirror parameters simultaneously across all active presentation fields
                 if (infoBalanceA) infoBalanceA.innerText = formattedBalance;
                 if (infoBalanceB) infoBalanceB.innerText = formattedBalance;
 
@@ -428,16 +712,13 @@
                 if (infoLastNameA) infoLastNameA.innerText = user.lastName || 'N/A';
                 if (infoLastNameB) infoLastNameB.innerText = user.lastName || 'N/A';
 
-                // Sync control interfaces
                 if (editUsername) editUsername.value = user.username || user.name || '';
                 if (editFirstName) editFirstName.value = user.firstName || '';
                 if (editLastName) editLastName.value = user.lastName || '';
                 if (editPhone1) editPhone1.value = user.paymentPhone1 || '';
                 if (editPhone2) editPhone2.value = user.paymentPhone2 || '';
                 
-                // Structuring array configurations for custom phone systems safely
                 const activePhones = [user.phone, user.paymentPhone1, user.paymentPhone2].filter(Boolean);
-                
                 const processChannelsHTML = (arr) => {
                     return arr.length > 0 
                         ? arr.map((p, i) => `<span>🔹 Phone ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Extra)'}</span>`).join('')
@@ -447,7 +728,6 @@
                 if (infoPhonesA) infoPhonesA.innerHTML = processChannelsHTML(activePhones);
                 if (infoPhonesB) infoPhonesB.innerHTML = processChannelsHTML(activePhones);
 
-                // Inject processing context state
                 serverUserProfile = {
                     username: user.username || user.name || "User Account",
                     firstName: user.firstName || '',
@@ -460,8 +740,6 @@
 
             } catch (err) {
                 console.error("Error loading your account details:", err);
-                // Do not redirect to login page on network/server errors. 
-                // Keep the user on the page so they can retry or use the fallback.
             }
         }
 
@@ -482,7 +760,6 @@
                 
                 if (serverUserProfile.phones.length > 0) {
                     serverUserProfile.phones.forEach((phone, idx) => {
-                        // UPDATED: Added break-all to prevent long numbers from overflowing
                         cardDispPhones.innerHTML += `
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200 break-all">
                                 <span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
@@ -648,5 +925,6 @@
             };
         }
     </script>
+
 </body>
-    </html>
+        </html>
