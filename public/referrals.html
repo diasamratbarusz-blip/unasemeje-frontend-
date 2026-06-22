@@ -1,146 +1,1018 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-KE">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referrals | UNASEMEJE ø DIA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Referrals | Unasemeje SMM Gains</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Reusing common dashboard styles */
-        :root { --primary: #7c3aed; --secondary: #10b981; --bg-dark: #0f172a; --card-bg: #1e293b; --text-main: #f8fafc; --text-dim: #94a3b8; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg-dark); color: var(--text-main); display: flex; }
-        
-        .sidebar { width: 260px; background: #111827; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #1f2937; overflow-y: auto; }
-        .sidebar h2 { color: var(--primary); text-align: center; font-weight: 800; margin-bottom: 30px; }
-        .sidebar a { display: flex; align-items: center; padding: 12px 15px; color: var(--text-dim); text-decoration: none; border-radius: 10px; margin-bottom: 5px; }
-        .sidebar a.active { background: var(--primary); color: white; }
+        /* ========================================= */
+        /* PROFESSIONAL WHITE THEME VARIABLES        */
+        /* ========================================= */
+        :root {
+            --primary: #1e3a5f;
+            --secondary: #f97316;
+            --bg-main: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-dim: #64748b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border-color: #e2e8f0;
+        }
 
-        .main { margin-left: 260px; padding: 40px; width: calc(100% - 260px); min-height: 100vh; }
-        .card { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #334155; text-align: center; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        .ref-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px dashed var(--primary); margin: 25px 0; }
-        #refLink { color: var(--primary); font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; flex: 1; text-align: left; }
-        
-        .btn-copy { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; white-space: nowrap; }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
-        .stat-item { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-        /* ========================================== */
-        /* RESPONSIVE DESIGN FOR ALL SCREEN WIDTHS    */
-        /* ========================================== */
+        /* ========================================= */
+        /* STICKY TOP HEADER (INSTRUCTIONS & TICKER) */
+        /* ========================================= */
+        .sticky-header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .warning-banner {
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .warning-banner i { color: #fbbf24; font-size: 16px; }
+        .warning-banner a { 
+            color: #fbbf24; 
+            text-decoration: underline; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .warning-banner a:hover { color: #ffffff; }
+
+        .top-ticker {
+            background: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            overflow: hidden;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 80s linear infinite;
+            padding-left: 100%;
+        }
+        .ticker-item {
+            display: inline-block;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 13px;
+            padding-right: 60px;
+        }
+        .ticker-item span { color: var(--secondary); font-weight: 800; }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* ========================================= */
+        /* PAGE LAYOUT WRAPPER                       */
+        /* ========================================= */
+        .page-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: calc(100vh - 90px);
+        }
+
+        /* ========================================= */
+        /* SIDEBAR NAVIGATION                        */
+        /* ========================================= */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            border-right: 2px solid var(--border-color);
+            position: fixed;
+            top: 90px;
+            height: calc(100vh - 90px);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 2px 0 15px rgba(30, 58, 95, 0.05);
+            padding: 30px 20px;
+        }
+        .sidebar h2 {
+            color: var(--primary);
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 5px;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            gap: 12px;
+            font-weight: 500;
+        }
+        .sidebar-nav a i {
+            color: var(--text-dim);
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .sidebar-nav a:hover {
+            background: rgba(249, 115, 22, 0.08);
+            color: var(--secondary);
+        }
+        .sidebar-nav a:hover i { color: var(--secondary); }
+        .sidebar-nav a.active {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+        }
+        .sidebar-nav a.active i, .sidebar-nav a.active span { color: #ffffff !important; }
+
+        .sidebar-nav a.utility-link.ai-support { color: var(--secondary); }
+        .sidebar-nav a.utility-link.whatsapp-help { color: #25d366; }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .sidebar-footer a {
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .sidebar-footer a:hover { background: rgba(239, 68, 68, 0.08); }
+
+        /* ========================================= */
+        /* MAIN CONTENT AREA                         */
+        /* ========================================= */
+        .main {
+            margin-left: 260px;
+            padding: 40px;
+            width: calc(100% - 260px);
+            min-height: 100%;
+        }
+
+        .header-section {
+            margin-bottom: 30px;
+        }
+        .header-section h1 {
+            font-weight: 800;
+            font-size: 28px;
+            color: var(--primary);
+            margin: 0;
+        }
+        .header-section p {
+            color: var(--text-dim);
+            margin-top: 8px;
+            font-size: 15px;
+            max-width: 600px;
+        }
+
+        /* ========================================= */
+        /* REFERRAL CARD STYLES                      */
+        /* ========================================= */
+        .card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(30, 58, 95, 0.06);
+            margin-bottom: 30px;
+        }
+
+        .ref-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 2px dashed var(--secondary);
+            margin: 25px 0;
+            gap: 15px;
+        }
+        
+        #refLink {
+            color: var(--primary);
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            text-align: left;
+            font-size: 15px;
+            font-family: monospace;
+        }
+        
+        .btn-copy {
+            background: linear-gradient(135deg, var(--secondary), #ea580c);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.4);
+        }
+        .btn-copy:active { transform: translateY(0); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-item {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            text-align: center;
+            transition: 0.3s;
+        }
+        .stat-item:hover {
+            border-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(30, 58, 95, 0.05);
+        }
+
+        .stat-item small {
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-item h2 {
+            color: var(--primary);
+            margin: 10px 0 0;
+            font-size: 28px;
+            font-weight: 800;
+        }
+        
+        .stat-item h2.earnings {
+            color: var(--secondary);
+        }
+
+        /* ========================================= */
+        /* MODAL STYLES                              */
+        /* ========================================= */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.8;
+            background: #ffffff;
+        }
+        .modal-body h4 { color: var(--primary); margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
+        .modal-body p { margin-bottom: 12px; color: var(--text-dim); }
+        .modal-body strong { color: var(--primary); }
+        .modal-body .step {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border-left: 4px solid var(--secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .modal-body .step-number {
+            background: var(--secondary);
+            color: white;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .modal-body .step-content { flex: 1; }
+
+        /* ========================================= */
+        /* MOBILE RESPONSIVE BOTTOM NAVIGATION       */
+        /* ========================================= */
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; width: 100%; padding: 20px; }
+            .warning-banner { font-size: 12px; padding: 10px 15px; height: auto; min-height: 40px; }
+            .top-ticker { height: 40px; }
             
-            .card { padding: 20px; }
-            .card h1 { font-size: 24px; }
+            .page-wrapper { flex-direction: column; }
             
-            .ref-box { 
-                flex-direction: column; 
-                gap: 15px; 
-                align-items: stretch; 
+            .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: auto;
+                min-height: 65px;
+                top: auto;
+                flex-direction: column;
+                padding: 0;
+                border-right: none;
+                border-top: 2px solid var(--border-color);
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 -4px 15px rgba(30, 58, 95, 0.1);
+                transition: transform 0.3s ease-in-out;
             }
+            .sidebar.nav-hidden { transform: translateY(100%); }
+            .sidebar h2 { display: none; }
+            .sidebar-footer { display: none; }
+
+            .sidebar-nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                width: 100%;
+                justify-content: space-around;
+                align-items: center;
+                margin: 0;
+                padding: 8px 0;
+                gap: 0;
+            }
+            .sidebar-nav a {
+                flex: 1 1 calc(100% / 6);
+                max-width: calc(100% / 6);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 4px;
+                padding: 8px 4px;
+                margin: 0;
+                text-align: center;
+                border-radius: 0;
+                min-width: 0;
+            }
+            .sidebar-nav a.utility-link {
+                flex: 0 0 auto;
+                max-width: none;
+                flex-direction: row;
+                padding: 10px 20px;
+                gap: 8px;
+                border-top: 1px solid var(--border-color);
+                width: 100%;
+                justify-content: center;
+            }
+            .sidebar-nav a:not(.utility-link) i { font-size: 20px; margin: 0; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 10px; font-weight: 500; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
             
-            #refLink { 
-                white-space: normal; 
-                word-break: break-all; 
-                text-align: center; 
-                margin-right: 0; 
-                display: block;
+            .main {
+                margin-left: 0;
+                margin-bottom: 120px;
+                padding: 20px;
+                width: 100%;
+            }
+            .header-section h1 { font-size: 24px; }
+            .card { padding: 20px; border-radius: 16px; }
+            
+            .ref-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #refLink {
+                white-space: normal;
+                word-break: break-all;
+                text-align: center;
+                margin-right: 0;
                 font-size: 14px;
             }
-            
-            .btn-copy { width: 100%; padding: 12px; }
+            .btn-copy { width: 100%; justify-content: center; }
             
             .stats-grid { grid-template-columns: 1fr; gap: 15px; }
-            .stat-item { padding: 15px; }
+            .stat-item { padding: 20px; }
+            .stat-item h2 { font-size: 24px; }
+
+            #chatToggleBtn { bottom: 140px !important; right: 20px !important; transition: bottom 0.3s ease-in-out !important; }
+            #chatToggleBtn.nav-hidden { bottom: 20px !important; }
+            #chatWindow { bottom: 215px !important; right: 15px !important; left: 15px !important; width: auto !important; max-width: 100% !important; height: 65vh !important; transition: bottom 0.3s ease-in-out !important; }
+            #chatWindow.nav-hidden { bottom: 95px !important; }
+        }
+
+        @media (max-width: 480px) {
+            .main { padding: 15px; margin-bottom: 115px; }
+            .sidebar { min-height: 60px; }
+            .sidebar-nav a:not(.utility-link) i { font-size: 18px; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 9px; }
+            .sidebar-nav a.utility-link { padding: 8px 15px; }
+            .sidebar-nav a.utility-link i { font-size: 14px; }
+            .sidebar-nav a.utility-link span { font-size: 11px; }
+            
+            #chatToggleBtn { bottom: 135px !important; right: 15px !important; width: 50px !important; height: 50px !important; padding: 12px !important; }
+            #chatToggleBtn.nav-hidden { bottom: 15px !important; }
+            #chatWindow { bottom: 210px !important; right: 10px !important; left: 10px !important; max-width: calc(100% - 20px) !important; }
+            #chatWindow.nav-hidden { bottom: 80px !important; }
+        }
+
+        @media (max-width: 360px) {
+            .main { padding: 10px; margin-bottom: 110px; }
+            .sidebar { min-height: 58px; }
+            .sidebar-nav a:not(.utility-link) i { font-size: 16px; }
+            .sidebar-nav a:not(.utility-link) span { font-size: 8px; }
+            .sidebar-nav a.utility-link { padding: 7px 12px; }
+            .sidebar-nav a.utility-link i { font-size: 13px; }
+            .sidebar-nav a.utility-link span { font-size: 10px; }
+            
+            #chatToggleBtn { width: 45px !important; height: 45px !important; padding: 10px !important; bottom: 130px !important; }
+            #chatToggleBtn.nav-hidden { bottom: 15px !important; }
+            #chatWindow { bottom: 205px !important; right: 8px !important; left: 8px !important; max-width: calc(100% - 16px) !important; }
+            #chatWindow.nav-hidden { bottom: 75px !important; }
+        }
+
+        /* ========================================= */
+        /* CHAT WIDGET STYLES                        */
+        /* ========================================= */
+        #chatWindow { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: bottom right; }
+        #chatWindow.hidden { display: none; }
+        #chatMessages::-webkit-scrollbar { width: 6px; }
+        #chatMessages::-webkit-scrollbar-track { background: transparent; }
+        #chatMessages::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        #chatMessages::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        @keyframes bounce-dot {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        .typing-dot { animation: bounce-dot 1.2s infinite ease-in-out; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @media (max-width: 768px) {
+            #chatWindow { width: calc(100vw - 30px) !important; max-width: calc(100vw - 30px) !important; right: 15px !important; left: 15px !important; box-sizing: border-box !important; }
+            #chatMessages { height: 280px !important; }
+        }
+        @media (max-width: 480px) {
+            #chatWindow { width: calc(100vw - 20px) !important; max-width: calc(100vw - 20px) !important; right: 10px !important; left: 10px !important; }
+            #chatMessages { height: 250px !important; }
+            #chatWindow .p-4 h3 { font-size: 13px !important; }
+            #chatWindow .p-4 p { font-size: 9px !important; }
+        }
+        @media (max-width: 360px) {
+            #chatWindow { width: calc(100vw - 16px) !important; max-width: calc(100vw - 16px) !important; right: 8px !important; left: 8px !important; }
+            #chatMessages { height: 220px !important; padding: 10px !important; }
+            #chatInput { font-size: 13px !important; padding: 8px 12px !important; }
         }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <h2>unasemeje ø dia</h2>
-        <a href="home.html"><i class="fas fa-home"></i> Home</a>
-        <a href="new-order.html"><i class="fas fa-plus-circle"></i> New Order</a>
-        <a href="my-orders.html"><i class="fas fa-history"></i> My Orders</a>
-        <a href="add-funds.html"><i class="fas fa-wallet"></i> Add Funds</a>
-        <a href="referrals.html" class="active"><i class="fas fa-users"></i> Referrals</a>
+    <!-- STICKY HEADER: INSTRUCTIONS & MOVING TICKER -->
+    <div class="sticky-header-wrapper">
+        <div class="warning-banner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
+            <a onclick="showFlagInstructions()">Click Here to See How</a>
+        </div>
+        <div class="top-ticker">
+            <div class="ticker-content" id="tickerContent">
+                <!-- Items injected by JS -->
+            </div>
+        </div>
     </div>
 
-    <div class="main">
-        <div class="card">
-            <h1 style="margin-top: 0;">Invite Friends & Earn KES</h1>
-            <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto;">Share your link with other Kenyan entrepreneurs. When they fund their account, you get <b>10%</b> of their deposit instantly into your balance.</p>
+    <!-- MODAL FOR FLAG INSTRUCTIONS -->
+    <div class="modal-overlay" id="flagModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
+                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
+                <h4>Step-by-Step Instructions:</h4>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Go to Settings</strong><br>
+                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Find Follow Settings</strong><br>
+                        Scroll down and tap <strong>"Follow and invite friends"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Disable Flag for Review</strong><br>
+                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Confirm</strong><br>
+                        Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+                    </div>
+                </div>
+                <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
+                <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
+                <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
+                    <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
+                </p>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE LAYOUT -->
+    <div class="page-wrapper">
+        <div class="sidebar">
+            <h2>Unasemeje SMM Gains</h2>
+            <div class="sidebar-nav" id="sidebarNav">
+                <a href="dashboard.html"><i class="fas fa-home"></i> <span>Home</span></a>
+                <a href="platform.html"><i class="fas fa-rocket"></i> <span>New Order</span></a>
+                <a href="my-orders.html"><i class="fas fa-history"></i> <span>My Orders</span></a>
+                <a href="services.html"><i class="fas fa-list"></i> <span>All Services</span></a>
+                <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
+                <a href="referrals.html" class="active"><i class="fas fa-users"></i> <span>Referrals</span></a>
+                
+                <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
+                <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
+            </div>
             
-            <div class="ref-box">
-                <span id="refLink">Loading your link...</span>
-                <button class="btn-copy" onclick="copyRef()">COPY LINK</button>
+            <div class="sidebar-footer">
+                <a onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="header-section">
+                <h1>Invite Friends & Earn KES</h1>
+                <p>Share your link with other Kenyan entrepreneurs. When they fund their account, you get <b style="color: var(--secondary);">10%</b> of their deposit instantly into your balance.</p>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <small style="color: var(--text-dim);">Total Earnings</small>
-                    <h2 style="color: var(--secondary); margin: 10px 0;">KES <span id="refEarnings">0.00</span></h2>
+            <div class="card">
+                <h3 style="color: var(--primary); font-weight: 700; margin-bottom: 5px;">Your Unique Referral Link</h3>
+                <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 0;">Share this link to start earning commissions on every successful deposit.</p>
+                
+                <div class="ref-box">
+                    <span id="refLink">Loading your link...</span>
+                    <button class="btn-copy" onclick="copyRef()">
+                        <i class="fas fa-copy"></i> COPY LINK
+                    </button>
                 </div>
-                <div class="stat-item">
-                    <small style="color: var(--text-dim);">People Invited</small>
-                    <h2 style="margin: 10px 0;" id="refCount">0</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <small>Total Earnings</small>
+                        <h2 class="earnings">KES <span id="refEarnings">0.00</span></h2>
+                    </div>
+                    <div class="stat-item">
+                        <small>People Invited</small>
+                        <h2 id="refCount">0</h2>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Updated to use the live production API endpoint
         const API = "https://unasemeje-backend.vercel.app/api";
+        const API_FALLBACK = "https://unasemeje-backend-3.onrender.com/api";
+        const token = localStorage.getItem("token");
 
+        if (!token) window.location.href = "index.html";
+
+        // --- MODAL FUNCTIONS ---
+        function showFlagInstructions() {
+            document.getElementById('flagModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFlagInstructions() {
+            document.getElementById('flagModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('flagModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFlagInstructions();
+        });
+
+        // --- DYNAMIC TOP TICKER LOADER ---
+        async function loadTopTicker() {
+            try {
+                let res = await fetch(`${API}/ticker`);
+                if (!res.ok) res = await fetch(`${API_FALLBACK}/ticker`);
+                
+                const data = await res.json();
+                const tickerContent = document.getElementById('tickerContent');
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `<div class="ticker-item">${item}</div>`;
+                    });
+                    tickerContent.innerHTML = html + html; 
+                } else {
+                    const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                    tickerContent.innerHTML = fallback + fallback;
+                }
+                
+                const speed = data.speed || 80;
+                tickerContent.style.animationDuration = `${speed}s`;
+                
+            } catch (err) {
+                const tickerContent = document.getElementById('tickerContent');
+                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
+                tickerContent.innerHTML = fallback + fallback;
+            }
+        }
+
+        // --- LOAD REFERRAL DATA ---
         async function loadRefData() {
             try {
-                const res = await fetch(`${API}/me`, { 
-                    headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } 
-                });
+                let res = await fetch(`${API}/me`, { headers: { "Authorization": `Bearer ${token}` } });
+                if (!res.ok) res = await fetch(`${API_FALLBACK}/me`, { headers: { "Authorization": `Bearer ${token}` } });
                 
-                if (!res.ok) {
+                if (res.status === 401 || res.status === 403) {
                     window.location.href = "index.html";
                     return;
                 }
 
                 const user = await res.json();
                 
-                // Updated referral link to point to signup.html instead of register.html
+                // Generate referral link
                 const link = `${window.location.origin}/signup.html?ref=${user.referralCode}`;
                 document.getElementById("refLink").innerText = link;
                 document.getElementById("refEarnings").innerText = (user.referralEarnings || 0).toFixed(2);
                 document.getElementById("refCount").innerText = user.referralCount || 0;
             } catch (error) {
                 console.error("Failed to load referral data:", error);
-                document.getElementById("refLink").innerText = "Error loading link";
+                document.getElementById("refLink").innerText = "Error loading link. Please refresh.";
             }
         }
 
+        // --- COPY REFERRAL LINK ---
         function copyRef() {
             const link = document.getElementById("refLink").innerText;
             if (link.startsWith("Error")) return;
             
             navigator.clipboard.writeText(link).then(() => {
-                alert("Referral Link Copied to clipboard!");
+                showToast("Referral Link Copied!");
             }).catch(() => {
-                // Fallback for older browsers or non-HTTPS environments
+                // Fallback for older browsers
                 const textArea = document.createElement("textarea");
                 textArea.value = link;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand("copy");
                 document.body.removeChild(textArea);
-                alert("Referral Link Copied to clipboard!");
+                showToast("Referral Link Copied!");
             });
         }
 
+        // Simple Toast Notification
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.innerText = message;
+            toast.style.cssText = `
+                position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+                background: var(--primary); color: white; padding: 12px 24px;
+                border-radius: 12px; font-weight: 600; font-size: 14px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999;
+                animation: popIn 0.3s ease;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transition = "0.3s";
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        // Execute on load
+        loadTopTicker(); 
         loadRefData();
     </script>
+
+    <!-- ========================================== -->
+    <!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
+    <!-- ========================================== -->
+    <button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: #f97316; position: fixed;">
+        <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+
+    <div id="chatWindow" class="fixed bottom-24 right-6 z-50 w-[90vw] bg-white rounded-3xl shadow-2xl border border-gray-100 flex-col hidden scale-95 opacity-0" style="font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; position: fixed;">
+        <div class="p-4 rounded-t-3xl flex justify-between items-center shadow-md text-white" style="background-color: #1e3a5f;">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">Unasemeje Support</h3>
+                    <p class="text-[10px] opacity-90 flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> AI Assistant Online
+                    </p>
+                </div>
+            </div>
+            <button id="chatCloseBtn" class="text-white/80 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style="height: 320px;"></div>
+
+        <div class="p-3 border-t border-gray-100 bg-white rounded-b-3xl">
+            <form id="chatForm" class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Type your question..." class="flex-1 bg-gray-100 rounded-xl px-4 py-2.5 text-sm outline-none transition-all text-gray-800 placeholder-gray-400" style="border: 1px solid #e5e7eb;" autocomplete="off" required>
+                <button type="submit" id="chatSendBtn" class="text-white p-2.5 rounded-xl hover:opacity-90 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center" style="background-color: #f97316;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+            const chatCloseBtn = document.getElementById('chatCloseBtn');
+            const chatWindow = document.getElementById('chatWindow');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatForm = document.getElementById('chatForm');
+            const chatInput = document.getElementById('chatInput');
+            const chatIconOpen = document.getElementById('chatIconOpen');
+            const chatIconClose = document.getElementById('chatIconClose');
+
+            const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
+            const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
+
+            let isChatOpen = false;
+
+            let lastScrollTop = 0;
+            const mobileSidebar = document.querySelector('.sidebar');
+
+            window.addEventListener('scroll', () => {
+                if (window.innerWidth <= 768) {
+                    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
+                    
+                    if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
+                        mobileSidebar.classList.add('nav-hidden');
+                        chatToggleBtn.classList.add('nav-hidden');
+                        chatWindow.classList.add('nav-hidden');
+                    } else {
+                        mobileSidebar.classList.remove('nav-hidden');
+                        chatToggleBtn.classList.remove('nav-hidden');
+                        chatWindow.classList.remove('nav-hidden');
+                    }
+                    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+                }
+            }, false);
+
+            function toggleChat() {
+                isChatOpen = !isChatOpen;
+                if (isChatOpen) {
+                    chatWindow.style.display = 'flex';
+                    setTimeout(() => {
+                        chatWindow.classList.remove('hidden', 'scale-95', 'opacity-0');
+                        chatWindow.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                    chatIconOpen.classList.add('hidden');
+                    chatIconClose.classList.remove('hidden');
+                    
+                    if (chatMessages.children.length === 0) {
+                        appendMessage('bot', "Hello! 👋 I'm the Unasemeje AI Assistant. How can I help you today?");
+                    }
+                    setTimeout(() => chatInput.focus(), 300);
+                } else {
+                    chatWindow.classList.add('scale-95', 'opacity-0');
+                    chatWindow.classList.remove('scale-100', 'opacity-100');
+                    setTimeout(() => {
+                        chatWindow.style.display = 'none';
+                        chatWindow.classList.add('hidden');
+                    }, 300);
+                    chatIconOpen.classList.remove('hidden');
+                    chatIconClose.classList.add('hidden');
+                }
+            }
+
+            function appendMessage(sender, text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                const bubble = document.createElement('div');
+                if (sender === 'user') {
+                    bubble.className = 'text-white px-4 py-2.5 rounded-2xl rounded-br-sm max-w-[85%] text-sm shadow-md break-words';
+                    bubble.style.backgroundColor = '#1e3a5f';
+                } else {
+                    bubble.className = 'bg-white text-gray-800 px-4 py-2.5 rounded-2xl rounded-bl-sm max-w-[85%] text-sm shadow-sm border border-gray-100 break-words';
+                }
+                bubble.innerText = text;
+                msgDiv.appendChild(bubble);
+                chatMessages.appendChild(msgDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typingIndicator';
+                typingDiv.className = 'flex justify-start';
+                typingDiv.innerHTML = `
+                    <div class="bg-white text-gray-400 px-4 py-3 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100 flex gap-1.5">
+                        <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                        <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                        <span class="w-2 h-2 bg-gray-300 rounded-full typing-dot"></span>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function hideTyping() {
+                const typing = document.getElementById('typingIndicator');
+                if (typing) typing.remove();
+            }
+
+            async function sendToBackend(message) {
+                try {
+                    const response = await fetch(API_PRIMARY_BOT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ message })
+                    });
+                    if (response.ok) return await response.json();
+                } catch (err) { console.warn("Primary AI server unreachable. Trying fallback..."); }
+
+                try {
+                    const response = await fetch(API_FALLBACK_BOT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ message })
+                    });
+                    if (response.ok) return await response.json();
+                } catch (err) { console.error("Both AI servers unreachable."); return null; }
+            }
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                appendMessage('user', message);
+                chatInput.value = '';
+                chatInput.disabled = true; 
+                showTyping();
+
+                const data = await sendToBackend(message);
+                hideTyping();
+                chatInput.disabled = false;
+                chatInput.focus();
+
+                if (data && data.success && data.reply) {
+                    appendMessage('bot', data.reply);
+                } else {
+                    appendMessage('bot', "I'm having trouble connecting to my brain right now. Please try again in a moment!");
+                }
+            });
+
+            chatToggleBtn.addEventListener('click', toggleChat);
+            chatCloseBtn.addEventListener('click', toggleChat);
+            
+            document.addEventListener('click', (e) => {
+                if (isChatOpen && !chatWindow.contains(e.target) && !chatToggleBtn.contains(e.target)) {
+                    toggleChat();
+                }
+            });
+        });
+    </script>
+
 </body>
-</html>
+    </html>
