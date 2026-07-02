@@ -6,7 +6,7 @@
     <title>Add Funds | Unasemeje SMM Gains</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -27,18 +27,24 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
+            font-family: 'Inter', sans-serif;
         }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
         .gradient-header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3b7bb5 100%);
+        }
+
+        .gradient-accent {
+            background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
         }
 
         .pulse-ring {
@@ -52,179 +58,295 @@
         }
 
         .slide-up {
-            animation: slideUp 0.3s ease-out;
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
+            from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .method-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
 
         .method-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
         }
 
         .method-card.selected {
             border-color: #1e3a5f;
-            background: #f0f7ff;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+            box-shadow: 0 8px 24px rgba(30, 58, 95, 0.15);
+        }
+
+        .quick-amount {
+            transition: all 0.2s ease;
+        }
+
+        .quick-amount:hover {
+            transform: scale(1.05);
+            background: #1e3a5f;
+            color: white;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 60s linear infinite;
+            padding-left: 100%;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .input-field {
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #1e3a5f;
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+        }
+
+        .badge-pulse {
+            animation: badgePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
 <body class="antialiased">
 
+    <!-- Sticky Warning Banner -->
+    <div class="bg-gradient-to-r from-red-600 to-red-500 text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-3 flex-wrap">
+            <i class="fas fa-exclamation-triangle text-yellow-300 text-lg"></i>
+            <span class="font-semibold text-sm">Turn off "Flag for Review" before ordering Instagram followers</span>
+            <button onclick="showFlagInstructions()" class="underline font-bold hover:text-yellow-300 transition text-sm">
+                Learn How →
+            </button>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="gradient-header text-white shadow-lg sticky top-0 z-40">
+    <nav class="gradient-header text-white shadow-2xl sticky top-[52px] z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-bolt text-xl"></i>
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-bolt text-2xl text-yellow-300"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-tight">Unasemeje SMM</span>
+                    <div>
+                        <h1 class="font-bold text-2xl tracking-tight">Unasemeje SMM</h1>
+                        <p class="text-xs text-white/70">Premium Social Media Services</p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="hidden md:flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
-                        <i class="fas fa-wallet text-emerald-400"></i>
-                        <span class="font-semibold" id="navBalance">KES 0.00</span>
+                    <div class="hidden md:flex items-center gap-3 bg-white/10 backdrop-blur-sm px-5 py-3 rounded-full border border-white/20">
+                        <i class="fas fa-wallet text-emerald-400 text-lg"></i>
+                        <div>
+                            <p class="text-xs text-white/70">Balance</p>
+                            <p class="font-bold text-lg" id="navBalance">KES 0.00</p>
+                        </div>
                     </div>
-                    <button onclick="window.location.href='dashboard.html'" class="text-white/80 hover:text-white transition">
-                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    <button onclick="window.location.href='dashboard.html'" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-5 py-3 rounded-full transition border border-white/20 flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="hidden sm:inline font-semibold">Dashboard</span>
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Ticker Bar -->
+    <div class="bg-primary border-b-4 border-secondary overflow-hidden">
+        <div class="ticker-content py-3" id="tickerContent">
+            <span class="text-white font-semibold text-sm px-8">🚀 UNASEMEJE SMM GAINS: Welcome to the Ultimate Plug!</span>
+        </div>
+    </div>
+
     <!-- Main Content -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         
         <!-- Header Section -->
-        <div class="mb-8 slide-up">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Funds</h1>
-            <p class="text-gray-600">Top up your wallet securely using your preferred payment method</p>
+        <div class="mb-10 slide-up">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-1 h-10 gradient-accent rounded-full"></div>
+                <h1 class="text-4xl font-black text-gray-900">Add Funds</h1>
+            </div>
+            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely using your preferred payment method</p>
         </div>
 
         <!-- Current Balance Card -->
-        <div class="glass-card rounded-2xl shadow-xl p-6 mb-8 slide-up" style="animation-delay: 0.1s">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600 mb-1">Current Balance</p>
-                    <h2 class="text-4xl font-bold text-gray-900" id="currentBalance">KES 0.00</h2>
+        <div class="glass-card rounded-3xl shadow-2xl p-8 mb-10 slide-up" style="animation-delay: 0.1s">
+            <div class="flex items-center justify-between flex-wrap gap-6">
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Current Wallet Balance</p>
+                    <h2 class="text-5xl font-black text-gray-900" id="currentBalance">KES 0.00</h2>
+                    <p class="text-sm text-gray-500 mt-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-500"></i>
+                        Funds available instantly after payment confirmation
+                    </p>
                 </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-wallet text-3xl text-white"></i>
-                </div>
-            </div>
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="fas fa-info-circle text-blue-500"></i>
-                    <span>Funds are available instantly after payment confirmation</span>
+                <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl">
+                    <i class="fas fa-wallet text-5xl text-white"></i>
                 </div>
             </div>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Payment Methods -->
-            <div class="md:col-span-2 space-y-6 slide-up" style="animation-delay: 0.2s">
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Main Content Area -->
+            <div class="lg:col-span-2 space-y-8">
                 
                 <!-- Payment Method Selection -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-credit-card text-primary"></i>
-                        Select Payment Method
-                    </h3>
+                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.2s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-credit-card text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Payment Method</h3>
+                            <p class="text-sm text-gray-600">Choose your preferred payment option</p>
+                        </div>
+                    </div>
                     
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <!-- M-Pesa -->
-                        <div class="method-card selected border-2 border-gray-200 rounded-xl p-4 cursor-pointer" onclick="selectMethod('mpesa')">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
+                        <div class="method-card selected border-2 border-gray-200 rounded-2xl p-5" onclick="selectMethod('mpesa', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-mobile-alt text-3xl text-green-600"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900">M-Pesa Express</h4>
-                                    <p class="text-sm text-gray-600">Pay with your M-Pesa phone number</p>
+                                    <h4 class="font-bold text-gray-900 text-lg">M-Pesa Express</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Instant payment via M-Pesa STK Push</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
+                                            <i class="fas fa-check-circle mr-1"></i>Recommended
+                                        </span>
+                                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
+                                            <i class="fas fa-bolt mr-1"></i>Instant
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="w-6 h-6 rounded-full border-4 border-primary flex items-center justify-center">
+                                <div class="w-7 h-7 rounded-full border-4 border-primary flex items-center justify-center">
                                     <div class="w-3 h-3 bg-primary rounded-full"></div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Card Payment -->
-                        <div class="method-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer opacity-60" onclick="selectMethod('card')">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-credit-card text-2xl text-blue-600"></i>
+                        <div class="method-card border-2 border-gray-200 rounded-2xl p-5 opacity-60" onclick="selectMethod('card', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-credit-card text-3xl text-blue-600"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900">Credit/Debit Card</h4>
-                                    <p class="text-sm text-gray-600">Visa, Mastercard accepted</p>
+                                    <h4 class="font-bold text-gray-900 text-lg">Credit/Debit Card</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Visa, Mastercard accepted</p>
                                 </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
+                                    Coming Soon
+                                </span>
                             </div>
                         </div>
 
                         <!-- Bank Transfer -->
-                        <div class="method-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer opacity-60" onclick="selectMethod('bank')">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-university text-2xl text-purple-600"></i>
+                        <div class="method-card border-2 border-gray-200 rounded-2xl p-5 opacity-60" onclick="selectMethod('bank', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-university text-3xl text-purple-600"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900">Bank Transfer</h4>
-                                    <p class="text-sm text-gray-600">Direct bank deposit</p>
+                                    <h4 class="font-bold text-gray-900 text-lg">Bank Transfer</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Direct bank deposit</p>
                                 </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
+                                    Coming Soon
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Amount Selection -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-coins text-secondary"></i>
-                        Enter Amount
-                    </h3>
+                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.3s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-coins text-2xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Enter Amount</h3>
+                            <p class="text-sm text-gray-600">Minimum deposit: KES 50</p>
+                        </div>
+                    </div>
                     
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount (KES)</label>
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-3">Amount (KES)</label>
                         <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">KES</span>
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xl">KES</span>
                             <input 
                                 type="number" 
                                 id="amountInput" 
                                 placeholder="500" 
                                 min="50"
-                                class="w-full pl-20 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition"
+                                class="input-field w-full pl-24 pr-6 py-5 text-3xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none"
                                 oninput="validateAmount(this.value)"
                             >
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">Minimum amount: KES 50</p>
                     </div>
 
                     <!-- Quick Amounts -->
-                    <div class="grid grid-cols-4 gap-3 mb-4">
-                        <button onclick="setAmount(100)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">100</button>
-                        <button onclick="setAmount(500)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">500</button>
-                        <button onclick="setAmount(1000)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">1K</button>
-                        <button onclick="setAmount(5000)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">5K</button>
+                    <div class="mb-6">
+                        <p class="text-sm font-semibold text-gray-700 mb-3">Quick Select</p>
+                        <div class="grid grid-cols-4 gap-3">
+                            <button onclick="setAmount(100)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 100</button>
+                            <button onclick="setAmount(500)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 500</button>
+                            <button onclick="setAmount(1000)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 1,000</button>
+                            <button onclick="setAmount(5000)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 5,000</button>
+                        </div>
                     </div>
 
                     <!-- Phone Number Display -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                        <div class="flex items-start gap-3">
-                            <i class="fas fa-phone-alt text-blue-600 mt-1"></i>
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5 mb-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone-alt text-xl text-blue-600"></i>
+                            </div>
                             <div class="flex-1">
-                                <p class="text-sm font-medium text-blue-900">Payment will be sent to:</p>
-                                <p class="text-lg font-bold text-blue-700 font-mono mt-1" id="registeredPhone">Loading...</p>
-                                <p class="text-xs text-blue-600 mt-1">Make sure this number is registered with M-Pesa</p>
+                                <p class="text-sm font-semibold text-blue-900 mb-1">Payment Phone Number</p>
+                                <p class="text-xl font-bold text-blue-700 font-mono" id="registeredPhone">Loading...</p>
+                                <p class="text-xs text-blue-600 mt-2">Ensure this number is registered with M-Pesa</p>
                             </div>
                         </div>
                     </div>
@@ -234,42 +356,99 @@
                         id="proceedBtn"
                         onclick="proceedToPayment()"
                         disabled
-                        class="w-full gradient-header text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                        class="w-full gradient-header text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 text-lg"
                     >
                         <i class="fas fa-lock"></i>
                         <span>Proceed to Secure Payment</span>
                     </button>
                 </div>
+
+                <!-- Account Settings -->
+                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.4s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-user-cog text-2xl text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Account Settings</h3>
+                            <p class="text-sm text-gray-600">Update your profile and security</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Profile Update -->
+                        <div>
+                            <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class="fas fa-user-edit text-primary"></i>
+                                Update Profile
+                            </h4>
+                            <form id="profileUpdateForm" class="space-y-3" onsubmit="updateProfileData(event)">
+                                <input type="text" id="editUsername" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="Username" required>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="text" id="editFirstName" class="input-field px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="First Name">
+                                    <input type="text" id="editLastName" class="input-field px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="Last Name">
+                                </div>
+                                <input type="text" id="editPhone1" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl font-mono" placeholder="Extra Phone 1 (2547...)">
+                                <input type="text" id="editPhone2" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl font-mono" placeholder="Extra Phone 2 (2547...)">
+                                <button type="submit" id="profileBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition text-sm">
+                                    Save Changes
+                                </button>
+                            </form>
+                            <p id="profileFeedback" class="text-xs font-medium mt-2 hidden"></p>
+                        </div>
+
+                        <!-- Password Change -->
+                        <div>
+                            <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <i class="fas fa-key text-secondary"></i>
+                                Change Password
+                            </h4>
+                            <form id="passwordChangeForm" class="space-y-3" onsubmit="changePassword(event)">
+                                <input type="password" id="currentPassword" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="Current Password" required>
+                                <input type="password" id="newPassword" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="New Password" required>
+                                <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-3 rounded-xl transition text-sm">
+                                    Update Password
+                                </button>
+                            </form>
+                            <p id="pwdFeedback" class="text-xs font-medium mt-2 hidden"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Sidebar -->
-            <div class="space-y-6 slide-up" style="animation-delay: 0.3s">
+            <div class="space-y-8">
                 
                 <!-- Recent Transactions -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Deposits</h3>
+                <div class="glass-card rounded-3xl shadow-xl p-6 slide-up" style="animation-delay: 0.5s">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <i class="fas fa-history text-primary"></i>
+                            Recent Deposits
+                        </h3>
+                        <button onclick="loadRecentTransactions()" class="text-xs text-primary font-semibold hover:underline">
+                            <i class="fas fa-sync-alt mr-1"></i>Refresh
+                        </button>
+                    </div>
                     <div id="recentTransactions" class="space-y-3">
-                        <div class="text-center py-8 text-gray-400">
-                            <i class="fas fa-receipt text-4xl mb-2"></i>
+                        <div class="text-center py-10 text-gray-400">
+                            <i class="fas fa-receipt text-5xl mb-3"></i>
                             <p class="text-sm">No recent deposits</p>
                         </div>
                     </div>
-                    <button onclick="loadRecentTransactions()" class="w-full mt-4 text-sm text-primary font-semibold hover:underline">
-                        Refresh History
-                    </button>
                 </div>
 
                 <!-- Help Card -->
-                <div class="glass-card rounded-2xl shadow-lg p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-question text-amber-600"></i>
+                <div class="glass-card rounded-3xl shadow-xl p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 slide-up" style="animation-delay: 0.6s">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-question text-2xl text-amber-600"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 mb-1">Need Help?</h4>
-                            <p class="text-sm text-gray-600 mb-3">Having trouble with your payment?</p>
-                            <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 text-sm font-bold text-green-600 hover:text-green-700">
-                                <i class="fab fa-whatsapp"></i>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900 text-lg mb-2">Need Help?</h4>
+                            <p class="text-sm text-gray-600 mb-4">Having trouble with your payment?</p>
+                            <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition">
+                                <i class="fab fa-whatsapp text-lg"></i>
                                 Contact Support
                             </a>
                         </div>
@@ -277,23 +456,29 @@
                 </div>
 
                 <!-- Security Notice -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i class="fas fa-shield-alt text-emerald-500 text-2xl"></i>
-                        <h4 class="font-bold text-gray-900">Secure Payment</h4>
+                <div class="glass-card rounded-3xl shadow-xl p-6 slide-up" style="animation-delay: 0.7s">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-lg">Secure Payment</h4>
                     </div>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-check text-emerald-500"></i>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-emerald-500"></i>
                             <span>256-bit SSL encryption</span>
                         </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-check text-emerald-500"></i>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-emerald-500"></i>
                             <span>PCI DSS compliant</span>
                         </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-check text-emerald-500"></i>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-emerald-500"></i>
                             <span>Instant confirmation</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-check-circle text-emerald-500"></i>
+                            <span>24/7 customer support</span>
                         </li>
                     </ul>
                 </div>
@@ -301,43 +486,92 @@
         </div>
     </div>
 
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden slide-up">
-            <!-- Modal Header -->
-            <div class="gradient-header text-white p-6 text-center">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 pulse-ring">
-                    <i class="fas fa-mobile-alt text-3xl"></i>
+    <!-- Flag Instructions Modal -->
+    <div class="modal-overlay" id="flagModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
+                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature.</strong></p>
+                <h4>Step-by-Step Instructions:</h4>
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <strong>Go to Settings</strong><br>
+                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+                    </div>
                 </div>
-                <h3 class="text-xl font-bold mb-1">Complete Payment</h3>
-                <p class="text-white/80 text-sm">A secure payment window will open</p>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <strong>Find Follow Settings</strong><br>
+                        Scroll down and tap <strong>"Follow and invite friends"</strong>
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <strong>Disable Flag for Review</strong><br>
+                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <strong>Confirm</strong><br>
+                        Once disabled, you can safely order Instagram followers.
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 25px;">
+                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden slide-up">
+            <div class="gradient-header text-white p-8 text-center">
+                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 pulse-ring">
+                    <i class="fas fa-mobile-alt text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Complete Payment</h3>
+                <p class="text-white/80">A secure payment window will open</p>
             </div>
 
-            <!-- Modal Body -->
-            <div class="p-6">
+            <div class="p-8">
                 <div class="space-y-4 mb-6">
-                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <i class="fas fa-coins text-primary"></i>
+                    <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-coins text-xl text-primary"></i>
+                        </div>
                         <div class="flex-1">
-                            <p class="text-xs text-gray-600">Amount</p>
-                            <p class="font-bold text-gray-900" id="modalAmount">KES 0</p>
+                            <p class="text-xs text-gray-600 font-semibold">Amount</p>
+                            <p class="text-xl font-bold text-gray-900" id="modalAmount">KES 0</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <i class="fas fa-phone text-primary"></i>
+                    <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-phone text-xl text-green-600"></i>
+                        </div>
                         <div class="flex-1">
-                            <p class="text-xs text-gray-600">Phone Number</p>
-                            <p class="font-bold text-gray-900 font-mono" id="modalPhone">-</p>
+                            <p class="text-xs text-gray-600 font-semibold">Phone Number</p>
+                            <p class="text-lg font-bold text-gray-900 font-mono" id="modalPhone">-</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 mb-6">
                     <div class="flex gap-3">
-                        <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
-                        <div class="text-sm text-blue-800">
-                            <p class="font-semibold mb-1">Payment Instructions:</p>
-                            <ol class="list-decimal list-inside space-y-1 text-xs">
+                        <i class="fas fa-info-circle text-blue-600 text-xl mt-0.5"></i>
+                        <div class="text-sm text-blue-900">
+                            <p class="font-bold mb-2">Payment Instructions:</p>
+                            <ol class="list-decimal list-inside space-y-1.5 text-xs">
                                 <li>Payment window will open in new tab</li>
                                 <li>Enter your M-Pesa phone number</li>
                                 <li>Confirm the STK push on your phone</li>
@@ -349,15 +583,15 @@
                 </div>
 
                 <div class="space-y-3">
-                    <button onclick="openPaymentWindow()" class="w-full gradient-header text-white font-bold py-3 rounded-xl hover:shadow-lg transition flex items-center justify-center gap-2">
+                    <button onclick="openPaymentWindow()" class="w-full gradient-header text-white font-bold py-4 rounded-2xl hover:shadow-xl transition flex items-center justify-center gap-3">
                         <i class="fas fa-external-link-alt"></i>
                         Open Payment Window
                     </button>
-                    <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                    <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-3">
                         <i class="fas fa-check-circle"></i>
                         I've Completed Payment
                     </button>
-                    <button onclick="closePaymentModal()" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition">
+                    <button onclick="closePaymentModal()" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-50 transition">
                         Cancel
                     </button>
                 </div>
@@ -366,39 +600,128 @@
     </div>
 
     <!-- Success Modal -->
-    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden slide-up text-center p-8">
-            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-check text-4xl text-emerald-500"></i>
+    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden slide-up text-center p-10">
+            <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-5xl text-emerald-500"></i>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h3>
-            <p class="text-gray-600 mb-6">Your wallet has been credited with <span class="font-bold text-emerald-600" id="successAmount">KES 0</span></p>
+            <h3 class="text-3xl font-black text-gray-900 mb-3">Payment Successful!</h3>
+            <p class="text-gray-600 text-lg mb-8">Your wallet has been credited with <span class="font-bold text-emerald-600" id="successAmount">KES 0</span></p>
             
-            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600">Transaction ID:</span>
+            <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm text-gray-600 font-semibold">Transaction ID:</span>
                     <span class="font-mono font-bold text-sm" id="successRef">-</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Time:</span>
+                    <span class="text-sm text-gray-600 font-semibold">Time:</span>
                     <span class="font-bold text-sm" id="successTime">-</span>
                 </div>
             </div>
 
-            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-3 rounded-xl hover:shadow-lg transition">
+            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-4 rounded-2xl hover:shadow-xl transition text-lg">
                 Continue to Dashboard
             </button>
         </div>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
-        <div class="bg-white rounded-2xl p-8 text-center">
-            <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="font-bold text-gray-900">Processing Payment...</p>
-            <p class="text-sm text-gray-600">Please wait</p>
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-3xl p-10 text-center shadow-2xl">
+            <div class="spinner mx-auto mb-5"></div>
+            <p class="font-bold text-gray-900 text-lg">Processing Payment...</p>
+            <p class="text-sm text-gray-600 mt-2">Please wait</p>
         </div>
     </div>
+
+    <style>
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            color: #1e293b;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .modal-body h4 { color: #1e3a5f; margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
+        .modal-body p { margin-bottom: 12px; color: #64748b; }
+        .modal-body strong { color: #1e3a5f; }
+        .modal-body .step {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 10px 0;
+            border-left: 4px solid #f97316;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .modal-body .step-number {
+            background: #f97316;
+            color: white;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+        }
+        .modal-body .step-content { flex: 1; }
+    </style>
 
     <script>
         // Configuration
@@ -440,6 +763,8 @@
             }
             await loadUserProfile();
             await loadBalance();
+            await loadRecentTransactions();
+            await loadTopTicker();
         });
 
         // Load User Profile
@@ -450,6 +775,13 @@
                     userProfile = await response.json();
                     document.getElementById('registeredPhone').textContent = userProfile.phone || 'Not set';
                     document.getElementById('modalPhone').textContent = userProfile.phone || 'Not set';
+                    
+                    // Populate profile form
+                    document.getElementById('editUsername').value = userProfile.username || '';
+                    document.getElementById('editFirstName').value = userProfile.firstName || '';
+                    document.getElementById('editLastName').value = userProfile.lastName || '';
+                    document.getElementById('editPhone1').value = userProfile.paymentPhone1 || '';
+                    document.getElementById('editPhone2').value = userProfile.paymentPhone2 || '';
                 }
             } catch (error) {
                 console.error('Failed to load profile:', error);
@@ -475,11 +807,7 @@
         function validateAmount(value) {
             const btn = document.getElementById('proceedBtn');
             const numValue = parseFloat(value);
-            if (numValue >= 50) {
-                btn.disabled = false;
-            } else {
-                btn.disabled = true;
-            }
+            btn.disabled = !(numValue >= 50);
         }
 
         // Set Quick Amount
@@ -489,20 +817,23 @@
         }
 
         // Select Payment Method
-        function selectMethod(method) {
+        function selectMethod(method, element) {
+            if (method !== 'mpesa') {
+                showToast('This payment method is coming soon!', 'info');
+                return;
+            }
             selectedMethod = method;
             document.querySelectorAll('.method-card').forEach(card => {
                 card.classList.remove('selected');
-                card.style.opacity = '1';
             });
-            event.currentTarget.classList.add('selected');
+            element.classList.add('selected');
         }
 
         // Proceed to Payment
         function proceedToPayment() {
             const amount = parseFloat(document.getElementById('amountInput').value);
             if (amount < 50) {
-                alert('Minimum amount is KES 50');
+                showToast('Minimum amount is KES 50', 'error');
                 return;
             }
             currentAmount = amount;
@@ -522,11 +853,6 @@
 
         // Open Payment Window
         function openPaymentWindow() {
-            // Store amount in sessionStorage for PayNecta to potentially use
-            sessionStorage.setItem('paymentAmount', currentAmount);
-            sessionStorage.setItem('paymentPhone', userProfile?.phone || '');
-            
-            // Open PayNecta in new window
             paymentWindow = window.open(
                 'https://paynecta.co.ke/pay/unasemeje-',
                 'PaymentWindow',
@@ -534,11 +860,10 @@
             );
 
             if (!paymentWindow || paymentWindow.closed) {
-                alert('Please allow popups to complete payment');
+                showToast('Please allow popups to complete payment', 'error');
                 return;
             }
 
-            // Show notification
             showToast('Payment window opened. Complete the transaction there.', 'info');
         }
 
@@ -548,13 +873,11 @@
             closePaymentModal();
 
             try {
-                // Fetch recent deposits
                 const response = await apiRequest('/deposits?limit=1');
                 if (response.ok) {
                     const deposits = await response.json();
                     if (deposits.length > 0) {
                         const latest = deposits[0];
-                        // Check if it's recent (within last 5 minutes) and matches amount
                         const depositTime = new Date(latest.createdAt);
                         const now = new Date();
                         const diffMinutes = (now - depositTime) / 60000;
@@ -566,10 +889,9 @@
                     }
                 }
 
-                // If no matching deposit found, show manual check option
                 showLoading(false);
                 setTimeout(() => {
-                    if (confirm('Payment not detected yet. Has it been more than 2 minutes? Click OK to refresh and check again, or Cancel to return.')) {
+                    if (confirm('Payment not detected yet. Has it been more than 2 minutes? Click OK to check again.')) {
                         checkPaymentStatus();
                     }
                 }, 500);
@@ -577,7 +899,7 @@
             } catch (error) {
                 console.error('Payment check failed:', error);
                 showLoading(false);
-                alert('Failed to check payment status. Please contact support if you were charged.');
+                showToast('Failed to check payment status. Please contact support.', 'error');
             }
         }
 
@@ -590,7 +912,6 @@
             document.getElementById('successModal').classList.remove('hidden');
             document.getElementById('successModal').classList.add('flex');
             
-            // Update balance
             loadBalance();
             loadRecentTransactions();
         }
@@ -612,8 +933,8 @@
                     
                     if (deposits.length === 0) {
                         container.innerHTML = `
-                            <div class="text-center py-8 text-gray-400">
-                                <i class="fas fa-receipt text-4xl mb-2"></i>
+                            <div class="text-center py-10 text-gray-400">
+                                <i class="fas fa-receipt text-5xl mb-3"></i>
                                 <p class="text-sm">No recent deposits</p>
                             </div>
                         `;
@@ -621,17 +942,17 @@
                     }
 
                     container.innerHTML = deposits.map(deposit => `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-arrow-down text-emerald-600"></i>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-arrow-down text-emerald-600 text-lg"></i>
                                 </div>
                                 <div>
                                     <p class="font-bold text-gray-900">KES ${deposit.amount.toLocaleString()}</p>
                                     <p class="text-xs text-gray-500">${new Date(deposit.createdAt).toLocaleDateString()}</p>
                                 </div>
                             </div>
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded">
+                            <span class="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
                                 ${deposit.status || 'Completed'}
                             </span>
                         </div>
@@ -657,29 +978,162 @@
         // Show Toast
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
-            toast.className = `fixed top-20 right-4 px-6 py-3 rounded-xl shadow-lg z-50 slide-up ${
+            toast.className = `fixed top-24 right-4 px-6 py-4 rounded-2xl shadow-2xl z-50 slide-up ${
                 type === 'success' ? 'bg-emerald-500 text-white' : 
                 type === 'error' ? 'bg-red-500 text-white' : 
                 'bg-blue-500 text-white'
             }`;
-            toast.textContent = message;
+            toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} text-xl"></i>
+                    <span class="font-semibold">${message}</span>
+                </div>
+            `;
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // Flag Instructions Modal
+        function showFlagInstructions() {
+            document.getElementById('flagModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFlagInstructions() {
+            document.getElementById('flagModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.getElementById('flagModal').addEventListener('click', function(e) {
+            if (e.target === this) closeFlagInstructions();
+        });
+
+        // Load Top Ticker
+        async function loadTopTicker() {
+            try {
+                let res = await fetch(`${API_URLS[0]}/ticker`);
+                if (!res.ok) res = await fetch(`${API_URLS[1]}/ticker`);
+                
+                const data = await res.json();
+                const tickerContent = document.getElementById('tickerContent');
+                
+                if (data.items && data.items.length > 0) {
+                    let html = '';
+                    data.items.forEach(item => {
+                        html += `<span class="text-white font-semibold text-sm px-8">${item}</span>`;
+                    });
+                    tickerContent.innerHTML = html + html;
+                }
+                
+                const speed = data.speed || 60;
+                tickerContent.style.animationDuration = `${speed}s`;
+                
+            } catch (err) {
+                console.warn('Ticker load failed');
+            }
+        }
+
+        // Update Profile
+        async function updateProfileData(e) {
+            e.preventDefault();
+            const feedback = document.getElementById('profileFeedback');
+            const btn = document.getElementById('profileBtn');
+
+            feedback.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Saving...';
+
+            const payload = {
+                username: document.getElementById('editUsername').value.trim(),
+                firstName: document.getElementById('editFirstName').value.trim(),
+                lastName: document.getElementById('editLastName').value.trim(),
+                paymentPhone1: document.getElementById('editPhone1').value.trim(),
+                paymentPhone2: document.getElementById('editPhone2').value.trim()
+            };
+
+            try {
+                const response = await apiRequest('/user/update-profile', {
+                    method: 'PUT',
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                feedback.classList.remove('hidden');
+
+                if (response.ok) {
+                    feedback.className = "text-xs font-medium mt-2 text-emerald-600";
+                    feedback.innerText = "✓ Profile updated successfully.";
+                    await loadUserProfile();
+                    showToast('Profile updated successfully!', 'success');
+                } else {
+                    feedback.className = "text-xs font-medium mt-2 text-red-500";
+                    feedback.innerText = `⚠ ${data.error || "Could not update profile."}`;
+                    showToast('Failed to update profile', 'error');
+                }
+            } catch (err) {
+                feedback.classList.remove('hidden');
+                feedback.className = "text-xs font-medium mt-2 text-red-500";
+                feedback.innerText = "⚠ Network error.";
+                showToast('Network error. Please try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Save Changes';
+            }
+        }
+
+        // Change Password
+        async function changePassword(e) {
+            e.preventDefault();
+            const feedback = document.getElementById('pwdFeedback');
+            const btn = document.getElementById('pwdBtn');
+
+            feedback.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Updating...';
+
+            try {
+                const response = await apiRequest('/user/change-password', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        currentPassword: document.getElementById('currentPassword').value,
+                        newPassword: document.getElementById('newPassword').value
+                    })
+                });
+
+                const data = await response.json();
+                feedback.classList.remove('hidden');
+                
+                if (response.ok) {
+                    feedback.className = "text-xs font-medium mt-2 text-emerald-600";
+                    feedback.innerText = "✓ Password changed successfully.";
+                    document.getElementById('passwordChangeForm').reset();
+                    showToast('Password changed successfully!', 'success');
+                } else {
+                    feedback.className = "text-xs font-medium mt-2 text-red-500";
+                    feedback.innerText = `⚠ ${data.error || "Could not change password."}`;
+                    showToast('Failed to change password', 'error');
+                }
+            } catch (err) {
+                feedback.classList.remove('hidden');
+                feedback.className = "text-xs font-medium mt-2 text-red-500";
+                feedback.innerText = "⚠ Network error.";
+                showToast('Network error. Please try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Update Password';
+            }
         }
 
         // Auto-check for payment when returning from PayNecta
         window.addEventListener('focus', () => {
             if (paymentWindow && paymentWindow.closed) {
                 setTimeout(() => {
-                    if (confirm('Payment window closed. Would you like to check if your payment was successful?')) {
+                    if (confirm('Payment window closed. Check if your payment was successful?')) {
                         checkPaymentStatus();
                     }
                 }, 2000);
             }
         });
-
-        // Load recent transactions on page load
-        loadRecentTransactions();
     </script>
 </body>
-    </html>
+                        </html>
