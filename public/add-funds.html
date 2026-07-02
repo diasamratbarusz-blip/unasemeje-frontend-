@@ -47,16 +47,6 @@
             background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
         }
 
-        .pulse-ring {
-            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
         .slide-up {
             animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -64,53 +54,6 @@
         @keyframes slideUp {
             from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .method-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .method-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-        }
-
-        .method-card.selected {
-            border-color: #1e3a5f;
-            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
-            box-shadow: 0 8px 24px rgba(30, 58, 95, 0.15);
-        }
-
-        .quick-amount {
-            transition: all 0.2s ease;
-        }
-
-        .quick-amount:hover {
-            transform: scale(1.05);
-            background: #1e3a5f;
-            color: white;
-        }
-
-        .ticker-content {
-            display: inline-block;
-            white-space: nowrap;
-            animation: marquee 60s linear infinite;
-            padding-left: 100%;
-        }
-
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
         }
 
         .spinner {
@@ -135,118 +78,20 @@
             box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
         }
 
-        .badge-pulse {
-            animation: badgePulse 2s ease-in-out infinite;
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        @keyframes badgePulse {
+        @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.5; }
         }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #ffffff;
-            width: 100%;
-            max-width: 600px;
-            max-height: 85vh;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: popIn 0.3s ease;
-        }
-        @keyframes popIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .modal-header {
-            padding: 25px 30px;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-            color: white;
-        }
-        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
-        .modal-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
-        .modal-body {
-            padding: 30px;
-            overflow-y: auto;
-            color: #1e293b;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        .modal-body h4 { color: #1e3a5f; margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
-        .modal-body p { margin-bottom: 12px; color: #64748b; }
-        .modal-body strong { color: #1e3a5f; }
-        .modal-body .step {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 10px 0;
-            border-left: 4px solid #f97316;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        .modal-body .step-number {
-            background: #f97316;
-            color: white;
-            min-width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 14px;
-        }
-        .modal-body .step-content { flex: 1; }
     </style>
 </head>
 <body class="antialiased">
 
-    <!-- Sticky Warning Banner -->
-    <div class="bg-gradient-to-r from-red-600 to-red-500 text-white py-3 px-4 text-center sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto flex items-center justify-center gap-3 flex-wrap">
-            <i class="fas fa-exclamation-triangle text-yellow-300 text-lg"></i>
-            <span class="font-semibold text-sm">Turn off "Flag for Review" before ordering Instagram followers</span>
-            <button onclick="showFlagInstructions()" class="underline font-bold hover:text-yellow-300 transition text-sm">
-                Learn How →
-            </button>
-        </div>
-    </div>
-
     <!-- Navigation -->
-    <nav class="gradient-header text-white shadow-2xl sticky top-[52px] z-40">
+    <nav class="gradient-header text-white shadow-2xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center gap-4">
@@ -275,15 +120,8 @@
         </div>
     </nav>
 
-    <!-- Ticker Bar -->
-    <div class="bg-primary border-b-4 border-secondary overflow-hidden">
-        <div class="ticker-content py-3" id="tickerContent">
-            <span class="text-white font-semibold text-sm px-8">🚀 UNASEMEJE SMM GAINS: Welcome to the Ultimate Plug!</span>
-        </div>
-    </div>
-
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         
         <!-- Header Section -->
         <div class="mb-10 slide-up">
@@ -291,7 +129,7 @@
                 <div class="w-1 h-10 gradient-accent rounded-full"></div>
                 <h1 class="text-4xl font-black text-gray-900">Add Funds</h1>
             </div>
-            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely using your preferred payment method</p>
+            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely via M-Pesa</p>
         </div>
 
         <!-- Current Balance Card -->
@@ -311,376 +149,149 @@
             </div>
         </div>
 
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Main Content Area -->
-            <div class="lg:col-span-2 space-y-8">
-                
-                <!-- Payment Method Selection -->
-                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.2s">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-credit-card text-2xl text-primary"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-900">Payment Method</h3>
-                            <p class="text-sm text-gray-600">Choose your preferred payment option</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <!-- M-Pesa -->
-                        <div class="method-card selected border-2 border-gray-200 rounded-2xl p-5" onclick="selectMethod('mpesa', this)">
-                            <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-mobile-alt text-3xl text-green-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">M-Pesa Express</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Instant payment via M-Pesa STK Push</p>
-                                    <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
-                                            <i class="fas fa-check-circle mr-1"></i>Recommended
-                                        </span>
-                                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
-                                            <i class="fas fa-bolt mr-1"></i>Instant
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="w-7 h-7 rounded-full border-4 border-primary flex items-center justify-center">
-                                    <div class="w-3 h-3 bg-primary rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card Payment -->
-                        <div class="method-card border-2 border-gray-200 rounded-2xl p-5 opacity-60" onclick="selectMethod('card', this)">
-                            <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-credit-card text-3xl text-blue-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">Credit/Debit Card</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Visa, Mastercard accepted</p>
-                                </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
-                                    Coming Soon
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Bank Transfer -->
-                        <div class="method-card border-2 border-gray-200 rounded-2xl p-5 opacity-60" onclick="selectMethod('bank', this)">
-                            <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-university text-3xl text-purple-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">Bank Transfer</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Direct bank deposit</p>
-                                </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
-                                    Coming Soon
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Payment Form -->
+        <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.2s">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
                 </div>
-
-                <!-- Amount Selection -->
-                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.3s">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-coins text-2xl text-secondary"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-900">Enter Amount</h3>
-                            <p class="text-sm text-gray-600">Minimum deposit: KES 50</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Amount (KES)</label>
-                        <div class="relative">
-                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xl">KES</span>
-                            <input 
-                                type="number" 
-                                id="amountInput" 
-                                placeholder="500" 
-                                min="50"
-                                class="input-field w-full pl-24 pr-6 py-5 text-3xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none"
-                                oninput="validateAmount(this.value)"
-                            >
-                        </div>
-                    </div>
-
-                    <!-- Quick Amounts -->
-                    <div class="mb-6">
-                        <p class="text-sm font-semibold text-gray-700 mb-3">Quick Select</p>
-                        <div class="grid grid-cols-4 gap-3">
-                            <button onclick="setAmount(100)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 100</button>
-                            <button onclick="setAmount(500)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 500</button>
-                            <button onclick="setAmount(1000)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 1,000</button>
-                            <button onclick="setAmount(5000)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 5,000</button>
-                        </div>
-                    </div>
-
-                    <!-- Phone Number Display -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5 mb-6">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-phone-alt text-xl text-blue-600"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-semibold text-blue-900 mb-1">Payment Phone Number</p>
-                                <p class="text-xl font-bold text-blue-700 font-mono" id="registeredPhone">Loading...</p>
-                                <p class="text-xs text-blue-600 mt-2">Ensure this number is registered with M-Pesa</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Proceed Button -->
-                    <button 
-                        id="proceedBtn"
-                        onclick="proceedToPayment()"
-                        disabled
-                        class="w-full gradient-header text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 text-lg"
-                    >
-                        <i class="fas fa-lock"></i>
-                        <span>Proceed to Secure Payment</span>
-                    </button>
-                </div>
-
-                <!-- Account Settings -->
-                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.4s">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-user-cog text-2xl text-emerald-600"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-900">Account Settings</h3>
-                            <p class="text-sm text-gray-600">Update your profile and security</p>
-                        </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <!-- Profile Update -->
-                        <div>
-                            <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <i class="fas fa-user-edit text-primary"></i>
-                                Update Profile
-                            </h4>
-                            <form id="profileUpdateForm" class="space-y-3" onsubmit="updateProfileData(event)">
-                                <input type="text" id="editUsername" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="Username" required>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <input type="text" id="editFirstName" class="input-field px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="First Name">
-                                    <input type="text" id="editLastName" class="input-field px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="Last Name">
-                                </div>
-                                <input type="text" id="editPhone1" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl font-mono" placeholder="Extra Phone 1 (2547...)">
-                                <input type="text" id="editPhone2" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl font-mono" placeholder="Extra Phone 2 (2547...)">
-                                <button type="submit" id="profileBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition text-sm">
-                                    Save Changes
-                                </button>
-                            </form>
-                            <p id="profileFeedback" class="text-xs font-medium mt-2 hidden"></p>
-                        </div>
-
-                        <!-- Password Change -->
-                        <div>
-                            <h4 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <i class="fas fa-key text-secondary"></i>
-                                Change Password
-                            </h4>
-                            <form id="passwordChangeForm" class="space-y-3" onsubmit="changePassword(event)">
-                                <input type="password" id="currentPassword" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="Current Password" required>
-                                <input type="password" id="newPassword" class="input-field w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl" placeholder="New Password" required>
-                                <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-3 rounded-xl transition text-sm">
-                                    Update Password
-                                </button>
-                            </form>
-                            <p id="pwdFeedback" class="text-xs font-medium mt-2 hidden"></p>
-                        </div>
-                    </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900">M-Pesa Payment</h3>
+                    <p class="text-sm text-gray-600">Enter amount and phone number to receive prompt</p>
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-8">
+            <form id="paymentForm" onsubmit="initiatePayment(event)" class="space-y-6">
+                <!-- Amount Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Amount (KES)</label>
+                    <div class="relative">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xl">KES</span>
+                        <input 
+                            type="number" 
+                            id="amountInput" 
+                            placeholder="100" 
+                            min="2"
+                            step="1"
+                            required
+                            class="input-field w-full pl-24 pr-6 py-5 text-3xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none"
+                        >
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Minimum amount: KES 2</p>
+                </div>
+
+                <!-- Phone Number Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">M-Pesa Phone Number</label>
+                    <div class="relative">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">+254</span>
+                        <input 
+                            type="tel" 
+                            id="phoneInput" 
+                            placeholder="712345678" 
+                            required
+                            pattern="[0-9]{9}"
+                            class="input-field w-full pl-20 pr-6 py-5 text-2xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none font-mono"
+                        >
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Enter 9 digits without the leading 0</p>
+                </div>
+
+                <!-- Quick Amounts -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Quick Select</p>
+                    <div class="grid grid-cols-4 gap-3">
+                        <button type="button" onclick="setAmount(50)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 50</button>
+                        <button type="button" onclick="setAmount(100)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 100</button>
+                        <button type="button" onclick="setAmount(500)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 500</button>
+                        <button type="button" onclick="setAmount(1000)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 1,000</button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit"
+                    id="submitBtn"
+                    class="w-full gradient-header text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3 text-lg"
+                >
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Send Payment Request</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Payment Status Card (Hidden by default) -->
+        <div id="paymentStatusCard" class="glass-card rounded-3xl shadow-xl p-8 mt-6 hidden">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 pulse-animation">
+                    <i class="fas fa-mobile-alt text-4xl text-blue-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Check Your Phone</h3>
+                <p class="text-gray-600 mb-4">An M-Pesa prompt has been sent to your phone</p>
                 
-                <!-- Recent Transactions -->
-                <div class="glass-card rounded-3xl shadow-xl p-6 slide-up" style="animation-delay: 0.5s">
-                    <div class="flex items-center justify-between mb-5">
-                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                            <i class="fas fa-history text-primary"></i>
-                            Recent Deposits
-                        </h3>
-                        <button onclick="loadRecentTransactions()" class="text-xs text-primary font-semibold hover:underline">
-                            <i class="fas fa-sync-alt mr-1"></i>Refresh
-                        </button>
-                    </div>
-                    <div id="recentTransactions" class="space-y-3">
-                        <div class="text-center py-10 text-gray-400">
-                            <i class="fas fa-receipt text-5xl mb-3"></i>
-                            <p class="text-sm">No recent deposits</p>
+                <div class="bg-blue-50 rounded-2xl p-5 mb-6 text-left">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Amount:</span>
+                            <span class="font-bold text-gray-900" id="statusAmount">KES 0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Phone:</span>
+                            <span class="font-bold text-gray-900 font-mono" id="statusPhone">+254</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Status:</span>
+                            <span class="font-bold text-blue-600" id="statusText">Waiting for confirmation...</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Help Card -->
-                <div class="glass-card rounded-3xl shadow-xl p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 slide-up" style="animation-delay: 0.6s">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-question text-2xl text-amber-600"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-bold text-gray-900 text-lg mb-2">Need Help?</h4>
-                            <p class="text-sm text-gray-600 mb-4">Having trouble with your payment?</p>
-                            <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition">
-                                <i class="fab fa-whatsapp text-lg"></i>
-                                Contact Support
-                            </a>
-                        </div>
-                    </div>
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6">
+                    <p class="text-sm text-amber-900">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Instructions:</strong> Enter your M-Pesa PIN on your phone to complete the payment
+                    </p>
                 </div>
 
-                <!-- Security Notice -->
-                <div class="glass-card rounded-3xl shadow-xl p-6 slide-up" style="animation-delay: 0.7s">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-shield-alt text-2xl text-emerald-600"></i>
-                        </div>
-                        <h4 class="font-bold text-gray-900 text-lg">Secure Payment</h4>
-                    </div>
-                    <ul class="space-y-3 text-sm text-gray-600">
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check-circle text-emerald-500"></i>
-                            <span>256-bit SSL encryption</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check-circle text-emerald-500"></i>
-                            <span>PCI DSS compliant</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check-circle text-emerald-500"></i>
-                            <span>Instant confirmation</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <i class="fas fa-check-circle text-emerald-500"></i>
-                            <span>24/7 customer support</span>
-                        </li>
-                    </ul>
+                <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    I've Completed Payment
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="glass-card rounded-3xl shadow-xl p-6 mt-8 slide-up" style="animation-delay: 0.3s">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-history text-primary"></i>
+                    Recent Deposits
+                </h3>
+                <button onclick="loadRecentTransactions()" class="text-xs text-primary font-semibold hover:underline">
+                    <i class="fas fa-sync-alt mr-1"></i>Refresh
+                </button>
+            </div>
+            <div id="recentTransactions" class="space-y-3">
+                <div class="text-center py-10 text-gray-400">
+                    <i class="fas fa-receipt text-5xl mb-3"></i>
+                    <p class="text-sm">No recent deposits</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Flag Instructions Modal -->
-    <div class="modal-overlay" id="flagModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
-                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature.</strong></p>
-                <h4>Step-by-Step Instructions:</h4>
-                <div class="step">
-                    <span class="step-number">1</span>
-                    <div class="step-content">
-                        <strong>Go to Settings</strong><br>
-                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
-                    </div>
+        <!-- Help Card -->
+        <div class="glass-card rounded-3xl shadow-xl p-6 mt-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 slide-up" style="animation-delay: 0.4s">
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-question text-2xl text-amber-600"></i>
                 </div>
-                <div class="step">
-                    <span class="step-number">2</span>
-                    <div class="step-content">
-                        <strong>Find Follow Settings</strong><br>
-                        Scroll down and tap <strong>"Follow and invite friends"</strong>
-                    </div>
-                </div>
-                <div class="step">
-                    <span class="step-number">3</span>
-                    <div class="step-content">
-                        <strong>Disable Flag for Review</strong><br>
-                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF
-                    </div>
-                </div>
-                <div class="step">
-                    <span class="step-number">4</span>
-                    <div class="step-content">
-                        <strong>Confirm</strong><br>
-                        Once disabled, you can safely order Instagram followers.
-                    </div>
-                </div>
-                <p style="text-align: center; margin-top: 25px;">
-                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
-                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
+                <div class="flex-1">
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">Need Help?</h4>
+                    <p class="text-sm text-gray-600 mb-4">Having trouble with your payment?</p>
+                    <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition">
+                        <i class="fab fa-whatsapp text-lg"></i>
+                        Contact Support
                     </a>
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden slide-up">
-            <div class="gradient-header text-white p-8 text-center">
-                <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 pulse-ring">
-                    <i class="fas fa-mobile-alt text-4xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold mb-2">Complete Payment</h3>
-                <p class="text-white/80">A secure payment window will open</p>
-            </div>
-
-            <div class="p-8">
-                <div class="space-y-4 mb-6">
-                    <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
-                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-coins text-xl text-primary"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-600 font-semibold">Amount</p>
-                            <p class="text-xl font-bold text-gray-900" id="modalAmount">KES 0</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl">
-                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-phone text-xl text-green-600"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-600 font-semibold">Phone Number</p>
-                            <p class="text-lg font-bold text-gray-900 font-mono" id="modalPhone">-</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-5 mb-6">
-                    <div class="flex gap-3">
-                        <i class="fas fa-info-circle text-blue-600 text-xl mt-0.5"></i>
-                        <div class="text-sm text-blue-900">
-                            <p class="font-bold mb-2">Payment Instructions:</p>
-                            <ol class="list-decimal list-inside space-y-1.5 text-xs">
-                                <li>Payment window will open in new tab</li>
-                                <li>Enter your M-Pesa phone number</li>
-                                <li>Confirm the STK push on your phone</li>
-                                <li>Enter your M-Pesa PIN</li>
-                                <li>Return here and click "I've Completed Payment"</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <button onclick="openPaymentWindow()" class="w-full gradient-header text-white font-bold py-4 rounded-2xl hover:shadow-xl transition flex items-center justify-center gap-3">
-                        <i class="fas fa-external-link-alt"></i>
-                        Open Payment Window
-                    </button>
-                    <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-3">
-                        <i class="fas fa-check-circle"></i>
-                        I've Completed Payment
-                    </button>
-                    <button onclick="closePaymentModal()" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-50 transition">
-                        Cancel
-                    </button>
                 </div>
             </div>
         </div>
@@ -712,101 +323,6 @@
         </div>
     </div>
 
-    <!-- Payment Check Modal -->
-    <div id="paymentCheckModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden slide-up">
-            <div class="p-8 text-center">
-                <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                    <i class="fas fa-clock text-4xl text-amber-600"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-3">Payment Processing</h3>
-                <p class="text-gray-600 mb-6">
-                    We haven't detected your payment yet. This can take 2-5 minutes.
-                </p>
-                
-                <div class="bg-blue-50 rounded-2xl p-5 mb-6 text-left">
-                    <p class="text-sm text-blue-900 font-semibold mb-3">
-                        <i class="fas fa-info-circle mr-2"></i>What to check:
-                    </p>
-                    <ul class="text-sm text-blue-800 space-y-2">
-                        <li class="flex items-start gap-2">
-                            <i class="fas fa-check text-blue-600 mt-1"></i>
-                            <span>Did you complete the M-Pesa PIN entry?</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fas fa-check text-blue-600 mt-1"></i>
-                            <span>Did you receive an M-Pesa confirmation SMS?</span>
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fas fa-check text-blue-600 mt-1"></i>
-                            <span>Was the payment sent from your registered number?</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="space-y-3">
-                    <button onclick="retryPaymentCheck()" 
-                            class="w-full gradient-header text-white font-bold py-4 rounded-2xl hover:shadow-xl transition flex items-center justify-center gap-2">
-                        <i class="fas fa-sync-alt"></i>
-                        Check Again
-                    </button>
-                    <button onclick="showManualVerification()" 
-                            class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-2">
-                        <i class="fas fa-headset"></i>
-                        Contact Support
-                    </button>
-                    <button onclick="closePaymentCheckModal()" 
-                            class="w-full border-2 border-gray-300 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-50 transition">
-                        I'll Check Later
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Manual Verification Modal -->
-    <div id="manualVerificationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden slide-up">
-            <div class="p-8">
-                <div class="text-center mb-6">
-                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fab fa-whatsapp text-4xl text-green-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Contact Support</h3>
-                    <p class="text-gray-600">We'll help you verify your payment manually</p>
-                </div>
-
-                <div class="bg-gray-50 rounded-2xl p-5 mb-6">
-                    <p class="text-sm font-semibold text-gray-700 mb-3">Payment Details:</p>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Amount:</span>
-                            <span class="font-bold" id="verifyAmount">KES 0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Phone:</span>
-                            <span class="font-bold" id="verifyPhone">N/A</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Time:</span>
-                            <span class="font-bold" id="verifyTime">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <a id="whatsappLink" href="#" target="_blank"
-                   class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-3 mb-3">
-                    <i class="fab fa-whatsapp text-xl"></i>
-                    Chat on WhatsApp
-                </a>
-                <button onclick="closeManualVerification()" 
-                        class="w-full border-2 border-gray-300 text-gray-700 font-bold py-4 rounded-2xl hover:bg-gray-50 transition">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center">
         <div class="bg-white rounded-3xl p-10 text-center shadow-2xl">
@@ -816,6 +332,9 @@
         </div>
     </div>
 
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-24 right-4 z-50 space-y-3"></div>
+
     <script>
         // Configuration
         const API_URLS = [
@@ -823,10 +342,8 @@
             'https://unasemeje-backend-3.onrender.com/api'
         ];
         const token = localStorage.getItem('token');
-        let paymentWindow = null;
         let currentAmount = 0;
-        let selectedMethod = 'mpesa';
-        let userProfile = null;
+        let currentPhone = '';
 
         // API Request Handler
         async function apiRequest(path, options = {}) {
@@ -854,32 +371,9 @@
                 window.location.href = 'index.html';
                 return;
             }
-            await loadUserProfile();
             await loadBalance();
             await loadRecentTransactions();
-            await loadTopTicker();
         });
-
-        // Load User Profile
-        async function loadUserProfile() {
-            try {
-                const response = await apiRequest('/me');
-                if (response.ok) {
-                    userProfile = await response.json();
-                    document.getElementById('registeredPhone').textContent = userProfile.phone || 'Not set';
-                    document.getElementById('modalPhone').textContent = userProfile.phone || 'Not set';
-                    
-                    // Populate profile form
-                    document.getElementById('editUsername').value = userProfile.username || '';
-                    document.getElementById('editFirstName').value = userProfile.firstName || '';
-                    document.getElementById('editLastName').value = userProfile.lastName || '';
-                    document.getElementById('editPhone1').value = userProfile.paymentPhone1 || '';
-                    document.getElementById('editPhone2').value = userProfile.paymentPhone2 || '';
-                }
-            } catch (error) {
-                console.error('Failed to load profile:', error);
-            }
-        }
 
         // Load Balance
         async function loadBalance() {
@@ -896,91 +390,93 @@
             }
         }
 
-        // Validate Amount
-        function validateAmount(value) {
-            const btn = document.getElementById('proceedBtn');
-            const numValue = parseFloat(value);
-            btn.disabled = !(numValue >= 50);
-        }
-
         // Set Quick Amount
         function setAmount(amount) {
             document.getElementById('amountInput').value = amount;
-            validateAmount(amount);
         }
 
-        // Select Payment Method
-        function selectMethod(method, element) {
-            if (method !== 'mpesa') {
-                showToast('This payment method is coming soon!', 'info');
-                return;
-            }
-            selectedMethod = method;
-            document.querySelectorAll('.method-card').forEach(card => {
-                card.classList.remove('selected');
-            });
-            element.classList.add('selected');
-        }
-
-        // Proceed to Payment
-        function proceedToPayment() {
+        // Initiate Payment
+        async function initiatePayment(event) {
+            event.preventDefault();
+            
             const amount = parseFloat(document.getElementById('amountInput').value);
-            if (amount < 50) {
-                showToast('Minimum amount is KES 50', 'error');
+            const phone = document.getElementById('phoneInput').value.trim();
+            
+            // Validation
+            if (amount < 2) {
+                showToast('Minimum amount is KES 2', 'error');
                 return;
             }
+
+            if (!phone || phone.length !== 9) {
+                showToast('Please enter a valid 9-digit phone number', 'error');
+                return;
+            }
+
             currentAmount = amount;
-            document.getElementById('modalAmount').textContent = `KES ${amount.toLocaleString()}`;
-            document.getElementById('paymentModal').classList.remove('hidden');
-            document.getElementById('paymentModal').classList.add('flex');
-        }
+            currentPhone = phone;
 
-        // Close Payment Modal
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.add('hidden');
-            document.getElementById('paymentModal').classList.remove('flex');
-            if (paymentWindow && !paymentWindow.closed) {
-                paymentWindow.close();
+            // Show loading
+            showLoading(true);
+            document.getElementById('submitBtn').disabled = true;
+
+            try {
+                // Send payment request to backend
+                const response = await apiRequest('/payment/initiate', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        amount: amount,
+                        phone: `254${phone}` // Backend expects full number
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showLoading(false);
+                    
+                    // Show payment status card
+                    document.getElementById('statusAmount').textContent = `KES ${amount.toLocaleString()}`;
+                    document.getElementById('statusPhone').textContent = `+254${phone}`;
+                    document.getElementById('paymentStatusCard').classList.remove('hidden');
+                    
+                    // Hide form
+                    document.getElementById('paymentForm').classList.add('hidden');
+                    
+                    showToast('Payment prompt sent! Check your phone.', 'success');
+                    
+                    // Start polling for payment status
+                    startPaymentPolling();
+                } else {
+                    showLoading(false);
+                    document.getElementById('submitBtn').disabled = false;
+                    showToast(data.error || data.message || 'Failed to initiate payment', 'error');
+                }
+
+            } catch (error) {
+                console.error('Payment initiation failed:', error);
+                showLoading(false);
+                document.getElementById('submitBtn').disabled = false;
+                showToast('Network error. Please try again.', 'error');
             }
-        }
-
-        // Open Payment Window
-        function openPaymentWindow() {
-            paymentWindow = window.open(
-                'https://paynecta.co.ke/pay/unasemeje-',
-                'PaymentWindow',
-                'width=500,height=700,top=100,left=400,scrollbars=yes'
-            );
-
-            if (!paymentWindow || paymentWindow.closed) {
-                showToast('Please allow popups to complete payment', 'error');
-                return;
-            }
-
-            showToast('Payment window opened. Complete the transaction there.', 'info');
         }
 
         // Check Payment Status
         async function checkPaymentStatus() {
             showLoading(true);
-            closePaymentModal();
 
             try {
-                const response = await apiRequest('/deposits?limit=10');
-                
+                const response = await apiRequest('/deposits?limit=1');
                 if (response.ok) {
                     const deposits = await response.json();
-                    
                     if (deposits.length > 0) {
                         const latest = deposits[0];
                         const depositTime = new Date(latest.createdAt);
                         const now = new Date();
                         const diffMinutes = (now - depositTime) / 60000;
                         
-                        const amountMatch = Math.abs(latest.amount - currentAmount) < 0.01;
-                        const isRecent = diffMinutes < 10;
-                        
-                        if (isRecent && (amountMatch || latest.status === 'completed')) {
+                        if (diffMinutes < 5 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                            showLoading(false);
                             showSuccess(latest);
                             return;
                         }
@@ -988,57 +484,54 @@
                 }
 
                 showLoading(false);
-                showPaymentCheckModal();
+                showToast('Payment not detected yet. Please wait a moment and try again.', 'info');
 
             } catch (error) {
                 console.error('Payment check failed:', error);
                 showLoading(false);
-                showPaymentCheckModal();
+                showToast('Failed to check payment status', 'error');
             }
         }
 
-        // Show Payment Check Modal
-        function showPaymentCheckModal() {
-            document.getElementById('paymentCheckModal').classList.remove('hidden');
-            document.getElementById('paymentCheckModal').classList.add('flex');
-        }
-
-        // Close Payment Check Modal
-        function closePaymentCheckModal() {
-            document.getElementById('paymentCheckModal').classList.add('hidden');
-            document.getElementById('paymentCheckModal').classList.remove('flex');
-        }
-
-        // Retry Payment Check
-        function retryPaymentCheck() {
-            closePaymentCheckModal();
-            checkPaymentStatus();
-        }
-
-        // Show Manual Verification
-        function showManualVerification() {
-            closePaymentCheckModal();
+        // Start Payment Polling
+        let pollingInterval = null;
+        function startPaymentPolling() {
+            let attempts = 0;
+            const maxAttempts = 60; // Poll for 2 minutes (every 2 seconds)
             
-            document.getElementById('verifyAmount').textContent = `KES ${currentAmount}`;
-            document.getElementById('verifyPhone').textContent = userProfile?.phone || 'N/A';
-            document.getElementById('verifyTime').textContent = new Date().toLocaleString();
-            
-            const message = encodeURIComponent(`Hi, I made a payment of KES ${currentAmount} from ${userProfile?.phone || 'my phone'} but it's not showing in my wallet. Please help.`);
-            document.getElementById('whatsappLink').href = `https://wa.me/254715509440?text=${message}`;
-            
-            document.getElementById('manualVerificationModal').classList.remove('hidden');
-            document.getElementById('manualVerificationModal').classList.add('flex');
-        }
+            pollingInterval = setInterval(async () => {
+                attempts++;
+                
+                if (attempts >= maxAttempts) {
+                    clearInterval(pollingInterval);
+                    document.getElementById('statusText').textContent = 'Payment timeout - please check manually';
+                    return;
+                }
 
-        // Close Manual Verification
-        function closeManualVerification() {
-            document.getElementById('manualVerificationModal').classList.add('hidden');
-            document.getElementById('manualVerificationModal').classList.remove('flex');
+                try {
+                    const response = await apiRequest('/deposits?limit=1');
+                    if (response.ok) {
+                        const deposits = await response.json();
+                        if (deposits.length > 0) {
+                            const latest = deposits[0];
+                            const depositTime = new Date(latest.createdAt);
+                            const now = new Date();
+                            const diffMinutes = (now - depositTime) / 60000;
+                            
+                            if (diffMinutes < 2 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                                clearInterval(pollingInterval);
+                                showSuccess(latest);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Polling error:', error);
+                }
+            }, 2000);
         }
 
         // Show Success
         function showSuccess(deposit) {
-            showLoading(false);
             document.getElementById('successAmount').textContent = `KES ${deposit.amount.toLocaleString()}`;
             document.getElementById('successRef').textContent = deposit.reference || 'N/A';
             document.getElementById('successTime').textContent = new Date(deposit.createdAt).toLocaleString();
@@ -1111,7 +604,7 @@
         // Show Toast
         function showToast(message, type = 'info') {
             const toast = document.createElement('div');
-            toast.className = `fixed top-24 right-4 px-6 py-4 rounded-2xl shadow-2xl z-50 slide-up ${
+            toast.className = `px-6 py-4 rounded-2xl shadow-2xl slide-up ${
                 type === 'success' ? 'bg-emerald-500 text-white' : 
                 type === 'error' ? 'bg-red-500 text-white' : 
                 'bg-blue-500 text-white'
@@ -1122,149 +615,9 @@
                     <span class="font-semibold">${message}</span>
                 </div>
             `;
-            document.body.appendChild(toast);
+            document.getElementById('toastContainer').appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         }
-
-        // Flag Instructions Modal
-        function showFlagInstructions() {
-            document.getElementById('flagModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeFlagInstructions() {
-            document.getElementById('flagModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        document.getElementById('flagModal').addEventListener('click', function(e) {
-            if (e.target === this) closeFlagInstructions();
-        });
-
-        // Load Top Ticker
-        async function loadTopTicker() {
-            try {
-                let res = await fetch(`${API_URLS[0]}/ticker`);
-                if (!res.ok) res = await fetch(`${API_URLS[1]}/ticker`);
-                
-                const data = await res.json();
-                const tickerContent = document.getElementById('tickerContent');
-                
-                if (data.items && data.items.length > 0) {
-                    let html = '';
-                    data.items.forEach(item => {
-                        html += `<span class="text-white font-semibold text-sm px-8">${item}</span>`;
-                    });
-                    tickerContent.innerHTML = html + html;
-                }
-                
-                const speed = data.speed || 60;
-                tickerContent.style.animationDuration = `${speed}s`;
-                
-            } catch (err) {
-                console.warn('Ticker load failed');
-            }
-        }
-
-        // Update Profile
-        async function updateProfileData(e) {
-            e.preventDefault();
-            const feedback = document.getElementById('profileFeedback');
-            const btn = document.getElementById('profileBtn');
-
-            feedback.classList.add('hidden');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Saving...';
-
-            const payload = {
-                username: document.getElementById('editUsername').value.trim(),
-                firstName: document.getElementById('editFirstName').value.trim(),
-                lastName: document.getElementById('editLastName').value.trim(),
-                paymentPhone1: document.getElementById('editPhone1').value.trim(),
-                paymentPhone2: document.getElementById('editPhone2').value.trim()
-            };
-
-            try {
-                const response = await apiRequest('/user/update-profile', {
-                    method: 'PUT',
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                feedback.classList.remove('hidden');
-
-                if (response.ok) {
-                    feedback.className = "text-xs font-medium mt-2 text-emerald-600";
-                    feedback.innerText = "✓ Profile updated successfully.";
-                    await loadUserProfile();
-                    showToast('Profile updated successfully!', 'success');
-                } else {
-                    feedback.className = "text-xs font-medium mt-2 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || "Could not update profile."}`;
-                    showToast('Failed to update profile', 'error');
-                }
-            } catch (err) {
-                feedback.classList.remove('hidden');
-                feedback.className = "text-xs font-medium mt-2 text-red-500";
-                feedback.innerText = "⚠ Network error.";
-                showToast('Network error. Please try again.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Save Changes';
-            }
-        }
-
-        // Change Password
-        async function changePassword(e) {
-            e.preventDefault();
-            const feedback = document.getElementById('pwdFeedback');
-            const btn = document.getElementById('pwdBtn');
-
-            feedback.classList.add('hidden');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Updating...';
-
-            try {
-                const response = await apiRequest('/user/change-password', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        currentPassword: document.getElementById('currentPassword').value,
-                        newPassword: document.getElementById('newPassword').value
-                    })
-                });
-
-                const data = await response.json();
-                feedback.classList.remove('hidden');
-                
-                if (response.ok) {
-                    feedback.className = "text-xs font-medium mt-2 text-emerald-600";
-                    feedback.innerText = "✓ Password changed successfully.";
-                    document.getElementById('passwordChangeForm').reset();
-                    showToast('Password changed successfully!', 'success');
-                } else {
-                    feedback.className = "text-xs font-medium mt-2 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || "Could not change password."}`;
-                    showToast('Failed to change password', 'error');
-                }
-            } catch (err) {
-                feedback.classList.remove('hidden');
-                feedback.className = "text-xs font-medium mt-2 text-red-500";
-                feedback.innerText = "⚠ Network error.";
-                showToast('Network error. Please try again.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerText = 'Update Password';
-            }
-        }
-
-        // Auto-check for payment when returning from PayNecta
-        window.addEventListener('focus', () => {
-            if (paymentWindow && paymentWindow.closed) {
-                setTimeout(() => {
-                    checkPaymentStatus();
-                }, 2000);
-            }
-        });
     </script>
 </body>
-                                </html>
+    </html>
