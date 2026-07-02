@@ -2,1015 +2,684 @@
 <html lang="en-KE">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Add Money | Unasemeje SMM Gains</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Funds | Unasemeje SMM Gains</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f97316',
+                        success: '#10b981',
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root {
-            --primary: #1e3a5f;
-            --secondary: #f97316;
-            --bg-main: #ffffff;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-dim: #64748b;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-            --border-color: #e2e8f0;
-        }
-
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
-            color: var(--text-main);
-            overflow-x: hidden;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            min-height: 100vh;
         }
-
-        .bg-custom-green { background: var(--primary); }
-        .status-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* STICKY TOP HEADER */
-        .sticky-header-wrapper {
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .warning-banner {
-            background: linear-gradient(90deg, #dc2626, #ef4444);
-            color: white;
-            padding: 12px 20px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .warning-banner i { color: #fbbf24; font-size: 16px; }
-        .warning-banner a { 
-            color: #fbbf24; 
-            text-decoration: underline; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: 0.2s;
-        }
-        .warning-banner a:hover { color: #ffffff; }
-
-        .top-ticker {
-            background: var(--primary);
-            border-bottom: 3px solid var(--secondary);
-            overflow: hidden;
-            height: 45px;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        .ticker-content {
-            display: inline-block;
-            white-space: nowrap;
-            animation: marquee 80s linear infinite;
-            padding-left: 100%;
-        }
-        .ticker-item {
-            display: inline-block;
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 13px;
-            padding-right: 60px;
-        }
-        .ticker-item span { color: var(--secondary); font-weight: 800; }
-        @keyframes marquee {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
-        }
-
-        .input-field {
-            width: 100%; 
-            background: #f9fafb; 
-            border: 1px solid #e5e7eb;
-            padding: 12px 16px; 
-            border-radius: 12px; 
-            outline: none; 
-            transition: 0.2s; 
-            color: #1f2937; 
-            font-weight: 500;
-            box-sizing: border-box;
-        }
-        .input-field:focus { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.2); 
-        }
-
-        .spinner {
-            width: 18px; height: 18px; border: 2px solid #ffffff;
-            border-bottom-color: transparent; border-radius: 50%;
-            display: inline-block; animation: rotation 1s linear infinite;
-        }
-        @keyframes rotation { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        /* MODAL STYLES */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(5px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #ffffff;
-            width: 100%;
-            max-width: 600px;
-            max-height: 85vh;
-            border-radius: 24px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 25px 50px rgba(30, 58, 95, 0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            animation: popIn 0.3s ease;
-        }
-        @keyframes popIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .modal-header {
-            padding: 25px 30px;
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-            color: white;
-        }
-        .modal-header h3 { font-size: 1.3rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
-        .modal-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
-        }
-        .modal-close:hover { background: rgba(255, 255, 255, 0.3); transform: rotate(90deg); }
-        .modal-body {
-            padding: 30px;
-            overflow-y: auto;
-            color: var(--text-main);
-            font-size: 14px;
-            line-height: 1.8;
-            background: #ffffff;
-        }
-        .modal-body h4 { color: var(--primary); margin: 20px 0 10px; font-size: 16px; font-weight: 700; }
-        .modal-body p { margin-bottom: 12px; color: var(--text-dim); }
-        .modal-body strong { color: var(--primary); }
-        .modal-body .step {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 12px;
-            margin: 10px 0;
-            border-left: 4px solid var(--secondary);
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        .modal-body .step-number {
-            background: var(--secondary);
-            color: white;
-            min-width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 14px;
-        }
-        .modal-body .step-content { flex: 1; }
-
-        /* PAYMENT MODAL - Hidden PayNecta Integration */
-        .payment-modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-        .payment-modal-overlay.active { display: flex; }
         
-        .payment-modal-container {
-            width: 100%;
-            max-width: 500px;
-            height: 90vh;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .payment-modal-header {
-            background: var(--primary);
-            color: white;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .payment-frame {
-            width: 100%;
-            height: calc(100% - 60px);
-            border: none;
-        }
-
-        .close-payment-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        /* Custom Payment Button */
-        .custom-pay-btn {
+        .gradient-header {
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .custom-pay-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.4);
-        }
-        .custom-pay-btn:active {
-            transform: translateY(0);
         }
 
-        @media (max-width: 768px) {
-            .warning-banner { font-size: 12px; padding: 10px 15px; }
-            .top-ticker { height: 40px; }
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .method-card {
+            transition: all 0.3s ease;
+        }
+
+        .method-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .method-card.selected {
+            border-color: #1e3a5f;
+            background: #f0f7ff;
         }
     </style>
 </head>
+<body class="antialiased">
 
-<body class="min-h-screen">
-
-    <!-- STICKY HEADER -->
-    <div class="sticky-header-wrapper">
-        <div class="warning-banner">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
-            <a onclick="showFlagInstructions()">Click Here to See How</a>
-        </div>
-        <div class="top-ticker">
-            <div class="ticker-content" id="tickerContent"></div>
-        </div>
-    </div>
-
-    <!-- FLAG INSTRUCTIONS MODAL -->
-    <div class="modal-overlay" id="flagModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fas fa-exclamation-triangle"></i>Important: Turn Off Flag for Review</h3>
-                <button class="modal-close" onclick="closeFlagInstructions()"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <p><strong>To ensure your Instagram followers are delivered properly, you MUST disable the "Flag for Review" feature in your Instagram settings.</strong></p>
-                <h4>Step-by-Step Instructions:</h4>
-                <div class="step">
-                    <span class="step-number">1</span>
-                    <div class="step-content">
-                        <strong>Go to Settings</strong><br>
-                        Open Instagram → Tap your profile → Tap ☰ (menu) → Settings and privacy
+    <!-- Navigation -->
+    <nav class="gradient-header text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-bolt text-xl"></i>
                     </div>
+                    <span class="font-bold text-xl tracking-tight">Unasemeje SMM</span>
                 </div>
-                <div class="step">
-                    <span class="step-number">2</span>
-                    <div class="step-content">
-                        <strong>Find Follow Settings</strong><br>
-                        Scroll down and tap <strong>"Follow and invite friends"</strong>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
+                        <i class="fas fa-wallet text-emerald-400"></i>
+                        <span class="font-semibold" id="navBalance">KES 0.00</span>
                     </div>
+                    <button onclick="window.location.href='dashboard.html'" class="text-white/80 hover:text-white transition">
+                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    </button>
                 </div>
-                <div class="step">
-                    <span class="step-number">3</span>
-                    <div class="step-content">
-                        <strong>Disable Flag for Review</strong><br>
-                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF
-                    </div>
-                </div>
-                <div class="step">
-                    <span class="step-number">4</span>
-                    <div class="step-content">
-                        <strong>Confirm</strong><br>
-                        Once disabled, you can safely order Instagram followers.
-                    </div>
-                </div>
-                <p style="text-align: center; margin-top: 25px;">
-                    <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
-                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
-                    </a>
-                </p>
             </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- PAYMENT MODAL (Hidden Integration) -->
-    <div class="payment-modal-overlay" id="paymentModal">
-        <div class="payment-modal-container">
-            <div class="payment-modal-header">
-                <h3 style="margin:0; font-size: 18px;"><i class="fas fa-wallet" style="margin-right: 8px;"></i>Secure Payment</h3>
-                <button class="close-payment-btn" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
-            </div>
-            <iframe 
-                id="paymentFrame"
-                class="payment-frame"
-                src=""
-                allow="payment"
-                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
-            </iframe>
-        </div>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="bg-custom-green text-white py-12 md:py-16 px-4 text-center shadow-lg">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold italic mb-3">Add Money</h1>
-        <p class="uppercase tracking-[4px] text-xs opacity-70">Current Balance: <span id="liveBalance" class="font-bold underline text-emerald-400">KES 0.00</span></p>
-    </div>
-
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 -mt-10 pb-20 space-y-6">
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Important Funding Instructions Alert -->
-        <div class="bg-white rounded-3xl shadow-xl border-l-4 border-amber-500 p-4 sm:p-6">
-            <div class="flex items-start gap-3">
-                <div class="flex-shrink-0 mt-1">
-                    <svg class="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
+        <!-- Header Section -->
+        <div class="mb-8 slide-up">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Funds</h1>
+            <p class="text-gray-600">Top up your wallet securely using your preferred payment method</p>
+        </div>
+
+        <!-- Current Balance Card -->
+        <div class="glass-card rounded-2xl shadow-xl p-6 mb-8 slide-up" style="animation-delay: 0.1s">
+            <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-1.5 flex items-center gap-2">
-                        <span class="text-amber-500">⚠️</span> Important: Read Before Adding Money
+                    <p class="text-sm font-medium text-gray-600 mb-1">Current Balance</p>
+                    <h2 class="text-4xl font-bold text-gray-900" id="currentBalance">KES 0.00</h2>
+                </div>
+                <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-wallet text-3xl text-white"></i>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <i class="fas fa-info-circle text-blue-500"></i>
+                    <span>Funds are available instantly after payment confirmation</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Payment Methods -->
+            <div class="md:col-span-2 space-y-6 slide-up" style="animation-delay: 0.2s">
+                
+                <!-- Payment Method Selection -->
+                <div class="glass-card rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-credit-card text-primary"></i>
+                        Select Payment Method
                     </h3>
-                    <p class="text-sm text-gray-600 leading-relaxed break-words">
-                        Before you add money, please make sure your payment details are correct and saved. Check that your <strong class="text-emerald-700">Registered Phone Numbers</strong> listed below are right.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Account Details Card A -->
-        <div id="accountDetailsCardLayoutA" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                    👤 Your Account Details
-                </h2>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
-                            <p id="infoUsernameA" class="text-sm font-bold text-zinc-800 break-words">Loading...</p>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Main Phone Number</span>
-                            <p id="infoAccountPhoneA" class="text-sm font-semibold text-zinc-700 font-mono break-all">Loading...</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
-                            <p id="infoFirstNameA" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
-                            <p id="infoLastNameA" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Email Address</span>
-                        <p id="infoEmailA" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
-                    </div>
-                </div>
-
-                <div class="space-y-3 md:border-l md:border-gray-100 md:pl-6 flex flex-col justify-between">
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Current Wallet Balance</span>
-                        <p id="infoBalanceA" class="text-2xl font-extrabold text-custom-green">KES 0.00</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Registered Phone Numbers for Deposits</span>
-                        <p id="infoPhonesA" class="text-xs text-gray-500 font-mono flex flex-col gap-1">Loading channels...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Account Details Card B -->
-        <div id="accountDetailsCardLayoutB" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                👤 Account Settings & Security
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-3 md:border-r border-gray-100 pr-0 md:pr-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Username</span>
-                            <p id="infoUsernameB" class="text-sm font-bold text-zinc-800 break-words">Loading...</p>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Main Phone Number</span>
-                            <p id="infoAccountPhoneB" class="text-sm font-semibold text-zinc-700 font-mono break-all">Loading...</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">First Name</span>
-                            <p id="infoFirstNameB" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Last Name</span>
-                            <p id="infoLastNameB" class="text-sm font-medium text-zinc-700 break-words">Loading...</p>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Email Address</span>
-                        <p id="infoEmailB" class="text-sm font-semibold text-gray-700 break-all">Loading...</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Current Wallet Balance</span>
-                        <p id="infoBalanceB" class="text-lg font-extrabold text-custom-green">KES 0.00</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-gray-400 uppercase block">Registered Phone Numbers for Deposits</span>
-                        <p id="infoPhonesB" class="text-xs text-gray-500 font-mono mt-1 flex flex-col gap-1">Loading channels...</p>
-                    </div>
-                </div>
-
-                <div class="space-y-5">
-                    <div>
-                        <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block mb-2">Update Your Details</span>
-                        <form id="profileUpdateForm" class="space-y-2" onsubmit="updateProfileData(event)">
-                            <div>
-                                <input type="text" id="editUsername" class="input-field !py-2 !text-xs" placeholder="Username" required>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <input type="text" id="editFirstName" class="input-field !py-2 !text-xs" placeholder="First Name">
-                                <input type="text" id="editLastName" class="input-field !py-2 !text-xs" placeholder="Last Name">
-                            </div>
-                            <div>
-                                <span class="text-[9px] font-bold text-zinc-400 uppercase block my-1">Extra Phone Numbers for Deposits (Maximum 2)</span>
-                                <div class="space-y-2">
-                                    <input type="text" id="editPhone1" class="input-field !py-2 !text-xs font-mono" placeholder="Extra Phone Number 1 (e.g., 2547...)">
-                                    <input type="text" id="editPhone2" class="input-field !py-2 !text-xs font-mono" placeholder="Extra Phone Number 2 (e.g., 2547...)">
+                    
+                    <div class="space-y-3">
+                        <!-- M-Pesa -->
+                        <div class="method-card selected border-2 border-gray-200 rounded-xl p-4 cursor-pointer" onclick="selectMethod('mpesa')">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900">M-Pesa Express</h4>
+                                    <p class="text-sm text-gray-600">Pay with your M-Pesa phone number</p>
+                                </div>
+                                <div class="w-6 h-6 rounded-full border-4 border-primary flex items-center justify-center">
+                                    <div class="w-3 h-3 bg-primary rounded-full"></div>
                                 </div>
                             </div>
-                            <button type="submit" id="profileBtn" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
-                                Save Changes
-                            </button>
-                        </form>
-                        <p id="profileFeedback" class="text-[11px] font-medium mt-1.5 hidden break-words"></p>
-                    </div>
-
-                    <hr class="border-gray-100" />
-
-                    <div>
-                        <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2">Change Your Password</span>
-                        <form id="passwordChangeForm" class="space-y-2" onsubmit="changePassword(event)">
-                            <div>
-                                <input type="password" id="currentPassword" class="input-field !py-2 !text-xs" placeholder="Current Password" required>
-                            </div>
-                            <div>
-                                <input type="password" id="newPassword" class="input-field !py-2 !text-xs" placeholder="New Password" required>
-                            </div>
-                            <button type="submit" id="pwdBtn" class="w-full bg-zinc-800 hover:bg-zinc-900 text-white font-bold py-2 rounded-xl transition-all text-xs uppercase tracking-wider">
-                                Change Password
-                            </button>
-                        </form>
-                        <p id="pwdFeedback" class="text-[11px] font-medium mt-1.5 hidden break-words"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Profile Card -->
-        <div id="profileCard" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 hidden">
-            <div class="flex justify-between items-start border-b border-gray-100 pb-4 mb-4">
-                <div class="w-full">
-                    <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Your Active Payment Profile</p>
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                        <div>
-                            <h3 id="cardDispName" class="text-xl font-extrabold text-gray-900 leading-tight break-words">Loading Profile...</h3>
-                            <p id="cardDispFullName" class="text-xs text-zinc-600 font-medium mt-0.5 break-words">Name: Loading...</p>
                         </div>
-                        <div class="text-left md:text-right">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase block">Linked Email</span>
-                            <p id="cardDispEmail" class="text-xs text-gray-700 font-semibold break-all"></p>
+
+                        <!-- Card Payment -->
+                        <div class="method-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer opacity-60" onclick="selectMethod('card')">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-credit-card text-2xl text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900">Credit/Debit Card</h4>
+                                    <p class="text-sm text-gray-600">Visa, Mastercard accepted</p>
+                                </div>
+                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                            </div>
+                        </div>
+
+                        <!-- Bank Transfer -->
+                        <div class="method-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer opacity-60" onclick="selectMethod('bank')">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-university text-2xl text-purple-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900">Bank Transfer</h4>
+                                    <p class="text-sm text-gray-600">Direct bank deposit</p>
+                                </div>
+                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Registered Phone Numbers for Deposits:</p>
-                <div id="cardDispPhones" class="flex flex-wrap gap-2"></div>
-            </div>
-        </div>
-        
-        <!-- Status Card -->
-        <div id="statusCard" class="bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 p-4 sm:p-8 hidden transform transition-all sm:scale-105">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Payment Received!</h2>
-                <span class="flex h-3 w-3 relative">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                </span>
-            </div>
 
-            <div id="statusBox" class="p-6 rounded-2xl text-sm font-medium flex flex-col items-center justify-center gap-4 status-success">
-                <div class="text-center w-full break-words">
-                    <p id="sensorMessage" class="text-lg font-bold">Waiting for payment...</p>
-                    <p class="text-xs opacity-75 mt-1">Account matched: <span id="matchedIdentity" class="font-bold"></span></p>
-                </div>
-                
-                <button id="approveBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-4 px-4 sm:px-8 rounded-2xl transition-all shadow-lg text-lg flex items-center justify-center gap-2">
-                    Confirm and Add Money
-                </button>
-            </div>
-        </div>
-
-        <!-- Payment Portal - Redesigned -->
-        <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-8">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Quick Deposit</h2>
-                <p class="text-xs text-gray-500 mt-1">Add money to your wallet securely using M-Pesa or other payment methods.</p>
-                <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
-            </div>
-
-            <div class="text-center py-8">
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 mb-6">
-                    <div class="w-20 h-20 bg-custom-green rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <i class="fas fa-mobile-alt text-4xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Instant Wallet Top-up</h3>
-                    <p class="text-sm text-gray-600 mb-6">Use your registered phone numbers to add money instantly</p>
+                <!-- Amount Selection -->
+                <div class="glass-card rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-coins text-secondary"></i>
+                        Enter Amount
+                    </h3>
                     
-                    <button onclick="openPaymentModal()" class="custom-pay-btn">
-                        <i class="fas fa-plus-circle"></i>
-                        Add Money Now
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount (KES)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">KES</span>
+                            <input 
+                                type="number" 
+                                id="amountInput" 
+                                placeholder="500" 
+                                min="50"
+                                class="w-full pl-20 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition"
+                                oninput="validateAmount(this.value)"
+                            >
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Minimum amount: KES 50</p>
+                    </div>
+
+                    <!-- Quick Amounts -->
+                    <div class="grid grid-cols-4 gap-3 mb-4">
+                        <button onclick="setAmount(100)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">100</button>
+                        <button onclick="setAmount(500)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">500</button>
+                        <button onclick="setAmount(1000)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">1K</button>
+                        <button onclick="setAmount(5000)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">5K</button>
+                    </div>
+
+                    <!-- Phone Number Display -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-phone-alt text-blue-600 mt-1"></i>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-blue-900">Payment will be sent to:</p>
+                                <p class="text-lg font-bold text-blue-700 font-mono mt-1" id="registeredPhone">Loading...</p>
+                                <p class="text-xs text-blue-600 mt-1">Make sure this number is registered with M-Pesa</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Proceed Button -->
+                    <button 
+                        id="proceedBtn"
+                        onclick="proceedToPayment()"
+                        disabled
+                        class="w-full gradient-header text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                    >
+                        <i class="fas fa-lock"></i>
+                        <span>Proceed to Secure Payment</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6 slide-up" style="animation-delay: 0.3s">
+                
+                <!-- Recent Transactions -->
+                <div class="glass-card rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Deposits</h3>
+                    <div id="recentTransactions" class="space-y-3">
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="fas fa-receipt text-4xl mb-2"></i>
+                            <p class="text-sm">No recent deposits</p>
+                        </div>
+                    </div>
+                    <button onclick="loadRecentTransactions()" class="w-full mt-4 text-sm text-primary font-semibold hover:underline">
+                        Refresh History
                     </button>
                 </div>
 
-                <div class="flex items-center justify-center gap-4 text-xs text-gray-500">
-                    <span class="flex items-center gap-1"><i class="fas fa-shield-alt text-emerald-500"></i> Secure</span>
-                    <span class="flex items-center gap-1"><i class="fas fa-bolt text-amber-500"></i> Instant</span>
-                    <span class="flex items-center gap-1"><i class="fas fa-check-circle text-blue-500"></i> Verified</span>
+                <!-- Help Card -->
+                <div class="glass-card rounded-2xl shadow-lg p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-question text-amber-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 mb-1">Need Help?</h4>
+                            <p class="text-sm text-gray-600 mb-3">Having trouble with your payment?</p>
+                            <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 text-sm font-bold text-green-600 hover:text-green-700">
+                                <i class="fab fa-whatsapp"></i>
+                                Contact Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="glass-card rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center gap-3 mb-3">
+                        <i class="fas fa-shield-alt text-emerald-500 text-2xl"></i>
+                        <h4 class="font-bold text-gray-900">Secure Payment</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-emerald-500"></i>
+                            <span>256-bit SSL encryption</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-emerald-500"></i>
+                            <span>PCI DSS compliant</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i class="fas fa-check text-emerald-500"></i>
+                            <span>Instant confirmation</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden slide-up">
+            <!-- Modal Header -->
+            <div class="gradient-header text-white p-6 text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 pulse-ring">
+                    <i class="fas fa-mobile-alt text-3xl"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-1">Complete Payment</h3>
+                <p class="text-white/80 text-sm">A secure payment window will open</p>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <i class="fas fa-coins text-primary"></i>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-600">Amount</p>
+                            <p class="font-bold text-gray-900" id="modalAmount">KES 0</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <i class="fas fa-phone text-primary"></i>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-600">Phone Number</p>
+                            <p class="font-bold text-gray-900 font-mono" id="modalPhone">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                    <div class="flex gap-3">
+                        <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                        <div class="text-sm text-blue-800">
+                            <p class="font-semibold mb-1">Payment Instructions:</p>
+                            <ol class="list-decimal list-inside space-y-1 text-xs">
+                                <li>Payment window will open in new tab</li>
+                                <li>Enter your M-Pesa phone number</li>
+                                <li>Confirm the STK push on your phone</li>
+                                <li>Enter your M-Pesa PIN</li>
+                                <li>Return here and click "I've Completed Payment"</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="openPaymentWindow()" class="w-full gradient-header text-white font-bold py-3 rounded-xl hover:shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fas fa-external-link-alt"></i>
+                        Open Payment Window
+                    </button>
+                    <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        I've Completed Payment
+                    </button>
+                    <button onclick="closePaymentModal()" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden slide-up text-center p-8">
+            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-4xl text-emerald-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h3>
+            <p class="text-gray-600 mb-6">Your wallet has been credited with <span class="font-bold text-emerald-600" id="successAmount">KES 0</span></p>
+            
+            <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm text-gray-600">Transaction ID:</span>
+                    <span class="font-mono font-bold text-sm" id="successRef">-</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Time:</span>
+                    <span class="font-bold text-sm" id="successTime">-</span>
+                </div>
+            </div>
+
+            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-3 rounded-xl hover:shadow-lg transition">
+                Continue to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 text-center">
+            <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="font-bold text-gray-900">Processing Payment...</p>
+            <p class="text-sm text-gray-600">Please wait</p>
+        </div>
+    </div>
+
     <script>
-        // DOM Elements
-        const statusCard = document.getElementById('statusCard');
-        const sensorMessage = document.getElementById('sensorMessage');
-        const approveBtn = document.getElementById('approveBtn');
-        const profileCard = document.getElementById('profileCard');
-        const cardDispName = document.getElementById('cardDispName');
-        const cardDispFullName = document.getElementById('cardDispFullName');
-        const cardDispEmail = document.getElementById('cardDispEmail');
-        const cardDispPhones = document.getElementById('cardDispPhones');
-        const portalSection = document.getElementById('portalSection');
-        const liveBalance = document.getElementById('liveBalance');
-        const paymentModal = document.getElementById('paymentModal');
-        const paymentFrame = document.getElementById('paymentFrame');
-
-        // Layout A UI Hooks
-        const infoEmailA = document.getElementById('infoEmailA');
-        const infoBalanceA = document.getElementById('infoBalanceA');
-        const infoPhonesA = document.getElementById('infoPhonesA');
-        const infoUsernameA = document.getElementById('infoUsernameA');
-        const infoAccountPhoneA = document.getElementById('infoAccountPhoneA');
-        const infoFirstNameA = document.getElementById('infoFirstNameA');
-        const infoLastNameA = document.getElementById('infoLastNameA');
-
-        // Layout B UI Hooks
-        const infoEmailB = document.getElementById('infoEmailB');
-        const infoBalanceB = document.getElementById('infoBalanceB');
-        const infoPhonesB = document.getElementById('infoPhonesB');
-        const infoUsernameB = document.getElementById('infoUsernameB');
-        const infoAccountPhoneB = document.getElementById('infoAccountPhoneB');
-        const infoFirstNameB = document.getElementById('infoFirstNameB');
-        const infoLastNameB = document.getElementById('infoLastNameB');
-
-        // Interactive profile adjustment elements
-        const editUsername = document.getElementById('editUsername');
-        const editFirstName = document.getElementById('editFirstName');
-        const editLastName = document.getElementById('editLastName');
-        const editPhone1 = document.getElementById('editPhone1');
-        const editPhone2 = document.getElementById('editPhone2');
-        
-        let detectedAmount = 0;
-        let detectedReference = "";
-        let serverUserProfile = null; 
-
-        // API Configuration
+        // Configuration
         const API_URLS = [
             'https://unasemeje-backend.vercel.app/api',
             'https://unasemeje-backend-3.onrender.com/api'
         ];
-        let ACTIVE_API_URL = API_URLS[0];
         const token = localStorage.getItem('token');
+        let paymentWindow = null;
+        let currentAmount = 0;
+        let selectedMethod = 'mpesa';
+        let userProfile = null;
 
-        // Smart Fetch Wrapper
+        // API Request Handler
         async function apiRequest(path, options = {}) {
-            for (let i = 0; i < API_URLS.length; i++) {
-                const currentUrl = API_URLS[i] + path;
+            for (let url of API_URLS) {
                 try {
-                    const response = await fetch(currentUrl, options);
-                    if (response.ok || (response.status >= 400 && response.status < 500)) {
-                        ACTIVE_API_URL = API_URLS[i];
-                        return response;
-                    }
-                    if (response.status >= 500 && i < API_URLS.length - 1) {
-                        console.warn(`Server error ${response.status} from ${API_URLS[i]}. Trying fallback...`);
-                        continue;
-                    }
-                    return response;
-                } catch (error) {
-                    console.warn(`Connection failed for ${API_URLS[i]}. Trying fallback...`, error);
-                    if (i === API_URLS.length - 1) {
-                        throw new Error("All backend servers are unreachable.");
-                    }
-                }
-            }
-        }
-
-        // MODAL FUNCTIONS
-        function showFlagInstructions() {
-            document.getElementById('flagModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeFlagInstructions() {
-            document.getElementById('flagModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        document.getElementById('flagModal').addEventListener('click', function(e) {
-            if (e.target === this) closeFlagInstructions();
-        });
-
-        // PAYMENT MODAL FUNCTIONS
-        function openPaymentModal() {
-            paymentFrame.src = "https://paynecta.co.ke/pay/unasemeje-";
-            paymentModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePaymentModal() {
-            paymentModal.classList.remove('active');
-            paymentFrame.src = "";
-            document.body.style.overflow = 'auto';
-        }
-
-        paymentModal.addEventListener('click', function(e) {
-            if (e.target === this) closePaymentModal();
-        });
-
-        // TOP TICKER LOADER
-        async function loadTopTicker() {
-            try {
-                let res = await fetch(`${API_URLS[0]}/ticker`);
-                if (!res.ok) res = await fetch(`${API_URLS[1]}/ticker`);
-                
-                const data = await res.json();
-                const tickerContent = document.getElementById('tickerContent');
-                
-                if (data.items && data.items.length > 0) {
-                    let html = '';
-                    data.items.forEach(item => {
-                        html += `<div class="ticker-item">${item}</div>`;
+                    const response = await fetch(url + path, {
+                        ...options,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`,
+                            ...options.headers
+                        }
                     });
-                    tickerContent.innerHTML = html + html; 
-                } else {
-                    const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
-                    tickerContent.innerHTML = fallback + fallback;
+                    if (response.ok || response.status < 500) return response;
+                } catch (e) {
+                    console.warn(`Failed ${url}, trying next...`);
                 }
-                
-                const speed = data.speed || 80;
-                tickerContent.style.animationDuration = `${speed}s`;
-                
-            } catch (err) {
-                const tickerContent = document.getElementById('tickerContent');
-                const fallback = `<div class="ticker-item">🚀 <span>UNASEMEJE SMM GAINS:</span> Welcome to the Ultimate Plug!</div>`;
-                tickerContent.innerHTML = fallback + fallback;
             }
+            throw new Error('All servers unavailable');
         }
 
-        // AUTHENTICATION & INITIALIZATION
-        window.onload = async () => {
+        // Initialize Page
+        window.addEventListener('load', async () => {
             if (!token) {
-                console.warn("Not logged in. Redirecting to login...");
                 window.location.href = 'index.html';
                 return;
             }
-            await fetchUserProfileFromServer();
-            loadTopTicker();
-        };
+            await loadUserProfile();
+            await loadBalance();
+        });
 
-        async function fetchUserProfileFromServer() {
+        // Load User Profile
+        async function loadUserProfile() {
             try {
-                const response = await apiRequest('/me', {
-                    method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (response.status === 401 || response.status === 403) {
-                    console.warn("Session expired. Please log in again.");
-                    localStorage.removeItem('token');
-                    window.location.href = 'index.html';
-                    return;
-                }
-
-                if (!response.ok) {
-                    console.warn("Could not load profile. Keeping user logged in.");
-                    return; 
-                }
-                
-                const user = await response.json();
-                const formattedBalance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`;
-                if (liveBalance) liveBalance.innerText = formattedBalance;
-                if (infoBalanceA) infoBalanceA.innerText = formattedBalance;
-                if (infoBalanceB) infoBalanceB.innerText = formattedBalance;
-
-                if (infoEmailA) infoEmailA.innerText = user.email || 'N/A';
-                if (infoEmailB) infoEmailB.innerText = user.email || 'N/A';
-
-                const targetUser = user.username || user.name || 'N/A';
-                if (infoUsernameA) infoUsernameA.innerText = targetUser;
-                if (infoUsernameB) infoUsernameB.innerText = targetUser;
-
-                if (infoAccountPhoneA) infoAccountPhoneA.innerText = user.phone || 'N/A';
-                if (infoAccountPhoneB) infoAccountPhoneB.innerText = user.phone || 'N/A';
-
-                if (infoFirstNameA) infoFirstNameA.innerText = user.firstName || 'N/A';
-                if (infoFirstNameB) infoFirstNameB.innerText = user.firstName || 'N/A';
-
-                if (infoLastNameA) infoLastNameA.innerText = user.lastName || 'N/A';
-                if (infoLastNameB) infoLastNameB.innerText = user.lastName || 'N/A';
-
-                if (editUsername) editUsername.value = user.username || user.name || '';
-                if (editFirstName) editFirstName.value = user.firstName || '';
-                if (editLastName) editLastName.value = user.lastName || '';
-                if (editPhone1) editPhone1.value = user.paymentPhone1 || '';
-                if (editPhone2) editPhone2.value = user.paymentPhone2 || '';
-                
-                const activePhones = [user.phone, user.paymentPhone1, user.paymentPhone2].filter(Boolean);
-                const processChannelsHTML = (arr) => {
-                    return arr.length > 0 
-                        ? arr.map((p, i) => `<span>🔹 Phone ${i+1}: ${p} ${i === 0 ? '(Main)' : '(Extra)'}</span>`).join('')
-                        : '<span class="text-zinc-400 italic">No extra phone numbers added.</span>';
-                };
-
-                if (infoPhonesA) infoPhonesA.innerHTML = processChannelsHTML(activePhones);
-                if (infoPhonesB) infoPhonesB.innerHTML = processChannelsHTML(activePhones);
-
-                serverUserProfile = {
-                    username: user.username || user.name || "User Account",
-                    firstName: user.firstName || '',
-                    lastName: user.lastName || '',
-                    email: user.email,
-                    phones: activePhones
-                };
-
-                renderProfileInterface();
-
-            } catch (err) {
-                console.error("Error loading your account details:", err);
-            }
-        }
-
-        function renderProfileInterface() {
-            if (serverUserProfile) {
-                profileCard.classList.remove('hidden');
-                cardDispName.innerText = `@${serverUserProfile.username}`;
-                
-                if (serverUserProfile.firstName || serverUserProfile.lastName) {
-                    cardDispFullName.innerText = `Real Name: ${serverUserProfile.firstName} ${serverUserProfile.lastName}`.trim();
-                } else {
-                    cardDispFullName.innerText = "Real Name: Not set";
-                }
-                
-                cardDispEmail.innerText = serverUserProfile.email;
-                cardDispPhones.innerHTML = '';
-                
-                if (serverUserProfile.phones.length > 0) {
-                    serverUserProfile.phones.forEach((phone, idx) => {
-                        cardDispPhones.innerHTML += `
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 text-zinc-800 rounded-xl text-xs font-bold font-mono border border-zinc-200 break-all">
-                                <span class="w-1.5 h-1.5 rounded-full ${idx === 0 ? 'bg-emerald-500' : 'bg-zinc-400'}"></span>
-                                ${phone}
-                            </span>`;
-                    });
-                } else {
-                    cardDispPhones.innerHTML = `<span class="text-xs text-zinc-400 italic">No extra phone numbers added.</span>`;
-                }
-            }
-        }
-
-        async function updateProfileData(e) {
-            e.preventDefault();
-            const feedback = document.getElementById('profileFeedback');
-            const btn = document.getElementById('profileBtn');
-
-            feedback.classList.add('hidden');
-            btn.disabled = true;
-            btn.innerText = "Saving...";
-
-            const payload = {
-                username: editUsername.value.trim(),
-                firstName: editFirstName.value.trim(),
-                lastName: editLastName.value.trim(),
-                paymentPhone1: editPhone1.value.trim(),
-                paymentPhone2: editPhone2.value.trim()
-            };
-
-            try {
-                const response = await apiRequest('/user/update-profile', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await response.json();
-                feedback.classList.remove('hidden');
-
+                const response = await apiRequest('/me');
                 if (response.ok) {
-                    feedback.className = "text-[11px] font-medium mt-1.5 text-emerald-600";
-                    feedback.innerText = "✓ Profile updated successfully.";
-                    await fetchUserProfileFromServer();
-                } else {
-                    feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || data.message || "Could not update profile. Please try again."}`;
+                    userProfile = await response.json();
+                    document.getElementById('registeredPhone').textContent = userProfile.phone || 'Not set';
+                    document.getElementById('modalPhone').textContent = userProfile.phone || 'Not set';
                 }
-            } catch (err) {
-                feedback.classList.remove('hidden');
-                feedback.className = "text-[11px] font-medium mt-1.5 text-red-500";
-                feedback.innerText = "⚠ Network error. Please check your internet and try again.";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Save Changes";
+            } catch (error) {
+                console.error('Failed to load profile:', error);
             }
         }
 
-        async function changePassword(e) {
-            e.preventDefault();
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const feedback = document.getElementById('pwdFeedback');
-            const btn = document.getElementById('pwdBtn');
+        // Load Balance
+        async function loadBalance() {
+            try {
+                const response = await apiRequest('/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    const balance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', {minimumFractionDigits: 2})}`;
+                    document.getElementById('currentBalance').textContent = balance;
+                    document.getElementById('navBalance').textContent = balance;
+                }
+            } catch (error) {
+                console.error('Failed to load balance:', error);
+            }
+        }
 
-            feedback.classList.add('hidden');
-            btn.disabled = true;
-            btn.innerText = "Updating...";
+        // Validate Amount
+        function validateAmount(value) {
+            const btn = document.getElementById('proceedBtn');
+            const numValue = parseFloat(value);
+            if (numValue >= 50) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        // Set Quick Amount
+        function setAmount(amount) {
+            document.getElementById('amountInput').value = amount;
+            validateAmount(amount);
+        }
+
+        // Select Payment Method
+        function selectMethod(method) {
+            selectedMethod = method;
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('selected');
+                card.style.opacity = '1';
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        // Proceed to Payment
+        function proceedToPayment() {
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            if (amount < 50) {
+                alert('Minimum amount is KES 50');
+                return;
+            }
+            currentAmount = amount;
+            document.getElementById('modalAmount').textContent = `KES ${amount.toLocaleString()}`;
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('paymentModal').classList.add('flex');
+        }
+
+        // Close Payment Modal
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            document.getElementById('paymentModal').classList.remove('flex');
+            if (paymentWindow && !paymentWindow.closed) {
+                paymentWindow.close();
+            }
+        }
+
+        // Open Payment Window
+        function openPaymentWindow() {
+            // Store amount in sessionStorage for PayNecta to potentially use
+            sessionStorage.setItem('paymentAmount', currentAmount);
+            sessionStorage.setItem('paymentPhone', userProfile?.phone || '');
+            
+            // Open PayNecta in new window
+            paymentWindow = window.open(
+                'https://paynecta.co.ke/pay/unasemeje-',
+                'PaymentWindow',
+                'width=500,height=700,top=100,left=400,scrollbars=yes'
+            );
+
+            if (!paymentWindow || paymentWindow.closed) {
+                alert('Please allow popups to complete payment');
+                return;
+            }
+
+            // Show notification
+            showToast('Payment window opened. Complete the transaction there.', 'info');
+        }
+
+        // Check Payment Status
+        async function checkPaymentStatus() {
+            showLoading(true);
+            closePaymentModal();
 
             try {
-                const response = await apiRequest('/user/change-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ currentPassword, newPassword })
-                });
-
-                const data = await response.json();
-                feedback.classList.remove('hidden');
-                
+                // Fetch recent deposits
+                const response = await apiRequest('/deposits?limit=1');
                 if (response.ok) {
-                    feedback.className = "text-[11px] font-medium mt-2 text-emerald-600";
-                    feedback.innerText = "✓ Password changed successfully.";
-                    document.getElementById('passwordChangeForm').reset();
-                } else {
-                    feedback.className = "text-[11px] font-medium mt-2 text-red-500";
-                    feedback.innerText = `⚠ ${data.error || data.message || "Could not change password. Please check your current password."}`;
+                    const deposits = await response.json();
+                    if (deposits.length > 0) {
+                        const latest = deposits[0];
+                        // Check if it's recent (within last 5 minutes) and matches amount
+                        const depositTime = new Date(latest.createdAt);
+                        const now = new Date();
+                        const diffMinutes = (now - depositTime) / 60000;
+                        
+                        if (diffMinutes < 5 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                            showSuccess(latest);
+                            return;
+                        }
+                    }
                 }
-            } catch (err) {
-                feedback.classList.remove('hidden');
-                feedback.className = "text-[11px] font-medium mt-2 text-red-500";
-                feedback.innerText = "⚠ Network error. Please try again.";
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Change Password";
+
+                // If no matching deposit found, show manual check option
+                showLoading(false);
+                setTimeout(() => {
+                    if (confirm('Payment not detected yet. Has it been more than 2 minutes? Click OK to refresh and check again, or Cancel to return.')) {
+                        checkPaymentStatus();
+                    }
+                }, 500);
+
+            } catch (error) {
+                console.error('Payment check failed:', error);
+                showLoading(false);
+                alert('Failed to check payment status. Please contact support if you were charged.');
             }
         }
 
-        // LISTEN FOR PAYMENT COMPLETION
-        window.addEventListener("message", (event) => {
-            if (!event.origin.includes("paynecta.co.ke")) return;
+        // Show Success
+        function showSuccess(deposit) {
+            showLoading(false);
+            document.getElementById('successAmount').textContent = `KES ${deposit.amount.toLocaleString()}`;
+            document.getElementById('successRef').textContent = deposit.reference || 'N/A';
+            document.getElementById('successTime').textContent = new Date(deposit.createdAt).toLocaleString();
+            document.getElementById('successModal').classList.remove('hidden');
+            document.getElementById('successModal').classList.add('flex');
+            
+            // Update balance
+            loadBalance();
+            loadRecentTransactions();
+        }
 
-            const data = event.data;
-            const isFinished = data.event === "payment.completed" || data.status === "completed" || data.status === "success";
+        // Close Success Modal
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            window.location.href = 'dashboard.html';
+        }
 
-            if (isFinished) {
-                detectedAmount = data.amount || 0;
-                detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
-                closePaymentModal();
-                showSensorPopup(detectedAmount, detectedReference);
+        // Load Recent Transactions
+        async function loadRecentTransactions() {
+            try {
+                const response = await apiRequest('/deposits?limit=5');
+                if (response.ok) {
+                    const deposits = await response.json();
+                    const container = document.getElementById('recentTransactions');
+                    
+                    if (deposits.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-8 text-gray-400">
+                                <i class="fas fa-receipt text-4xl mb-2"></i>
+                                <p class="text-sm">No recent deposits</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = deposits.map(deposit => `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-arrow-down text-emerald-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-900">KES ${deposit.amount.toLocaleString()}</p>
+                                    <p class="text-xs text-gray-500">${new Date(deposit.createdAt).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded">
+                                ${deposit.status || 'Completed'}
+                            </span>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load transactions:', error);
+            }
+        }
+
+        // Show Loading
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            } else {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
+        }
+
+        // Show Toast
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-20 right-4 px-6 py-3 rounded-xl shadow-lg z-50 slide-up ${
+                type === 'success' ? 'bg-emerald-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Auto-check for payment when returning from PayNecta
+        window.addEventListener('focus', () => {
+            if (paymentWindow && paymentWindow.closed) {
+                setTimeout(() => {
+                    if (confirm('Payment window closed. Would you like to check if your payment was successful?')) {
+                        checkPaymentStatus();
+                    }
+                }, 2000);
             }
         });
 
-        function showSensorPopup(amount, reference) {
-            statusCard.classList.remove('hidden');
-            document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.username : "User Account";
-            
-            const formattedAmount = Number(amount).toLocaleString('en-KE', {
-                style: 'currency',
-                currency: 'KES'
-            });
-
-            sensorMessage.innerHTML = `Payment verified: <span class="text-2xl block text-emerald-800 font-extrabold mt-1">${formattedAmount}</span>`;
-            statusCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            approveBtn.onclick = async () => {
-                approveBtn.disabled = true;
-                approveBtn.innerHTML = `<span class="spinner"></span> Adding Money...`;
-
-                try {
-                    const response = await apiRequest('/deposit', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ 
-                            amount: Number(amount), 
-                            transactionCode: reference
-                        })
-                    });
-
-                    if (response.ok) {
-                        sensorMessage.innerHTML = `🎉 Success! Updating your balance...`;
-                        approveBtn.style.display = 'none';
-                        setTimeout(() => window.location.reload(), 2500);
-                    } else {
-                        const errData = await response.json();
-                        sensorMessage.innerText = "Error: " + (errData.error || errData.message || "Could not add money. Please try again.");
-                        approveBtn.innerHTML = "Retry";
-                        approveBtn.disabled = false;
-                    }
-                } catch (err) {
-                    sensorMessage.innerText = "Failed to update. Please refresh the page.";
-                    approveBtn.disabled = false;
-                }
-            };
-        }
+        // Load recent transactions on page load
+        loadRecentTransactions();
     </script>
-
 </body>
-                    </html>
+    </html>
