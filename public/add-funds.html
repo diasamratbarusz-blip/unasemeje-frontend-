@@ -6,7 +6,7 @@
     <title>Add Funds | Unasemeje SMM Gains</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -27,73 +27,93 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
+            font-family: 'Inter', sans-serif;
         }
         
         .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
 
         .gradient-header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3b7bb5 100%);
         }
 
-        .pulse-ring {
-            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        .gradient-accent {
+            background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
         }
 
         .slide-up {
-            animation: slideUp 0.3s ease-out;
+            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
+            from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .method-card {
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .input-field {
             transition: all 0.3s ease;
         }
 
-        .method-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        .input-field:focus {
+            border-color: #1e3a5f;
+            box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
         }
 
-        .method-card.selected {
-            border-color: #1e3a5f;
-            background: #f0f7ff;
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Navigation -->
-    <nav class="gradient-header text-white shadow-lg sticky top-0 z-40">
+    <nav class="gradient-header text-white shadow-2xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-bolt text-xl"></i>
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-bolt text-2xl text-yellow-300"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-tight">Unasemeje SMM</span>
+                    <div>
+                        <h1 class="font-bold text-2xl tracking-tight">Unasemeje SMM</h1>
+                        <p class="text-xs text-white/70">Premium Social Media Services</p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="hidden md:flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full">
-                        <i class="fas fa-wallet text-emerald-400"></i>
-                        <span class="font-semibold" id="navBalance">KES 0.00</span>
+                    <div class="hidden md:flex items-center gap-3 bg-white/10 backdrop-blur-sm px-5 py-3 rounded-full border border-white/20">
+                        <i class="fas fa-wallet text-emerald-400 text-lg"></i>
+                        <div>
+                            <p class="text-xs text-white/70">Balance</p>
+                            <p class="font-bold text-lg" id="navBalance">KES 0.00</p>
+                        </div>
                     </div>
-                    <button onclick="window.location.href='dashboard.html'" class="text-white/80 hover:text-white transition">
-                        <i class="fas fa-arrow-left mr-2"></i>Back
+                    <button onclick="window.location.href='dashboard.html'" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-5 py-3 rounded-full transition border border-white/20 flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="hidden sm:inline font-semibold">Dashboard</span>
                     </button>
                 </div>
             </div>
@@ -101,304 +121,220 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         
         <!-- Header Section -->
-        <div class="mb-8 slide-up">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Funds</h1>
-            <p class="text-gray-600">Top up your wallet securely using your preferred payment method</p>
+        <div class="mb-10 slide-up">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-1 h-10 gradient-accent rounded-full"></div>
+                <h1 class="text-4xl font-black text-gray-900">Add Funds</h1>
+            </div>
+            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely via M-Pesa</p>
         </div>
 
         <!-- Current Balance Card -->
-        <div class="glass-card rounded-2xl shadow-xl p-6 mb-8 slide-up" style="animation-delay: 0.1s">
-            <div class="flex items-center justify-between">
+        <div class="glass-card rounded-3xl shadow-2xl p-8 mb-10 slide-up" style="animation-delay: 0.1s">
+            <div class="flex items-center justify-between flex-wrap gap-6">
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Current Wallet Balance</p>
+                    <h2 class="text-5xl font-black text-gray-900" id="currentBalance">KES 0.00</h2>
+                    <p class="text-sm text-gray-500 mt-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-500"></i>
+                        Funds available instantly after payment confirmation
+                    </p>
+                </div>
+                <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl">
+                    <i class="fas fa-wallet text-5xl text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.2s">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                    <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
+                </div>
                 <div>
-                    <p class="text-sm font-medium text-gray-600 mb-1">Current Balance</p>
-                    <h2 class="text-4xl font-bold text-gray-900" id="currentBalance">KES 0.00</h2>
-                </div>
-                <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-                    <i class="fas fa-wallet text-3xl text-white"></i>
+                    <h3 class="text-2xl font-bold text-gray-900">M-Pesa Payment</h3>
+                    <p class="text-sm text-gray-600">Enter amount and phone number to receive prompt</p>
                 </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-200">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <i class="fas fa-info-circle text-blue-500"></i>
-                    <span>Funds are available instantly after payment confirmation</span>
+
+            <form id="paymentForm" onsubmit="initiatePayment(event)" class="space-y-6">
+                <!-- Amount Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Amount (KES)</label>
+                    <div class="relative">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xl">KES</span>
+                        <input 
+                            type="number" 
+                            id="amountInput" 
+                            placeholder="100" 
+                            min="2"
+                            step="1"
+                            required
+                            class="input-field w-full pl-24 pr-6 py-5 text-3xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none"
+                        >
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Minimum amount: KES 2</p>
                 </div>
-            </div>
+
+                <!-- Phone Number Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">M-Pesa Phone Number</label>
+                    <div class="relative">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">+254</span>
+                        <input 
+                            type="tel" 
+                            id="phoneInput" 
+                            placeholder="712345678" 
+                            required
+                            pattern="[0-9]{9}"
+                            maxlength="9"
+                            class="input-field w-full pl-20 pr-6 py-5 text-2xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none font-mono"
+                        >
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Enter 9 digits without the leading 0</p>
+                </div>
+
+                <!-- Quick Amounts -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-700 mb-3">Quick Select</p>
+                    <div class="grid grid-cols-4 gap-3">
+                        <button type="button" onclick="setAmount(50)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 50</button>
+                        <button type="button" onclick="setAmount(100)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 100</button>
+                        <button type="button" onclick="setAmount(500)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 500</button>
+                        <button type="button" onclick="setAmount(1000)" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 1,000</button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit"
+                    id="submitBtn"
+                    class="w-full gradient-header text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3 text-lg"
+                >
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Send Payment Request</span>
+                </button>
+            </form>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Payment Methods -->
-            <div class="md:col-span-2 space-y-6 slide-up" style="animation-delay: 0.2s">
+        <!-- Payment Status Card (Hidden by default) -->
+        <div id="paymentStatusCard" class="glass-card rounded-3xl shadow-xl p-8 mt-6 hidden">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 pulse-animation">
+                    <i class="fas fa-mobile-alt text-4xl text-blue-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Check Your Phone</h3>
+                <p class="text-gray-600 mb-4">An M-Pesa prompt has been sent to your phone</p>
                 
-                <!-- Payment Method Selection -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-credit-card text-primary"></i>
-                        Select Payment Method
-                    </h3>
-                    
+                <div class="bg-blue-50 rounded-2xl p-5 mb-6 text-left">
                     <div class="space-y-3">
-                        <!-- M-Pesa -->
-                        <div class="method-card selected border-2 border-gray-200 rounded-xl p-4 cursor-pointer" onclick="selectMethod('mpesa')">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-mobile-alt text-2xl text-green-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900">M-Pesa Express</h4>
-                                    <p class="text-sm text-gray-600">Pay with your M-Pesa phone number</p>
-                                </div>
-                                <div class="w-6 h-6 rounded-full border-4 border-primary flex items-center justify-center">
-                                    <div class="w-3 h-3 bg-primary rounded-full"></div>
-                                </div>
-                            </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Amount:</span>
+                            <span class="font-bold text-gray-900" id="statusAmount">KES 0</span>
                         </div>
-
-                        <!-- Card Payment -->
-                        <div class="method-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer opacity-60" onclick="selectMethod('card')">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-credit-card text-2xl text-blue-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900">Credit/Debit Card</h4>
-                                    <p class="text-sm text-gray-600">Visa, Mastercard accepted</p>
-                                </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
-                            </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Phone:</span>
+                            <span class="font-bold text-gray-900 font-mono" id="statusPhone">+254</span>
                         </div>
-
-                        <!-- Bank Transfer -->
-                        <div class="method-card border-2 border-gray-200 rounded-xl p-4 cursor-pointer opacity-60" onclick="selectMethod('bank')">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-university text-2xl text-purple-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900">Bank Transfer</h4>
-                                    <p class="text-sm text-gray-600">Direct bank deposit</p>
-                                </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
-                            </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Status:</span>
+                            <span class="font-bold text-blue-600" id="statusText">Waiting for confirmation...</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Amount Selection -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-coins text-secondary"></i>
-                        Enter Amount
-                    </h3>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Amount (KES)</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">KES</span>
-                            <input 
-                                type="number" 
-                                id="amountInput" 
-                                placeholder="500" 
-                                min="50"
-                                class="w-full pl-20 pr-4 py-4 text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition"
-                                oninput="validateAmount(this.value)"
-                            >
-                        </div>
-                        <p class="text-xs text-gray-500 mt-2">Minimum amount: KES 50</p>
-                    </div>
-
-                    <!-- Quick Amounts -->
-                    <div class="grid grid-cols-4 gap-3 mb-4">
-                        <button onclick="setAmount(100)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">100</button>
-                        <button onclick="setAmount(500)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">500</button>
-                        <button onclick="setAmount(1000)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">1K</button>
-                        <button onclick="setAmount(5000)" class="quick-amount px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-semibold text-gray-700 transition">5K</button>
-                    </div>
-
-                    <!-- Phone Number Display -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                        <div class="flex items-start gap-3">
-                            <i class="fas fa-phone-alt text-blue-600 mt-1"></i>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-blue-900">Payment will be sent to:</p>
-                                <p class="text-lg font-bold text-blue-700 font-mono mt-1" id="registeredPhone">Loading...</p>
-                                <p class="text-xs text-blue-600 mt-1">Make sure this number is registered with M-Pesa</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Proceed Button -->
-                    <button 
-                        id="proceedBtn"
-                        onclick="proceedToPayment()"
-                        disabled
-                        class="w-full gradient-header text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-                    >
-                        <i class="fas fa-lock"></i>
-                        <span>Proceed to Secure Payment</span>
-                    </button>
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6">
+                    <p class="text-sm text-amber-900">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Instructions:</strong> Enter your M-Pesa PIN on your phone to complete the payment
+                    </p>
                 </div>
+
+                <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    I've Completed Payment
+                </button>
             </div>
+        </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-6 slide-up" style="animation-delay: 0.3s">
-                
-                <!-- Recent Transactions -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Deposits</h3>
-                    <div id="recentTransactions" class="space-y-3">
-                        <div class="text-center py-8 text-gray-400">
-                            <i class="fas fa-receipt text-4xl mb-2"></i>
-                            <p class="text-sm">No recent deposits</p>
-                        </div>
-                    </div>
-                    <button onclick="loadRecentTransactions()" class="w-full mt-4 text-sm text-primary font-semibold hover:underline">
-                        Refresh History
-                    </button>
-                </div>
-
-                <!-- Help Card -->
-                <div class="glass-card rounded-2xl shadow-lg p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
-                    <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-question text-amber-600"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 mb-1">Need Help?</h4>
-                            <p class="text-sm text-gray-600 mb-3">Having trouble with your payment?</p>
-                            <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 text-sm font-bold text-green-600 hover:text-green-700">
-                                <i class="fab fa-whatsapp"></i>
-                                Contact Support
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Security Notice -->
-                <div class="glass-card rounded-2xl shadow-lg p-6">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i class="fas fa-shield-alt text-emerald-500 text-2xl"></i>
-                        <h4 class="font-bold text-gray-900">Secure Payment</h4>
-                    </div>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-check text-emerald-500"></i>
-                            <span>256-bit SSL encryption</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-check text-emerald-500"></i>
-                            <span>PCI DSS compliant</span>
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-check text-emerald-500"></i>
-                            <span>Instant confirmation</span>
-                        </li>
-                    </ul>
+        <!-- Recent Transactions -->
+        <div class="glass-card rounded-3xl shadow-xl p-6 mt-8 slide-up" style="animation-delay: 0.3s">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <i class="fas fa-history text-primary"></i>
+                    Recent Deposits
+                </h3>
+                <button onclick="loadRecentTransactions()" class="text-xs text-primary font-semibold hover:underline">
+                    <i class="fas fa-sync-alt mr-1"></i>Refresh
+                </button>
+            </div>
+            <div id="recentTransactions" class="space-y-3">
+                <div class="text-center py-10 text-gray-400">
+                    <i class="fas fa-receipt text-5xl mb-3"></i>
+                    <p class="text-sm">No recent deposits</p>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Payment Modal -->
-    <div id="paymentModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden slide-up">
-            <!-- Modal Header -->
-            <div class="gradient-header text-white p-6 text-center">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 pulse-ring">
-                    <i class="fas fa-mobile-alt text-3xl"></i>
+        <!-- Help Card -->
+        <div class="glass-card rounded-3xl shadow-xl p-6 mt-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 slide-up" style="animation-delay: 0.4s">
+            <div class="flex items-start gap-4">
+                <div class="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-question text-2xl text-amber-600"></i>
                 </div>
-                <h3 class="text-xl font-bold mb-1">Complete Payment</h3>
-                <p class="text-white/80 text-sm">A secure payment window will open</p>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="p-6">
-                <div class="space-y-4 mb-6">
-                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <i class="fas fa-coins text-primary"></i>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-600">Amount</p>
-                            <p class="font-bold text-gray-900" id="modalAmount">KES 0</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <i class="fas fa-phone text-primary"></i>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-600">Phone Number</p>
-                            <p class="font-bold text-gray-900 font-mono" id="modalPhone">-</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-                    <div class="flex gap-3">
-                        <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
-                        <div class="text-sm text-blue-800">
-                            <p class="font-semibold mb-1">Payment Instructions:</p>
-                            <ol class="list-decimal list-inside space-y-1 text-xs">
-                                <li>Payment window will open in new tab</li>
-                                <li>Enter your M-Pesa phone number</li>
-                                <li>Confirm the STK push on your phone</li>
-                                <li>Enter your M-Pesa PIN</li>
-                                <li>Return here and click "I've Completed Payment"</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <button onclick="openPaymentWindow()" class="w-full gradient-header text-white font-bold py-3 rounded-xl hover:shadow-lg transition flex items-center justify-center gap-2">
-                        <i class="fas fa-external-link-alt"></i>
-                        Open Payment Window
-                    </button>
-                    <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
-                        <i class="fas fa-check-circle"></i>
-                        I've Completed Payment
-                    </button>
-                    <button onclick="closePaymentModal()" class="w-full border-2 border-gray-300 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition">
-                        Cancel
-                    </button>
+                <div class="flex-1">
+                    <h4 class="font-bold text-gray-900 text-lg mb-2">Need Help?</h4>
+                    <p class="text-sm text-gray-600 mb-4">Having trouble with your payment?</p>
+                    <a href="https://wa.me/254715509440" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition">
+                        <i class="fab fa-whatsapp text-lg"></i>
+                        Contact Support
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Success Modal -->
-    <div id="successModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden slide-up text-center p-8">
-            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-check text-4xl text-emerald-500"></i>
+    <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden slide-up text-center p-10">
+            <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-5xl text-emerald-500"></i>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h3>
-            <p class="text-gray-600 mb-6">Your wallet has been credited with <span class="font-bold text-emerald-600" id="successAmount">KES 0</span></p>
+            <h3 class="text-3xl font-black text-gray-900 mb-3">Payment Successful!</h3>
+            <p class="text-gray-600 text-lg mb-8">Your wallet has been credited with <span class="font-bold text-emerald-600" id="successAmount">KES 0</span></p>
             
-            <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm text-gray-600">Transaction ID:</span>
+            <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm text-gray-600 font-semibold">Transaction ID:</span>
                     <span class="font-mono font-bold text-sm" id="successRef">-</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">Time:</span>
+                    <span class="text-sm text-gray-600 font-semibold">Time:</span>
                     <span class="font-bold text-sm" id="successTime">-</span>
                 </div>
             </div>
 
-            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-3 rounded-xl hover:shadow-lg transition">
+            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-4 rounded-2xl hover:shadow-xl transition text-lg">
                 Continue to Dashboard
             </button>
         </div>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
-        <div class="bg-white rounded-2xl p-8 text-center">
-            <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p class="font-bold text-gray-900">Processing Payment...</p>
-            <p class="text-sm text-gray-600">Please wait</p>
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-3xl p-10 text-center shadow-2xl">
+            <div class="spinner mx-auto mb-5"></div>
+            <p class="font-bold text-gray-900 text-lg">Processing Payment...</p>
+            <p class="text-sm text-gray-600 mt-2">Please wait</p>
         </div>
     </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-24 right-4 z-50 space-y-3"></div>
 
     <script>
         // Configuration
@@ -407,190 +343,315 @@
             'https://unasemeje-backend-3.onrender.com/api'
         ];
         const token = localStorage.getItem('token');
-        let paymentWindow = null;
         let currentAmount = 0;
-        let selectedMethod = 'mpesa';
-        let userProfile = null;
+        let currentPhone = '';
 
-        // API Request Handler
+        // Debug logging
+        console.log('[INIT] Page loaded');
+        console.log('[INIT] Token exists:', !!token);
+        console.log('[INIT] API URLs:', API_URLS);
+
+        // API Request Handler with detailed logging
         async function apiRequest(path, options = {}) {
-            for (let url of API_URLS) {
+            console.log(`\n[API REQUEST] ====== START ======`);
+            console.log(`[API REQUEST] Path: ${path}`);
+            console.log(`[API REQUEST] Method: ${options.method || 'GET'}`);
+            console.log(`[API REQUEST] Options:`, options);
+            
+            for (let i = 0; i < API_URLS.length; i++) {
+                const url = API_URLS[i] + path;
+                console.log(`\n[API REQUEST] Attempt ${i + 1}/${API_URLS.length}`);
+                console.log(`[API REQUEST] URL: ${url}`);
+                
                 try {
-                    const response = await fetch(url + path, {
+                    const fetchOptions = {
                         ...options,
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`,
                             ...options.headers
                         }
+                    };
+                    
+                    console.log(`[API REQUEST] Headers:`, fetchOptions.headers);
+                    if (options.body) {
+                        console.log(`[API REQUEST] Body:`, options.body);
+                    }
+                    
+                    const response = await fetch(url, fetchOptions);
+                    console.log(`[API REQUEST] Response status: ${response.status}`);
+                    console.log(`[API REQUEST] Response ok: ${response.ok}`);
+                    
+                    const responseText = await response.text();
+                    console.log(`[API REQUEST] Response text:`, responseText);
+                    
+                    let responseData;
+                    try {
+                        responseData = JSON.parse(responseText);
+                    } catch (e) {
+                        responseData = { text: responseText };
+                    }
+                    
+                    console.log(`[API REQUEST] Response data:`, responseData);
+                    
+                    if (response.ok || response.status < 500) {
+                        console.log(`[API REQUEST] ✅ Success with ${url}`);
+                        console.log(`[API REQUEST] ====== END ======\n`);
+                        return {
+                            ok: response.ok,
+                            status: response.status,
+                            json: async () => responseData
+                        };
+                    }
+                    
+                    console.log(`[API REQUEST] ⚠️ Server error ${response.status}, trying next URL...`);
+                    
+                } catch (error) {
+                    console.error(`[API REQUEST] ❌ Error with ${url}:`, error);
+                    console.error(`[API REQUEST] Error details:`, {
+                        message: error.message,
+                        stack: error.stack
                     });
-                    if (response.ok || response.status < 500) return response;
-                } catch (e) {
-                    console.warn(`Failed ${url}, trying next...`);
+                    
+                    if (i === API_URLS.length - 1) {
+                        console.error(`[API REQUEST] ❌ All API URLs failed`);
+                        throw new Error(`All servers unavailable. Last error: ${error.message}`);
+                    }
                 }
             }
+            
+            console.log(`[API REQUEST] ====== END ======\n`);
             throw new Error('All servers unavailable');
         }
 
         // Initialize Page
         window.addEventListener('load', async () => {
+            console.log('[INIT] Window loaded');
+            
             if (!token) {
+                console.warn('[INIT] No token found, redirecting to login');
                 window.location.href = 'index.html';
                 return;
             }
-            await loadUserProfile();
+            
+            console.log('[INIT] Token found, loading user data...');
             await loadBalance();
+            await loadRecentTransactions();
         });
-
-        // Load User Profile
-        async function loadUserProfile() {
-            try {
-                const response = await apiRequest('/me');
-                if (response.ok) {
-                    userProfile = await response.json();
-                    document.getElementById('registeredPhone').textContent = userProfile.phone || 'Not set';
-                    document.getElementById('modalPhone').textContent = userProfile.phone || 'Not set';
-                }
-            } catch (error) {
-                console.error('Failed to load profile:', error);
-            }
-        }
 
         // Load Balance
         async function loadBalance() {
+            console.log('[BALANCE] Loading balance...');
             try {
                 const response = await apiRequest('/me');
+                console.log('[BALANCE] Response received:', response);
+                
                 if (response.ok) {
                     const user = await response.json();
+                    console.log('[BALANCE] User data:', user);
+                    
                     const balance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', {minimumFractionDigits: 2})}`;
                     document.getElementById('currentBalance').textContent = balance;
                     document.getElementById('navBalance').textContent = balance;
+                    console.log('[BALANCE] ✅ Balance updated:', balance);
+                } else {
+                    console.error('[BALANCE] ❌ Failed to load balance, status:', response.status);
                 }
             } catch (error) {
-                console.error('Failed to load balance:', error);
-            }
-        }
-
-        // Validate Amount
-        function validateAmount(value) {
-            const btn = document.getElementById('proceedBtn');
-            const numValue = parseFloat(value);
-            if (numValue >= 50) {
-                btn.disabled = false;
-            } else {
-                btn.disabled = true;
+                console.error('[BALANCE] ❌ Error loading balance:', error);
             }
         }
 
         // Set Quick Amount
         function setAmount(amount) {
             document.getElementById('amountInput').value = amount;
-            validateAmount(amount);
+            console.log('[QUICK AMOUNT] Set to:', amount);
         }
 
-        // Select Payment Method
-        function selectMethod(method) {
-            selectedMethod = method;
-            document.querySelectorAll('.method-card').forEach(card => {
-                card.classList.remove('selected');
-                card.style.opacity = '1';
-            });
-            event.currentTarget.classList.add('selected');
-        }
-
-        // Proceed to Payment
-        function proceedToPayment() {
-            const amount = parseFloat(document.getElementById('amountInput').value);
-            if (amount < 50) {
-                alert('Minimum amount is KES 50');
-                return;
-            }
-            currentAmount = amount;
-            document.getElementById('modalAmount').textContent = `KES ${amount.toLocaleString()}`;
-            document.getElementById('paymentModal').classList.remove('hidden');
-            document.getElementById('paymentModal').classList.add('flex');
-        }
-
-        // Close Payment Modal
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.add('hidden');
-            document.getElementById('paymentModal').classList.remove('flex');
-            if (paymentWindow && !paymentWindow.closed) {
-                paymentWindow.close();
-            }
-        }
-
-        // Open Payment Window
-        function openPaymentWindow() {
-            // Store amount in sessionStorage for PayNecta to potentially use
-            sessionStorage.setItem('paymentAmount', currentAmount);
-            sessionStorage.setItem('paymentPhone', userProfile?.phone || '');
+        // Initiate Payment
+        async function initiatePayment(event) {
+            event.preventDefault();
+            console.log('\n[PAYMENT] ====== INITIATE PAYMENT ======');
             
-            // Open PayNecta in new window
-            paymentWindow = window.open(
-                'https://paynecta.co.ke/pay/unasemeje-',
-                'PaymentWindow',
-                'width=500,height=700,top=100,left=400,scrollbars=yes'
-            );
-
-            if (!paymentWindow || paymentWindow.closed) {
-                alert('Please allow popups to complete payment');
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const phone = document.getElementById('phoneInput').value.trim();
+            
+            console.log('[PAYMENT] Raw input - Amount:', amount, 'Phone:', phone);
+            
+            // Validation
+            if (!amount || amount < 2) {
+                console.error('[PAYMENT] ❌ Invalid amount:', amount);
+                showToast('Minimum amount is KES 2', 'error');
                 return;
             }
 
-            // Show notification
-            showToast('Payment window opened. Complete the transaction there.', 'info');
+            if (!phone || phone.length !== 9 || !/^[0-9]{9}$/.test(phone)) {
+                console.error('[PAYMENT] ❌ Invalid phone:', phone);
+                showToast('Please enter a valid 9-digit phone number', 'error');
+                return;
+            }
+
+            currentAmount = amount;
+            currentPhone = phone;
+            
+            const fullPhone = `254${phone}`;
+            console.log('[PAYMENT] Full phone number:', fullPhone);
+
+            // Show loading
+            showLoading(true);
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<span class="spinner"></span><span>Processing...</span>';
+
+            try {
+                console.log('[PAYMENT] Sending request to backend...');
+                console.log('[PAYMENT] Payload:', { amount, phone: fullPhone });
+                
+                // Send payment request to backend
+                const response = await apiRequest('/payment/initiate', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        amount: amount,
+                        phone: fullPhone
+                    })
+                });
+
+                console.log('[PAYMENT] Response received:', response);
+                const data = await response.json();
+                console.log('[PAYMENT] Response data:', data);
+
+                if (response.ok && data.success) {
+                    console.log('[PAYMENT] ✅ Payment initiated successfully');
+                    showLoading(false);
+                    
+                    // Show payment status card
+                    document.getElementById('statusAmount').textContent = `KES ${amount.toLocaleString()}`;
+                    document.getElementById('statusPhone').textContent = `+${fullPhone}`;
+                    document.getElementById('paymentStatusCard').classList.remove('hidden');
+                    
+                    // Hide form
+                    document.getElementById('paymentForm').classList.add('hidden');
+                    
+                    showToast('Payment prompt sent! Check your phone.', 'success');
+                    
+                    // Start polling for payment status
+                    startPaymentPolling();
+                } else {
+                    console.error('[PAYMENT] ❌ Payment failed:', data);
+                    showLoading(false);
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i><span>Send Payment Request</span>';
+                    
+                    const errorMsg = data.error || data.message || 'Failed to initiate payment';
+                    console.error('[PAYMENT] Error message:', errorMsg);
+                    showToast(errorMsg, 'error');
+                }
+
+            } catch (error) {
+                console.error('[PAYMENT] ❌ Exception:', error);
+                console.error('[PAYMENT] Error details:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                
+                showLoading(false);
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i><span>Send Payment Request</span>';
+                
+                showToast('Network error. Please check your connection and try again.', 'error');
+            }
+            
+            console.log('[PAYMENT] ====== END ======\n');
         }
 
         // Check Payment Status
         async function checkPaymentStatus() {
+            console.log('[CHECK] Checking payment status...');
             showLoading(true);
-            closePaymentModal();
 
             try {
-                // Fetch recent deposits
                 const response = await apiRequest('/deposits?limit=1');
                 if (response.ok) {
                     const deposits = await response.json();
+                    console.log('[CHECK] Deposits:', deposits);
+                    
                     if (deposits.length > 0) {
                         const latest = deposits[0];
-                        // Check if it's recent (within last 5 minutes) and matches amount
                         const depositTime = new Date(latest.createdAt);
                         const now = new Date();
                         const diffMinutes = (now - depositTime) / 60000;
                         
+                        console.log('[CHECK] Latest deposit:', latest);
+                        console.log('[CHECK] Time difference:', diffMinutes, 'minutes');
+                        
                         if (diffMinutes < 5 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                            console.log('[CHECK] ✅ Payment detected!');
+                            showLoading(false);
                             showSuccess(latest);
                             return;
                         }
                     }
                 }
 
-                // If no matching deposit found, show manual check option
                 showLoading(false);
-                setTimeout(() => {
-                    if (confirm('Payment not detected yet. Has it been more than 2 minutes? Click OK to refresh and check again, or Cancel to return.')) {
-                        checkPaymentStatus();
-                    }
-                }, 500);
+                showToast('Payment not detected yet. Please wait a moment and try again.', 'info');
 
             } catch (error) {
-                console.error('Payment check failed:', error);
+                console.error('[CHECK] ❌ Error:', error);
                 showLoading(false);
-                alert('Failed to check payment status. Please contact support if you were charged.');
+                showToast('Failed to check payment status', 'error');
             }
+        }
+
+        // Start Payment Polling
+        let pollingInterval = null;
+        function startPaymentPolling() {
+            console.log('[POLLING] Starting payment polling...');
+            let attempts = 0;
+            const maxAttempts = 60; // Poll for 2 minutes (every 2 seconds)
+            
+            pollingInterval = setInterval(async () => {
+                attempts++;
+                console.log(`[POLLING] Attempt ${attempts}/${maxAttempts}`);
+                
+                if (attempts >= maxAttempts) {
+                    console.warn('[POLLING] ⚠️ Timeout reached');
+                    clearInterval(pollingInterval);
+                    document.getElementById('statusText').textContent = 'Payment timeout - please check manually';
+                    return;
+                }
+
+                try {
+                    const response = await apiRequest('/deposits?limit=1');
+                    if (response.ok) {
+                        const deposits = await response.json();
+                        if (deposits.length > 0) {
+                            const latest = deposits[0];
+                            const depositTime = new Date(latest.createdAt);
+                            const now = new Date();
+                            const diffMinutes = (now - depositTime) / 60000;
+                            
+                            if (diffMinutes < 2 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                                console.log('[POLLING] ✅ Payment detected!');
+                                clearInterval(pollingInterval);
+                                showSuccess(latest);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('[POLLING] ❌ Error:', error);
+                }
+            }, 2000);
         }
 
         // Show Success
         function showSuccess(deposit) {
-            showLoading(false);
+            console.log('[SUCCESS] Showing success modal:', deposit);
             document.getElementById('successAmount').textContent = `KES ${deposit.amount.toLocaleString()}`;
-            document.getElementById('successRef').textContent = deposit.reference || 'N/A';
+            document.getElementById('successRef').textContent = deposit.transactionCode || deposit.reference || 'N/A';
             document.getElementById('successTime').textContent = new Date(deposit.createdAt).toLocaleString();
             document.getElementById('successModal').classList.remove('hidden');
             document.getElementById('successModal').classList.add('flex');
             
-            // Update balance
             loadBalance();
             loadRecentTransactions();
         }
@@ -604,6 +665,7 @@
 
         // Load Recent Transactions
         async function loadRecentTransactions() {
+            console.log('[TRANSACTIONS] Loading recent transactions...');
             try {
                 const response = await apiRequest('/deposits?limit=5');
                 if (response.ok) {
@@ -612,8 +674,8 @@
                     
                     if (deposits.length === 0) {
                         container.innerHTML = `
-                            <div class="text-center py-8 text-gray-400">
-                                <i class="fas fa-receipt text-4xl mb-2"></i>
+                            <div class="text-center py-10 text-gray-400">
+                                <i class="fas fa-receipt text-5xl mb-3"></i>
                                 <p class="text-sm">No recent deposits</p>
                             </div>
                         `;
@@ -621,24 +683,24 @@
                     }
 
                     container.innerHTML = deposits.map(deposit => `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-arrow-down text-emerald-600"></i>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-arrow-down text-emerald-600 text-lg"></i>
                                 </div>
                                 <div>
                                     <p class="font-bold text-gray-900">KES ${deposit.amount.toLocaleString()}</p>
                                     <p class="text-xs text-gray-500">${new Date(deposit.createdAt).toLocaleDateString()}</p>
                                 </div>
                             </div>
-                            <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded">
+                            <span class="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
                                 ${deposit.status || 'Completed'}
                             </span>
                         </div>
                     `).join('');
                 }
             } catch (error) {
-                console.error('Failed to load transactions:', error);
+                console.error('[TRANSACTIONS] ❌ Error:', error);
             }
         }
 
@@ -656,30 +718,22 @@
 
         // Show Toast
         function showToast(message, type = 'info') {
+            console.log(`[TOAST] ${type.toUpperCase()}: ${message}`);
             const toast = document.createElement('div');
-            toast.className = `fixed top-20 right-4 px-6 py-3 rounded-xl shadow-lg z-50 slide-up ${
+            toast.className = `px-6 py-4 rounded-2xl shadow-2xl slide-up ${
                 type === 'success' ? 'bg-emerald-500 text-white' : 
                 type === 'error' ? 'bg-red-500 text-white' : 
                 'bg-blue-500 text-white'
             }`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} text-xl"></i>
+                    <span class="font-semibold">${message}</span>
+                </div>
+            `;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
-
-        // Auto-check for payment when returning from PayNecta
-        window.addEventListener('focus', () => {
-            if (paymentWindow && paymentWindow.closed) {
-                setTimeout(() => {
-                    if (confirm('Payment window closed. Would you like to check if your payment was successful?')) {
-                        checkPaymentStatus();
-                    }
-                }, 2000);
-            }
-        });
-
-        // Load recent transactions on page load
-        loadRecentTransactions();
     </script>
 </body>
-    </html>
+            </html>
