@@ -191,6 +191,7 @@
                             placeholder="712345678" 
                             required
                             pattern="[0-9]{9}"
+                            maxlength="9"
                             class="input-field w-full pl-20 pr-6 py-5 text-2xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none font-mono"
                         >
                     </div>
@@ -345,99 +346,186 @@
         let currentAmount = 0;
         let currentPhone = '';
 
-        // API Request Handler
+        // Debug logging
+        console.log('[INIT] Page loaded');
+        console.log('[INIT] Token exists:', !!token);
+        console.log('[INIT] API URLs:', API_URLS);
+
+        // API Request Handler with detailed logging
         async function apiRequest(path, options = {}) {
-            for (let url of API_URLS) {
+            console.log(`\n[API REQUEST] ====== START ======`);
+            console.log(`[API REQUEST] Path: ${path}`);
+            console.log(`[API REQUEST] Method: ${options.method || 'GET'}`);
+            console.log(`[API REQUEST] Options:`, options);
+            
+            for (let i = 0; i < API_URLS.length; i++) {
+                const url = API_URLS[i] + path;
+                console.log(`\n[API REQUEST] Attempt ${i + 1}/${API_URLS.length}`);
+                console.log(`[API REQUEST] URL: ${url}`);
+                
                 try {
-                    const response = await fetch(url + path, {
+                    const fetchOptions = {
                         ...options,
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`,
                             ...options.headers
                         }
+                    };
+                    
+                    console.log(`[API REQUEST] Headers:`, fetchOptions.headers);
+                    if (options.body) {
+                        console.log(`[API REQUEST] Body:`, options.body);
+                    }
+                    
+                    const response = await fetch(url, fetchOptions);
+                    console.log(`[API REQUEST] Response status: ${response.status}`);
+                    console.log(`[API REQUEST] Response ok: ${response.ok}`);
+                    
+                    const responseText = await response.text();
+                    console.log(`[API REQUEST] Response text:`, responseText);
+                    
+                    let responseData;
+                    try {
+                        responseData = JSON.parse(responseText);
+                    } catch (e) {
+                        responseData = { text: responseText };
+                    }
+                    
+                    console.log(`[API REQUEST] Response data:`, responseData);
+                    
+                    if (response.ok || response.status < 500) {
+                        console.log(`[API REQUEST] ✅ Success with ${url}`);
+                        console.log(`[API REQUEST] ====== END ======\n`);
+                        return {
+                            ok: response.ok,
+                            status: response.status,
+                            json: async () => responseData
+                        };
+                    }
+                    
+                    console.log(`[API REQUEST] ⚠️ Server error ${response.status}, trying next URL...`);
+                    
+                } catch (error) {
+                    console.error(`[API REQUEST] ❌ Error with ${url}:`, error);
+                    console.error(`[API REQUEST] Error details:`, {
+                        message: error.message,
+                        stack: error.stack
                     });
-                    if (response.ok || response.status < 500) return response;
-                } catch (e) {
-                    console.warn(`Failed ${url}, trying next...`);
+                    
+                    if (i === API_URLS.length - 1) {
+                        console.error(`[API REQUEST] ❌ All API URLs failed`);
+                        throw new Error(`All servers unavailable. Last error: ${error.message}`);
+                    }
                 }
             }
+            
+            console.log(`[API REQUEST] ====== END ======\n`);
             throw new Error('All servers unavailable');
         }
 
         // Initialize Page
         window.addEventListener('load', async () => {
+            console.log('[INIT] Window loaded');
+            
             if (!token) {
+                console.warn('[INIT] No token found, redirecting to login');
                 window.location.href = 'index.html';
                 return;
             }
+            
+            console.log('[INIT] Token found, loading user data...');
             await loadBalance();
             await loadRecentTransactions();
         });
 
         // Load Balance
         async function loadBalance() {
+            console.log('[BALANCE] Loading balance...');
             try {
                 const response = await apiRequest('/me');
+                console.log('[BALANCE] Response received:', response);
+                
                 if (response.ok) {
                     const user = await response.json();
+                    console.log('[BALANCE] User data:', user);
+                    
                     const balance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', {minimumFractionDigits: 2})}`;
                     document.getElementById('currentBalance').textContent = balance;
                     document.getElementById('navBalance').textContent = balance;
+                    console.log('[BALANCE] ✅ Balance updated:', balance);
+                } else {
+                    console.error('[BALANCE] ❌ Failed to load balance, status:', response.status);
                 }
             } catch (error) {
-                console.error('Failed to load balance:', error);
+                console.error('[BALANCE] ❌ Error loading balance:', error);
             }
         }
 
         // Set Quick Amount
         function setAmount(amount) {
             document.getElementById('amountInput').value = amount;
+            console.log('[QUICK AMOUNT] Set to:', amount);
         }
 
         // Initiate Payment
         async function initiatePayment(event) {
             event.preventDefault();
+            console.log('\n[PAYMENT] ====== INITIATE PAYMENT ======');
             
             const amount = parseFloat(document.getElementById('amountInput').value);
             const phone = document.getElementById('phoneInput').value.trim();
             
+            console.log('[PAYMENT] Raw input - Amount:', amount, 'Phone:', phone);
+            
             // Validation
-            if (amount < 2) {
+            if (!amount || amount < 2) {
+                console.error('[PAYMENT] ❌ Invalid amount:', amount);
                 showToast('Minimum amount is KES 2', 'error');
                 return;
             }
 
-            if (!phone || phone.length !== 9) {
+            if (!phone || phone.length !== 9 || !/^[0-9]{9}$/.test(phone)) {
+                console.error('[PAYMENT] ❌ Invalid phone:', phone);
                 showToast('Please enter a valid 9-digit phone number', 'error');
                 return;
             }
 
             currentAmount = amount;
             currentPhone = phone;
+            
+            const fullPhone = `254${phone}`;
+            console.log('[PAYMENT] Full phone number:', fullPhone);
 
             // Show loading
             showLoading(true);
             document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<span class="spinner"></span><span>Processing...</span>';
 
             try {
+                console.log('[PAYMENT] Sending request to backend...');
+                console.log('[PAYMENT] Payload:', { amount, phone: fullPhone });
+                
                 // Send payment request to backend
                 const response = await apiRequest('/payment/initiate', {
                     method: 'POST',
                     body: JSON.stringify({
                         amount: amount,
-                        phone: `254${phone}` // Backend expects full number
+                        phone: fullPhone
                     })
                 });
 
+                console.log('[PAYMENT] Response received:', response);
                 const data = await response.json();
+                console.log('[PAYMENT] Response data:', data);
 
-                if (response.ok) {
+                if (response.ok && data.success) {
+                    console.log('[PAYMENT] ✅ Payment initiated successfully');
                     showLoading(false);
                     
                     // Show payment status card
                     document.getElementById('statusAmount').textContent = `KES ${amount.toLocaleString()}`;
-                    document.getElementById('statusPhone').textContent = `+254${phone}`;
+                    document.getElementById('statusPhone').textContent = `+${fullPhone}`;
                     document.getElementById('paymentStatusCard').classList.remove('hidden');
                     
                     // Hide form
@@ -448,34 +536,55 @@
                     // Start polling for payment status
                     startPaymentPolling();
                 } else {
+                    console.error('[PAYMENT] ❌ Payment failed:', data);
                     showLoading(false);
                     document.getElementById('submitBtn').disabled = false;
-                    showToast(data.error || data.message || 'Failed to initiate payment', 'error');
+                    document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i><span>Send Payment Request</span>';
+                    
+                    const errorMsg = data.error || data.message || 'Failed to initiate payment';
+                    console.error('[PAYMENT] Error message:', errorMsg);
+                    showToast(errorMsg, 'error');
                 }
 
             } catch (error) {
-                console.error('Payment initiation failed:', error);
+                console.error('[PAYMENT] ❌ Exception:', error);
+                console.error('[PAYMENT] Error details:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+                
                 showLoading(false);
                 document.getElementById('submitBtn').disabled = false;
-                showToast('Network error. Please try again.', 'error');
+                document.getElementById('submitBtn').innerHTML = '<i class="fas fa-paper-plane"></i><span>Send Payment Request</span>';
+                
+                showToast('Network error. Please check your connection and try again.', 'error');
             }
+            
+            console.log('[PAYMENT] ====== END ======\n');
         }
 
         // Check Payment Status
         async function checkPaymentStatus() {
+            console.log('[CHECK] Checking payment status...');
             showLoading(true);
 
             try {
                 const response = await apiRequest('/deposits?limit=1');
                 if (response.ok) {
                     const deposits = await response.json();
+                    console.log('[CHECK] Deposits:', deposits);
+                    
                     if (deposits.length > 0) {
                         const latest = deposits[0];
                         const depositTime = new Date(latest.createdAt);
                         const now = new Date();
                         const diffMinutes = (now - depositTime) / 60000;
                         
+                        console.log('[CHECK] Latest deposit:', latest);
+                        console.log('[CHECK] Time difference:', diffMinutes, 'minutes');
+                        
                         if (diffMinutes < 5 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                            console.log('[CHECK] ✅ Payment detected!');
                             showLoading(false);
                             showSuccess(latest);
                             return;
@@ -487,7 +596,7 @@
                 showToast('Payment not detected yet. Please wait a moment and try again.', 'info');
 
             } catch (error) {
-                console.error('Payment check failed:', error);
+                console.error('[CHECK] ❌ Error:', error);
                 showLoading(false);
                 showToast('Failed to check payment status', 'error');
             }
@@ -496,13 +605,16 @@
         // Start Payment Polling
         let pollingInterval = null;
         function startPaymentPolling() {
+            console.log('[POLLING] Starting payment polling...');
             let attempts = 0;
             const maxAttempts = 60; // Poll for 2 minutes (every 2 seconds)
             
             pollingInterval = setInterval(async () => {
                 attempts++;
+                console.log(`[POLLING] Attempt ${attempts}/${maxAttempts}`);
                 
                 if (attempts >= maxAttempts) {
+                    console.warn('[POLLING] ⚠️ Timeout reached');
                     clearInterval(pollingInterval);
                     document.getElementById('statusText').textContent = 'Payment timeout - please check manually';
                     return;
@@ -519,21 +631,23 @@
                             const diffMinutes = (now - depositTime) / 60000;
                             
                             if (diffMinutes < 2 && Math.abs(latest.amount - currentAmount) < 0.01) {
+                                console.log('[POLLING] ✅ Payment detected!');
                                 clearInterval(pollingInterval);
                                 showSuccess(latest);
                             }
                         }
                     }
                 } catch (error) {
-                    console.error('Polling error:', error);
+                    console.error('[POLLING] ❌ Error:', error);
                 }
             }, 2000);
         }
 
         // Show Success
         function showSuccess(deposit) {
+            console.log('[SUCCESS] Showing success modal:', deposit);
             document.getElementById('successAmount').textContent = `KES ${deposit.amount.toLocaleString()}`;
-            document.getElementById('successRef').textContent = deposit.reference || 'N/A';
+            document.getElementById('successRef').textContent = deposit.transactionCode || deposit.reference || 'N/A';
             document.getElementById('successTime').textContent = new Date(deposit.createdAt).toLocaleString();
             document.getElementById('successModal').classList.remove('hidden');
             document.getElementById('successModal').classList.add('flex');
@@ -551,6 +665,7 @@
 
         // Load Recent Transactions
         async function loadRecentTransactions() {
+            console.log('[TRANSACTIONS] Loading recent transactions...');
             try {
                 const response = await apiRequest('/deposits?limit=5');
                 if (response.ok) {
@@ -585,7 +700,7 @@
                     `).join('');
                 }
             } catch (error) {
-                console.error('Failed to load transactions:', error);
+                console.error('[TRANSACTIONS] ❌ Error:', error);
             }
         }
 
@@ -603,6 +718,7 @@
 
         // Show Toast
         function showToast(message, type = 'info') {
+            console.log(`[TOAST] ${type.toUpperCase()}: ${message}`);
             const toast = document.createElement('div');
             toast.className = `px-6 py-4 rounded-2xl shadow-2xl slide-up ${
                 type === 'success' ? 'bg-emerald-500 text-white' : 
