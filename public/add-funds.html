@@ -6,7 +6,6 @@
     <title>Add Money | Unasemeje SMM Gains</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://paynecta.co.ke/widget.js" data-slug="unasemeje-"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
@@ -36,9 +35,7 @@
         .status-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* ========================================= */
-        /* STICKY TOP HEADER (INSTRUCTIONS & TICKER) */
-        /* ========================================= */
+        /* STICKY TOP HEADER */
         .sticky-header-wrapper {
             position: sticky;
             top: 0;
@@ -96,23 +93,6 @@
         @keyframes marquee {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100%, 0); }
-        }
-
-        /* Payment Frame */
-        .payment-frame-container {
-            width: 100%; 
-            height: 80vh; 
-            max-height: 650px; 
-            border-radius: 24px;
-            overflow: hidden; 
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 2px solid var(--border-color); 
-            background: var(--card-bg);
-        }
-
-        #paymentPortalFrame {
-            height: calc(100% + 100px) !important;
-            margin-bottom: -100px;
         }
 
         .input-field {
@@ -232,18 +212,89 @@
         }
         .modal-body .step-content { flex: 1; }
 
-        /* MOBILE RESPONSIVE FIXES */
+        /* PAYMENT MODAL - Hidden PayNecta Integration */
+        .payment-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .payment-modal-overlay.active { display: flex; }
+        
+        .payment-modal-container {
+            width: 100%;
+            max-width: 500px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .payment-modal-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .payment-frame {
+            width: 100%;
+            height: calc(100% - 60px);
+            border: none;
+        }
+
+        .close-payment-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Custom Payment Button */
+        .custom-pay-btn {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .custom-pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 58, 95, 0.4);
+        }
+        .custom-pay-btn:active {
+            transform: translateY(0);
+        }
+
         @media (max-width: 768px) {
             .warning-banner { font-size: 12px; padding: 10px 15px; }
             .top-ticker { height: 40px; }
-            .payment-frame-container { height: 70vh; max-height: 500px; }
         }
     </style>
 </head>
 
 <body class="min-h-screen">
 
-    <!-- STICKY HEADER: INSTRUCTIONS & MOVING TICKER -->
+    <!-- STICKY HEADER -->
     <div class="sticky-header-wrapper">
         <div class="warning-banner">
             <i class="fas fa-exclamation-triangle"></i>
@@ -251,13 +302,11 @@
             <a onclick="showFlagInstructions()">Click Here to See How</a>
         </div>
         <div class="top-ticker">
-            <div class="ticker-content" id="tickerContent">
-                <!-- Items injected by JS -->
-            </div>
+            <div class="ticker-content" id="tickerContent"></div>
         </div>
     </div>
 
-    <!-- MODAL FOR FLAG INSTRUCTIONS -->
+    <!-- FLAG INSTRUCTIONS MODAL -->
     <div class="modal-overlay" id="flagModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -285,27 +334,39 @@
                     <span class="step-number">3</span>
                     <div class="step-content">
                         <strong>Disable Flag for Review</strong><br>
-                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF (toggle should be gray, not blue)
+                        Under "Followers" section, find <strong>"Flag for review"</strong> and turn it OFF
                     </div>
                 </div>
                 <div class="step">
                     <span class="step-number">4</span>
                     <div class="step-content">
                         <strong>Confirm</strong><br>
-                        Once disabled, you can safely order Instagram followers and they will be delivered automatically.
+                        Once disabled, you can safely order Instagram followers.
                     </div>
                 </div>
-                <h4 style="margin-top: 25px; color: #dc2626;"><i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>Why This is Important:</h4>
-                <p>When "Flag for Review" is ON, Instagram requires your approval for new followers. This means our automated delivery system won't work, and your followers won't be added to your account.</p>
-                <p style="background: #fef3c7; padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b; margin-top: 20px;">
-                    <strong>💡 Pro Tip:</strong> After disabling this setting, wait 5-10 minutes before placing your order to ensure the change takes effect.
-                </p>
                 <p style="text-align: center; margin-top: 25px;">
                     <a href="https://wa.me/254715509440" style="color: #25d366; font-weight: 700; text-decoration: none;">
                         <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>Need Help? Contact Support
                     </a>
                 </p>
             </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL (Hidden Integration) -->
+    <div class="payment-modal-overlay" id="paymentModal">
+        <div class="payment-modal-container">
+            <div class="payment-modal-header">
+                <h3 style="margin:0; font-size: 18px;"><i class="fas fa-wallet" style="margin-right: 8px;"></i>Secure Payment</h3>
+                <button class="close-payment-btn" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <iframe 
+                id="paymentFrame"
+                class="payment-frame"
+                src=""
+                allow="payment"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups">
+            </iframe>
         </div>
     </div>
 
@@ -330,7 +391,7 @@
                         <span class="text-amber-500">⚠️</span> Important: Read Before Adding Money
                     </h3>
                     <p class="text-sm text-gray-600 leading-relaxed break-words">
-                        Before you add money, please make sure your payment details are correct and saved. Check that your <strong class="text-emerald-700">Registered Phone Numbers</strong> listed below are right. If you send money to a phone number that is not registered, we cannot track it or add it to your wallet.
+                        Before you add money, please make sure your payment details are correct and saved. Check that your <strong class="text-emerald-700">Registered Phone Numbers</strong> listed below are right.
                     </p>
                 </div>
             </div>
@@ -518,21 +579,33 @@
             </div>
         </div>
 
-        <!-- Payment Portal -->
+        <!-- Payment Portal - Redesigned -->
         <div id="portalSection" class="bg-white rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-8">
             <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Payment Portal</h2>
-                <p class="text-xs text-gray-500 mt-1">This portal only accepts payments from the phone numbers registered above.</p>
+                <h2 class="text-2xl font-bold text-gray-800">Quick Deposit</h2>
+                <p class="text-xs text-gray-500 mt-1">Add money to your wallet securely using M-Pesa or other payment methods.</p>
                 <div class="w-16 h-1 bg-custom-green mt-3 rounded-full"></div>
             </div>
 
-            <div class="payment-frame-container" id="portalFrameWrapper">
-                <iframe 
-                    src="https://paynecta.co.ke/pay/unasemeje-" 
-                    class="w-full h-full border-0"
-                    id="paymentPortalFrame"
-                    allow="payment">
-                </iframe>
+            <div class="text-center py-8">
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 mb-6">
+                    <div class="w-20 h-20 bg-custom-green rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                        <i class="fas fa-mobile-alt text-4xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Instant Wallet Top-up</h3>
+                    <p class="text-sm text-gray-600 mb-6">Use your registered phone numbers to add money instantly</p>
+                    
+                    <button onclick="openPaymentModal()" class="custom-pay-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        Add Money Now
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-center gap-4 text-xs text-gray-500">
+                    <span class="flex items-center gap-1"><i class="fas fa-shield-alt text-emerald-500"></i> Secure</span>
+                    <span class="flex items-center gap-1"><i class="fas fa-bolt text-amber-500"></i> Instant</span>
+                    <span class="flex items-center gap-1"><i class="fas fa-check-circle text-blue-500"></i> Verified</span>
+                </div>
             </div>
         </div>
     </div>
@@ -543,7 +616,6 @@
         const statusCard = document.getElementById('statusCard');
         const sensorMessage = document.getElementById('sensorMessage');
         const approveBtn = document.getElementById('approveBtn');
-        const portalFrameWrapper = document.getElementById('portalFrameWrapper');
         const profileCard = document.getElementById('profileCard');
         const cardDispName = document.getElementById('cardDispName');
         const cardDispFullName = document.getElementById('cardDispFullName');
@@ -551,6 +623,8 @@
         const cardDispPhones = document.getElementById('cardDispPhones');
         const portalSection = document.getElementById('portalSection');
         const liveBalance = document.getElementById('liveBalance');
+        const paymentModal = document.getElementById('paymentModal');
+        const paymentFrame = document.getElementById('paymentFrame');
 
         // Layout A UI Hooks
         const infoEmailA = document.getElementById('infoEmailA');
@@ -581,9 +655,7 @@
         let detectedReference = "";
         let serverUserProfile = null; 
 
-        // ==========================================
-        // DUAL-API FALLBACK CONFIGURATION
-        // ==========================================
+        // API Configuration
         const API_URLS = [
             'https://unasemeje-backend.vercel.app/api',
             'https://unasemeje-backend-3.onrender.com/api'
@@ -615,7 +687,7 @@
             }
         }
 
-        // --- MODAL FUNCTIONS ---
+        // MODAL FUNCTIONS
         function showFlagInstructions() {
             document.getElementById('flagModal').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -630,7 +702,24 @@
             if (e.target === this) closeFlagInstructions();
         });
 
-        // --- DYNAMIC TOP TICKER LOADER ---
+        // PAYMENT MODAL FUNCTIONS
+        function openPaymentModal() {
+            paymentFrame.src = "https://paynecta.co.ke/pay/unasemeje-";
+            paymentModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePaymentModal() {
+            paymentModal.classList.remove('active');
+            paymentFrame.src = "";
+            document.body.style.overflow = 'auto';
+        }
+
+        paymentModal.addEventListener('click', function(e) {
+            if (e.target === this) closePaymentModal();
+        });
+
+        // TOP TICKER LOADER
         async function loadTopTicker() {
             try {
                 let res = await fetch(`${API_URLS[0]}/ticker`);
@@ -660,7 +749,7 @@
             }
         }
 
-        // 1. MANDATORY AUTHENTICATION & SECURITY INITIALIZATION LOOPS
+        // AUTHENTICATION & INITIALIZATION
         window.onload = async () => {
             if (!token) {
                 console.warn("Not logged in. Redirecting to login...");
@@ -743,7 +832,6 @@
             }
         }
 
-        // Active Payment Badge Processor Layout
         function renderProfileInterface() {
             if (serverUserProfile) {
                 profileCard.classList.remove('hidden');
@@ -772,7 +860,6 @@
             }
         }
 
-        // PROFILE MODIFICATION SUBMISSION TRANSMITTER
         async function updateProfileData(e) {
             e.preventDefault();
             const feedback = document.getElementById('profileFeedback');
@@ -821,7 +908,6 @@
             }
         }
 
-        // PASSWORD MODIFICATION LOGIC TRANSMITTER
         async function changePassword(e) {
             e.preventDefault();
             const currentPassword = document.getElementById('currentPassword').value;
@@ -864,7 +950,7 @@
             }
         }
 
-        // 3. LISTEN FOR COMPLETED IFRAME POSTMESSAGE PAYMENTS
+        // LISTEN FOR PAYMENT COMPLETION
         window.addEventListener("message", (event) => {
             if (!event.origin.includes("paynecta.co.ke")) return;
 
@@ -874,11 +960,11 @@
             if (isFinished) {
                 detectedAmount = data.amount || 0;
                 detectedReference = data.reference || data.transaction_id || "TXN-" + Date.now();
+                closePaymentModal();
                 showSensorPopup(detectedAmount, detectedReference);
             }
         });
 
-        // 4. MANUAL REAL-TIME BALANCE APPROVAL INTERCEPTOR
         function showSensorPopup(amount, reference) {
             statusCard.classList.remove('hidden');
             document.getElementById('matchedIdentity').innerText = serverUserProfile ? serverUserProfile.username : "User Account";
@@ -927,4 +1013,4 @@
     </script>
 
 </body>
-        </html>
+                    </html>
