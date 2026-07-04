@@ -1337,11 +1337,19 @@
                     mobileSidebar.classList.add('nav-hidden');
                     chatToggleBtn.classList.add('nav-hidden');
                     chatWindow.classList.add('nav-hidden');
+                    
+                    // 🎵 NEW: Hide music toggle too
+                    const musicPlayer = document.getElementById('musicPlayer');
+                    if(musicPlayer) musicPlayer.classList.add('nav-hidden');
                 } else {
                     // If scrolling up -> Show Nav
                     mobileSidebar.classList.remove('nav-hidden');
                     chatToggleBtn.classList.remove('nav-hidden');
                     chatWindow.classList.remove('nav-hidden');
+                    
+                    // 🎵 NEW: Show music toggle too
+                    const musicPlayer = document.getElementById('musicPlayer');
+                    if(musicPlayer) musicPlayer.classList.remove('nav-hidden');
                 }
                 lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
             }
@@ -1479,6 +1487,226 @@
                 toggleChat();
             }
         });
+    });
+</script>
+
+<!-- ========================================== -->
+<!-- 🎵 AUDIO ELEMENTS & MUSIC TOGGLE           -->
+<!-- ========================================== -->
+<audio id="bgMusic" loop preload="auto"></audio>
+<audio id="welcomeVoice" preload="auto"></audio>
+<audio id="successSound" preload="auto"></audio>
+<audio id="notificationSound" preload="auto"></audio>
+<audio id="loginSound" preload="auto"></audio>
+
+<!-- Floating Music Toggle Button -->
+<div id="musicPlayer" style="position: fixed; bottom: 140px; left: 20px; z-index: 999;">
+    <button 
+        id="musicToggle" 
+        onclick="toggleMusic()"
+        title="Toggle Background Music"
+        style="background: linear-gradient(135deg, #1e3a5f, #2d5a87); width: 56px; height: 56px; border-radius: 50%; border: none; color: white; cursor: pointer; box-shadow: 0 10px 25px rgba(30, 58, 95, 0.3); display: flex; align-items: center; justify-content: center; transition: transform 0.3s, bottom 0.3s ease-in-out;"
+    >
+        <i id="musicIcon" class="fas fa-volume-mute" style="font-size: 20px;"></i>
+    </button>
+</div>
+
+<style>
+    /* Music Toggle Responsive Fixes */
+    @media (max-width: 768px) {
+        #musicPlayer {
+            bottom: 140px !important;
+            left: 20px !important;
+            transition: bottom 0.3s ease-in-out !important;
+        }
+        #musicPlayer.nav-hidden {
+            bottom: 20px !important;
+        }
+    }
+    @media (max-width: 480px) {
+        #musicPlayer {
+            bottom: 135px !important;
+            left: 15px !important;
+        }
+        #musicPlayer.nav-hidden {
+            bottom: 15px !important;
+        }
+        #musicToggle {
+            width: 50px !important;
+            height: 50px !important;
+        }
+        #musicToggle i {
+            font-size: 18px !important;
+        }
+    }
+    @media (max-width: 360px) {
+        #musicPlayer {
+            bottom: 130px !important;
+            left: 10px !important;
+        }
+        #musicPlayer.nav-hidden {
+            bottom: 10px !important;
+        }
+        #musicToggle {
+            width: 45px !important;
+            height: 45px !important;
+        }
+        #musicToggle i {
+            font-size: 16px !important;
+        }
+    }
+</style>
+
+<script>
+    // ==========================================
+    // 🎵 ADMIN-CONTROLLED AUDIO SYSTEM
+    // ==========================================
+    let audioSettings = null;
+    let isPlaying = false;
+
+    // Load audio settings from backend
+    async function loadAudioSettings() {
+        try {
+            const response = await fetch(`${API}/audio/settings`);
+            if (response.ok) {
+                const data = await response.json();
+                audioSettings = data.data;
+                
+                const bgMusic = document.getElementById('bgMusic');
+                const successSound = document.getElementById('successSound');
+                const notificationSound = document.getElementById('notificationSound');
+                const loginSound = document.getElementById('loginSound');
+                const welcomeVoice = document.getElementById('welcomeVoice');
+                
+                if (audioSettings.bgMusic.enabled) {
+                    bgMusic.src = audioSettings.bgMusic.url;
+                    bgMusic.volume = audioSettings.bgMusic.volume;
+                }
+                if (audioSettings.welcomeVoice.enabled) {
+                    welcomeVoice.src = audioSettings.welcomeVoice.url;
+                }
+                if (audioSettings.successSound.enabled) {
+                    successSound.src = audioSettings.successSound.url;
+                }
+                if (audioSettings.notificationSound.enabled) {
+                    notificationSound.src = audioSettings.notificationSound.url;
+                }
+                if (audioSettings.loginSound.enabled) {
+                    loginSound.src = audioSettings.loginSound.url;
+                }
+                
+                console.log('🎵 Audio settings loaded from admin');
+            }
+        } catch (error) {
+            console.error('Failed to load audio settings:', error);
+        }
+    }
+
+    function playMusic() {
+        const bgMusic = document.getElementById('bgMusic');
+        if (audioSettings?.bgMusic.enabled && bgMusic.src) {
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                document.getElementById('musicIcon').className = 'fas fa-music';
+                console.log('🎵 Background music started');
+            }).catch(err => {
+                console.log('⚠️ Autoplay blocked:', err.message);
+            });
+        }
+    }
+
+    function pauseMusic() {
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.pause();
+        isPlaying = false;
+        document.getElementById('musicIcon').className = 'fas fa-volume-mute';
+    }
+
+    function toggleMusic() {
+        if (isPlaying) {
+            pauseMusic();
+            localStorage.setItem('userMutedMusic', 'true');
+        } else {
+            playMusic();
+            localStorage.setItem('userMutedMusic', 'false');
+        }
+    }
+
+    function playSuccessSound() {
+        if (audioSettings?.successSound.enabled) {
+            const sound = document.getElementById('successSound');
+            if (sound.src) {
+                sound.currentTime = 0;
+                sound.volume = 0.7;
+                sound.play().catch(err => console.log('Sound blocked:', err));
+            }
+        }
+    }
+
+    function playNotificationSound() {
+        if (audioSettings?.notificationSound.enabled) {
+            const sound = document.getElementById('notificationSound');
+            if (sound.src) {
+                sound.currentTime = 0;
+                sound.volume = 0.5;
+                sound.play().catch(err => console.log('Sound blocked:', err));
+            }
+        }
+    }
+
+    function playLoginSound() {
+        if (audioSettings?.loginSound.enabled) {
+            const sound = document.getElementById('loginSound');
+            if (sound.src) {
+                sound.currentTime = 0;
+                sound.volume = 0.6;
+                sound.play().catch(err => console.log('Sound blocked:', err));
+            }
+        }
+    }
+
+    function playLoginWelcomeSequence() {
+        const welcome = document.getElementById('welcomeVoice');
+        if (audioSettings?.welcomeVoice.enabled && welcome.src) {
+            welcome.currentTime = 0;
+            welcome.play().then(() => {
+                console.log('🎙️ Welcome broadcast started!');
+            }).catch(err => console.log('Welcome blocked:', err));
+
+            welcome.onended = () => {
+                console.log('🎙️ Welcome finished. Starting background music...');
+                const userMuted = localStorage.getItem('userMutedMusic');
+                if (userMuted !== 'true') {
+                    playMusic();
+                }
+            };
+        } else {
+            const userMuted = localStorage.getItem('userMutedMusic');
+            if (userMuted !== 'true') {
+                playMusic();
+            }
+        }
+    }
+
+    // Initialize audio on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAudioSettings();
+        
+        // Start music on first user interaction
+        const startOnInteraction = () => {
+            const userMuted = localStorage.getItem('userMutedMusic');
+            if (userMuted !== 'true') {
+                playMusic();
+            }
+            
+            document.removeEventListener('click', startOnInteraction);
+            document.removeEventListener('scroll', startOnInteraction);
+            document.removeEventListener('touchstart', startOnInteraction);
+        };
+        
+        document.addEventListener('click', startOnInteraction, { once: true });
+        document.addEventListener('scroll', startOnInteraction, { once: true });
+        document.addEventListener('touchstart', startOnInteraction, { once: true });
     });
 </script>
 
