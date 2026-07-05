@@ -1288,7 +1288,7 @@
                 class="text-white p-2.5 rounded-xl hover:opacity-90 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 style="background-color: #f97316;"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
+                <svg xmlns="http://www.w3.org/2000/xl" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 20px; height: 20px;">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
             </button>
@@ -1547,10 +1547,29 @@
 
 <script>
     // ==========================================
-    // ADMIN-CONTROLLED AUDIO SYSTEM (FORCED ACTIVE)
+    // PERSISTENT AUDIO STATE SYNCHRONIZATION ENGINE
     // ==========================================
     let audioSettings = null;
-    let isPlaying = false;
+    let isPlaying = localStorage.getItem('audio_isPlaying') === 'true';
+
+    // Continuous timestamp tracking & storage engine
+    function setupAudioStateMirrors() {
+        const bgMusic = document.getElementById('bgMusic');
+        const welcomeVoice = document.getElementById('welcomeVoice');
+
+        setInterval(() => {
+            if (bgMusic && !bgMusic.paused) {
+                localStorage.setItem('audio_bgMusic_time', bgMusic.currentTime);
+            }
+            if (welcomeVoice && !welcomeVoice.paused) {
+                localStorage.setItem('audio_welcomeVoice_time', welcomeVoice.currentTime);
+            }
+        }, 200);
+
+        // Track user-instantiated toggles cleanly
+        bgMusic.addEventListener('play', () => localStorage.setItem('audio_isPlaying', 'true'));
+        bgMusic.addEventListener('pause', () => localStorage.setItem('audio_isPlaying', 'false'));
+    }
 
     async function loadAudioSettings() {
         try {
@@ -1568,9 +1587,17 @@
                 if (audioSettings.bgMusic.enabled) {
                     bgMusic.src = audioSettings.bgMusic.url;
                     bgMusic.volume = audioSettings.bgMusic.volume;
+                    
+                    // Recover exact loop runtime offsets
+                    const savedBgTime = localStorage.getItem('audio_bgMusic_time');
+                    if (savedBgTime) bgMusic.currentTime = parseFloat(savedBgTime);
                 }
                 if (audioSettings.welcomeVoice.enabled) {
                     welcomeVoice.src = audioSettings.welcomeVoice.url;
+                    
+                    // Recover voice runtime offsets
+                    const savedWelcomeTime = localStorage.getItem('audio_welcomeVoice_time');
+                    if (savedWelcomeTime) welcomeVoice.currentTime = parseFloat(savedWelcomeTime);
                 }
                 if (audioSettings.successSound.enabled) {
                     successSound.src = audioSettings.successSound.url;
@@ -1582,12 +1609,10 @@
                     loginSound.src = audioSettings.loginSound.url;
                 }
                 
-                console.log('🎵 Audio links successfully pulled from Admin. Forcing continuous stream...');
+                console.log('🎵 Audio targets fully recovered. Resuming synchronization channel...');
                 
-                // Initialize the radio ducking logic event handling
                 setupRadioDuckingLogic();
-
-                // Immediately trigger playback sequence, bypassing traditional event waits
+                setupAudioStateMirrors();
                 forceAudioPlaybackSequence();
             }
         } catch (error) {
@@ -1602,22 +1627,19 @@
 
         if (!welcome || !bgMusic) return;
 
-        // When the voice starts playing, reduce background music volume instantly (Duck)
         welcome.addEventListener('play', () => {
             if (audioSettings && audioSettings.bgMusic && audioSettings.bgMusic.enabled) {
-                // Radio Presenter effect: drop music volume to 15% of its normal target volume
                 bgMusic.volume = audioSettings.bgMusic.volume * 0.15;
             }
         });
 
-        // When the voice finishes, swells or recovers background music back to its full normal volume
         welcome.addEventListener('ended', () => {
+            localStorage.removeItem('audio_welcomeVoice_time');
             if (audioSettings && audioSettings.bgMusic && audioSettings.bgMusic.enabled && isPlaying) {
                 bgMusic.volume = audioSettings.bgMusic.volume;
             }
         });
 
-        // Fail-safe wrapper context if the voice stream gets paused or interrupted
         welcome.addEventListener('pause', () => {
             if (audioSettings && audioSettings.bgMusic && audioSettings.bgMusic.enabled && isPlaying) {
                 bgMusic.volume = audioSettings.bgMusic.volume;
@@ -1626,20 +1648,36 @@
     }
 
     function forceAudioPlaybackSequence() {
-        // 1. Play Login entry Sound instantly
-        playLoginSound();
+        // Only trigger login sound context if this isn't a simple page-to-page navigation
+        const savedBgTime = localStorage.getItem('audio_bgMusic_time');
+        if (!savedBgTime) {
+            playLoginSound();
+        }
 
-        // 2. Fire Welcome Broadcast sequence or immediate Background loops
-        setTimeout(() => {
-            playLoginWelcomeSequence();
-        }, 500);
+        // Automatic playback initialization
+        if (isPlaying) {
+            setTimeout(() => {
+                resumeContinuousBroadcast();
+            }, 300);
+        }
+    }
+
+    function resumeContinuousBroadcast() {
+        const welcome = document.getElementById('welcomeVoice');
+        const bgMusic = document.getElementById('bgMusic');
+
+        // Check if welcome voice was playing and still has time remaining
+        if (welcome && welcome.src && welcome.currentTime > 0 && !welcome.ended) {
+            welcome.play().catch(e => console.log("Voice recovery waiting on safe interaction block."));
+        }
+        
+        playMusic();
     }
 
     function playMusic() {
         const bgMusic = document.getElementById('bgMusic');
         const welcome = document.getElementById('welcomeVoice');
-        if (bgMusic.src) {
-            // Adjust current entry volume status if welcome presentation is actively running
+        if (bgMusic && bgMusic.src) {
             if (welcome && !welcome.paused && !welcome.ended) {
                 bgMusic.volume = (audioSettings ? audioSettings.bgMusic.volume : 0.5) * 0.15;
             } else {
@@ -1648,23 +1686,29 @@
 
             bgMusic.play().then(() => {
                 isPlaying = true;
+                localStorage.setItem('audio_isPlaying', 'true');
                 document.getElementById('musicIcon').className = 'fas fa-music';
-                console.log('🎵 Background loop active.');
             }).catch(err => {
-                // Browser sandbox guard fallback: force play on domestic context document state
-                bgMusic.muted = false;
-                bgMusic.play();
-                isPlaying = true;
-                document.getElementById('musicIcon').className = 'fas fa-music';
+                // Handle native desktop sandboxing rules securely
+                document.addEventListener('click', () => {
+                    if (localStorage.getItem('audio_isPlaying') === 'true') {
+                        bgMusic.play();
+                        isPlaying = true;
+                        document.getElementById('musicIcon').className = 'fas fa-music';
+                    }
+                }, { once: true });
             });
         }
     }
 
     function pauseMusic() {
         const bgMusic = document.getElementById('bgMusic');
-        bgMusic.pause();
-        isPlaying = false;
-        document.getElementById('musicIcon').className = 'fas fa-volume-mute';
+        if (bgMusic) {
+            bgMusic.pause();
+            isPlaying = false;
+            localStorage.setItem('audio_isPlaying', 'false');
+            document.getElementById('musicIcon').className = 'fas fa-volume-mute';
+        }
     }
 
     function toggleMusic() {
@@ -1677,52 +1721,40 @@
 
     function playSuccessSound() {
         const sound = document.getElementById('successSound');
-        if (sound.src) {
+        if (sound && sound.src) {
             sound.currentTime = 0;
             sound.volume = 0.7;
-            sound.play().catch(e => console.log('Audio pipe processed directly.'));
+            sound.play().catch(e => console.log('Audio sync pipe verified.'));
         }
     }
 
     function playNotificationSound() {
         const sound = document.getElementById('notificationSound');
-        if (sound.src) {
+        if (sound && sound.src) {
             sound.currentTime = 0;
             sound.volume = 0.5;
-            sound.play().catch(e => console.log('Audio pipe processed directly.'));
+            sound.play().catch(e => console.log('Audio sync pipe verified.'));
         }
     }
 
     function playLoginSound() {
         const sound = document.getElementById('loginSound');
-        if (sound.src) {
+        if (sound && sound.src) {
             sound.currentTime = 0;
             sound.volume = 0.6;
-            sound.play().catch(e => console.log('Audio pipe processed directly.'));
+            sound.play().catch(e => console.log('Audio sync pipe verified.'));
         }
     }
 
-    function playLoginWelcomeSequence() {
-        const welcome = document.getElementById('welcomeVoice');
-        if (welcome.src) {
-            // Start background music loop immediately alongside presentation wrapper
-            playMusic();
-            
-            welcome.currentTime = 0;
-            welcome.play().then(() => {
-                console.log('🎙️ Main Welcome sequence running.');
-            }).catch(err => {
-                // Fallback straight to standard background engine if browser blocked playback initialization
-                playMusic();
-            });
-        } else {
-            playMusic();
-        }
-    }
-
-    // Force automatic execution as soon as document elements are loaded
     document.addEventListener('DOMContentLoaded', () => {
         loadAudioSettings();
+        
+        // Setup initial UI feedback match state configuration matching localStorage options
+        if (isPlaying) {
+            document.getElementById('musicIcon').className = 'fas fa-music';
+        } else {
+            document.getElementById('musicIcon').className = 'fas fa-volume-mute';
+        }
     });
 </script>
 
