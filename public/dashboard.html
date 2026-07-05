@@ -426,7 +426,7 @@
                 transition: transform 0.3s ease-in-out !important; 
             }
 
-            /* NEW: Class to hide the bottom nav when scrolling down */
+            /* Class to hide the bottom nav when scrolling down */
             .sidebar.nav-hidden {
                 transform: translateY(100%) !important;
             }
@@ -957,7 +957,7 @@
             <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
             <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
             
-            <!-- NEW: AI Support & WhatsApp Help at bottom of mobile nav -->
+            <!-- AI Support & WhatsApp Help at bottom of mobile nav -->
             <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
             <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
         </div>
@@ -1137,7 +1137,6 @@
 
     setInterval(showLiveOrder, 15000);
     
-    // Execute functions on page load
     loadTopTicker(); 
     syncDashboard();
 </script>
@@ -1233,11 +1232,9 @@
 
 <!-- 2. FLOATING ACTION BUTTON (CHAT TOGGLE) -->
 <button id="chatToggleBtn" class="fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform focus:outline-none" aria-label="Open Support Chat" style="background-color: #f97316;">
-    <!-- Chat Icon -->
     <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
     </svg>
-    <!-- Close Icon (Hidden by default) -->
     <svg id="chatIconClose" xmlns="http://www.w3.org/2000/svg" class="hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
     </svg>
@@ -1302,7 +1299,6 @@
 <!-- 4. JAVASCRIPT LOGIC FOR WIDGET -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // DOM Elements
         const chatToggleBtn = document.getElementById('chatToggleBtn');
         const chatCloseBtn = document.getElementById('chatCloseBtn');
         const chatWindow = document.getElementById('chatWindow');
@@ -1312,42 +1308,34 @@
         const chatIconOpen = document.getElementById('chatIconOpen');
         const chatIconClose = document.getElementById('chatIconClose');
 
-        // Configuration: Your Backend URLs (Dual-API Fallback)
         const API_PRIMARY_BOT = 'https://unasemeje-backend.vercel.app/api/support-bot';
         const API_FALLBACK_BOT = 'https://unasemeje-backend-3.onrender.com/api/support-bot';
 
         let isChatOpen = false;
 
         // ==========================================
-        // NEW: AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
+        // AUTO-HIDE BOTTOM NAV ON SCROLL DOWN
         // ==========================================
         let lastScrollTop = 0;
         const mobileSidebar = document.querySelector('.sidebar');
 
         window.addEventListener('scroll', () => {
-            // Only apply this logic on mobile screens
             if (window.innerWidth <= 768) {
                 let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                
-                // Check if the chat window is currently open
                 const isChatCurrentlyOpen = chatWindow.style.display === 'flex' && !chatWindow.classList.contains('hidden');
                 
-                // If scrolling down (and past the first 100px) and chat is NOT open -> Hide Nav
                 if (scrollTop > lastScrollTop && scrollTop > 100 && !isChatCurrentlyOpen) {
                     mobileSidebar.classList.add('nav-hidden');
                     chatToggleBtn.classList.add('nav-hidden');
                     chatWindow.classList.add('nav-hidden');
                     
-                    // 🎵 NEW: Hide music toggle too
                     const musicPlayer = document.getElementById('musicPlayer');
                     if(musicPlayer) musicPlayer.classList.add('nav-hidden');
                 } else {
-                    // If scrolling up -> Show Nav
                     mobileSidebar.classList.remove('nav-hidden');
                     chatToggleBtn.classList.remove('nav-hidden');
                     chatWindow.classList.remove('nav-hidden');
                     
-                    // 🎵 NEW: Show music toggle too
                     const musicPlayer = document.getElementById('musicPlayer');
                     if(musicPlayer) musicPlayer.classList.remove('nav-hidden');
                 }
@@ -1559,18 +1547,17 @@
 
 <script>
     // ==========================================
-    // 🎵 ADMIN-CONTROLLED AUDIO SYSTEM
+    // ADMIN-CONTROLLED AUDIO SYSTEM
     // ==========================================
     let audioSettings = null;
     let isPlaying = false;
 
-    // Load audio settings from backend
     async function loadAudioSettings() {
         try {
             const response = await fetch(`${API}/audio/settings`);
             if (response.ok) {
-                const data = await response.json();
-                audioSettings = data.data;
+                const resData = await response.json();
+                audioSettings = resData.data;
                 
                 const bgMusic = document.getElementById('bgMusic');
                 const successSound = document.getElementById('successSound');
@@ -1688,11 +1675,9 @@
         }
     }
 
-    // Initialize audio on page load
     document.addEventListener('DOMContentLoaded', () => {
         loadAudioSettings();
         
-        // Start music on first user interaction
         const startOnInteraction = () => {
             const userMuted = localStorage.getItem('userMutedMusic');
             if (userMuted !== 'true') {
@@ -1711,4 +1696,4 @@
 </script>
 
 </body>
-    </html>
+</html>
