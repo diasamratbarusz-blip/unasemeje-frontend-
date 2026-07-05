@@ -1584,12 +1584,45 @@
                 
                 console.log('🎵 Audio links successfully pulled from Admin. Forcing continuous stream...');
                 
+                // Initialize the radio ducking logic event handling
+                setupRadioDuckingLogic();
+
                 // Immediately trigger playback sequence, bypassing traditional event waits
                 forceAudioPlaybackSequence();
             }
         } catch (error) {
             console.error('Failed to load audio settings:', error);
         }
+    }
+
+    // --- RADIO PRESENTATION STYLE AUDIO DUCKING ENGINE ---
+    function setupRadioDuckingLogic() {
+        const welcome = document.getElementById('welcomeVoice');
+        const bgMusic = document.getElementById('bgMusic');
+
+        if (!welcome || !bgMusic) return;
+
+        // When the voice starts playing, reduce background music volume instantly (Duck)
+        welcome.addEventListener('play', () => {
+            if (audioSettings && audioSettings.bgMusic && audioSettings.bgMusic.enabled) {
+                // Radio Presenter effect: drop music volume to 15% of its normal target volume
+                bgMusic.volume = audioSettings.bgMusic.volume * 0.15;
+            }
+        });
+
+        // When the voice finishes, swells or recovers background music back to its full normal volume
+        welcome.addEventListener('ended', () => {
+            if (audioSettings && audioSettings.bgMusic && audioSettings.bgMusic.enabled && isPlaying) {
+                bgMusic.volume = audioSettings.bgMusic.volume;
+            }
+        });
+
+        // Fail-safe wrapper context if the voice stream gets paused or interrupted
+        welcome.addEventListener('pause', () => {
+            if (audioSettings && audioSettings.bgMusic && audioSettings.bgMusic.enabled && isPlaying) {
+                bgMusic.volume = audioSettings.bgMusic.volume;
+            }
+        });
     }
 
     function forceAudioPlaybackSequence() {
@@ -1604,7 +1637,15 @@
 
     function playMusic() {
         const bgMusic = document.getElementById('bgMusic');
+        const welcome = document.getElementById('welcomeVoice');
         if (bgMusic.src) {
+            // Adjust current entry volume status if welcome presentation is actively running
+            if (welcome && !welcome.paused && !welcome.ended) {
+                bgMusic.volume = (audioSettings ? audioSettings.bgMusic.volume : 0.5) * 0.15;
+            } else {
+                bgMusic.volume = audioSettings ? audioSettings.bgMusic.volume : 0.5;
+            }
+
             bgMusic.play().then(() => {
                 isPlaying = true;
                 document.getElementById('musicIcon').className = 'fas fa-music';
@@ -1664,17 +1705,16 @@
     function playLoginWelcomeSequence() {
         const welcome = document.getElementById('welcomeVoice');
         if (welcome.src) {
+            // Start background music loop immediately alongside presentation wrapper
+            playMusic();
+            
             welcome.currentTime = 0;
             welcome.play().then(() => {
                 console.log('🎙️ Main Welcome sequence running.');
             }).catch(err => {
-                // Fallback straight to background engine if welcome layer encounters structure delay
+                // Fallback straight to standard background engine if browser blocked playback initialization
                 playMusic();
             });
-
-            welcome.onended = () => {
-                playMusic();
-            };
         } else {
             playMusic();
         }
