@@ -44,6 +44,46 @@
         }
 
         /* ========================================= */
+        /* AUDIO PLAYER HUD MINI BRANDING            */
+        /* ========================================= */
+        .audio-hud-control {
+            position: fixed;
+            bottom: 90px;
+            left: 24px;
+            z-index: 1002;
+            background: #ffffff;
+            border: 2px solid var(--border-light);
+            border-radius: 30px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(30, 58, 95, 0.08);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .audio-hud-control:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        .audio-hud-control i {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        @media (max-width: 768px) {
+            .audio-hud-control {
+                bottom: 80px;
+                left: 15px;
+                padding: 5px 10px;
+                font-size: 10px;
+            }
+        }
+
+        /* ========================================= */
         /* IMPORTANT WARNING BANNER STYLES           */
         /* ========================================= */
         .warning-banner {
@@ -1016,6 +1056,15 @@
 </head>
 <body>
 
+<!-- PERSISTENT BACKGROUND AUDIO ELEMENT -->
+<audio id="globalPlatformAudio" src="your-music-or-voice-file.mp3" loop pre-load="auto"></audio>
+
+<!-- AUDIO MINIFIED STATUS CONTROL HUD -->
+<div class="audio-hud-control" id="audioHudBtn">
+    <i class="fas fa-volume-up" id="audioHudIcon"></i>
+    <span id="audioHudStatus">Audio: Loading</span>
+</div>
+
 <!-- IMPORTANT WARNING BANNER -->
 <div class="warning-banner">
     <i class="fas fa-exclamation-triangle"></i>
@@ -1354,6 +1403,80 @@
         if (e.target === this) {
             closeFlagInstructions();
         }
+    });
+
+    // --- CONTINUOUS BACKGROUND VOICE & MUSIC CONTROLLER ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const audio = document.getElementById('globalPlatformAudio');
+        const hudBtn = document.getElementById('audioHudBtn');
+        const hudIcon = document.getElementById('audioHudIcon');
+        const hudStatus = document.getElementById('audioHudStatus');
+
+        // Check or initialize global tracking metrics
+        let targetState = localStorage.getItem('platformAudioPlaying');
+        let initialTime = localStorage.getItem('platformAudioTime');
+
+        if (targetState === null) {
+            targetState = 'playing'; // Default play preference
+            localStorage.setItem('platformAudioPlaying', 'playing');
+        }
+
+        if (initialTime) {
+            audio.currentTime = parseFloat(initialTime);
+        }
+
+        // Try playing smoothly
+        function playAudioTrack() {
+            if (targetState === 'playing') {
+                audio.play().then(() => {
+                    hudStatus.textContent = "Audio: Playing";
+                    hudIcon.className = "fas fa-volume-up";
+                }).catch((err) => {
+                    // Handled if browser stops auto play rules until user click
+                    hudStatus.textContent = "Click to Unmute";
+                    hudIcon.className = "fas fa-volume-mute";
+                });
+            } else {
+                audio.pause();
+                hudStatus.textContent = "Audio: Paused";
+                hudIcon.className = "fas fa-volume-mute";
+            }
+        }
+
+        // Periodically sync current sound position to storage seamlessly
+        audio.addEventListener('timeupdate', () => {
+            localStorage.setItem('platformAudioTime', audio.currentTime);
+        });
+
+        // Detect any human interaction to instantly sync stream position if browser blocked it
+        const engageEvents = ['click', 'touchstart', 'scroll', 'keydown'];
+        const triggerContext = () => {
+            if (localStorage.getItem('platformAudioPlaying') === 'playing' && audio.paused) {
+                playAudioTrack();
+            }
+            engageEvents.forEach(evt => document.removeEventListener(evt, triggerContext));
+        };
+        engageEvents.forEach(evt => document.addEventListener(evt, triggerContext));
+
+        // Let users toggle background audio manually via structural HUD element
+        hudBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+                localStorage.setItem('platformAudioPlaying', 'playing');
+                targetState = 'playing';
+                audio.play();
+                hudStatus.textContent = "Audio: Playing";
+                hudIcon.className = "fas fa-volume-up";
+            } else {
+                localStorage.setItem('platformAudioPlaying', 'paused');
+                targetState = 'paused';
+                audio.pause();
+                hudStatus.textContent = "Audio: Paused";
+                hudIcon.className = "fas fa-volume-mute";
+            }
+        });
+
+        playAudioTrack();
     });
 
     // --- CONTINUOUS MOVING TICKER LOADER ---
@@ -1802,4 +1925,4 @@
 </script>
 
 </body>
-    </html>
+</html>
