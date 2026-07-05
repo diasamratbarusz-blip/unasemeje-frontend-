@@ -997,6 +997,54 @@
         window.location.href = "index.html";
     }
 
+    // --- SEAMLESS CONTINUOUS BACKGROUND MUSIC MANAGER ---
+    const audioTrackUrl = "audio/bg-music.mp3"; // Weka link ya audio/track yako hapa
+    let bgAudio = new Audio(audioTrackUrl);
+    bgAudio.loop = true;
+
+    function initContinuousMusic() {
+        // Hifadhi timestamp ya mwisho kila baada ya nusu sekunde
+        setInterval(() => {
+            if (bgAudio && !bgAudio.paused) {
+                localStorage.setItem('bgMusicTime', bgAudio.currentTime);
+                localStorage.setItem('bgMusicState', 'playing');
+            }
+        }, 500);
+
+        // Sikiliza wakati mtumiaji anapoondoka au kurefresh ukurasa ili kusave muda sahihi kabisa
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('bgMusicTime', bgAudio.currentTime);
+        });
+
+        // Set up upigaji wa muziki kulingana na data iliyosaviwa
+        const savedTime = localStorage.getItem('bgMusicTime');
+        const savedState = localStorage.getItem('bgMusicState');
+
+        if (savedTime) {
+            bgAudio.currentTime = parseFloat(savedTime);
+        }
+
+        if (savedState === 'playing') {
+            // Vivinjari vinazuia autoplay hadi mtumiaji abonyeze kitu (Click/Touch/Scroll)
+            const startPlayback = () => {
+                bgAudio.play().then(() => {
+                    localStorage.setItem('bgMusicState', 'playing');
+                    // Ondoa usikilizaji ukurasa ukianza kucheza
+                    ['click', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+                        document.removeEventListener(evt, startPlayback);
+                    });
+                }).catch(err => console.log("Autoplay context initialization waiting for gesture..."));
+            };
+
+            ['click', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+                document.addEventListener(evt, startPlayback, { once: false });
+            });
+            
+            // Jaribu kucheza mara moja direct
+            startPlayback();
+        }
+    }
+
     // --- MODAL FUNCTIONS FOR FLAG INSTRUCTIONS ---
     function showFlagInstructions() {
         document.getElementById('flagModal').classList.add('active');
@@ -1461,6 +1509,7 @@
     setInterval(showLiveOrder, 10000);
     
     // Execute functions on page load
+    initContinuousMusic();
     loadTopTicker();
     init();
 </script>
@@ -1473,4 +1522,4 @@
 </style>
 
 </body>
-    </html>
+</html>
