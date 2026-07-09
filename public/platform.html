@@ -1016,21 +1016,17 @@
 </head>
 <body>
 
-<!-- IMPORTANT WARNING BANNER -->
 <div class="warning-banner">
     <i class="fas fa-exclamation-triangle"></i>
     <span>Turn off "Flag for Review" before ordering Instagram followers or they won't be delivered.</span>
     <a onclick="showFlagInstructions()">Click Here to See How</a>
 </div>
 
-<!-- DYNAMIC MOVING WORDS TICKER -->
 <div class="top-ticker">
     <div class="ticker-content" id="tickerContent">
-        <!-- Items will be injected dynamically by JS from the backend -->
-    </div>
+        </div>
 </div>
 
-<!-- MODAL FOR FLAG INSTRUCTIONS -->
 <div class="modal-overlay" id="flagModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -1083,7 +1079,6 @@
 </div>
 
 <div class="dashboard">
-    <!-- Sidebar Navigation -->
     <div class="sidebar">
         <h2>Unasemeje <span>SMM Gains</span></h2>
         <div class="sidebar-nav">
@@ -1094,7 +1089,6 @@
             <a href="add-funds.html"><i class="fas fa-wallet"></i> <span>Add Funds</span></a>
             <a href="referrals.html"><i class="fas fa-users"></i> <span>Referrals</span></a>
             
-            <!-- AI Support & WhatsApp Help at bottom of mobile nav -->
             <a href="support.html" class="utility-link ai-support"><i class="fas fa-robot"></i> <span>AI Support</span></a>
             <a href="https://wa.me/254715509440" target="_blank" class="utility-link whatsapp-help"><i class="fab fa-whatsapp"></i> <span>WhatsApp Help</span></a>
         </div>
@@ -1106,14 +1100,12 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
     <div class="main">
         <div class="header-section">
             <h1>All <span>Services</span></h1>
             <p>Browse and order any service from all platforms in one place. Click any service to place an order instantly.</p>
         </div>
 
-        <!-- Stats Bar -->
         <div class="stats-bar">
             <div class="stat-card">
                 <i class="fas fa-layer-group"></i>
@@ -1137,7 +1129,6 @@
             </div>
         </div>
 
-        <!-- Search & Filter Section -->
         <div class="filter-section">
             <div class="search-container">
                 <i class="fas fa-search"></i>
@@ -1171,8 +1162,7 @@
             <div class="sort-options">
                 <label><i class="fas fa-sort" style="margin-right: 5px;"></i>Sort by:</label>
                 <select class="sort-select" id="sortSelect" onchange="renderServices()">
-                    <option value="default">Default</option>
-                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-low" selected>Price: Low to High (Default)</option>
                     <option value="price-high">Price: High to Low</option>
                     <option value="name-az">Name: A to Z</option>
                     <option value="name-za">Name: Z to A</option>
@@ -1180,7 +1170,6 @@
             </div>
         </div>
 
-        <!-- Services Grid -->
         <div class="services-grid" id="servicesGrid">
             <div class="loading-state">
                 <div class="loading-spinner"></div>
@@ -1190,10 +1179,6 @@
         </div>
     </div>
 </div>
-
-<!-- ========================================== -->
-<!-- UNASEMEJE INTERNAL AI CHAT WIDGET          -->
-<!-- ========================================== -->
 
 <style>
     #chatWindow {
@@ -1256,7 +1241,6 @@
     }
 </style>
 
-<!-- FLOATING ACTION BUTTON (CHAT TOGGLE) -->
 <button id="chatToggleBtn" style="position: fixed; bottom: 24px; right: 24px; z-index: 50; color: white; padding: 16px; border-radius: 50%; box-shadow: 0 10px 25px rgba(249, 115, 22, 0.4); border: none; cursor: pointer; background-color: var(--secondary); transition: transform 0.2s;" aria-label="Open Support Chat" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
     <svg id="chatIconOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 24px; height: 24px;">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -1266,7 +1250,6 @@
     </svg>
 </button>
 
-<!-- CHAT WINDOW CONTAINER -->
 <div id="chatWindow" style="position: fixed; bottom: 96px; right: 24px; z-index: 50; width: 90vw; background: white; border-radius: 24px; box-shadow: 0 25px 50px rgba(30, 58, 95, 0.15); border: 2px solid var(--border-light); flex-direction: column; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 350px; display: none; transform: scale(0.95); opacity: 0;">
     
     <div style="padding: 16px; border-radius: 24px 24px 0 0; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(30, 58, 95, 0.1); color: white; background-color: var(--primary);">
@@ -1456,7 +1439,7 @@
         document.getElementById('totalCategories').textContent = totalCategories;
         document.getElementById('count-all').textContent = allServicesList.length;
 
-        // Update platform counts
+        // Update platform counts strictly based on platform names
         Object.keys(allData).forEach(platform => {
             const count = Object.values(allData[platform]).reduce((sum, cat) => sum + cat.length, 0);
             const countEl = document.getElementById(`count-${platform}`);
@@ -1483,35 +1466,29 @@
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
         const sortValue = document.getElementById('sortSelect').value;
         
-        // Filter by platform
+        // Step 1: Enforce Strict Platform Isolation First
         let filtered = currentPlatformFilter === 'all' 
             ? allServicesList 
-            : allServicesList.filter(s => s.platform === currentPlatformFilter);
+            : allServicesList.filter(s => s.platform.toLowerCase() === currentPlatformFilter.toLowerCase() || (currentPlatformFilter.toLowerCase() === 'twitter' && s.platform.toLowerCase() === 'twitter/x'));
         
-        // Filter by search
+        // Step 2: Apply Search Filtering Strictly Within Isolated Selection
         if (searchTerm) {
             filtered = filtered.filter(s => 
                 s.name.toLowerCase().includes(searchTerm) ||
-                s.platform.toLowerCase().includes(searchTerm) ||
                 s.category.toLowerCase().includes(searchTerm) ||
                 (s.description && s.description.toLowerCase().includes(searchTerm))
             );
         }
 
-        // Sort
-        switch(sortValue) {
-            case 'price-low':
-                filtered.sort((a, b) => a.rate - b.rate);
-                break;
-            case 'price-high':
-                filtered.sort((a, b) => b.rate - a.rate);
-                break;
-            case 'name-az':
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'name-za':
-                filtered.sort((a, b) => b.name.localeCompare(a.name));
-                break;
+        // Step 3: Sort Options (Defaulting strictly to low-to-high if specified or standard execution)
+        if (sortValue === 'price-low' || sortValue === 'default') {
+            filtered.sort((a, b) => Number(a.rate) - Number(b.rate));
+        } else if (sortValue === 'price-high') {
+            filtered.sort((a, b) => Number(b.rate) - Number(a.rate));
+        } else if (sortValue === 'name-az') {
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortValue === 'name-za') {
+            filtered.sort((a, b) => b.name.localeCompare(a.name));
         }
 
         if (filtered.length === 0) {
@@ -1802,4 +1779,4 @@
 </script>
 
 </body>
-    </html>
+</html>
