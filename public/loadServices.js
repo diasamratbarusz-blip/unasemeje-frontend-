@@ -1,6 +1,6 @@
 /**
  * =========================================
- * LOAD SERVICES - unasemeje ø dia SMM
+ * LOAD SERVICES - unasemeje smm gains
  * =========================================
  * Fetches, parses, and renders services.
  * Handles grouped, flat, and fallback API routes.
@@ -48,7 +48,7 @@ async function loadServices() {
                         services.push({
                             serviceId: String(s.serviceId || s.id || ""),
                             name: cleanText(s.name || "Unnamed Service"),
-                            rate: Number(s.rate || 0), // Uses the adjusted rate from backend
+                            rate: Number(s.sellingRate || s.rate || 0), // Safely uses sellingRate (with markup) first
                             min: Number(s.min || 1),
                             max: Number(s.max || 10000),
                             category: s.category || type,
@@ -66,7 +66,7 @@ async function loadServices() {
             services = list.map(s => ({
                 serviceId: String(s.serviceId || s.id || ""),
                 name: cleanText(s.name || "Unnamed Service"),
-                rate: Number(s.rate || 0),
+                rate: Number(s.sellingRate || s.rate || 0), // Safely uses sellingRate (with markup) first
                 min: Number(s.min || 1),
                 max: Number(s.max || 10000),
                 category: s.category || "Other",
@@ -101,7 +101,7 @@ async function handleFallback(container) {
             services2 = list2.map(s => ({
                 serviceId: String(s.serviceId || s.id || ""),
                 name: cleanText(s.name || "Unnamed Service"),
-                rate: Number(s.rate || 0),
+                rate: Number(s.sellingRate || s.rate || 0), // Safely uses sellingRate (with markup) first
                 min: Number(s.min || 1),
                 max: Number(s.max || 10000),
                 category: s.category || "Other",
@@ -139,7 +139,7 @@ function processAndRender(services) {
 }
 
 /**
- * RENDER SERVICES TO UI
+ * RENDER SERVICES TO UI - Grouped distinctly by specific platforms
  */
 function renderServices(data) {
     const container = document.getElementById("serviceList");
@@ -150,22 +150,52 @@ function renderServices(data) {
         return;
     }
 
-    container.innerHTML = data.map(s => `
-        <div class="service-card" onclick="selectService('${s.serviceId}', '${s.name.replace(/'/g, "\\'")}')" 
-             style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.3s;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <span style="font-size: 10px; text-transform: uppercase; color: #10b981; font-weight: 800; letter-spacing: 1px;">${s.platform}</span>
-                    <h4 style="margin: 5px 0; font-size: 14px; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;">${s.name}</h4>
-                    <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.5);">ID: ${s.serviceId} | Min: ${s.min.toLocaleString()} - Max: ${s.max.toLocaleString()}</p>
-                </div>
-                <div style="text-align: right;">
-                    <span style="display: block; color: #10b981; font-weight: 900; font-size: 16px;">KES ${s.rate.toFixed(2)}</span>
-                    <small style="color: rgba(255,255,255,0.3); font-size: 10px;">per 1000</small>
+    // 1. Group services into separate arrays keyed by platform name
+    const groupedByPlatform = {};
+    data.forEach(s => {
+        const platformKey = s.platform || "Other";
+        if (!groupedByPlatform[platformKey]) {
+            groupedByPlatform[platformKey] = [];
+        }
+        groupedByPlatform[platformKey].push(s);
+    });
+
+    // 2. Build the structured UI grouping
+    let htmlOutput = "";
+
+    Object.keys(groupedByPlatform).forEach(platformName => {
+        const platformServices = groupedByPlatform[platformName];
+
+        // Append a clear section title header for each specific platform
+        htmlOutput += `
+            <div class="platform-group-header" style="margin: 25px 0 12px 0; padding-bottom: 6px; border-bottom: 2px solid rgba(16, 185, 129, 0.3);">
+                <h3 style="margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; color: #10b981; text-transform: uppercase; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-layer-group" style="font-size: 14px;"></i> ${platformName} 
+                    <span style="font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 400; text-transform: none; letter-spacing: 0;">(${platformServices.length} options)</span>
+                </h3>
+            </div>
+        `;
+
+        // Append the list of structural cards belonging strictly to this platform group
+        htmlOutput += platformServices.map(s => `
+            <div class="service-card" onclick="selectService('${s.serviceId}', '${s.name.replace(/'/g, "\\'")}')" 
+                 style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.3s;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <span style="font-size: 10px; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 600; letter-spacing: 0.5px;">${s.category}</span>
+                        <h4 style="margin: 5px 0; font-size: 14px; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;">${s.name}</h4>
+                        <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.5);">ID: ${s.serviceId} | Min: ${s.min.toLocaleString()} - Max: ${s.max.toLocaleString()}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="display: block; color: #10b981; font-weight: 900; font-size: 16px;">KES ${s.rate.toFixed(2)}</span>
+                        <small style="color: rgba(255,255,255,0.3); font-size: 10px;">per 1000</small>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
+    });
+
+    container.innerHTML = htmlOutput;
 }
 
 /**
