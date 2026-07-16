@@ -1649,7 +1649,7 @@
     setInterval(showNotification, 10000); 
   }, 4000);
 
-  // PASSWORD VISIBILITY TOGGLE
+  // PASSWORD VISIBILITY TOGGLE - UPDATED FIX
   const togglePasswordBtn = document.getElementById('togglePassword');
   const passwordInputField = document.getElementById('password');
   const eyeIcon = document.getElementById('eyeIcon');
@@ -1660,11 +1660,9 @@
       passwordInputField.setAttribute('type', type);
       
       if (type === 'text') {
-        eyeIcon.classList.remove('fa-eye');
-        eyeIcon.classList.add('fa-eye-slash');
+        eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
       } else {
-        eyeIcon.classList.remove('fa-eye-slash');
-        eyeIcon.classList.add('fa-eye');
+        eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
       }
     });
   }
