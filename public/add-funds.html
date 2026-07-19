@@ -385,7 +385,7 @@
                 <div class="w-1 h-10 gradient-accent rounded-full"></div>
                 <h1 class="text-4xl font-black text-gray-900">Add Funds</h1>
             </div>
-            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely with instant M-Pesa payments</p>
+            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely via Express or global manual payment systems</p>
         </div>
 
         <!-- Current Balance Card -->
@@ -409,7 +409,7 @@
             <!-- Main Payment Section -->
             <div class="lg:col-span-2 space-y-8">
                 
-                <!-- Payment Methods -->
+                <!-- Payment Methods Selector Box -->
                 <div class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.2s">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
@@ -446,19 +446,93 @@
                             </div>
                         </div>
 
-                        <!-- M-Pesa Manual Payment (New) -->
-                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-manual" onclick="selectMethod('manual', this)">
+                        <!-- Airtel Uganda -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-airtel-ug" onclick="selectMethod('airtel-ug', this)">
                             <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-hand-holding-usd text-3xl text-amber-600"></i>
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-mobile-alt text-3xl text-red-600"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">Cross-Border Manual Payments</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Airtel, MTN, WorldRemit instructions & WhatsApp confirmation</p>
+                                    <h4 class="font-bold text-gray-900 text-lg">Airtel Uganda</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Cross-Border Mobile Money Transfer</p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">
-                                            <i class="fas fa-user-shield mr-1"></i>Verified
-                                        </span>
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">Manual Payment</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-transparent rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WorldRemit -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-worldremit" onclick="selectMethod('worldremit', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-globe text-3xl text-indigo-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">WorldRemit</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Global remittance to M-Pesa wallet</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">Manual Payment</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-transparent rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MTN Uganda -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-mtn-ug" onclick="selectMethod('mtn-ug', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-mobile-alt text-3xl text-yellow-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">MTN Uganda</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Cross-Border Mobile Money Transfer</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">Manual Payment</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-transparent rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Somalia -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-somalia" onclick="selectMethod('somalia', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-flag text-3xl text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">Somalia</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Remitly / WorldRemit transfer solutions</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">Manual Payment</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-transparent rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Airtel Tanzania -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-airtel-tz" onclick="selectMethod('airtel-tz', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-exchange-alt text-3xl text-red-500"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">Airtel Tanzania</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Muamala wa kuvuka mpaka wa Airtel Money</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">Manual Payment</span>
                                     </div>
                                 </div>
                                 <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
@@ -476,38 +550,6 @@
                                 <div class="flex-1">
                                     <h4 class="font-bold text-gray-900 text-lg">Credit/Debit Card</h4>
                                     <p class="text-sm text-gray-600 mt-1">Visa, Mastercard accepted</p>
-                                </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
-                                    Coming Soon
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Bank Transfer (Coming Soon) -->
-                        <div class="payment-method disabled border-2 border-gray-200 rounded-2xl p-5" onclick="showComingSoon()">
-                            <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center">
-                                    <i class="fas fa-university text-3xl text-purple-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">Bank Transfer</h4>
-                                    <p class="text-sm text-gray-600 mt-1">Direct bank deposit</p>
-                                </div>
-                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
-                                    Coming Soon
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- PayPal (Coming Soon) -->
-                        <div class="payment-method disabled border-2 border-gray-200 rounded-2xl p-5" onclick="showComingSoon()">
-                            <div class="flex items-center gap-5">
-                                <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl flex items-center justify-center">
-                                    <i class="fab fa-paypal text-3xl text-indigo-600"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h4 class="font-bold text-gray-900 text-lg">PayPal</h4>
-                                    <p class="text-sm text-gray-600 mt-1">International payments</p>
                                 </div>
                                 <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">
                                     Coming Soon
@@ -589,125 +631,160 @@
                     </form>
                 </div>
 
-                <!-- Manual Payment Instructions Card -->
-                <div id="manualFormCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                <!-- Individual Instruction Blocks (Displayed depending on selection) -->
+                
+                <!-- 1. Airtel Uganda Card -->
+                <div id="airtelUgCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
                     <div class="flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-info-circle text-2xl text-amber-600"></i>
+                        <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-red-600"></i>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold text-gray-900">Manual Payment Instructions</h3>
-                            <p class="text-sm text-gray-600">Select an international gateway panel below to view steps</p>
+                            <h3 class="text-2xl font-bold text-gray-900">Airtel Uganda Instructions</h3>
+                            <p class="text-sm text-gray-600">Follow these instructions to deposit manually</p>
                         </div>
                     </div>
-
-                    <div class="space-y-6">
-                        
-                        <!-- 1. Airtel Uganda -->
-                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
-                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3">
-                                <i class="fas fa-mobile-alt text-red-500"></i> Airtel Uganda to Unasemeje smm gains
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-4">Welcome! Here's how to send money from Airtel Uganda to Unasemeje smm gains in Kenya:</p>
-                            <ul class="space-y-2 text-sm text-gray-700">
-                                <li><strong>Step 1:</strong> On your Airtel Uganda phone, dial <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold">*185*1*4#</span>.</li>
-                                <li><strong>Step 2:</strong> Follow the prompts to select the option for sending money internationally.</li>
-                                <li><strong>Step 3:</strong> Enter the recipient details:</li>
-                                <li class="pl-5 border-l-2 border-gray-300 my-1">
-                                    <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
-                                    <div><strong>Phone Number:</strong> +254 715 509 440</div>
-                                </li>
-                                <li><strong>Step 4:</strong> Enter the amount you wish to send in Ugandan Shillings (UGX).</li>
-                                <li><strong>Step 5:</strong> Confirm the transaction with your Airtel Money PIN.</li>
-                            </ul>
-                        </div>
-
-                        <!-- 2. WorldRemit -->
-                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
-                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3">
-                                <i class="fas fa-globe text-indigo-500"></i> WorldRemit
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-4">Follow these steps to send money via WorldRemit to our M-Pesa account:</p>
-                            <ul class="space-y-2 text-sm text-gray-700">
-                                <li><strong>Step 1:</strong> Open the WorldRemit website or mobile app.</li>
-                                <li><strong>Step 2:</strong> Sign in or create an account if you are a new user.</li>
-                                <li><strong>Step 3:</strong> Select 'Kenya' as the recipient country.</li>
-                                <li><strong>Step 4:</strong> Choose 'Mobile Money - M-Pesa' as the delivery method.</li>
-                                <li><strong>Step 5:</strong> Enter the recipient details:</li>
-                                <li class="pl-5 border-l-2 border-gray-300 my-1">
-                                    <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
-                                    <div><strong>Phone Number:</strong> +254 715 509 440</div>
-                                </li>
-                                <li><strong>Step 6:</strong> Enter the amount you want to send and review the transaction fees.</li>
-                                <li><strong>Step 7:</strong> Choose your payment method (Bank, Credit/Debit card, etc.) and confirm the transaction.</li>
-                            </ul>
-                        </div>
-
-                        <!-- 3. MTN Uganda -->
-                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
-                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3">
-                                <i class="fas fa-mobile-alt text-yellow-500"></i> MTN Uganda to Unasemeje smm gains
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-4">Welcome! Here's how to send money from MTN Uganda to Unasemeje smm gains in Kenya:</p>
-                            <ul class="space-y-2 text-sm text-gray-700">
-                                <li><strong>Step 1:</strong> On your MTN Uganda phone, dial <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold">*165#</span>.</li>
-                                <li><strong>Step 2:</strong> Follow the prompts to select the option for sending money internationally.</li>
-                                <li><strong>Step 3:</strong> Enter the recipient details:</li>
-                                <li class="pl-5 border-l-2 border-gray-300 my-1">
-                                    <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
-                                    <div><strong>Phone Number:</strong> +254 715 509 440</div>
-                                </li>
-                                <li><strong>Step 4:</strong> Enter the amount you wish to send in Ugandan Shillings (UGX).</li>
-                                <li><strong>Step 5:</strong> Confirm the transaction with your MTN Mobile Money PIN.</li>
-                            </ul>
-                        </div>
-
-                        <!-- 4. Somalia -->
-                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
-                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3">
-                                <i class="fas fa-flag text-blue-500"></i> Somalia Transfers
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-4">Welcome! Here's how to send money to Unasemeje smm gains's M-Pesa account in Kenya:</p>
-                            <ul class="space-y-2 text-sm text-gray-700">
-                                <li><strong>Step 1:</strong> Use a money transfer service like WorldRemit or Remitly to send money to Kenya.</li>
-                                <li><strong>Step 2:</strong> Enter the following details for the recipient:</li>
-                                <li class="pl-5 border-l-2 border-gray-300 my-1">
-                                    <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
-                                    <div><strong>M-Pesa Number:</strong> +254 715 509 440</div>
-                                </li>
-                                <li><strong>Step 3:</strong> Complete the payment process on the service's platform.</li>
-                            </ul>
-                        </div>
-
-                        <!-- 5. Airtel Tanzania -->
-                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
-                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3">
-                                <i class="fas fa-exchange-alt text-red-400"></i> Airtel Tanzania hadi Unasemeje smm gains
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-4">Karibu! Hivi ndivyo unavyoweza kutuma pesa kutoka Airtel Tanzania hadi Unasemeje smm gains nchini Kenya:</p>
-                            <ul class="space-y-2 text-sm text-gray-700">
-                                <li><strong>Hatua ya 1:</strong> Kwenye simu yako ya Airtel Tanzania, piga <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold">*150*60#</span>.</li>
-                                <li><strong>Hatua ya 2:</strong> Kubali sheria na masharti yaliyoonyeshwa.</li>
-                                <li><strong>Hatua ya 3:</strong> Chagua chaguo la kutuma pesa kwa <strong>Safaricom M-Pesa Kenya</strong>.</li>
-                                <li class="pl-5 border-l-2 border-gray-300 my-1">
-                                    <div><strong>Jina la Mpokeaji:</strong> DAIMON CHERUIYOT</div>
-                                    <div><strong>Namba ya Simu:</strong> +254 715 509 440</div>
-                                </li>
-                                <li><strong>Hatua ya 4:</strong> Ingiza kiasi unachotaka kutuma kwa Shilingi ya Tanzania (TZS).</li>
-                                <li><strong>Hatua ya 5:</strong> Thibitisha muamala kwa kutumia PIN yako ya Airtel Money.</li>
-                            </ul>
-                        </div>
-
-                        <!-- Direct WhatsApp Trigger Action Button -->
-                        <a 
-                            href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20cross-border%20payment%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20payment%20confirmation%20message:" 
-                            target="_blank"
-                            class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-3 text-lg"
-                        >
-                            <i class="fab fa-whatsapp text-2xl"></i>
-                            <span>Send Confirmation Message on WhatsApp</span>
-                        </a>
+                    <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6 mb-6">
+                        <p class="text-sm text-gray-600 mb-4">Welcome! Here's how to send money from Airtel Uganda to Unasemeje smm gains in Kenya:</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Step 1:</strong> On your Airtel Uganda phone, dial <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold">*185*1*4#</span>.</li>
+                            <li><strong>Step 2:</strong> Follow the prompts to select the option for sending money internationally.</li>
+                            <li><strong>Step 3:</strong> Enter the recipient details:</li>
+                            <li class="pl-5 border-l-2 border-gray-300 my-1">
+                                <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
+                                <div><strong>Phone Number:</strong> +254 715 509 440</div>
+                            </li>
+                            <li><strong>Step 4:</strong> Enter the amount you wish to send in Ugandan Shillings (UGX).</li>
+                            <li><strong>Step 5:</strong> Confirm the transaction with your Airtel Money PIN.</li>
+                        </ul>
                     </div>
+                    <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20payment%20via%20Airtel%20Uganda%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20receipt:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg transition-transform transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        <span>Send Airtel Uganda Receipt on WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- 2. WorldRemit Card -->
+                <div id="worldremitCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-indigo-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">WorldRemit Instructions</h3>
+                            <p class="text-sm text-gray-600">Follow these steps to send money globally</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6 mb-6">
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Step 1:</strong> Open the WorldRemit website or mobile app.</li>
+                            <li><strong>Step 2:</strong> Sign in or create an account if you are a new user.</li>
+                            <li><strong>Step 3:</strong> Select 'Kenya' as the recipient country.</li>
+                            <li><strong>Step 4:</strong> Choose 'Mobile Money - M-Pesa' as the delivery method.</li>
+                            <li><strong>Step 5:</strong> Enter the recipient details:</li>
+                            <li class="pl-5 border-l-2 border-gray-300 my-1">
+                                <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
+                                <div><strong>Phone Number:</strong> +254 715 509 440</div>
+                            </li>
+                            <li><strong>Step 6:</strong> Enter the amount you want to send and review the transaction fees.</li>
+                            <li><strong>Step 7:</strong> Choose your payment method (Bank, Credit/Debit card, etc.) and confirm the transaction.</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20payment%20via%20WorldRemit%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20receipt:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg transition-transform transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        <span>Send WorldRemit Receipt on WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- 3. MTN Uganda Card -->
+                <div id="mtnUgCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">MTN Uganda Instructions</h3>
+                            <p class="text-sm text-gray-600">Follow these instructions to deposit manually</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6 mb-6">
+                        <p class="text-sm text-gray-600 mb-4">Welcome! Here's how to send money from MTN Uganda to Unasemeje smm gains in Kenya:</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Step 1:</strong> On your MTN Uganda phone, dial <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold">*165#</span>.</li>
+                            <li><strong>Step 2:</strong> Follow the prompts to select the option for sending money internationally.</li>
+                            <li><strong>Step 3:</strong> Enter the recipient details:</li>
+                            <li class="pl-5 border-l-2 border-gray-300 my-1">
+                                <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
+                                <div><strong>Phone Number:</strong> +254 715 509 440</div>
+                            </li>
+                            <li><strong>Step 4:</strong> Enter the amount you wish to send in Ugandan Shillings (UGX).</li>
+                            <li><strong>Step 5:</strong> Confirm the transaction with your MTN Mobile Money PIN.</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20payment%20via%20MTN%20Uganda%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20receipt:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg transition-transform transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        <span>Send MTN Uganda Receipt on WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- 4. Somalia Card -->
+                <div id="somaliaCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Somalia Transfer Steps</h3>
+                            <p class="text-sm text-gray-600">Follow these instructions to transfer funds manually</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6 mb-6">
+                        <p class="text-sm text-gray-600 mb-4">Welcome! Here's how to send money to Unasemeje smm gains's M-Pesa account in Kenya:</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Step 1:</strong> Use a money transfer service like WorldRemit or Remitly to send money to Kenya.</li>
+                            <li><strong>Step 2:</strong> Enter the following details for the recipient:</li>
+                            <li class="pl-5 border-l-2 border-gray-300 my-1">
+                                <div><strong>Name:</strong> DAIMON CHERUIYOT</div>
+                                <div><strong>M-Pesa Number:</strong> +254 715 509 440</div>
+                            </li>
+                            <li><strong>Step 3:</strong> Complete the payment process on the service's platform.</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20payment%20from%20Somalia%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20receipt:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg transition-transform transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        <span>Send Somalia Receipt on WhatsApp</span>
+                    </a>
+                </div>
+
+                <!-- 5. Airtel Tanzania Card -->
+                <div id="airtelTzCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-red-500"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Airtel Tanzania Instructions</h3>
+                            <p class="text-sm text-gray-600">Maelekezo ya kutuma malipo kwa usalama</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6 mb-6">
+                        <p class="text-sm text-gray-600 mb-4">Karibu! Hivi ndivyo unavyoweza kutuma pesa kutoka Airtel Tanzania hadi Unasemeje smm gains nchini Kenya:</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Hatua ya 1:</strong> Kwenye simu yako ya Airtel Tanzania, piga <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold">*150*60#</span>.</li>
+                            <li><strong>Hatua ya 2:</strong> Kubali sheria na masharti yaliyoonyeshwa.</li>
+                            <li><strong>Hatua ya 3:</strong> Chagua chaguo la kutuma pesa kwa <strong>Safaricom M-Pesa Kenya</strong>.</li>
+                            <li class="pl-5 border-l-2 border-gray-300 my-1">
+                                <div><strong>Jina la Mpokeaji:</strong> DAIMON CHERUIYOT</div>
+                                <div><strong>Namba ya Simu:</strong> +254 715 509 440</div>
+                            </li>
+                            <li><strong>Hatua ya 4:</strong> Ingiza kiasi unachotaka kutuma kwa Shilingi ya Tanzania (TZS).</li>
+                            <li><strong>Hatua ya 5:</strong> Thibitisha muamala kwa kutumia PIN yako ya Airtel Money.</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/254715509440?text=Hello%20Support,%20Nimetuma%20malipo%20kutoka%20Airtel%20Tanzania%20kwenda%20kwa%20DAIMON%20CHERUIYOT.%20Huu%20hapa%20ujumbe%20wa%20muamala:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg transition-transform transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        <span>Tuma Ujumbe wa Airtel Tanzania kwa WhatsApp</span>
+                    </a>
                 </div>
 
                 <!-- Payment Status Card -->
@@ -938,11 +1015,6 @@
 
         // Select Payment Method
         function selectMethod(method, element) {
-            if (method !== 'mpesa' && method !== 'manual') {
-                showComingSoon();
-                return;
-            }
-            
             // Manage Selected Classes
             document.querySelectorAll('.payment-method').forEach(card => {
                 card.classList.remove('selected');
@@ -960,15 +1032,28 @@
                 activeDot.innerHTML = '<div class="w-3 h-3 bg-primary rounded-full"></div>';
             }
 
+            // Hide all specialized instructional forms
+            document.getElementById('expressFormCard').classList.add('hidden');
+            document.getElementById('airtelUgCard').classList.add('hidden');
+            document.getElementById('worldremitCard').classList.add('hidden');
+            document.getElementById('mtnUgCard').classList.add('hidden');
+            document.getElementById('somaliaCard').classList.add('hidden');
+            document.getElementById('airtelTzCard').classList.add('hidden');
+            document.getElementById('paymentStatusCard').classList.add('hidden');
+
             // View management based on chosen method
             if (method === 'mpesa') {
                 document.getElementById('expressFormCard').classList.remove('hidden');
-                document.getElementById('manualFormCard').classList.add('hidden');
-                document.getElementById('paymentStatusCard').classList.add('hidden');
-            } else if (method === 'manual') {
-                document.getElementById('expressFormCard').classList.add('hidden');
-                document.getElementById('manualFormCard').classList.remove('hidden');
-                document.getElementById('paymentStatusCard').classList.add('hidden');
+            } else if (method === 'airtel-ug') {
+                document.getElementById('airtelUgCard').classList.remove('hidden');
+            } else if (method === 'worldremit') {
+                document.getElementById('worldremitCard').classList.remove('hidden');
+            } else if (method === 'mtn-ug') {
+                document.getElementById('mtnUgCard').classList.remove('hidden');
+            } else if (method === 'somalia') {
+                document.getElementById('somaliaCard').classList.remove('hidden');
+            } else if (method === 'airtel-tz') {
+                document.getElementById('airtelTzCard').classList.remove('hidden');
             }
         }
 
@@ -1129,7 +1214,7 @@
             window.location.href = 'dashboard.html';
         }
 
-        // Load Recent Transactions with Real Status
+        // Load Recent Transactions
         async function loadRecentTransactions() {
             try {
                 const response = await apiRequest('/deposits?limit=5');
