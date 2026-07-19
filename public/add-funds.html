@@ -39,13 +39,20 @@
             font-family: 'Inter', sans-serif;
         }
 
+        /* Premium Glassmorphism */
         .glass-card {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
 
+        .glass-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Gradient Headers */
         .gradient-header {
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3b7bb5 100%);
         }
@@ -54,6 +61,7 @@
             background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
         }
 
+        /* Animations */
         .slide-up {
             animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -72,6 +80,7 @@
             to { transform: scale(1); opacity: 1; }
         }
 
+        /* Spinner */
         .spinner {
             width: 20px;
             height: 20px;
@@ -83,6 +92,7 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Input Fields */
         .input-field {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -93,6 +103,7 @@
             transform: translateY(-1px);
         }
 
+        /* Pulse Animation */
         .pulse-animation {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -102,54 +113,98 @@
             50% { opacity: 0.7; transform: scale(1.05); }
         }
 
-        /* List Layout Elements Matching the Screenshot Structure */
-        .method-item {
-            transition: all 0.2s ease;
+        /* Payment Method Cards */
+        .payment-method {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
         }
 
-        .method-item:hover {
-            background-color: #f8fafc;
+        .payment-method::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
         }
 
-        .method-item.selected {
-            background-color: #f0f7ff;
-            border-left-color: #1e3a5f;
+        .payment-method:hover::before { left: 100%; }
+
+        .payment-method:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .method-item.disabled {
+        .payment-method.selected {
+            border-color: #1e3a5f;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%);
+            box-shadow: 0 8px 24px rgba(30, 58, 95, 0.2);
+        }
+
+        .payment-method.disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
 
-        .quick-amount {
-            transition: all 0.2s ease;
+        .payment-method.disabled:hover {
+            transform: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         }
+
+        /* Quick Amount Buttons */
+        .quick-amount {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
         .quick-amount:hover {
             transform: translateY(-2px);
             background: #1e3a5f;
             color: white;
-            box-shadow: 0 6px 15px rgba(30, 58, 95, 0.2);
+            box-shadow: 0 8px 20px rgba(30, 58, 95, 0.3);
         }
 
+        /* Status Badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .status-completed { background: #d1fae5; color: #065f46; border: 1px solid #10b981; }
-        .status-failed { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
-        .status-pending { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+        .status-completed { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; border: 1px solid #10b981; }
+        .status-failed { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #991b1b; border: 1px solid #ef4444; }
+        .status-pending { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; border: 1px solid #f59e0b; }
 
         .transaction-row { transition: all 0.2s ease; }
-        .transaction-row:hover { transform: translateX(4px); background: #f8fafc; }
+        .transaction-row:hover { background: #f8fafc; transform: translateX(4px); }
+
+        .balance-glow::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
 
         .security-badge { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #10b981; }
         .toast { animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -157,6 +212,15 @@
             from { transform: translateX(400px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        @media (max-width: 768px) {
+            .balance-amount { font-size: 2.5rem !important; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="antialiased">
@@ -200,18 +264,18 @@
                 <div class="w-1 h-10 gradient-accent rounded-full"></div>
                 <h1 class="text-4xl font-black text-gray-900">Add Funds</h1>
             </div>
-            <p class="text-gray-600 text-lg ml-5">Select a secure payment channel below to replenish your dashboard wallet parameters</p>
+            <p class="text-gray-600 text-lg ml-5">Top up your wallet securely via instant STK Push or manual cross-border alternatives</p>
         </div>
 
         <!-- Current Balance Card -->
-        <div class="glass-card rounded-3xl shadow-2xl p-8 mb-10 slide-up relative overflow-hidden">
-            <div class="flex items-center justify-between flex-wrap gap-6 z-10 relative">
+        <div class="glass-card rounded-3xl shadow-2xl p-8 mb-10 slide-up balance-glow">
+            <div class="flex items-center justify-between flex-wrap gap-6">
                 <div class="flex-1">
                     <p class="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">Current Wallet Balance</p>
                     <h2 class="text-5xl font-black text-gray-900 balance-amount" id="currentBalance">KES 0.00</h2>
                     <p class="text-sm text-gray-500 mt-3 flex items-center gap-2">
                         <i class="fas fa-info-circle text-blue-500"></i>
-                        Funds available instantly after system validation node approvals.
+                        Funds available instantly after system validation confirmation.
                     </p>
                 </div>
                 <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl">
@@ -221,473 +285,514 @@
         </div>
 
         <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Left Side: Clean Professional List View Layout -->
-            <div class="lg:col-span-2 space-y-6">
-                <div class="glass-card rounded-3xl shadow-xl overflow-hidden divide-y divide-gray-100 slide-up">
+            <!-- Left Side: Payment Methods List -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-credit-card text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Payment Method</h3>
+                            <p class="text-sm text-gray-600">Choose your preferred payment option</p>
+                        </div>
+                    </div>
                     
-                    <!-- 1. M-Pesa Express (STK Push) -->
-                    <div class="method-item selected p-6 flex items-center justify-between" id="method-mpesa" onclick="selectMethod('mpesa', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
-                                <i class="fas fa-bolt text-2xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">M-PESA EXPRESS [ STK Push ]</h4>
-                                <span class="inline-block text-[11px] bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Instant Automatic</span>
+                    <div class="space-y-4">
+                        <!-- M-Pesa Express (Active STK) -->
+                        <div class="payment-method selected border-2 border-gray-200 rounded-2xl p-5" id="method-mpesa" onclick="selectMethod('mpesa', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-mobile-alt text-3xl text-green-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">M-Pesa Express</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Instant payment via automated M-Pesa STK Push</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold"><i class="fas fa-check-circle mr-1"></i>Active</span>
+                                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold"><i class="fas fa-bolt mr-1"></i>Instant</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-primary flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-primary rounded-full"></div>
+                                </div>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
 
-                    <!-- 2. M-Pesa Till Payment -->
-                    <div class="method-item p-6 flex items-center justify-between" id="method-till" onclick="selectMethod('till', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white">
-                                <i class="fas fa-store text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">M-PESA TILL [ Buy Goods - message us after paying ]</h4>
-                                <span class="inline-block text-[11px] bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Manual payment</span>
+                        <!-- Manual Global Gateways -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-manual" onclick="selectMethod('manual', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-hand-holding-usd text-3xl text-amber-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">Cross-Border Manual Payments</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Airtel, MTN, WorldRemit instructions & WhatsApp confirmation logs</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold"><i class="fas fa-user-shield mr-1"></i>Verified Gateway</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-transparent rounded-full"></div>
+                                </div>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
 
-                    <!-- 3. Airtel Tanzania -->
-                    <div class="method-item p-6 flex items-center justify-between" id="method-tz" onclick="selectMethod('manual-tz', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600 font-extrabold text-sm tracking-tighter">TZ</div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">AIRTEL TANZANIA</h4>
-                                <span class="inline-block text-[11px] bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Manual payment</span>
+                        <!-- Card Payments -->
+                        <div class="payment-method disabled border-2 border-gray-200 rounded-2xl p-5" onclick="showComingSoon()">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-credit-card text-3xl text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-400 text-lg">Credit / Debit Card</h4>
+                                    <p class="text-sm text-gray-400 mt-1">Visa, Mastercard worldwide international networks</p>
+                                </div>
+                                <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1.5 rounded-full font-semibold">Coming Soon</span>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
-
-                    <!-- 4. Airtel Uganda -->
-                    <div class="method-item p-6 flex items-center justify-between" id="method-ug-airtel" onclick="selectMethod('manual-ug-airtel', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center text-white font-extrabold text-sm tracking-tighter">UG</div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">AIRTEL UGANDA</h4>
-                                <span class="inline-block text-[11px] bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Manual payment</span>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
-
-                    <!-- 5. MTN Uganda -->
-                    <div class="method-item p-6 flex items-center justify-between" id="method-ug-mtn" onclick="selectMethod('manual-ug-mtn', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center text-yellow-900 font-extrabold text-sm tracking-tighter">UG</div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">MTN UGANDA</h4>
-                                <span class="inline-block text-[11px] bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Manual payment</span>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
-
-                    <!-- 6. WorldRemit -->
-                    <div class="method-item p-6 flex items-center justify-between" id="method-worldremit" onclick="selectMethod('manual-worldremit', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
-                                <i class="fas fa-globe text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">WORLD REMIT</h4>
-                                <span class="inline-block text-[11px] bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Manual payment</span>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
-
-                    <!-- 7. Somalia Transfers -->
-                    <div class="method-item p-6 flex items-center justify-between" id="method-somalia" onclick="selectMethod('manual-somalia', this)">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white">
-                                <i class="fas fa-flag text-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-900 text-lg">SOMALIA</h4>
-                                <span class="inline-block text-[11px] bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-bold mt-1">Manual payment</span>
-                            </div>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400"></i>
-                    </div>
-
-                    <!-- 8. Crypto & International Cards -->
-                    <div class="method-item disabled p-6 flex items-center justify-between" onclick="showComingSoon()">
-                        <div class="flex items-center gap-5">
-                            <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">
-                                <i class="fas fa-credit-card text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-400 text-lg">VISA / MASTERCARD / CRYPTO [ Worldwide ]</h4>
-                                <span class="inline-block text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-bold mt-1">Coming Soon</span>
-                            </div>
-                        </div>
-                        <i class="fas fa-lock text-gray-300"></i>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Side: Context Action Input Panes & Analytics Area -->
-            <div class="space-y-8">
-                
-                <!-- Active Action Panel Card -->
-                <div class="glass-card rounded-3xl shadow-xl p-8 slide-up">
-                    
-                    <!-- Form Container 1: M-Pesa Express Payment Options -->
-                    <div id="pane-mpesa" class="space-y-6">
-                        <h3 class="text-2xl font-bold text-gray-900">Payment Details</h3>
-                        <form onsubmit="initiatePayment(event)" class="space-y-5">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (KES)</label>
-                                <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">KES</span>
-                                    <input type="number" id="amountInput" placeholder="100" min="2" step="1" required class="input-field w-full pl-16 pr-4 py-4 text-xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none">
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                                <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">+254</span>
-                                    <input type="tel" id="phoneInput" placeholder="712345678" required pattern="[0-9]{9}" maxlength="9" class="input-field w-full pl-16 pr-4 py-4 text-xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none font-mono">
-                                </div>
-                            </div>
-
-                            <div>
-                                <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Quick Select</p>
-                                <div class="grid grid-cols-4 gap-2">
-                                    <button type="button" onclick="setAmount(50)" class="quick-amount py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-bold text-xs text-gray-700 transition">50</button>
-                                    <button type="button" onclick="setAmount(100)" class="quick-amount py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-bold text-xs text-gray-700 transition">100</button>
-                                    <button type="button" onclick="setAmount(500)" class="quick-amount py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-bold text-xs text-gray-700 transition">500</button>
-                                    <button type="button" onclick="setAmount(1000)" class="quick-amount py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-bold text-xs text-gray-700 transition">1K</button>
-                                </div>
-                            </div>
-
-                            <button type="submit" id="submitBtn" class="w-full gradient-header text-white font-bold py-4 rounded-2xl shadow-lg transition flex items-center justify-center gap-2">
-                                <i class="fas fa-paper-plane"></i> Send Push Request
-                            </button>
-                        </form>
+                <!-- Payment Form Pane (M-Pesa Express) -->
+                <div id="expressFormCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-coins text-2xl text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Payment Details</h3>
+                            <p class="text-sm text-gray-600">Enter parameters to complete push transaction requests</p>
+                        </div>
                     </div>
 
-                    <!-- Form Container 2: M-Pesa Buy Goods Till Parameters -->
-                    <div id="pane-till" class="space-y-5 hidden">
-                        <h3 class="text-2xl font-bold text-emerald-600"><i class="fas fa-store mr-2"></i>Lipa na M-Pesa Till</h3>
-                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-5 space-y-3 text-sm text-gray-700">
-                            <div><span class="text-gray-500">Till Number:</span> <span class="font-mono bg-white px-3 py-1 rounded border-2 font-black text-xl text-primary tracking-wider">9257710</span></div>
-                            <div><span class="text-gray-500">Account Name:</span> <strong class="text-gray-900">DAIMON CHERUIYOT</strong></div>
-                            <div class="text-xs text-amber-600 bg-amber-50 p-3 rounded-xl border border-amber-200 mt-2">
-                                <i class="fas fa-exclamation-triangle mr-1"></i> Submit transaction screenshots or code message metrics directly to verify logs.
+                    <form id="paymentForm" onsubmit="initiatePayment(event)" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Amount (KES)</label>
+                            <div class="relative">
+                                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xl">KES</span>
+                                <input type="number" id="amountInput" placeholder="100" min="2" step="1" required class="input-field w-full pl-24 pr-6 py-5 text-3xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Minimum amount: KES 2</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">M-Pesa Phone Number</label>
+                            <div class="relative">
+                                <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-lg">+254</span>
+                                <input type="tel" id="phoneInput" placeholder="712345678" required pattern="[0-9]{9}" maxlength="9" class="input-field w-full pl-20 pr-6 py-5 text-2xl font-bold border-2 border-gray-200 rounded-2xl focus:outline-none font-mono">
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Enter the 9 digits without the leading 0</p>
+                        </div>
+
+                        <div>
+                            <p class="text-sm font-semibold text-gray-700 mb-3">Quick Select</p>
+                            <div class="grid grid-cols-4 gap-3">
+                                <button type="button" onclick="setAmount(50)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 50</button>
+                                <button type="button" onclick="setAmount(100)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 100</button>
+                                <button type="button" onclick="setAmount(500)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 500</button>
+                                <button type="button" onclick="setAmount(1000)" class="quick-amount px-4 py-4 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition">KES 1K</button>
                             </div>
                         </div>
-                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20payment%20to%20Till%209257710.%20Here%20is%20my%20receipt%20details:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-4 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-center text-sm">
-                            <i class="fab fa-whatsapp text-lg"></i> Confirm on WhatsApp
+
+                        <button type="submit" id="submitBtn" class="w-full gradient-header text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transition flex items-center justify-center gap-3 text-lg">
+                            <i class="fas fa-paper-plane"></i><span>Send Payment Request</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Manual Remittance Instructions Panel Wrapper -->
+                <div id="manualFormCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-amber-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Manual Payment Instructions</h3>
+                            <p class="text-sm text-gray-600">Select an international gateway node sequence to execute manual funds transfers</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Airtel Uganda -->
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
+                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3"><i class="fas fa-mobile-alt text-red-500"></i> Airtel Uganda</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><strong>Step 1:</strong> Dial shortcode string: <span class="font-mono bg-white px-2 py-0.5 rounded border font-bold">*185*1*4#</span></li>
+                                <li><strong>Step 2:</strong> Choose International Remittance Option.</li>
+                                <li><strong>Step 3:</strong> Recipient Details: <strong>DAIMON CHERUIYOT</strong> | Phone: <strong class="font-mono text-gray-900">+254715509440</strong></li>
+                                <li><strong>Step 4:</strong> Input amount parameters and submit security PIN context to complete transfer.</li>
+                            </ul>
+                        </div>
+
+                        <!-- WorldRemit -->
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
+                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3"><i class="fas fa-globe text-indigo-500"></i> WorldRemit Gateway</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><strong>Step 1:</strong> Route country destination to **Kenya**.</li>
+                                <li><strong>Step 2:</strong> Set delivery channel option structure to **Mobile Money (M-Pesa)**.</li>
+                                <li><strong>Step 3:</strong> Recipient Data: <strong>DAIMON CHERUIYOT</strong> | Phone: <strong class="font-mono text-gray-900">+254715509440</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- MTN Uganda -->
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
+                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3"><i class="fas fa-mobile-alt text-yellow-500"></i> MTN Uganda</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><strong>Step 1:</strong> Access menu dialing protocol: <span class="font-mono bg-white px-2 py-0.5 rounded border font-bold">*165#</span></li>
+                                <li><strong>Step 2:</strong> Select Remittance -> International.</li>
+                                <li><strong>Step 3:</strong> Send parameter details to: <strong>DAIMON CHERUIYOT</strong> | Phone: <strong class="font-mono text-gray-900">+254715509440</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- Somalia Transfers -->
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
+                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3"><i class="fas fa-flag text-blue-500"></i> Somalia Region</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><strong>Step 1:</strong> Execute international digital processing transfer apps (WorldRemit / Remitly).</li>
+                                <li><strong>Step 2:</strong> Set destination phone parameters to: <strong>DAIMON CHERUIYOT</strong> | M-Pesa Number: <strong class="font-mono text-gray-900">+254715509440</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- Airtel Tanzania -->
+                        <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6">
+                            <h4 class="font-bold text-lg text-primary flex items-center gap-2 mb-3"><i class="fas fa-exchange-alt text-red-400"></i> Airtel Tanzania</h4>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li><strong>Hatua ya 1:</strong> Piga namba ya usafirishaji: <span class="font-mono bg-white px-2 py-0.5 rounded border font-bold">*150*60#</span></li>
+                                <li><strong>Hatua ya 2:</strong> Chagua tuma kwenda <strong>Safaricom M-Pesa Kenya</strong>.</li>
+                                <li><strong>Hatua ya 3:</strong> Mpokeaji: <strong>DAIMON CHERUIYOT</strong> | Namba ya Simu: <strong class="font-mono text-gray-900">+254715509440</strong></li>
+                            </ul>
+                        </div>
+
+                        <!-- Dynamic WhatsApp Core Actions -->
+                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20cross-border%20payment%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20receipt%20details:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl hover:shadow-2xl transition flex items-center justify-center gap-3 text-lg">
+                            <i class="fab fa-whatsapp text-2xl"></i><span>Submit Confirmation Message on WhatsApp</span>
                         </a>
                     </div>
-
-                    <!-- Form Container 3: Airtel Tanzania -->
-                    <div id="pane-manual-tz" class="space-y-5 hidden">
-                        <h3 class="text-2xl font-bold text-red-600">Airtel Tanzania</h3>
-                        <div class="space-y-3 text-sm text-gray-600 bg-gray-50 p-5 rounded-2xl border">
-                            <p>1. Piga namba ya usafirishaji: <span class="font-mono bg-white px-2 py-0.5 rounded border font-bold text-gray-900">*150*60#</span></p>
-                            <p>2. Chagua tuma kwenda <strong>Safaricom M-Pesa Kenya</strong>.</p>
-                            <p>3. Namba ya Mpokeaji: <strong class="text-gray-900 font-mono">+254715509440</strong></p>
-                            <p>4. Jina la Mpokeaji: <strong>DAIMON CHERUIYOT</strong></p>
-                        </div>
-                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20Nimetuma%20pesa%20kutoka%20Airtel%20Tanzania:" target="_blank" class="w-full bg-green-500 text-white font-bold py-4 rounded-2xl block text-center shadow"><i class="fab fa-whatsapp mr-1"></i> Tuma Uthibitisho</a>
-                    </div>
-
-                    <!-- Form Container 4: Airtel Uganda -->
-                    <div id="pane-manual-ug-airtel" class="space-y-5 hidden">
-                        <h3 class="text-2xl font-bold text-red-600">Airtel Uganda</h3>
-                        <div class="space-y-3 text-sm text-gray-600 bg-gray-50 p-5 rounded-2xl border">
-                            <p>1. Dial: <span class="font-mono bg-white px-2 py-0.5 rounded border font-bold text-gray-900">*185*1*4#</span></p>
-                            <p>2. Choose International Remittance Option.</p>
-                            <p>3. Target Number: <strong class="text-gray-900 font-mono">+254715509440</strong></p>
-                            <p>4. Name: <strong>DAIMON CHERUIYOT</strong></p>
-                        </div>
-                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20sent%20money%20via%20Airtel%20Uganda:" target="_blank" class="w-full bg-green-500 text-white font-bold py-4 rounded-2xl block text-center shadow"><i class="fab fa-whatsapp mr-1"></i> Forward Receipt</a>
-                    </div>
-
-                    <!-- Form Container 5: MTN Uganda -->
-                    <div id="pane-manual-ug-mtn" class="space-y-5 hidden">
-                        <h3 class="text-2xl font-bold text-yellow-600">MTN Uganda</h3>
-                        <div class="space-y-3 text-sm text-gray-600 bg-gray-50 p-5 rounded-2xl border">
-                            <p>1. Dial execution shortcode: <span class="font-mono bg-white px-2 py-0.5 rounded border font-bold text-gray-900">*165#</span></p>
-                            <p>2. Choose Remittance -> International.</p>
-                            <p>3. Send parameter details: <strong class="text-gray-900 font-mono">+254715509440</strong></p>
-                            <p>4. Recipient: <strong>DAIMON CHERUIYOT</strong></p>
-                        </div>
-                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20sent%20money%20via%20MTN%20Uganda:" target="_blank" class="w-full bg-green-500 text-white font-bold py-4 rounded-2xl block text-center shadow"><i class="fab fa-whatsapp mr-1"></i> Submit Record</a>
-                    </div>
-
-                    <!-- Form Container 6: WorldRemit -->
-                    <div id="pane-manual-worldremit" class="space-y-5 hidden">
-                        <h3 class="text-2xl font-bold text-purple-600">WorldRemit</h3>
-                        <div class="space-y-3 text-sm text-gray-600 bg-gray-50 p-5 rounded-2xl border">
-                            <p>1. Select destination country: <strong>Kenya</strong></p>
-                            <p>2. Select transfer routing method: <strong>Mobile Money (M-Pesa)</strong></p>
-                            <p>3. Phone parameters: <strong class="text-gray-900 font-mono">+254715509440</strong></p>
-                            <p>4. Name details: <strong>DAIMON CHERUIYOT</strong></p>
-                        </div>
-                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20completed%20a%20WorldRemit%20transfer:" target="_blank" class="w-full bg-green-500 text-white font-bold py-4 rounded-2xl block text-center shadow"><i class="fab fa-whatsapp mr-1"></i> Send Transfer Code</a>
-                    </div>
-
-                    <!-- Form Container 7: Somalia Transfers -->
-                    <div id="pane-manual-somalia" class="space-y-5 hidden">
-                        <h3 class="text-2xl font-bold text-blue-600">Somalia Transfer</h3>
-                        <div class="space-y-3 text-sm text-gray-600 bg-gray-50 p-5 rounded-2xl border">
-                            <p>1. Use secure international applications (WorldRemit / Remitly).</p>
-                            <p>2. Setup destination node as **M-Pesa Kenya**.</p>
-                            <p>3. Transfer to: <strong class="text-gray-900 font-mono">+254715509440</strong></p>
-                            <p>4. Full Name: <strong>DAIMON CHERUIYOT</strong></p>
-                        </div>
-                        <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20sent%20funds%20from%20Somalia:" target="_blank" class="w-full bg-green-500 text-white font-bold py-4 rounded-2xl block text-center shadow"><i class="fab fa-whatsapp mr-1"></i> Send Confirmation</a>
-                    </div>
                 </div>
 
-                <!-- STK Push Waiting Verification Container -->
-                <div id="paymentStatusCard" class="glass-card rounded-3xl shadow-xl p-6 text-center space-y-4 hidden">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto pulse-animation">
-                        <i class="fas fa-mobile-alt text-3xl text-blue-600"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-gray-800 text-lg">Push Notification Active</h4>
-                        <p class="text-xs text-gray-500 mt-1">Enter your secure M-Pesa PIN on your phone interface.</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-xl text-left text-xs space-y-1">
-                        <div class="flex justify-between"><span>Amount:</span><span class="font-bold" id="statusAmount">KES 0</span></div>
-                        <div class="flex justify-between"><span>Phone:</span><span class="font-mono font-bold" id="statusPhone">+254</span></div>
-                    </div>
-                    <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl text-xs transition">Verify Deposit Transaction Status</button>
-                </div>
+                <!-- STK Push Processing View State -->
+                <div id="paymentStatusCard" class="glass-card rounded-3xl shadow-xl p-8 hidden">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 pulse-animation">
+                            <i class="fas fa-mobile-alt text-4xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Check Your Device Phone</h3>
+                        <p class="text-gray-600 mb-4">An automated M-Pesa secure prompt framework handshake broadcasted</p>
+                        
+                        <div class="bg-blue-50 rounded-2xl p-5 mb-6 text-left">
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Amount:</span><span class="font-bold text-gray-900" id="statusAmount">KES 0</span></div>
+                                <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Target Phone:</span><span class="font-bold text-gray-900 font-mono" id="statusPhone">+254</span></div>
+                                <div class="flex justify-between items-center"><span class="text-sm text-gray-600">Status Node:</span><span class="font-bold text-blue-600 animate-pulse" id="statusText">Waiting for PIN context verification...</span></div>
+                            </div>
+                        </div>
 
-                <!-- Recent Deposits Sidebar Logs Component -->
+                        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 text-sm text-amber-900">
+                            <i class="fas fa-info-circle mr-2"></i><strong>Validation Steps:</strong> Enter your secure M-Pesa transaction PIN validation framework on your phone workspace.
+                        </div>
+
+                        <button onclick="checkPaymentStatus()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-2xl transition flex items-center justify-center gap-2">
+                            <i class="fas fa-check-circle"></i> Verify Deposit Status
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Recent Logs & Safety Badges Sidebar -->
+            <div class="space-y-8">
                 <div class="glass-card rounded-3xl shadow-xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-black text-gray-900 tracking-wider uppercase flex items-center gap-2">
-                            <i class="fas fa-history text-gray-400"></i> Recent Deposits
-                        </h3>
-                        <button onclick="loadRecentTransactions()" class="text-xs text-primary font-bold hover:underline"><i class="fas fa-sync-alt"></i></button>
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2"><i class="fas fa-history text-primary"></i> Recent Deposits</h3>
+                        <button onclick="loadRecentTransactions()" class="text-xs text-primary font-semibold hover:underline"><i class="fas fa-sync-alt mr-1"></i>Refresh</button>
                     </div>
-                    <div id="recentTransactions" class="space-y-2">
-                        <div class="text-center py-6 text-gray-400 text-xs">Loading transaction telemetry records...</div>
+                    <div id="recentTransactions" class="space-y-3">
+                        <div class="text-center py-10 text-gray-400">
+                            <i class="fas fa-receipt text-5xl mb-3"></i>
+                            <p class="text-sm">No operational deposit logs loaded.</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Security Verification Matrix -->
-                <div class="glass-card rounded-3xl p-6 security-badge">
-                    <div class="flex items-center gap-3 mb-3">
-                        <i class="fas fa-shield-alt text-2xl text-emerald-600"></i>
-                        <h4 class="font-bold text-gray-900 text-sm">Escrow Infrastructure Secured</h4>
+                <div class="glass-card rounded-3xl shadow-xl p-6 security-badge">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900 text-lg">Secure Wallet Ledger</h4>
                     </div>
-                    <p class="text-[11px] text-gray-600 leading-relaxed">System connections are encrypted securely with end-to-end multi-node protocols. Processing transactions are verified by secure callback hooks instantly.</p>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-emerald-500"></i><span>256-bit SSL encrypted hooks</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-emerald-500"></i><span>Instant automated synchronization</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-emerald-500"></i><span>System callback confirmation metrics</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Success Modal Popup Overlay Grid -->
+    <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center space-y-5 scale-in">
-            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto text-4xl"><i class="fas fa-check"></i></div>
-            <div>
-                <h3 class="text-2xl font-black text-gray-900">Wallet Funded Successfully</h3>
-                <p class="text-sm text-gray-500 mt-1">Transaction processed. Balance balance values updated.</p>
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden scale-in text-center p-10">
+            <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6"><i class="fas fa-check text-5xl text-emerald-500"></i></div>
+            <h3 class="text-3xl font-black text-gray-900 mb-3">Wallet Funded Successfully!</h3>
+            <p class="text-gray-600 text-lg mb-8">Your dashboard metrics credited with: <span class="font-bold text-emerald-600" id="successAmount">KES 0.00</span></p>
+            
+            <div class="bg-gray-50 rounded-2xl p-6 mb-8 text-sm">
+                <div class="flex justify-between items-center mb-3"><span class="text-gray-600 font-semibold">Reference code ID:</span><span class="font-mono font-bold" id="successRef">-</span></div>
+                <div class="flex justify-between items-center"><span class="text-gray-600 font-semibold">Callback Timestamp:</span><span class="font-bold" id="successTime">-</span></div>
             </div>
-            <div class="bg-gray-50 rounded-xl p-4 text-xs font-medium text-gray-600 space-y-2 text-left">
-                <div class="flex justify-between"><span>Amount Credited:</span><span class="font-bold text-emerald-600 text-sm animate-pulse" id="successAmount">KES 0.00</span></div>
-                <div class="flex justify-between"><span>Reference ID Code:</span><span class="font-mono font-bold text-gray-900" id="successRef">-</span></div>
-                <div class="flex justify-between"><span>Timestamp Logs:</span><span class="font-bold text-gray-900" id="successTime">-</span></div>
-            </div>
-            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-3.5 rounded-xl shadow-lg">Return to Dashboard Interface</button>
+            <button onclick="closeSuccessModal()" class="w-full gradient-header text-white font-bold py-4 rounded-2xl hover:shadow-xl transition text-lg">Return to Dashboard</button>
         </div>
     </div>
 
-    <!-- Communication Node Processing Spinner Overlay Layout -->
+    <!-- Loading Overlay Spinner -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center">
-        <div class="bg-white rounded-2xl p-8 text-center max-w-xs w-full shadow-2xl">
-            <div class="spinner mx-auto mb-4 border-t-primary"></div>
-            <p class="font-bold text-sm text-gray-900">Synchronizing transactions...</p>
+        <div class="bg-white rounded-3xl p-10 text-center shadow-2xl">
+            <div class="spinner mx-auto mb-5 border-t-primary"></div>
+            <p class="font-bold text-gray-900 text-lg">Synchronizing parameters...</p>
+            <p class="text-sm text-gray-600 mt-2">Please wait matching logs</p>
         </div>
     </div>
 
-    <!-- Toast Component Notification Box -->
-    <div id="toastContainer" class="fixed top-24 right-4 z-50 space-y-2"></div>
+    <!-- Toast Notification Workspace Elements -->
+    <div id="toastContainer" class="fixed top-24 right-4 z-50 space-y-3"></div>
 
+    <!-- JavaScript Application Logic Layer Core Code -->
     <script>
         const API_URLS = ['https://unasemeje-backend.vercel.app/api', 'https://unasemeje-backend-3.onrender.com/api'];
         const token = localStorage.getItem('token');
         let currentAmount = 0;
+        let currentPhone = '';
+        let pollingInterval = null;
 
         async function apiRequest(path, options = {}) {
             for (let i = 0; i < API_URLS.length; i++) {
                 try {
-                    const res = await fetch(API_URLS[i] + path, {
+                    const response = await fetch(API_URLS[i] + path, {
                         ...options,
                         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...options.headers }
                     });
-                    const text = await res.text();
-                    let data; try { data = JSON.parse(text); } catch(e) { data = { text }; }
-                    if (res.ok || res.status < 500) return { ok: res.ok, json: async () => data };
-                } catch (e) {
-                    if (i === API_URLS.length - 1) throw e;
+                    const responseText = await response.text();
+                    let responseData;
+                    try { responseData = JSON.parse(responseText); } catch (e) { responseData = { text: responseText }; }
+                    if (response.ok || response.status < 500) return { ok: response.ok, json: async () => responseData };
+                } catch (error) {
+                    if (i === API_URLS.length - 1) throw new Error('Endpoints communications failure');
                 }
             }
         }
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             if (!token) { window.location.href = 'index.html'; return; }
-            loadBalance();
-            loadRecentTransactions();
+            await loadBalance();
+            await loadRecentTransactions();
         });
 
         async function loadBalance() {
             try {
-                const res = await apiRequest('/me');
-                if (res.ok) {
-                    const user = await res.json();
-                    const fmt = `KES ${Number(user.balance || 0).toLocaleString('en-KE', {minimumFractionDigits:2})}`;
-                    document.getElementById('currentBalance').textContent = fmt;
-                    document.getElementById('navBalance').textContent = fmt;
+                const response = await apiRequest('/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    const balance = `KES ${Number(user.balance || 0).toLocaleString('en-KE', {minimumFractionDigits: 2})}`;
+                    document.getElementById('currentBalance').textContent = balance;
+                    document.getElementById('navBalance').textContent = balance;
                 }
-            } catch(e){}
+            } catch (error) { console.error(error); }
         }
 
-        function setAmount(amt) { document.getElementById('amountInput').value = amt; }
+        function setAmount(amount) { document.getElementById('amountInput').value = amount; }
 
-        function selectMethod(method, el) {
-            document.querySelectorAll('.method-item').forEach(item => item.classList.remove('selected'));
-            el.classList.add('selected');
-
-            ['mpesa', 'till', 'manual-ug-airtel', 'manual-ug-mtn', 'manual-worldremit', 'manual-somalia', 'manual-tz'].forEach(p => {
-                document.getElementById(`pane-${p}`)?.classList.add('hidden');
-            });
-
-            document.getElementById(`pane-${method}`)?.classList.remove('hidden');
-            document.getElementById('paymentStatusCard').classList.add('hidden');
-        }
-
-        function showComingSoon() { showToast('Channel infrastructure operational processes incoming soon.', 'info'); }
-
-        async function initiatePayment(e) {
-            e.preventDefault();
-            const amt = parseFloat(document.getElementById('amountInput').value);
-            const ph = document.getElementById('phoneInput').value.trim();
-            if(!amt || amt < 2 || ph.length !== 9) { showToast('Provide correct parameters', 'error'); return; }
+        function selectMethod(method, element) {
+            if (method !== 'mpesa' && method !== 'manual') { showComingSoon(); return; }
             
-            currentAmount = amt;
+            document.querySelectorAll('.payment-method').forEach(card => {
+                card.classList.remove('selected');
+                const dot = card.querySelector('.radio-dot');
+                if(dot) {
+                    dot.className = "w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot";
+                    dot.innerHTML = '<div class="w-3 h-3 bg-transparent rounded-full"></div>';
+                }
+            });
+            
+            element.classList.add('selected');
+            const activeDot = element.querySelector('.radio-dot');
+            if(activeDot) {
+                activeDot.className = "w-7 h-7 rounded-full border-4 border-primary flex items-center justify-center radio-dot";
+                activeDot.innerHTML = '<div class="w-3 h-3 bg-primary rounded-full"></div>';
+            }
+
+            if (method === 'mpesa') {
+                document.getElementById('expressFormCard').classList.remove('hidden');
+                document.getElementById('paymentForm').classList.remove('hidden');
+                document.getElementById('manualFormCard').classList.add('hidden');
+                document.getElementById('paymentStatusCard').classList.add('hidden');
+            } else {
+                document.getElementById('expressFormCard').classList.add('hidden');
+                document.getElementById('manualFormCard').classList.remove('hidden');
+                document.getElementById('paymentStatusCard').classList.add('hidden');
+            }
+        }
+
+        function showComingSoon() { showToast('Operational implementation processing routes coming soon!', 'info'); }
+
+        async function initiatePayment(event) {
+            event.preventDefault();
+            const amount = parseFloat(document.getElementById('amountInput').value);
+            const phone = document.getElementById('phoneInput').value.trim();
+            
+            if (!amount || amount < 2) { showToast('Minimum amount parameter limits is KES 2', 'error'); return; }
+            if (!phone || phone.length !== 9 || !/^[0-9]{9}$/.test(phone)) { showToast('Provide correct 9 digit format values', 'error'); return; }
+
+            currentAmount = amount;
+            currentPhone = phone;
+            const fullPhone = `254${phone}`;
+
             showLoading(true);
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = '<span class="spinner"></span><span>Connecting...</span>';
 
             try {
-                const res = await apiRequest('/payment/initiate', {
+                const response = await apiRequest('/payment/initiate', {
                     method: 'POST',
-                    body: JSON.stringify({ amount: amt, phone: `254${ph}` })
+                    body: JSON.stringify({ amount: amount, phone: fullPhone })
                 });
+                const data = await response.json();
                 showLoading(false);
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    document.getElementById('pane-mpesa').classList.add('hidden');
-                    document.getElementById('statusAmount').textContent = `KES ${amt}`;
-                    document.getElementById('statusPhone').textContent = `+254${ph}`;
+
+                if (response.ok && data.success) {
+                    document.getElementById('statusAmount').textContent = `KES ${amount.toLocaleString()}`;
+                    document.getElementById('statusPhone').textContent = `+${fullPhone}`;
                     document.getElementById('paymentStatusCard').classList.remove('hidden');
-                    showToast('STK Push node request broadcasted.', 'success');
-                    startPolling();
+                    document.getElementById('paymentForm').classList.add('hidden');
+                    showToast('STK Push request broadcasted successfully.', 'success');
+                    startPaymentPolling();
                 } else {
+                    resetSubmitButton();
                     showToast(data.error || data.message || 'Initialization failed', 'error');
                 }
-            } catch(err){ showLoading(false); showToast('Endpoint communication failure.', 'error'); }
+            } catch (error) {
+                showLoading(false);
+                resetSubmitButton();
+                showToast('API communication endpoint structure down.', 'error');
+            }
         }
 
-        let poll = null;
-        function startPolling() {
-            let count = 0;
-            poll = setInterval(async () => {
-                count++;
-                if(count > 45) clearInterval(poll);
+        function resetSubmitButton() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Send Payment Request</span>';
+        }
+
+        function startPaymentPolling() {
+            let attempts = 0;
+            if (pollingInterval) clearInterval(pollingInterval);
+            
+            pollingInterval = setInterval(async () => {
+                attempts++;
+                if (attempts >= 45) {
+                    clearInterval(pollingInterval);
+                    document.getElementById('statusText').textContent = 'Timeout - Verify system transaction record history manually.';
+                    return;
+                }
                 try {
-                    const res = await apiRequest('/deposits?limit=1');
-                    if(res.ok) {
-                        const data = await res.json();
-                        if(data.length > 0 && Math.abs(data[0].amount - currentAmount) < 0.1) {
-                            clearInterval(poll);
-                            showSuccessDisplay(data[0]);
+                    const response = await apiRequest('/deposits?limit=1');
+                    if (response.ok) {
+                        const deposits = await response.json();
+                        if (deposits.length > 0) {
+                            const latest = deposits[0];
+                            const diffMinutes = (new Date() - new Date(latest.createdAt)) / 60000;
+                            if (diffMinutes < 5 && Math.abs(latest.amount - currentAmount) < 0.1) {
+                                clearInterval(pollingInterval);
+                                showSuccess(latest);
+                            }
                         }
                     }
-                } catch(e){}
+                } catch (e) {}
             }, 2500);
         }
 
         async function checkPaymentStatus() {
             showLoading(true);
             try {
-                const res = await apiRequest('/deposits?limit=1');
+                const response = await apiRequest('/deposits?limit=1');
                 showLoading(false);
-                if(res.ok) {
-                    const data = await res.json();
-                    if(data.length > 0 && Math.abs(data[0].amount - currentAmount) < 5) {
-                        clearInterval(poll);
-                        showSuccessDisplay(data[0]);
-                        return;
+                if (response.ok) {
+                    const deposits = await response.json();
+                    if (deposits.length > 0) {
+                        const latest = deposits[0];
+                        const diffMinutes = (new Date() - new Date(latest.createdAt)) / 60000;
+                        if (diffMinutes < 6 && Math.abs(latest.amount - currentAmount) < 5) {
+                            if (pollingInterval) clearInterval(pollingInterval);
+                            showSuccess(latest);
+                            return;
+                        }
                     }
                 }
-                showToast('Transaction verification pending ledger records update.', 'info');
-            } catch(e){ showLoading(false); }
+                showToast('Transaction validation records pending update hooks.', 'info');
+            } catch (error) { showLoading(false); }
         }
 
-        function showSuccessDisplay(d) {
-            document.getElementById('successAmount').textContent = `KES ${Number(d.amount).toLocaleString()}`;
-            document.getElementById('successRef').textContent = d.transactionCode || d.reference || 'SYSTEM_CREDIT';
-            document.getElementById('successTime').textContent = new Date(d.createdAt).toLocaleString();
+        function showSuccess(deposit) {
+            document.getElementById('successAmount').textContent = `KES ${deposit.amount.toLocaleString()}`;
+            document.getElementById('successRef').textContent = deposit.transactionCode || deposit.reference || 'SYSTEM_SYNC';
+            document.getElementById('successTime').textContent = new Date(deposit.createdAt).toLocaleString();
             document.getElementById('successModal').classList.remove('hidden');
             document.getElementById('successModal').classList.add('flex');
             loadBalance();
             loadRecentTransactions();
         }
 
-        function closeSuccessModal() { window.location.href = 'dashboard.html'; }
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('successModal').classList.remove('flex');
+            window.location.href = 'dashboard.html';
+        }
 
         async function loadRecentTransactions() {
             try {
-                const res = await apiRequest('/deposits?limit=5');
-                if(res.ok) {
-                    const data = await res.json();
+                const response = await apiRequest('/deposits?limit=5');
+                if (response.ok) {
+                    const deposits = await response.json();
                     const container = document.getElementById('recentTransactions');
-                    if(data.length === 0) { container.innerHTML = '<div class="text-center py-4 text-gray-400 text-xs">No active nodes logged.</div>'; return; }
-                    container.innerHTML = data.map(d => {
-                        const st = (d.status || 'pending').toLowerCase();
-                        const badge = st === 'completed' ? 'status-completed' : st === 'failed' ? 'status-failed' : 'status-pending';
+                    if (deposits.length === 0) {
+                        container.innerHTML = `<div class="text-center py-10 text-gray-400"><i class="fas fa-receipt text-5xl mb-3"></i><p class="text-sm">No recent deposits found.</p></div>`;
+                        return;
+                    }
+                    container.innerHTML = deposits.map(d => {
+                        const status = (d.status || 'pending').toLowerCase();
+                        const badgeClass = status === 'completed' ? 'status-completed' : status === 'failed' ? 'status-failed' : 'status-pending';
+                        const iconClass = status === 'completed' ? 'fa-check-circle' : status === 'failed' ? 'fa-times-circle' : 'fa-clock';
                         return `
-                            <div class="transaction-row flex items-center justify-between p-3 bg-gray-50 rounded-xl text-xs">
-                                <div>
-                                    <p class="font-bold text-gray-900">KES ${d.amount}</p>
-                                    <p class="text-[10px] text-gray-400 mt-0.5">${new Date(d.createdAt).toLocaleDateString()}</p>
+                            <div class="transaction-row flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center"><i class="fas fa-arrow-down text-emerald-600 text-lg"></i></div>
+                                    <div>
+                                        <p class="font-bold text-gray-900">KES ${d.amount.toLocaleString()}</p>
+                                        <p class="text-xs text-gray-500">${new Date(d.createdAt).toLocaleDateString()}</p>
+                                    </div>
                                 </div>
-                                <span class="status-badge ${badge}">${st}</span>
+                                <span class="status-badge ${badgeClass}"><i class="fas ${iconClass}"></i>${status}</span>
                             </div>
                         `;
                     }).join('');
                 }
-            } catch(e){}
+            } catch (error) { console.error(error); }
         }
 
-        function showLoading(s) {
+        function showLoading(show) {
             const el = document.getElementById('loadingOverlay');
-            if(s) { el.classList.remove('hidden'); el.classList.add('flex'); } 
+            if (show) { el.classList.remove('hidden'); el.classList.add('flex'); } 
             else { el.classList.add('hidden'); el.classList.remove('flex'); }
         }
 
-        function showToast(m, type) {
-            const t = document.createElement('div');
-            t.className = `toast px-5 py-3.5 rounded-xl shadow-xl text-xs font-bold text-white ${type==='success'?'bg-emerald-500':type==='error'?'bg-red-500':'bg-blue-500'}`;
-            t.innerHTML = `<div class="flex items-center gap-2"><i class="fas fa-info-circle"></i><span>${m}</span></div>`;
-            document.getElementById('toastContainer').appendChild(t);
-            setTimeout(() => t.remove(), 4000);
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast px-6 py-4 rounded-2xl shadow-2xl text-white font-bold text-sm ${type === 'success' ? 'bg-emerald-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'}`;
+            toast.innerHTML = `<div class="flex items-center gap-3"><i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} text-xl"></i><span>${message}</span></div>`;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
     </script>
 </body>
