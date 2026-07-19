@@ -446,6 +446,25 @@
                             </div>
                         </div>
 
+                        <!-- M-Pesa Till Number (New Payment Option) -->
+                        <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-mpesa-till" onclick="selectMethod('mpesa-till', this)">
+                            <div class="flex items-center gap-5">
+                                <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-200 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-store text-3xl text-emerald-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold text-gray-900 text-lg">M-Pesa Buy Goods (Till)</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Pay manually using our M-Pesa Till Number</p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-semibold">Manual Verification</span>
+                                    </div>
+                                </div>
+                                <div class="w-7 h-7 rounded-full border-4 border-gray-300 flex items-center justify-center radio-dot">
+                                    <div class="w-3 h-3 bg-transparent rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Airtel Uganda -->
                         <div class="payment-method border-2 border-gray-200 rounded-2xl p-5" id="method-airtel-ug" onclick="selectMethod('airtel-ug', this)">
                             <div class="flex items-center gap-5">
@@ -560,7 +579,7 @@
                 </div>
 
                 <!-- Payment Form (For Express) -->
-                <div id="expressFormCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up" style="animation-delay: 0.3s">
+                <div id="expressFormCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
                             <i class="fas fa-coins text-2xl text-green-600"></i>
@@ -632,6 +651,37 @@
                 </div>
 
                 <!-- Individual Instruction Blocks -->
+
+                <!-- M-Pesa Till Card (Instruction block for newly added method) -->
+                <div id="mpesaTillCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-2xl text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">M-Pesa Buy Goods Instructions</h3>
+                            <p class="text-sm text-gray-600">Follow these steps to pay via Till Number</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 border-2 border-gray-100 rounded-2xl p-6 mb-6">
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li><strong>Step 1:</strong> Go to your M-Pesa Menu or open the M-Pesa App.</li>
+                            <li><strong>Step 2:</strong> Select <strong>Lipa na M-Pesa</strong> option.</li>
+                            <li><strong>Step 3:</strong> Select <strong>Buy Goods and Services</strong>.</li>
+                            <li><strong>Step 4:</strong> Enter the Till Number details:</li>
+                            <li class="pl-5 border-l-2 border-gray-300 my-1">
+                                <div><strong>Till Number:</strong> <span class="font-mono bg-white px-2 py-0.5 rounded border border-gray-200 font-bold text-emerald-600">4409440</span></div>
+                                <div><strong>Merchant Name:</strong> DAIMON CHERUIYOT</div>
+                            </li>
+                            <li><strong>Step 5:</strong> Enter the Amount you wish to add.</li>
+                            <li><strong>Step 6:</strong> Enter your M-Pesa PIN and complete the payment.</li>
+                        </ul>
+                    </div>
+                    <a href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20manual%20payment%20via%20M-Pesa%20Till%20Number%20to%20DAIMON%20CHERUIYOT.%20Here%20is%20my%20M-Pesa%20Confirmation%20Message:" target="_blank" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl shadow-xl flex items-center justify-center gap-3 text-lg transition-transform transform hover:-translate-y-1">
+                        <i class="fab fa-whatsapp text-2xl"></i>
+                        <span>Send Till Receipt on WhatsApp</span>
+                    </a>
+                </div>
                 
                 <!-- 1. Airtel Uganda Card -->
                 <div id="airtelUgCard" class="glass-card rounded-3xl shadow-xl p-8 slide-up hidden">
@@ -1034,6 +1084,7 @@
 
             // Hide all specialized instructional forms
             document.getElementById('expressFormCard').classList.add('hidden');
+            document.getElementById('mpesaTillCard').classList.add('hidden');
             document.getElementById('airtelUgCard').classList.add('hidden');
             document.getElementById('worldremitCard').classList.add('hidden');
             document.getElementById('mtnUgCard').classList.add('hidden');
@@ -1044,6 +1095,8 @@
             // View management based on chosen method
             if (method === 'mpesa') {
                 document.getElementById('expressFormCard').classList.remove('hidden');
+            } else if (method === 'mpesa-till') {
+                document.getElementById('mpesaTillCard').classList.remove('hidden');
             } else if (method === 'airtel-ug') {
                 document.getElementById('airtelUgCard').classList.remove('hidden');
             } else if (method === 'worldremit') {
