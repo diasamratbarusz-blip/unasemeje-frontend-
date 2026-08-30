@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Dashboard | PanelEngine</title>
+  <title>Customer Dashboard | Unasemeje SMM Panel Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -20,13 +20,13 @@
   <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between shrink-0 hidden md:flex">
     <div class="p-5 overflow-y-auto">
       <!-- Brand Logo -->
-      <div class="flex items-center gap-3 mb-8">
-        <div class="h-9 w-9 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-blue-500/20">P</div>
+      <a href="https://unasemeje.co.ke/" target="_blank" class="flex items-center gap-3 mb-8 group">
+        <div class="h-9 w-9 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-blue-500/20 group-hover:bg-blue-500 transition">U</div>
         <div>
-          <span class="font-extrabold text-lg tracking-tight text-white block leading-tight">PanelEngine</span>
+          <span class="font-extrabold text-lg tracking-tight text-white block leading-tight group-hover:text-blue-400 transition">Unasemeje</span>
           <span class="text-[10px] text-blue-400 font-mono font-medium">CUSTOMER DASHBOARD</span>
         </div>
-      </div>
+      </a>
 
       <!-- Navigation Links -->
       <nav class="space-y-1">
@@ -84,12 +84,15 @@
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
           <span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></span> Panel Live
         </span>
-        <a id="header-domain" href="https://alexsmm.yourbrand.com" target="_blank" class="text-sm font-mono text-slate-300 hover:text-blue-400 transition flex items-center gap-1.5">
-          https://alexsmm.yourbrand.com <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500"></i>
+        <a id="header-domain" href="https://alexsmm.unasemeje.co.ke" target="_blank" class="text-sm font-mono text-slate-300 hover:text-blue-400 transition flex items-center gap-1.5">
+          https://alexsmm.unasemeje.co.ke <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500"></i>
         </a>
       </div>
 
       <div class="flex items-center gap-3">
+        <a href="https://unasemeje.co.ke/" target="_blank" class="text-xs text-slate-400 hover:text-white transition flex items-center gap-1 mr-2 hidden sm:flex">
+          <i class="fa-solid fa-house text-slate-500"></i> Main Brand Link
+        </a>
         <button class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2">
           <i class="fa-solid fa-rocket"></i> Go Live Settings
         </button>
@@ -145,7 +148,7 @@
 
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
           <h3 class="text-lg font-bold text-white">Quick Panel Overview</h3>
-          <p class="text-sm text-slate-400">Welcome to your PanelEngine management dashboard. From here you can customize your frontend theme, set service prices, view incoming order traffic, and manage M-Pesa client deposits.</p>
+          <p class="text-sm text-slate-400">Welcome to your <a href="https://unasemeje.co.ke/" target="_blank" class="text-blue-400 hover:underline">Unasemeje</a> management dashboard. From here you can customize your frontend theme, set service prices, view incoming order traffic, and manage M-Pesa client deposits.</p>
         </div>
       </div>
 
@@ -164,7 +167,7 @@
             </div>
             <div class="space-y-2">
               <label class="block text-sm font-medium text-slate-300">Custom Logo URL</label>
-              <input type="text" placeholder="https://example.com/logo.png" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+              <input type="text" placeholder="https://unasemeje.co.ke/assets/logo.png" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
             </div>
             <div class="space-y-2">
               <label class="block text-sm font-medium text-slate-300">Support Email / WhatsApp</label>
@@ -320,13 +323,13 @@
       <div id="tab-domain" class="tab-content hidden space-y-6">
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
           <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-globe text-blue-500 mr-2"></i>Domain & DNS Routing</h3>
-          <p class="text-sm text-slate-400">Configure your custom domain CNAME record to point directly to PanelEngine edge servers.</p>
+          <p class="text-sm text-slate-400">Configure your custom domain CNAME record or use your default subdomain routed through <a href="https://unasemeje.co.ke/" target="_blank" class="text-blue-400 hover:underline">unasemeje.co.ke</a>.</p>
           <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg space-y-2 font-mono text-xs">
             <div class="flex justify-between text-slate-400">
               <span>TYPE: <strong class="text-white">CNAME</strong></span>
               <span>HOST: <strong class="text-white">@ / www</strong></span>
             </div>
-            <div class="text-blue-400">VALUE: cname.panelengine.com</div>
+            <div class="text-blue-400">VALUE: cname.unasemeje.co.ke</div>
           </div>
         </div>
       </div>
@@ -338,7 +341,7 @@
           <div class="flex justify-between items-center p-4 bg-slate-900 border border-slate-800 rounded-lg">
             <div>
               <p class="text-base font-bold text-white">Pro Panel Subscription</p>
-              <p class="text-xs text-slate-400">Auto-renews monthly via M-Pesa STK Push</p>
+              <p class="text-xs text-slate-400">Auto-renews monthly via M-Pesa STK Push on <a href="https://unasemeje.co.ke/" target="_blank" class="text-blue-400 hover:underline">unasemeje.co.ke</a></p>
             </div>
             <span class="text-xl font-extrabold text-green-400">KES 4,500 / mo</span>
           </div>
@@ -358,8 +361,20 @@
     </main>
   </div>
 
-  <!-- JAVASCRIPT TAB SWITCHING ENGINE -->
+  <!-- JAVASCRIPT TAB SWITCHING & URL PARSING ENGINE -->
   <script>
+    // Read domain query parameter if passed from onboarding flow
+    const urlParams = new URLSearchParams(window.location.search);
+    const domainParam = urlParams.get('domain');
+    if (domainParam) {
+      const formattedUrl = domainParam.startsWith('http') ? domainParam : `https://${domainParam}`;
+      const headerDomain = document.getElementById('header-domain');
+      if (headerDomain) {
+        headerDomain.href = formattedUrl;
+        headerDomain.innerHTML = `${formattedUrl} <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500"></i>`;
+      }
+    }
+
     function switchTab(tabId) {
       // Hide all contents
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
