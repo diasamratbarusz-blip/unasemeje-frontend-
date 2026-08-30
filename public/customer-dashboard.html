@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard | PanelEngine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Custom scrollbar for sidebar & tables */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="h-full text-slate-100 font-sans antialiased flex overflow-hidden">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between shrink-0 hidden md:flex">
+    <div class="p-5 overflow-y-auto">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 mb-8">
+        <div class="h-9 w-9 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-blue-500/20">P</div>
+        <div>
+          <span class="font-extrabold text-lg tracking-tight text-white block leading-tight">PanelEngine</span>
+          <span class="text-[10px] text-blue-400 font-mono font-medium">CUSTOMER DASHBOARD</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="space-y-1">
+        <button onclick="switchTab('my-panel')" id="nav-my-panel" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-semibold transition bg-blue-600 text-white shadow-md shadow-blue-600/20">
+          <i class="fa-solid fa-gauge-high w-5 text-center"></i> My Panel
+        </button>
+        <button onclick="switchTab('customize')" id="nav-customize" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-palette w-5 text-center"></i> Customize
+        </button>
+        <button onclick="switchTab('services')" id="nav-services" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-list-check w-5 text-center"></i> Services
+        </button>
+        <button onclick="switchTab('pricing')" id="nav-pricing" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-tags w-5 text-center"></i> Pricing
+        </button>
+        <button onclick="switchTab('users')" id="nav-users" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-users w-5 text-center"></i> Users
+        </button>
+        <button onclick="switchTab('orders')" id="nav-orders" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Orders
+        </button>
+        <button onclick="switchTab('deposits')" id="nav-deposits" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-wallet w-5 text-center"></i> Deposits
+        </button>
+        <button onclick="switchTab('domain')" id="nav-domain" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-globe w-5 text-center"></i> Domain
+        </button>
+        <button onclick="switchTab('subscription')" id="nav-subscription" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-receipt w-5 text-center"></i> Subscription
+        </button>
+        <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+          <i class="fa-solid fa-chart-line w-5 text-center"></i> Analytics
+        </button>
+      </nav>
+    </div>
+
+    <!-- Tenant Account Footer -->
+    <div class="p-4 border-t border-slate-800 bg-slate-950/50">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sm text-slate-300">AM</div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-semibold text-white truncate">Alex Merchant</p>
+          <p class="text-xs text-green-400 font-mono truncate">Pro Plan • Active</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+
+    <!-- TOP BAR -->
+    <header class="h-16 border-b border-slate-800 bg-slate-950/80 backdrop-blur px-6 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-4">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-400 border border-green-500/20">
+          <span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></span> Panel Live
+        </span>
+        <a id="header-domain" href="https://alexsmm.yourbrand.com" target="_blank" class="text-sm font-mono text-slate-300 hover:text-blue-400 transition flex items-center gap-1.5">
+          https://alexsmm.yourbrand.com <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500"></i>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-rocket"></i> Go Live Settings
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+
+      <!-- LIFECYCLE WORKFLOW TRACKER BANNER -->
+      <section class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-diagram-project text-blue-500"></i> Panel Provisioning & Activation Pipeline
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2 text-center text-[11px] font-medium">
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">1. Customer</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">2. Create Panel</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">3. Choose Package</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">4. M-Pesa STK</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">5. Payment OK</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">6. Subscription</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">7. Auto Created</div>
+          <div class="p-2 rounded-lg bg-blue-950/40 border border-blue-800 text-blue-300 font-bold">8. Dashboard</div>
+          <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400">9. Customizes</div>
+          <div class="p-2 rounded-lg bg-green-950/40 border border-green-800 text-green-400 font-bold">10. Panel Live</div>
+        </div>
+      </section>
+
+      <!-- TAB 1: MY PANEL -->
+      <div id="tab-my-panel" class="tab-content space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl">
+            <span class="text-xs font-medium text-slate-400">Panel Status</span>
+            <div class="text-2xl font-extrabold text-green-400 mt-1">ONLINE</div>
+            <p class="text-xs text-slate-500 mt-1">SSL Certificate Active</p>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl">
+            <span class="text-xs font-medium text-slate-400">Connected API Providers</span>
+            <div class="text-2xl font-extrabold text-white mt-1">2 Active</div>
+            <p class="text-xs text-slate-500 mt-1">Auto-syncing orders</p>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl">
+            <span class="text-xs font-medium text-slate-400">Total Registered Users</span>
+            <div class="text-[22px] font-extrabold text-white mt-1">1,248</div>
+            <p class="text-xs text-green-400 mt-1">+12% this week</p>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-5 rounded-xl">
+            <span class="text-xs font-medium text-slate-400">Monthly Subscription</span>
+            <div class="text-2xl font-extrabold text-blue-400 mt-1">KES 4,500</div>
+            <p class="text-xs text-slate-500 mt-1">Renews in 28 Days</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white">Quick Panel Overview</h3>
+          <p class="text-sm text-slate-400">Welcome to your PanelEngine management dashboard. From here you can customize your frontend theme, set service prices, view incoming order traffic, and manage M-Pesa client deposits.</p>
+        </div>
+      </div>
+
+      <!-- TAB 2: CUSTOMIZE -->
+      <div id="tab-customize" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-6">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-palette text-blue-500 mr-2"></i>Theme & Branding Customization</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-slate-300">Panel Brand Name</label>
+              <input type="text" value="Alex Boost Store" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-slate-300">Primary Accent Color</label>
+              <input type="color" value="#3b82f6" class="h-10 w-24 bg-transparent border-0 cursor-pointer rounded">
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-slate-300">Custom Logo URL</label>
+              <input type="text" placeholder="https://example.com/logo.png" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-slate-300">Support Email / WhatsApp</label>
+              <input type="text" value="+254712345678" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+          <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-lg transition">Save Customization Settings</button>
+        </div>
+      </div>
+
+      <!-- TAB 3: SERVICES -->
+      <div id="tab-services" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-list-check text-blue-500 mr-2"></i>Service Catalog Sync</h3>
+            <button class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Import New Service</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 text-xs uppercase font-semibold">
+                <tr>
+                  <th class="p-3">ID</th>
+                  <th class="p-3">Service Name</th>
+                  <th class="p-3">Provider Cost</th>
+                  <th class="p-3">Min / Max</th>
+                  <th class="p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-xs">
+                <tr>
+                  <td class="p-3 font-mono">101</td>
+                  <td class="p-3 font-medium text-white">Instagram Followers [Instant High Quality]</td>
+                  <td class="p-3 font-mono text-green-400">KES 120 / 1k</td>
+                  <td class="p-3">100 / 50,000</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">Active</span></td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-mono">102</td>
+                  <td class="p-3 font-medium text-white">TikTok Views [Fast Speed - Non Drop]</td>
+                  <td class="p-3 font-mono text-green-400">KES 15 / 1k</td>
+                  <td class="p-3">500 / 1,000,000</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">Active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: PRICING -->
+      <div id="tab-pricing" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-tags text-blue-500 mr-2"></i>Global Profit Markup Controls</h3>
+          <p class="text-sm text-slate-400">Set automatic percentage price increases on all imported supplier services.</p>
+          <div class="max-w-md space-y-4 pt-2">
+            <div>
+              <label class="block text-sm font-medium text-slate-300 mb-2">Default Percentage Markup (%)</label>
+              <input type="number" value="30" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500 font-mono">
+            </div>
+            <button class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-6 py-2.5 rounded-lg transition">Apply Price Markup Rules</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: USERS -->
+      <div id="tab-users" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Registered Panel Clients</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 text-xs uppercase font-semibold">
+                <tr>
+                  <th class="p-3">User ID</th>
+                  <th class="p-3">Username</th>
+                  <th class="p-3">Email</th>
+                  <th class="p-3">Balance</th>
+                  <th class="p-3">Joined Date</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-xs">
+                <tr>
+                  <td class="p-3 font-mono">USR-8821</td>
+                  <td class="p-3 font-medium text-white">john_doe</td>
+                  <td class="p-3 text-slate-400">john@example.com</td>
+                  <td class="p-3 font-mono text-green-400">KES 1,450.00</td>
+                  <td class="p-3 text-slate-500">2026-08-12</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: ORDERS -->
+      <div id="tab-orders" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-cart-shopping text-blue-500 mr-2"></i>Customer Orders</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 text-xs uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Order ID</th>
+                  <th class="p-3">Target Link</th>
+                  <th class="p-3">Quantity</th>
+                  <th class="p-3">Charge</th>
+                  <th class="p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-xs">
+                <tr>
+                  <td class="p-3 font-mono">ORD-99120</td>
+                  <td class="p-3 font-mono text-blue-400">instagram.com/user_test</td>
+                  <td class="p-3">1,000</td>
+                  <td class="p-3 font-mono text-white">KES 150.00</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">In Progress</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: DEPOSITS -->
+      <div id="tab-deposits" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-wallet text-green-500 mr-2"></i>M-Pesa Client Deposits</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+              <thead class="bg-slate-900 text-slate-400 text-xs uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Receipt Code</th>
+                  <th class="p-3">Phone</th>
+                  <th class="p-3">Amount</th>
+                  <th class="p-3">Date</th>
+                  <th class="p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-xs">
+                <tr>
+                  <td class="p-3 font-mono text-green-400">QKH78219X</td>
+                  <td class="p-3 font-mono">+254712***678</td>
+                  <td class="p-3 font-mono text-white">KES 500.00</td>
+                  <td class="p-3 text-slate-500">2026-08-30 14:22</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">Confirmed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: DOMAIN -->
+      <div id="tab-domain" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-globe text-blue-500 mr-2"></i>Domain & DNS Routing</h3>
+          <p class="text-sm text-slate-400">Configure your custom domain CNAME record to point directly to PanelEngine edge servers.</p>
+          <div class="p-4 bg-slate-900 border border-slate-800 rounded-lg space-y-2 font-mono text-xs">
+            <div class="flex justify-between text-slate-400">
+              <span>TYPE: <strong class="text-white">CNAME</strong></span>
+              <span>HOST: <strong class="text-white">@ / www</strong></span>
+            </div>
+            <div class="text-blue-400">VALUE: cname.panelengine.com</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 9: SUBSCRIPTION -->
+      <div id="tab-subscription" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-receipt text-blue-500 mr-2"></i>Subscription Plan Details</h3>
+          <div class="flex justify-between items-center p-4 bg-slate-900 border border-slate-800 rounded-lg">
+            <div>
+              <p class="text-base font-bold text-white">Pro Panel Subscription</p>
+              <p class="text-xs text-slate-400">Auto-renews monthly via M-Pesa STK Push</p>
+            </div>
+            <span class="text-xl font-extrabold text-green-400">KES 4,500 / mo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 10: ANALYTICS -->
+      <div id="tab-analytics" class="tab-content hidden space-y-6">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-chart-line text-blue-500 mr-2"></i>Revenue Analytics</h3>
+          <div class="h-48 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-center text-slate-500 text-sm">
+            <i class="fa-solid fa-chart-column text-2xl mr-3 text-blue-500"></i> Revenue charts will render here after first order processing.
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- JAVASCRIPT TAB SWITCHING ENGINE -->
+  <script>
+    function switchTab(tabId) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      
+      // Reset button styles
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:bg-slate-900 hover:text-slate-200';
+      });
+
+      // Show selected tab content
+      const selectedTab = document.getElementById(`tab-${tabId}`);
+      if(selectedTab) selectedTab.classList.remove('hidden');
+
+      // Highlight active navigation button
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if(activeBtn) {
+        activeBtn.className = 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-semibold transition bg-blue-600 text-white shadow-md shadow-blue-600/20';
+      }
+    }
+  </script>
+</body>
+</html>
