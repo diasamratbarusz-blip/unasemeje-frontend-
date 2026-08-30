@@ -143,7 +143,7 @@
           <label class="block text-sm font-medium text-slate-300">Choose Subdomain Prefix</label>
           <div class="flex rounded-lg overflow-hidden border border-slate-800 bg-slate-900 focus-within:border-blue-500">
             <input type="text" id="subdomain-prefix" placeholder="alexsmm" class="w-full bg-transparent px-4 py-3 text-white focus:outline-none text-sm" oninput="updateDomainPreview()">
-            <span class="bg-slate-800 text-slate-400 px-4 flex items-center text-sm font-mono border-l border-slate-700">.yourbrand.com</span>
+            <span class="bg-slate-800 text-slate-400 px-4 flex items-center text-sm font-mono border-l border-slate-700">.unasemeje.co.ke</span>
           </div>
         </div>
 
@@ -151,7 +151,7 @@
         <div id="custom-domain-input-group" class="space-y-2 hidden">
           <label class="block text-sm font-medium text-slate-300">Your Custom Domain</label>
           <input type="text" id="custom-domain-name" placeholder="alexsmmstore.com" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm" oninput="updateDomainPreview()">
-          <p class="text-xs text-slate-500">After payment, you will point your domain's CNAME record to <code class="text-blue-400 font-mono">cname.yourbrand.com</code></p>
+          <p class="text-xs text-slate-500">After payment, you will point your domain's CNAME record to <code class="text-blue-400 font-mono">cname.unasemeje.co.ke</code></p>
         </div>
 
         <!-- Panel Branding Info -->
@@ -172,7 +172,7 @@
         <!-- Dynamic Preview Card -->
         <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4 mt-4">
           <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider block mb-1">Live Endpoint Preview</span>
-          <p class="text-sm font-mono text-green-400" id="live-url-preview">https://alexsmm.yourbrand.com</p>
+          <p class="text-sm font-mono text-green-400" id="live-url-preview">https://alexsmm.unasemeje.co.ke</p>
         </div>
 
         <div class="flex justify-between mt-8">
@@ -195,7 +195,7 @@
           </div>
           <div class="flex justify-between text-sm">
             <span class="text-slate-400">Target Domain:</span>
-            <span id="summary-domain" class="font-mono text-blue-400">alexsmm.yourbrand.com</span>
+            <span id="summary-domain" class="font-mono text-blue-400">alexsmm.unasemeje.co.ke</span>
           </div>
           <div class="border-t border-slate-800 pt-3 flex justify-between items-center">
             <span class="font-bold text-white">Total Amount Due:</span>
@@ -252,7 +252,7 @@
         </div>
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 max-w-md mx-auto text-left">
           <div class="text-xs text-slate-500 mb-1">Access URL</div>
-          <a id="final-panel-url" href="#" target="_blank" class="text-blue-400 font-mono font-bold text-sm hover:underline">https://alexsmm.yourbrand.com</a>
+          <a id="final-panel-url" href="#" target="_blank" class="text-blue-400 font-mono font-bold text-sm hover:underline">https://alexsmm.unasemeje.co.ke</a>
         </div>
         <button onclick="redirectToDashboard()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold text-sm transition-all flex items-center justify-center gap-2 mx-auto">
           <span>Go to Customer Dashboard</span>
@@ -307,7 +307,7 @@
       let targetDomain = '';
       if (domainType === 'subdomain') {
         const prefix = document.getElementById('subdomain-prefix').value.trim() || 'alexsmm';
-        targetDomain = `${prefix}.yourbrand.com`;
+        targetDomain = `${prefix}.unasemeje.co.ke`;
       } else {
         targetDomain = document.getElementById('custom-domain-name').value.trim() || 'alexsmmstore.com';
       }
