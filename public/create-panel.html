@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your SMM Panel | No-Code Launch</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .step-active { border-color: #3b82f6; color: #3b82f6; }
+    .step-done { border-color: #10b981; background-color: #10b981; color: white; }
+    .pulse-ring { animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+
+  <!-- Top Bar -->
+  <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-lg">P</div>
+        <span class="font-bold text-xl tracking-tight">PanelEngine</span>
+      </div>
+      <div class="text-sm text-slate-400">Need help? <a href="#" class="text-blue-400 hover:underline">Support</a></div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Header Section -->
+    <div class="text-center mb-10">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">Launch Your Own SMM Reseller Panel</h1>
+      <p class="text-slate-400 max-w-2xl mx-auto text-base">Select a plan, enter your custom domain, make a payment via M-Pesa STK Push, and go live instantly with zero coding required.</p>
+    </div>
+
+    <!-- Multi-Step Progress Tracker -->
+    <div class="flex justify-between items-center max-w-2xl mx-auto mb-12 relative">
+      <div class="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-800 -translate-y-1/2 -z-10"></div>
+      
+      <div class="flex flex-col items-center gap-2 bg-slate-900 px-2">
+        <div id="step-1-icon" class="w-10 h-10 rounded-full border-2 border-blue-500 bg-slate-900 flex items-center justify-center font-semibold text-blue-500">1</div>
+        <span class="text-xs font-medium text-slate-300">Choose Package</span>
+      </div>
+      <div class="flex flex-col items-center gap-2 bg-slate-900 px-2">
+        <div id="step-2-icon" class="w-10 h-10 rounded-full border-2 border-slate-700 bg-slate-900 flex items-center justify-center font-semibold text-slate-500">2</div>
+        <span class="text-xs font-medium text-slate-400">Domain & Brand</span>
+      </div>
+      <div class="flex flex-col items-center gap-2 bg-slate-900 px-2">
+        <div id="step-3-icon" class="w-10 h-10 rounded-full border-2 border-slate-700 bg-slate-900 flex items-center justify-center font-semibold text-slate-500">3</div>
+        <span class="text-xs font-medium text-slate-400">M-Pesa Payment</span>
+      </div>
+    </div>
+
+    <!-- FORM CONTAINER -->
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl">
+
+      <!-- STEP 1: CHOOSE PACKAGE -->
+      <div id="step-1" class="space-y-6">
+        <h2 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-cubes text-blue-500 mr-2"></i>Select Subscription Plan</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Starter Plan -->
+          <div onclick="selectPackage('starter', 2500)" id="pkg-starter" class="border-2 border-slate-800 hover:border-slate-700 rounded-xl p-6 cursor-pointer transition-all bg-slate-900/50 relative">
+            <h3 class="text-lg font-semibold text-white">Starter Panel</h3>
+            <p class="text-xs text-slate-400 mt-1">Best for small resellers</p>
+            <div class="my-4">
+              <span class="text-3xl font-extrabold text-white">KES 2,500</span>
+              <span class="text-slate-400 text-sm">/month</span>
+            </div>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Free Subdomain</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Up to 500 Orders/mo</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Standard SMM API Sync</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Free SSL Certificate</li>
+            </ul>
+          </div>
+
+          <!-- Professional Plan (Default Selected) -->
+          <div onclick="selectPackage('pro', 4500)" id="pkg-pro" class="border-2 border-blue-500 bg-blue-950/20 rounded-xl p-6 cursor-pointer transition-all relative">
+            <span class="absolute -top-3 right-4 bg-blue-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Popular</span>
+            <h3 class="text-lg font-semibold text-white">Pro Panel</h3>
+            <p class="text-xs text-slate-400 mt-1">For growing agency owners</p>
+            <div class="my-4">
+              <span class="text-3xl font-extrabold text-white">KES 4,500</span>
+              <span class="text-slate-400 text-sm">/month</span>
+            </div>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Custom Domain Support</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Unlimited Orders</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Multi-Provider API Integration</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Custom Branding & Themes</li>
+            </ul>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div onclick="selectPackage('enterprise', 8500)" id="pkg-enterprise" class="border-2 border-slate-800 hover:border-slate-700 rounded-xl p-6 cursor-pointer transition-all bg-slate-900/50 relative">
+            <h3 class="text-lg font-semibold text-white">Ultimate Panel</h3>
+            <p class="text-xs text-slate-400 mt-1">High volume resellers</p>
+            <div class="my-4">
+              <span class="text-3xl font-extrabold text-white">KES 8,500</span>
+              <span class="text-slate-400 text-sm">/month</span>
+            </div>
+            <ul class="space-y-2 text-sm text-slate-300">
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Multiple Custom Domains</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Automated M-Pesa Gateway</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Priority 24/7 Support</li>
+              <li><i class="fa-solid fa-check text-green-400 mr-2"></i>Zero Transaction Fees</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flex justify-end mt-8">
+          <button onclick="goToStep(2)" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2">
+            Continue to Domain <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: DOMAIN & BRANDING -->
+      <div id="step-2" class="space-y-6 hidden">
+        <h2 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-globe text-blue-500 mr-2"></i>Domain & Panel Identity</h2>
+
+        <!-- Domain Selection Type -->
+        <div class="space-y-4">
+          <label class="block text-sm font-medium text-slate-300">Choose Domain Type</label>
+          <div class="grid grid-cols-2 gap-4">
+            <button type="button" onclick="setDomainType('subdomain')" id="btn-subdomain" class="p-4 border-2 border-blue-500 bg-blue-950/20 rounded-lg text-left font-medium text-sm">
+              <i class="fa-solid fa-link text-blue-400 mr-2"></i> Free Subdomain
+            </button>
+            <button type="button" onclick="setDomainType('custom')" id="btn-custom" class="p-4 border border-slate-800 bg-slate-900 rounded-lg text-left font-medium text-sm text-slate-400">
+              <i class="fa-solid fa-globe text-slate-400 mr-2"></i> Use My Own Domain
+            </button>
+          </div>
+        </div>
+
+        <!-- Subdomain Input -->
+        <div id="subdomain-input-group" class="space-y-2">
+          <label class="block text-sm font-medium text-slate-300">Choose Subdomain Prefix</label>
+          <div class="flex rounded-lg overflow-hidden border border-slate-800 bg-slate-900 focus-within:border-blue-500">
+            <input type="text" id="subdomain-prefix" placeholder="alexsmm" class="w-full bg-transparent px-4 py-3 text-white focus:outline-none text-sm" oninput="updateDomainPreview()">
+            <span class="bg-slate-800 text-slate-400 px-4 flex items-center text-sm font-mono border-l border-slate-700">.yourbrand.com</span>
+          </div>
+        </div>
+
+        <!-- Custom Domain Input (Hidden by Default) -->
+        <div id="custom-domain-input-group" class="space-y-2 hidden">
+          <label class="block text-sm font-medium text-slate-300">Your Custom Domain</label>
+          <input type="text" id="custom-domain-name" placeholder="alexsmmstore.com" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm" oninput="updateDomainPreview()">
+          <p class="text-xs text-slate-500">After payment, you will point your domain's CNAME record to <code class="text-blue-400 font-mono">cname.yourbrand.com</code></p>
+        </div>
+
+        <!-- Panel Branding Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Panel Website Title</label>
+            <input type="text" id="site-title" placeholder="Alex Boost Store" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2">Primary Accent Color</label>
+            <div class="flex items-center gap-3">
+              <input type="color" id="theme-color" value="#3b82f6" class="h-11 w-16 bg-transparent border-0 cursor-pointer rounded">
+              <span id="color-hex" class="text-xs font-mono text-slate-400">#3b82f6</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Preview Card -->
+        <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4 mt-4">
+          <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider block mb-1">Live Endpoint Preview</span>
+          <p class="text-sm font-mono text-green-400" id="live-url-preview">https://alexsmm.yourbrand.com</p>
+        </div>
+
+        <div class="flex justify-between mt-8">
+          <button onclick="goToStep(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-lg font-semibold transition-all">Back</button>
+          <button onclick="goToStep(3)" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2">
+            Proceed to Payment <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: MPESA PAYMENT -->
+      <div id="step-3" class="space-y-6 hidden">
+        <h2 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-mobile-screen-button text-green-500 mr-2"></i>Pay via M-Pesa STK Push</h2>
+
+        <!-- Order Summary Box -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-400">Package Selected:</span>
+            <span id="summary-package" class="font-semibold text-white">Pro Panel</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-400">Target Domain:</span>
+            <span id="summary-domain" class="font-mono text-blue-400">alexsmm.yourbrand.com</span>
+          </div>
+          <div class="border-t border-slate-800 pt-3 flex justify-between items-center">
+            <span class="font-bold text-white">Total Amount Due:</span>
+            <span id="summary-price" class="text-2xl font-extrabold text-green-400">KES 4,500</span>
+          </div>
+        </div>
+
+        <!-- Phone Number Field -->
+        <div class="space-y-2">
+          <label class="block text-sm font-medium text-slate-300">M-Pesa Phone Number</label>
+          <div class="relative">
+            <span class="absolute left-4 top-3.5 text-slate-400 text-sm font-bold">+254</span>
+            <input type="tel" id="mpesa-phone" placeholder="712345678" maxlength="9" class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-16 pr-4 py-3 text-white focus:outline-none focus:border-green-500 text-sm font-mono">
+          </div>
+          <p class="text-xs text-slate-500">You will receive an instant prompt on your phone requesting your M-Pesa PIN.</p>
+        </div>
+
+        <div class="flex justify-between mt-8">
+          <button onclick="goToStep(2)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-lg font-semibold transition-all">Back</button>
+          <button onclick="initiateStkPush()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2">
+            <i class="fa-solid fa-bolt"></i> Send STK Push
+          </button>
+        </div>
+      </div>
+
+      <!-- PROCESSING / PROVISIONING STATE (HIDDEN INITIALLY) -->
+      <div id="processing-state" class="text-center py-12 space-y-6 hidden">
+        <div class="relative inline-block">
+          <div class="w-20 h-20 rounded-full bg-blue-600/20 flex items-center justify-center pulse-ring mx-auto">
+            <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-500"></i>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <h3 id="status-heading" class="text-xl font-bold text-white">Waiting for M-Pesa PIN Input...</h3>
+          <p id="status-subtext" class="text-sm text-slate-400 max-w-md mx-auto">Please check your phone and key in your PIN to authorize the payment.</p>
+        </div>
+        <!-- Progress Steps Animation -->
+        <div class="max-w-md mx-auto bg-slate-900 border border-slate-800 rounded-lg p-4 text-left text-xs font-mono space-y-2 text-slate-400">
+          <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Requesting STK Push transaction...</div>
+          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming M-Pesa payment payload...</div>
+          <div id="log-3" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Allocating database tenant & SSL certificate...</div>
+          <div id="log-4" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Deploying panel dashboard...</div>
+        </div>
+      </div>
+
+      <!-- SUCCESS / LIVE STATE -->
+      <div id="success-state" class="text-center py-10 space-y-6 hidden">
+        <div class="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto text-3xl">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+          <h3 class="text-2xl font-extrabold text-white">Your Panel is Live!</h3>
+          <p class="text-slate-400 text-sm mt-1">Your website panel has been automatically provisioned and configured.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 max-w-md mx-auto text-left">
+          <div class="text-xs text-slate-500 mb-1">Access URL</div>
+          <a id="final-panel-url" href="#" target="_blank" class="text-blue-400 font-mono font-bold text-sm hover:underline">https://alexsmm.yourbrand.com</a>
+        </div>
+        <button onclick="window.location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold text-sm">
+          Go to Customer Dashboard
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // State management
+    let selectedPackage = { name: 'Pro Panel', price: 4500 };
+    let domainType = 'subdomain';
+    let currentStep = 1;
+
+    function selectPackage(id, price) {
+      document.querySelectorAll('#step-1 > div > div').forEach(el => {
+        el.classList.remove('border-blue-500', 'bg-blue-950/20');
+        el.classList.add('border-slate-800', 'bg-slate-900/50');
+      });
+      const selected = document.getElementById(`pkg-${id}`);
+      selected.classList.remove('border-slate-800', 'bg-slate-900/50');
+      selected.classList.add('border-blue-500', 'bg-blue-950/20');
+
+      const names = { starter: 'Starter Panel', pro: 'Pro Panel', enterprise: 'Ultimate Panel' };
+      selectedPackage = { name: names[id], price };
+    }
+
+    function setDomainType(type) {
+      domainType = type;
+      const subBtn = document.getElementById('btn-subdomain');
+      const custBtn = document.getElementById('btn-custom');
+      const subGroup = document.getElementById('subdomain-input-group');
+      const custGroup = document.getElementById('custom-domain-input-group');
+
+      if (type === 'subdomain') {
+        subBtn.className = 'p-4 border-2 border-blue-500 bg-blue-950/20 rounded-lg text-left font-medium text-sm text-white';
+        custBtn.className = 'p-4 border border-slate-800 bg-slate-900 rounded-lg text-left font-medium text-sm text-slate-400';
+        subGroup.classList.remove('hidden');
+        custGroup.classList.add('hidden');
+      } else {
+        custBtn.className = 'p-4 border-2 border-blue-500 bg-blue-950/20 rounded-lg text-left font-medium text-sm text-white';
+        subBtn.className = 'p-4 border border-slate-800 bg-slate-900 rounded-lg text-left font-medium text-sm text-slate-400';
+        custGroup.classList.remove('hidden');
+        subGroup.classList.add('hidden');
+      }
+      updateDomainPreview();
+    }
+
+    function updateDomainPreview() {
+      let targetDomain = '';
+      if (domainType === 'subdomain') {
+        const prefix = document.getElementById('subdomain-prefix').value.trim() || 'alexsmm';
+        targetDomain = `${prefix}.yourbrand.com`;
+      } else {
+        targetDomain = document.getElementById('custom-domain-name').value.trim() || 'alexsmmstore.com';
+      }
+      document.getElementById('live-url-preview').innerText = `https://${targetDomain}`;
+      document.getElementById('summary-domain').innerText = targetDomain;
+    }
+
+    function goToStep(step) {
+      document.getElementById(`step-${currentStep}`).classList.add('hidden');
+      currentStep = step;
+      document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+
+      // Update tracker UI
+      for (let i = 1; i <= 3; i++) {
+        const icon = document.getElementById(`step-${i}-icon`);
+        if (i < currentStep) {
+          icon.className = 'w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-semibold text-sm';
+          icon.innerHTML = '<i class="fa-solid fa-check"></i>';
+        } else if (i === currentStep) {
+          icon.className = 'w-10 h-10 rounded-full border-2 border-blue-500 bg-slate-900 text-blue-500 flex items-center justify-center font-semibold text-sm';
+          icon.innerText = i;
+        } else {
+          icon.className = 'w-10 h-10 rounded-full border-2 border-slate-700 bg-slate-900 text-slate-500 flex items-center justify-center font-semibold text-sm';
+          icon.innerText = i;
+        }
+      }
+
+      if (step === 3) {
+        document.getElementById('summary-package').innerText = selectedPackage.name;
+        document.getElementById('summary-price').innerText = `KES ${selectedPackage.price.toLocaleString()}`;
+        updateDomainPreview();
+      }
+    }
+
+    function initiateStkPush() {
+      const phone = document.getElementById('mpesa-phone').value.trim();
+      if (!phone || phone.length < 9) {
+        alert('Please enter a valid M-Pesa phone number.');
+        return;
+      }
+
+      // Hide step 3, show processing state
+      document.getElementById('step-3').classList.add('hidden');
+      document.getElementById('processing-state').classList.remove('hidden');
+
+      // Simulated Async Provisioning Engine Steps
+      setTimeout(() => {
+        document.getElementById('log-1').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> STK Push sent to 254' + phone;
+        document.getElementById('log-2').classList.remove('opacity-30');
+        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Validating M-Pesa PIN entry...';
+      }, 2000);
+
+      setTimeout(() => {
+        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Payment confirmed (M-Pesa Receipt: QKH78219X)';
+        document.getElementById('log-3').classList.remove('opacity-30');
+        document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & DNS records...';
+        document.getElementById('status-heading').innerText = 'Building Your Website Panel...';
+        document.getElementById('status-subtext').innerText = 'Please wait while our engine configures your database and SSL certificate.';
+      }, 5000);
+
+      setTimeout(() => {
+        document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Domain & SSL issued successfully';
+        document.getElementById('log-4').classList.remove('opacity-30');
+        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Finalizing dashboard settings...';
+      }, 7500);
+
+      setTimeout(() => {
+        const finalUrl = document.getElementById('summary-domain').innerText;
+        document.getElementById('processing-state').classList.add('hidden');
+        document.getElementById('success-state').classList.remove('hidden');
+        document.getElementById('final-panel-url').innerText = `https://${finalUrl}`;
+        document.getElementById('final-panel-url').href = `https://${finalUrl}`;
+      }, 9500);
+    }
+
+    // Color picker hex reflection
+    document.getElementById('theme-color').addEventListener('input', (e) => {
+      document.getElementById('color-hex').innerText = e.target.value;
+    });
+  </script>
+</body>
+</html>
