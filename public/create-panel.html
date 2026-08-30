@@ -254,8 +254,9 @@
           <div class="text-xs text-slate-500 mb-1">Access URL</div>
           <a id="final-panel-url" href="#" target="_blank" class="text-blue-400 font-mono font-bold text-sm hover:underline">https://alexsmm.yourbrand.com</a>
         </div>
-        <button onclick="window.location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold text-sm">
-          Go to Customer Dashboard
+        <button onclick="redirectToDashboard()" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-lg font-semibold text-sm transition-all flex items-center justify-center gap-2 mx-auto">
+          <span>Go to Customer Dashboard</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
         </button>
       </div>
 
@@ -379,7 +380,17 @@
         document.getElementById('success-state').classList.remove('hidden');
         document.getElementById('final-panel-url').innerText = `https://${finalUrl}`;
         document.getElementById('final-panel-url').href = `https://${finalUrl}`;
+        
+        // Auto-redirect to customer dashboard after 3 seconds
+        setTimeout(() => {
+          redirectToDashboard();
+        }, 3000);
       }, 9500);
+    }
+
+    function redirectToDashboard() {
+      const finalUrl = document.getElementById('summary-domain').innerText;
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}`;
     }
 
     // Color picker hex reflection
