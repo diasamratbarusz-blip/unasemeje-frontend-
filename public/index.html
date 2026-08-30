@@ -635,23 +635,29 @@
       margin-top: 35px;
       padding-top: 30px;
       border-top: 2px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
     }
     .join-now-text {
       font-size: 15px;
       color: var(--text-secondary);
-      margin-bottom: 20px;
+      margin-bottom: 5px;
       font-weight: 500;
     }
     .btn-join-now {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
+      width: 100%;
       background: linear-gradient(135deg, var(--brand-primary), #2d5a87);
       color: #ffffff !important;
       text-decoration: none;
       font-weight: 800;
-      font-size: 17px;
-      padding: 18px 45px;
+      font-size: 16px;
+      padding: 16px 30px;
       border-radius: 50px;
       box-shadow: 0 10px 25px rgba(30, 58, 95, 0.3);
       transition: all 0.3s ease;
@@ -672,8 +678,31 @@
       left: 100%;
     }
     .btn-join-now:hover {
-      transform: translateY(-3px) scale(1.02);
+      transform: translateY(-3px) scale(1.01);
       box-shadow: 0 15px 35px rgba(30, 58, 95, 0.4);
+    }
+    .btn-create-panel {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      background: transparent;
+      color: var(--brand-secondary) !important;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 15px 30px;
+      border-radius: 50px;
+      border: 2px solid var(--brand-secondary);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.1);
+    }
+    .btn-create-panel:hover {
+      background: var(--brand-secondary);
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(249, 115, 22, 0.3);
     }
 
     /* Section Styling */
@@ -1210,9 +1239,9 @@
         width: auto; 
       }
       
-      .btn-join-now {
-        font-size: 15px;
-        padding: 16px 25px;
+      .btn-join-now, .btn-create-panel {
+        font-size: 14px;
+        padding: 14px 20px;
         width: 100%;
         justify-content: center;
       }
@@ -1362,6 +1391,9 @@
       <p class="join-now-text">Don't have an account yet?</p>
       <a href="signup.html" class="btn-join-now">
         Create Free Account <i class="fas fa-arrow-right"></i>
+      </a>
+      <a href="create-panel.html" class="btn-create-panel">
+        <i class="fas fa-globe"></i> Create Your Own Panel Website
       </a>
     </div>
   </div>
