@@ -31,21 +31,17 @@
     }
   </style>
   <script>
-    // AUTHENTICATION GUARD & ACCOUNT STATE RETRIEVAL
-    // Dynamically retrieve real account details from session storage or local storage
+    // STRICT AUTHENTICATION GUARD & ACCOUNT RETRIEVAL
+    // Checks localStorage and sessionStorage for actual user session
     const storedAuth = JSON.parse(localStorage.getItem('authenticatedUser')) || JSON.parse(sessionStorage.getItem('userSession'));
 
-    // Fallback to active logged in session data if available, or direct user to log in
-    const currentUser = storedAuth || {
-      isLoggedIn: true,
-      username: "Unasemeje Admin",
-      email: "unasemeje@gmail.com",
-      whatsapp: "254715509440"
-    };
-
-    if (!currentUser || !currentUser.isLoggedIn) {
-      window.location.href = "login.html?redirect=create-panel.html";
+    // If user is not logged in or session object is invalid, redirect immediately to login page
+    if (!storedAuth || !storedAuth.isLoggedIn) {
+      window.location.href = "login.html?redirect=" + encodeURIComponent(window.location.pathname);
     }
+
+    // Reference to real user details
+    const currentUser = storedAuth;
   </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
@@ -65,17 +61,17 @@
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span class="text-slate-400">Account:</span>
-            <strong class="text-white font-medium" id="header-username">...</strong>
+            <strong class="text-white font-medium" id="header-username">Loading...</strong>
           </div>
           <span class="text-slate-700">|</span>
           <div class="text-slate-400">
             <i class="fa-solid fa-envelope mr-1 text-slate-500"></i>
-            <span id="header-email" class="text-slate-300">...</span>
+            <span id="header-email" class="text-slate-300">Loading...</span>
           </div>
           <span class="text-slate-700">|</span>
           <div class="text-slate-400">
             <i class="fab fa-whatsapp mr-1 text-green-500"></i>
-            <span id="header-whatsapp" class="text-slate-300 font-mono">...</span>
+            <span id="header-whatsapp" class="text-slate-300 font-mono">Loading...</span>
           </div>
         </div>
 
@@ -511,23 +507,26 @@
 
     // Populate Authenticated User Real Account Details Across All Views
     document.addEventListener("DOMContentLoaded", () => {
+      if (!currentUser) return;
+
       // Header Navigation Badge
-      document.getElementById('header-username').innerText = currentUser.username;
-      document.getElementById('header-email').innerText = currentUser.email;
-      document.getElementById('header-whatsapp').innerText = currentUser.whatsapp;
+      document.getElementById('header-username').innerText = currentUser.username || currentUser.name || 'Account Owner';
+      document.getElementById('header-email').innerText = currentUser.email || 'N/A';
+      document.getElementById('header-whatsapp').innerText = currentUser.whatsapp || currentUser.phone || 'N/A';
 
       // Step 3 Order Summary Details
-      document.getElementById('summary-owner').innerText = currentUser.username;
-      document.getElementById('summary-email').innerText = currentUser.email;
-      document.getElementById('summary-whatsapp').innerText = currentUser.whatsapp;
+      document.getElementById('summary-owner').innerText = currentUser.username || currentUser.name || 'Account Owner';
+      document.getElementById('summary-email').innerText = currentUser.email || 'N/A';
+      document.getElementById('summary-whatsapp').innerText = currentUser.whatsapp || currentUser.phone || 'N/A';
 
       // Success & Log States
-      document.getElementById('final-owner-username').innerText = currentUser.username;
-      document.getElementById('final-owner-email').innerText = currentUser.email;
-      document.getElementById('log-account-user').innerText = currentUser.email;
+      document.getElementById('final-owner-username').innerText = currentUser.username || currentUser.name || 'Account Owner';
+      document.getElementById('final-owner-email').innerText = currentUser.email || 'N/A';
+      document.getElementById('log-account-user').innerText = currentUser.email || currentUser.username || 'N/A';
 
       // Pre-fill M-Pesa phone number input from user's registered WhatsApp / phone
-      const phoneDigits = currentUser.whatsapp ? currentUser.whatsapp.replace(/\D/g, '').slice(-9) : '';
+      const rawPhone = currentUser.whatsapp || currentUser.phone || '';
+      const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
       if (phoneDigits) {
         document.getElementById('mpesa-phone').value = phoneDigits;
       }
@@ -587,7 +586,7 @@
     }
 
     function updateWhatsAppLinks(domain) {
-      const msg = encodeURIComponent(`Hello Support, I am logged in as ${currentUser.username} (${currentUser.email}, WhatsApp: ${currentUser.whatsapp}). I paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
+      const msg = encodeURIComponent(`Hello Support, I am logged in as ${currentUser.username || currentUser.name} (${currentUser.email}, WhatsApp: ${currentUser.whatsapp || currentUser.phone}). I paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
       const baseWa = "https://wa.me/254715509440?text=";
       document.querySelectorAll('[id^="wa-link-"]').forEach(el => {
         el.href = baseWa + msg;
@@ -645,7 +644,7 @@
       const generatedAccessCode = 'STK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
       document.getElementById('activation-code').value = generatedAccessCode;
       
-      alert(`STK Push initiated to +254${phone} for account ${currentUser.username}. Your activation code (${generatedAccessCode}) has been pre-filled.`);
+      alert(`STK Push initiated to +254${phone} for account ${currentUser.username || currentUser.name}. Your activation code (${generatedAccessCode}) has been pre-filled.`);
     }
 
     function redeemActivationCode() {
@@ -662,7 +661,7 @@
       document.getElementById('processing-state').classList.remove('hidden');
 
       setTimeout(() => {
-        document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${currentUser.username} - ${currentUser.email})`;
+        document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${currentUser.username || currentUser.name} - ${currentUser.email})`;
         document.getElementById('log-2').classList.remove('opacity-30');
         document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Confirming ledger balance & entitlement...';
       }, 2000);
@@ -677,7 +676,7 @@
       setTimeout(() => {
         document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Domain & SSL issued successfully';
         document.getElementById('log-4').classList.remove('opacity-30');
-        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Binding tenant to account ' + currentUser.username + '...';
+        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Binding tenant to account ' + (currentUser.username || currentUser.name) + '...';
       }, 7000);
 
       setTimeout(() => {
@@ -691,7 +690,7 @@
 
     function redirectToDashboard() {
       const finalUrl = document.getElementById('summary-domain').innerText;
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(currentUser.username)}`;
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(currentUser.username || currentUser.name)}`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
