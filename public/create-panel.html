@@ -6,7 +6,9 @@
   <title>Create Your SMM Panel | No-Code Launch</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    * { font-family: 'Inter', sans-serif; }
     .step-active { border-color: #3b82f6; color: #3b82f6; }
     .step-done { border-color: #10b981; background-color: #10b981; color: white; }
     .pulse-ring { animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
@@ -14,6 +16,20 @@
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    .payment-option {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+    .payment-option:hover {
+      border-color: #3b82f6;
+      background-color: rgba(30, 58, 138, 0.3);
+      transform: translateY(-2px);
+    }
+    .payment-option.active-option {
+      border-color: #3b82f6;
+      background-color: rgba(30, 58, 138, 0.4);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     }
   </style>
 </head>
@@ -26,7 +42,7 @@
         <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-lg">P</div>
         <span class="font-bold text-xl tracking-tight">PanelEngine</span>
       </div>
-      <div class="text-sm text-slate-400">Need help? <a href="#" class="text-blue-400 hover:underline">Support</a></div>
+      <div class="text-sm text-slate-400">Need help? <a href="https://wa.me/254715509440" target="_blank" class="text-blue-400 hover:underline"><i class="fab fa-whatsapp mr-1"></i> WhatsApp Support</a></div>
     </div>
   </header>
 
@@ -35,7 +51,7 @@
     <!-- Header Section -->
     <div class="text-center mb-10">
       <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">Launch Your Own SMM Reseller Panel</h1>
-      <p class="text-slate-400 max-w-2xl mx-auto text-base">Select a plan, enter your custom domain, make a payment via M-Pesa STK Push, and go live instantly with zero coding required.</p>
+      <p class="text-slate-400 max-w-2xl mx-auto text-base">Select a plan, configure your custom domain, submit payment via local or global channels, and redeem your activation code to launch instantly.</p>
     </div>
 
     <!-- Multi-Step Progress Tracker -->
@@ -52,7 +68,7 @@
       </div>
       <div class="flex flex-col items-center gap-2 bg-slate-900 px-2">
         <div id="step-3-icon" class="w-10 h-10 rounded-full border-2 border-slate-700 bg-slate-900 flex items-center justify-center font-semibold text-slate-500">3</div>
-        <span class="text-xs font-medium text-slate-400">M-Pesa Payment</span>
+        <span class="text-xs font-medium text-slate-400">Payment & Activation</span>
       </div>
     </div>
 
@@ -151,7 +167,7 @@
         <div id="custom-domain-input-group" class="space-y-2 hidden">
           <label class="block text-sm font-medium text-slate-300">Your Custom Domain</label>
           <input type="text" id="custom-domain-name" placeholder="alexsmmstore.com" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm" oninput="updateDomainPreview()">
-          <p class="text-xs text-slate-500">After payment, you will point your domain's CNAME record to <code class="text-blue-400 font-mono">cname.unasemeje.co.ke</code></p>
+          <p class="text-xs text-slate-500">After payment, point your domain's CNAME record to <code class="text-blue-400 font-mono">cname.unasemeje.co.ke</code></p>
         </div>
 
         <!-- Panel Branding Info -->
@@ -183,9 +199,10 @@
         </div>
       </div>
 
-      <!-- STEP 3: MPESA PAYMENT -->
+      <!-- STEP 3: MPESA & GLOBAL PAYMENT SELECTOR + ACTIVATION CODE REDEMPTION -->
       <div id="step-3" class="space-y-6 hidden">
-        <h2 class="text-xl font-bold text-white mb-4"><i class="fa-solid fa-mobile-screen-button text-green-500 mr-2"></i>Pay via M-Pesa STK Push</h2>
+        <h2 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-credit-card text-green-500 mr-2"></i>Select Payment Method & Redeem Access Code</h2>
+        <p class="text-xs text-slate-400">Choose your preferred payment gateway. For manual options, send your payment confirmation via WhatsApp to receive your instant <strong>10-Character Activation Code</strong>.</p>
 
         <!-- Order Summary Box -->
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
@@ -203,21 +220,183 @@
           </div>
         </div>
 
-        <!-- Phone Number Field -->
-        <div class="space-y-2">
-          <label class="block text-sm font-medium text-slate-300">M-Pesa Phone Number</label>
+        <!-- Payment Method Grid -->
+        <div class="space-y-3">
+          <label class="block text-sm font-semibold text-slate-300">Choose Payment Channel</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            
+            <!-- M-Pesa STK Express -->
+            <div onclick="switchPaymentMethod('mpesa-express')" id="opt-mpesa-express" class="payment-option active-option border-2 border-slate-800 bg-slate-900 rounded-xl p-4 flex items-center gap-3">
+              <div class="w-10 h-10 bg-green-500/20 text-green-400 rounded-lg flex items-center justify-center font-bold text-xl">
+                <i class="fa-solid fa-bolt"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-white">M-Pesa STK Push</p>
+                <p class="text-[11px] text-slate-400">Instant Phone Prompt</p>
+              </div>
+            </div>
+
+            <!-- M-Pesa Buy Goods Till -->
+            <div onclick="switchPaymentMethod('mpesa-till')" id="opt-mpesa-till" class="payment-option border-2 border-slate-800 bg-slate-900 rounded-xl p-4 flex items-center gap-3">
+              <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-xl">
+                <i class="fa-solid fa-store"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-white">M-Pesa Till (9257710)</p>
+                <p class="text-[11px] text-slate-400">Buy Goods & Services</p>
+              </div>
+            </div>
+
+            <!-- Airtel Uganda -->
+            <div onclick="switchPaymentMethod('airtel-ug')" id="opt-airtel-ug" class="payment-option border-2 border-slate-800 bg-slate-900 rounded-xl p-4 flex items-center gap-3">
+              <div class="w-10 h-10 bg-red-500/20 text-red-400 rounded-lg flex items-center justify-center font-bold text-xl">
+                <i class="fa-solid fa-mobile-screen"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-white">Airtel Uganda</p>
+                <p class="text-[11px] text-slate-400">*185*1*4# Money Transfer</p>
+              </div>
+            </div>
+
+            <!-- WorldRemit -->
+            <div onclick="switchPaymentMethod('worldremit')" id="opt-worldremit" class="payment-option border-2 border-slate-800 bg-slate-900 rounded-xl p-4 flex items-center gap-3">
+              <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-lg flex items-center justify-center font-bold text-xl">
+                <i class="fa-solid fa-globe"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-white">WorldRemit</p>
+                <p class="text-[11px] text-slate-400">Global Remittance</p>
+              </div>
+            </div>
+
+            <!-- MTN Uganda -->
+            <div onclick="switchPaymentMethod('mtn-ug')" id="opt-mtn-ug" class="payment-option border-2 border-slate-800 bg-slate-900 rounded-xl p-4 flex items-center gap-3">
+              <div class="w-10 h-10 bg-yellow-500/20 text-yellow-400 rounded-lg flex items-center justify-center font-bold text-xl">
+                <i class="fa-solid fa-mobile-retro"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-white">MTN Uganda</p>
+                <p class="text-[11px] text-slate-400">*165# Cross-Border</p>
+              </div>
+            </div>
+
+            <!-- Somalia / Remitly -->
+            <div onclick="switchPaymentMethod('somalia')" id="opt-somalia" class="payment-option border-2 border-slate-800 bg-slate-900 rounded-xl p-4 flex items-center gap-3">
+              <div class="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center font-bold text-xl">
+                <i class="fa-solid fa-flag"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-sm text-white">Somalia Transfers</p>
+                <p class="text-[11px] text-slate-400">Remitly / WorldRemit</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PAYMENT METHOD INSTRUCTION AND ACTION PANELS -->
+
+        <!-- 1. M-Pesa STK Express Panel -->
+        <div id="panel-mpesa-express" class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+          <label class="block text-sm font-medium text-slate-300">M-Pesa Phone Number (254...)</label>
           <div class="relative">
             <span class="absolute left-4 top-3.5 text-slate-400 text-sm font-bold">+254</span>
-            <input type="tel" id="mpesa-phone" placeholder="712345678" maxlength="9" class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-16 pr-4 py-3 text-white focus:outline-none focus:border-green-500 text-sm font-mono">
+            <input type="tel" id="mpesa-phone" placeholder="712345678" maxlength="9" class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-16 pr-4 py-3 text-white focus:outline-none focus:border-green-500 text-sm font-mono">
           </div>
-          <p class="text-xs text-slate-500">You will receive an instant prompt on your phone requesting your M-Pesa PIN.</p>
+          <p class="text-xs text-slate-500">You will receive an instant prompt on your mobile phone asking for your M-Pesa PIN.</p>
+          <button onclick="initiateStkPush()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-bolt"></i> Send Instant STK Push
+          </button>
+        </div>
+
+        <!-- 2. M-Pesa Till Panel -->
+        <div id="panel-mpesa-till" class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 hidden">
+          <h3 class="font-bold text-emerald-400 text-sm flex items-center gap-2"><i class="fa-solid fa-store"></i> Buy Goods & Services Instructions</h3>
+          <ol class="list-decimal list-inside text-xs text-slate-300 space-y-2">
+            <li>Go to M-Pesa Menu or open M-Pesa App.</li>
+            <li>Select <strong>Lipa na M-Pesa</strong> &gt; <strong>Buy Goods and Services</strong>.</li>
+            <li>Till Number: <strong class="text-green-400 font-mono text-sm bg-slate-950 px-2 py-0.5 rounded border border-slate-800">9257710</strong> (DAIMON CHERUIYOT)</li>
+            <li>Enter the target amount and confirm with your M-Pesa PIN.</li>
+          </ol>
+          <a id="wa-link-till" href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20paid%20via%20Till%20Number%209257710.%20Please%20send%20my%20Activation%20Code." target="_blank" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+          </a>
+        </div>
+
+        <!-- 3. Airtel Uganda Panel -->
+        <div id="panel-airtel-ug" class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 hidden">
+          <h3 class="font-bold text-red-400 text-sm flex items-center gap-2"><i class="fa-solid fa-mobile-screen"></i> Airtel Uganda Transfer Instructions</h3>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li>Dial <code class="text-blue-400 font-mono">*185*1*4#</code> on Airtel Uganda.</li>
+            <li>Select International Transfer to Kenya Safaricom.</li>
+            <li>Recipient Name: <strong>DAIMON CHERUIYOT</strong></li>
+            <li>Recipient Mobile: <strong class="text-green-400 font-mono">+254 715 509 440</strong></li>
+          </ul>
+          <a id="wa-link-airtel-ug" href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20paid%20via%20Airtel%20Uganda.%20Please%20send%20my%20Activation%20Code." target="_blank" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+          </a>
+        </div>
+
+        <!-- 4. WorldRemit Panel -->
+        <div id="panel-worldremit" class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 hidden">
+          <h3 class="font-bold text-indigo-400 text-sm flex items-center gap-2"><i class="fa-solid fa-globe"></i> WorldRemit Global Transfer</h3>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li>Select Destination Country: <strong>Kenya</strong></li>
+            <li>Delivery Method: <strong>Mobile Money (M-Pesa)</strong></li>
+            <li>Recipient Name: <strong>DAIMON CHERUIYOT</strong></li>
+            <li>Recipient Number: <strong class="text-green-400 font-mono">+254 715 509 440</strong></li>
+          </ul>
+          <a id="wa-link-worldremit" href="https://wa.me/254715509440?text=Hello%20Support,%20I%20have%20made%20a%20payment%20via%20WorldRemit.%20Please%20send%20my%20Activation%20Code." target="_blank" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+          </a>
+        </div>
+
+        <!-- 5. MTN Uganda Panel -->
+        <div id="panel-mtn-ug" class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 hidden">
+          <h3 class="font-bold text-yellow-400 text-sm flex items-center gap-2"><i class="fa-solid fa-mobile-retro"></i> MTN Uganda Cross-Border Instructions</h3>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li>Dial <code class="text-blue-400 font-mono">*165#</code> on your MTN line.</li>
+            <li>Select International Transfer to Kenya Safaricom M-Pesa.</li>
+            <li>Recipient Name: <strong>DAIMON CHERUIYOT</strong></li>
+            <li>Recipient Number: <strong class="text-green-400 font-mono">+254 715 509 440</strong></li>
+          </ul>
+          <a id="wa-link-mtn-ug" href="https://wa.me/254715509440?text=Hello%20Support,%20I%20paid%20via%20MTN%20Uganda.%20Please%20send%20my%20Activation%20Code." target="_blank" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+          </a>
+        </div>
+
+        <!-- 6. Somalia Panel -->
+        <div id="panel-somalia" class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 hidden">
+          <h3 class="font-bold text-blue-400 text-sm flex items-center gap-2"><i class="fa-solid fa-flag"></i> Somalia Remittance Transfer</h3>
+          <ul class="text-xs text-slate-300 space-y-2">
+            <li>Send money via Remitly or WorldRemit directly to Kenya M-Pesa.</li>
+            <li>Recipient Name: <strong>DAIMON CHERUIYOT</strong></li>
+            <li>Recipient Mobile: <strong class="text-green-400 font-mono">+254 715 509 440</strong></li>
+          </ul>
+          <a id="wa-link-somalia" href="https://wa.me/254715509440?text=Hello%20Support,%20I%20sent%20a%20payment%20from%20Somalia.%20Please%20send%20my%20Activation%20Code." target="_blank" class="w-full bg-green-600 hover:bg-green-500 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+          </a>
+        </div>
+
+        <!-- ACTIVATION / REDEMPTION CODE INPUT SECTION -->
+        <div class="pt-6 border-t border-slate-800 space-y-4">
+          <div class="bg-blue-950/30 border border-blue-500/30 rounded-xl p-5 space-y-3">
+            <label class="block text-sm font-bold text-white flex items-center justify-between">
+              <span><i class="fa-solid fa-key text-blue-400 mr-2"></i>Enter Activation Code</span>
+              <span class="text-[11px] text-blue-400 font-normal">Received via WhatsApp / Instant Push</span>
+            </label>
+            <div class="flex gap-2">
+              <input type="text" id="activation-code" placeholder="e.g. PANEL-9X4A" uppercase class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
+              <button onclick="redeemActivationCode()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg transition-all text-sm flex items-center gap-2 shrink-0">
+                <i class="fa-solid fa-unlock"></i> Activate Panel
+              </button>
+            </div>
+            <p id="code-error-msg" class="text-xs text-red-400 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> Invalid or unverified activation code. Please check or request support.</p>
+          </div>
         </div>
 
         <div class="flex justify-between mt-8">
           <button onclick="goToStep(2)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-lg font-semibold transition-all">Back</button>
-          <button onclick="initiateStkPush()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2">
-            <i class="fa-solid fa-bolt"></i> Send STK Push
-          </button>
         </div>
       </div>
 
@@ -229,13 +408,13 @@
           </div>
         </div>
         <div class="space-y-2">
-          <h3 id="status-heading" class="text-xl font-bold text-white">Waiting for M-Pesa PIN Input...</h3>
-          <p id="status-subtext" class="text-sm text-slate-400 max-w-md mx-auto">Please check your phone and key in your PIN to authorize the payment.</p>
+          <h3 id="status-heading" class="text-xl font-bold text-white">Validating Activation Code...</h3>
+          <p id="status-subtext" class="text-sm text-slate-400 max-w-md mx-auto">Please wait while the server verifies your token and allocates database resources.</p>
         </div>
         <!-- Progress Steps Animation -->
         <div class="max-w-md mx-auto bg-slate-900 border border-slate-800 rounded-lg p-4 text-left text-xs font-mono space-y-2 text-slate-400">
-          <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Requesting STK Push transaction...</div>
-          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming M-Pesa payment payload...</div>
+          <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Authenticating activation code payload...</div>
+          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming ledger balance & tenant entitlement...</div>
           <div id="log-3" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Allocating database tenant & SSL certificate...</div>
           <div id="log-4" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Deploying panel dashboard...</div>
         </div>
@@ -264,10 +443,12 @@
   </main>
 
   <script>
-    // State management
+    // System State Management
     let selectedPackage = { name: 'Pro Panel', price: 4500 };
     let domainType = 'subdomain';
     let currentStep = 1;
+    let activePaymentMethod = 'mpesa-express';
+    let generatedAccessCode = '';
 
     function selectPackage(id, price) {
       document.querySelectorAll('#step-1 > div > div').forEach(el => {
@@ -313,6 +494,32 @@
       }
       document.getElementById('live-url-preview').innerText = `https://${targetDomain}`;
       document.getElementById('summary-domain').innerText = targetDomain;
+      updateWhatsAppLinks(targetDomain);
+    }
+
+    function updateWhatsAppLinks(domain) {
+      const msg = encodeURIComponent(`Hello Support, I have paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
+      const baseWa = "https://wa.me/254715509440?text=";
+      document.querySelectorAll('[id^="wa-link-"]').forEach(el => {
+        el.href = baseWa + msg;
+      });
+    }
+
+    function switchPaymentMethod(methodKey) {
+      activePaymentMethod = methodKey;
+      
+      // Toggle card styles
+      document.querySelectorAll('.payment-option').forEach(el => {
+        el.classList.remove('active-option');
+      });
+      document.getElementById(`opt-${methodKey}`).classList.add('active-option');
+
+      // Toggle instructional view panels
+      const panels = ['mpesa-express', 'mpesa-till', 'airtel-ug', 'worldremit', 'mtn-ug', 'somalia'];
+      panels.forEach(p => {
+        document.getElementById(`panel-${p}`).classList.add('hidden');
+      });
+      document.getElementById(`panel-${methodKey}`).classList.remove('hidden');
     }
 
     function goToStep(step) {
@@ -320,7 +527,7 @@
       currentStep = step;
       document.getElementById(`step-${currentStep}`).classList.remove('hidden');
 
-      // Update tracker UI
+      // Update progress tracker visual states
       for (let i = 1; i <= 3; i++) {
         const icon = document.getElementById(`step-${i}-icon`);
         if (i < currentStep) {
@@ -345,34 +552,51 @@
     function initiateStkPush() {
       const phone = document.getElementById('mpesa-phone').value.trim();
       if (!phone || phone.length < 9) {
-        alert('Please enter a valid M-Pesa phone number.');
+        alert('Please enter a valid 9-digit M-Pesa phone number.');
         return;
       }
 
-      // Hide step 3, show processing state
+      // Generate a mock activation code for automated push flow
+      generatedAccessCode = 'STK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      document.getElementById('activation-code').value = generatedAccessCode;
+      
+      alert(`STK Push sent to 254${phone}. Your Activation Code (${generatedAccessCode}) has been automatically populated.`);
+    }
+
+    function redeemActivationCode() {
+      const code = document.getElementById('activation-code').value.trim().toUpperCase();
+      
+      if (!code || code.length < 5) {
+        document.getElementById('code-error-msg').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('code-error-msg').classList.add('hidden');
+
+      // Hide step 3, trigger provisioning pipeline animation
       document.getElementById('step-3').classList.add('hidden');
       document.getElementById('processing-state').classList.remove('hidden');
 
-      // Simulated Async Provisioning Engine Steps
+      // Async Provisioning Sequence Execution
       setTimeout(() => {
-        document.getElementById('log-1').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> STK Push sent to 254' + phone;
+        document.getElementById('log-1').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Activation code (' + code + ') authenticated';
         document.getElementById('log-2').classList.remove('opacity-30');
-        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Validating M-Pesa PIN entry...';
+        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Confirming ledger balance & entitlement...';
       }, 2000);
 
       setTimeout(() => {
-        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Payment confirmed (M-Pesa Receipt: QKH78219X)';
+        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Payment & entitlement confirmed';
         document.getElementById('log-3').classList.remove('opacity-30');
-        document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & DNS records...';
-        document.getElementById('status-heading').innerText = 'Building Your Website Panel...';
-        document.getElementById('status-subtext').innerText = 'Please wait while our engine configures your database and SSL certificate.';
-      }, 5000);
+        document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & SSL certificate...';
+        document.getElementById('status-heading').innerText = 'Building Your Reseller Panel...';
+        document.getElementById('status-subtext').innerText = 'Please wait while our engine configures your dynamic database and issues SSL certificate.';
+      }, 4500);
 
       setTimeout(() => {
         document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-check text-green-400"></i> Domain & SSL issued successfully';
         document.getElementById('log-4').classList.remove('opacity-30');
-        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Finalizing dashboard settings...';
-      }, 7500);
+        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Finalizing reseller dashboard settings...';
+      }, 7000);
 
       setTimeout(() => {
         const finalUrl = document.getElementById('summary-domain').innerText;
@@ -381,10 +605,9 @@
         document.getElementById('final-panel-url').innerText = `https://${finalUrl}`;
         document.getElementById('final-panel-url').href = `https://${finalUrl}`;
         
-        // Auto-redirect to customer dashboard after 3 seconds
         setTimeout(() => {
           redirectToDashboard();
-        }, 3000);
+        }, 4000);
       }, 9500);
     }
 
