@@ -35,16 +35,38 @@
     // Checks localStorage and sessionStorage for actual user session
     const storedAuth = JSON.parse(localStorage.getItem('authenticatedUser')) || JSON.parse(sessionStorage.getItem('userSession'));
 
-    // If user is not logged in or session object is invalid, redirect immediately to login page
-    if (!storedAuth || !storedAuth.isLoggedIn) {
-      window.location.href = "login.html?redirect=" + encodeURIComponent(window.location.pathname);
-    }
-
     // Reference to real user details
     const currentUser = storedAuth;
   </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- AUTHENTICATION CHECK OVERLAY / GUARD CONTAINER -->
+  <script>
+    if (!storedAuth || !storedAuth.isLoggedIn) {
+      document.write(`
+        <div class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
+          <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
+            <div class="w-16 h-16 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+              <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="text-xl font-extrabold text-white mb-2">Authentication Required</h2>
+            <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+              You are not allowed to visit or access the <strong class="text-slate-200">Create Your Own Panel</strong> page without logging in or signing up for an account first.
+            </p>
+            <div class="space-y-3">
+              <a href="index.html?redirect=create-panel" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 block">
+                <i class="fa-solid fa-right-to-bracket"></i> Login to Your Account
+              </a>
+              <a href="signup.html?redirect=create-panel" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 border border-slate-700/60 block">
+                <i class="fa-solid fa-user-plus"></i> Create New Account
+              </a>
+            </div>
+          </div>
+        </div>
+      `);
+    }
+  </script>
 
   <!-- Top Navigation Bar -->
   <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
@@ -535,7 +557,7 @@
     function logoutUser() {
       localStorage.removeItem('authenticatedUser');
       sessionStorage.removeItem('userSession');
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
 
     function selectPackage(id, price) {
