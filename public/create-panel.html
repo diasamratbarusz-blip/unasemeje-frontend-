@@ -33,17 +33,31 @@
   <script>
     // STRICT AUTHENTICATION GUARD & ACCOUNT RETRIEVAL
     // Checks localStorage and sessionStorage for actual user session
-    const storedAuth = JSON.parse(localStorage.getItem('authenticatedUser')) || JSON.parse(sessionStorage.getItem('userSession'));
+    const rawStoredAuth = localStorage.getItem('authenticatedUser') || sessionStorage.getItem('userSession') || localStorage.getItem('userSession');
+    let storedAuth = null;
+
+    try {
+      storedAuth = rawStoredAuth ? JSON.parse(rawStoredAuth) : null;
+    } catch (e) {
+      storedAuth = null;
+    }
+
+    // Determine if user has a valid authenticated session
+    const isUserLoggedIn = Boolean(
+      storedAuth && 
+      (storedAuth.isLoggedIn === true || storedAuth.isLoggedIn === "true" || storedAuth.token || storedAuth.username || storedAuth.email)
+    );
 
     // Reference to real user details
-    const currentUser = storedAuth;
+    const currentUser = isUserLoggedIn ? storedAuth : null;
   </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
 
   <!-- AUTHENTICATION CHECK OVERLAY / GUARD CONTAINER -->
   <script>
-    if (!storedAuth || !storedAuth.isLoggedIn) {
+    // Only display lock overlay if user is NOT logged in. Logged-in users proceed without re-login prompts.
+    if (!isUserLoggedIn) {
       document.write(`
         <div class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
           <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
@@ -556,6 +570,7 @@
 
     function logoutUser() {
       localStorage.removeItem('authenticatedUser');
+      localStorage.removeItem('userSession');
       sessionStorage.removeItem('userSession');
       window.location.href = "index.html";
     }
@@ -608,7 +623,11 @@
     }
 
     function updateWhatsAppLinks(domain) {
-      const msg = encodeURIComponent(`Hello Support, I am logged in as ${currentUser.username || currentUser.name} (${currentUser.email}, WhatsApp: ${currentUser.whatsapp || currentUser.phone}). I paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
+      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'Valued User') : 'Valued User';
+      const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
+      const userPhone = currentUser ? (currentUser.whatsapp || currentUser.phone || 'N/A') : 'N/A';
+      
+      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
       const baseWa = "https://wa.me/254715509440?text=";
       document.querySelectorAll('[id^="wa-link-"]').forEach(el => {
         el.href = baseWa + msg;
@@ -666,7 +685,8 @@
       const generatedAccessCode = 'STK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
       document.getElementById('activation-code').value = generatedAccessCode;
       
-      alert(`STK Push initiated to +254${phone} for account ${currentUser.username || currentUser.name}. Your activation code (${generatedAccessCode}) has been pre-filled.`);
+      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'User') : 'User';
+      alert(`STK Push initiated to +254${phone} for account ${userIdent}. Your activation code (${generatedAccessCode}) has been pre-filled.`);
     }
 
     function redeemActivationCode() {
@@ -682,8 +702,11 @@
       document.getElementById('step-3').classList.add('hidden');
       document.getElementById('processing-state').classList.remove('hidden');
 
+      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'User') : 'User';
+      const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
+
       setTimeout(() => {
-        document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${currentUser.username || currentUser.name} - ${currentUser.email})`;
+        document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${userIdent} - ${userMail})`;
         document.getElementById('log-2').classList.remove('opacity-30');
         document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Confirming ledger balance & entitlement...';
       }, 2000);
@@ -698,7 +721,7 @@
       setTimeout(() => {
         document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Domain & SSL issued successfully';
         document.getElementById('log-4').classList.remove('opacity-30');
-        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Binding tenant to account ' + (currentUser.username || currentUser.name) + '...';
+        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Binding tenant to account ' + userIdent + '...';
       }, 7000);
 
       setTimeout(() => {
@@ -712,7 +735,8 @@
 
     function redirectToDashboard() {
       const finalUrl = document.getElementById('summary-domain').innerText;
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(currentUser.username || currentUser.name)}`;
+      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'User') : 'User';
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
