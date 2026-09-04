@@ -31,12 +31,12 @@
     }
   </style>
   <script>
-    // HARDENED SESSION RESOLVER FOR DASHBOARD INTEGRATION
+    // HARDENED SESSION AND REFERRER RESOLVER
     function resolveUserSession() {
       const urlParams = new URLSearchParams(window.location.search);
       let session = {};
 
-      // 1. Scan Local Storage & Session Storage across common dashboard keys
+      // Scan Local Storage & Session Storage
       const storageKeys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'account'];
       for (const storageEngine of [localStorage, sessionStorage]) {
         for (const key of storageKeys) {
@@ -54,7 +54,7 @@
         }
       }
 
-      // 2. URL Parameters take top priority (if passed directly via link from dashboard.html)
+      // Check URL parameters
       const paramUsername = urlParams.get('username') || urlParams.get('user') || urlParams.get('name');
       const paramEmail = urlParams.get('email') || urlParams.get('mail');
       const paramPhone = urlParams.get('phone') || urlParams.get('whatsapp') || urlParams.get('mobile');
@@ -63,12 +63,11 @@
       if (paramEmail) session.email = paramEmail;
       if (paramPhone) session.whatsapp = paramPhone;
 
-      // 3. Normalize property aliases across different backend schemas
+      // Normalize fields
       session.username = session.username || session.name || session.user_name || session.user || '';
       session.email = session.email || session.mail || session.user_email || '';
       session.whatsapp = session.whatsapp || session.phone || session.mobile || session.phoneNumber || '';
 
-      // Persist resolved session so all tabs stay synced
       if (session.username || session.email) {
         localStorage.setItem('authenticatedUser', JSON.stringify(session));
       }
@@ -77,32 +76,41 @@
     }
 
     const currentUser = resolveUserSession();
-
-    // Verify active login state
     const isUserLoggedIn = Boolean(
       currentUser && 
       (currentUser.username || currentUser.email || currentUser.isLoggedIn === true || currentUser.token)
     );
+
+    // NAVIGATION SOURCE EVALUATION (index.html vs dashboard.html)
+    const referrer = document.referrer ? document.referrer.toLowerCase() : '';
+    const urlParams = new URLSearchParams(window.location.search);
+    const srcParam = urlParams.get('src') ? urlParams.get('src').toLowerCase() : '';
+
+    const visitedFromDashboard = referrer.includes('dashboard.html') || srcParam === 'dashboard';
+    const visitedFromIndex = referrer.includes('index.html') || srcParam === 'index';
+
+    // REQUIRE AUTHENTICATION IF VISITED VIA INDEX.HTML OR IF UNAUTHENTICATED
+    const requiresAuthPrompt = visitedFromIndex || (!visitedFromDashboard && !isUserLoggedIn);
   </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- AUTHENTICATION CHECK OVERLAY -->
+  <!-- AUTHENTICATION CHECK / OVERLAY FOR INDEX VISITORS -->
   <script>
-    if (!isUserLoggedIn) {
+    if (requiresAuthPrompt) {
       document.write(`
         <div class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
           <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
             <div class="w-16 h-16 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
-              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-user-lock"></i>
             </div>
-            <h2 class="text-xl font-extrabold text-white mb-2">Authentication Required</h2>
+            <h2 class="text-xl font-extrabold text-white mb-2">Login or Create Account Required</h2>
             <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-              You are not allowed to access the <strong class="text-slate-200">Create Your Own Panel</strong> page without logging in to your dashboard first.
+              You accessed this page via <strong class="text-slate-200">index.html</strong>. Please log in to your account or register to configure and launch your reseller panel.
             </p>
             <div class="space-y-3">
-              <a href="dashboard.html" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 block">
-                <i class="fa-solid fa-right-to-bracket"></i> Return to Dashboard
+              <a href="login.html?redirect=create-panel" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 block">
+                <i class="fa-solid fa-right-to-bracket"></i> Login to Existing Account
               </a>
               <a href="signup.html?redirect=create-panel" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 border border-slate-700/60 block">
                 <i class="fa-solid fa-user-plus"></i> Create New Account
@@ -560,9 +568,8 @@
     let activePaymentMethod = 'mpesa-express';
 
     document.addEventListener("DOMContentLoaded", () => {
-      if (!isUserLoggedIn || !currentUser) return;
+      if (requiresAuthPrompt || !currentUser) return;
 
-      // Real user detail binding across all DOM sections
       const userNameDisplay = currentUser.username || 'Account Owner';
       const userEmailDisplay = currentUser.email || 'N/A';
       const userPhoneDisplay = currentUser.whatsapp || 'N/A';
@@ -579,7 +586,6 @@
       document.getElementById('final-owner-email').innerText = userEmailDisplay;
       document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
 
-      // Auto-prefill M-Pesa input with user's phone number if available
       const rawPhone = userPhoneDisplay !== 'N/A' ? userPhoneDisplay : '';
       const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
       if (phoneDigits) {
@@ -593,7 +599,7 @@
         localStorage.removeItem(k);
         sessionStorage.removeItem(k);
       });
-      window.location.href = "dashboard.html";
+      window.location.href = "login.html";
     }
 
     function selectPackage(id, price) {
