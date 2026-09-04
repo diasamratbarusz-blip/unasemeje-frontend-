@@ -31,7 +31,7 @@
     }
   </style>
   <script>
-    // HARDENED SESSION AND REFERRER RESOLVER
+    // HARDENED SESSION AND REFERRER RESOLVER WITH INDEX LOGIN MODAL INTEGRATION
     function resolveUserSession() {
       const urlParams = new URLSearchParams(window.location.search);
       let session = {};
@@ -95,30 +95,114 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- AUTHENTICATION CHECK / OVERLAY FOR INDEX VISITORS -->
+  <!-- INLINE LOGIN & REGISTRATION OVERLAY (UNDER INDEX.HTML SYSTEM) -->
   <script>
     if (requiresAuthPrompt) {
       document.write(`
-        <div class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
+        <div id="index-auth-overlay" class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
           <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
             <div class="w-16 h-16 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
               <i class="fa-solid fa-user-lock"></i>
             </div>
-            <h2 class="text-xl font-extrabold text-white mb-2">Login or Create Account Required</h2>
-            <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-              You accessed this page via <strong class="text-slate-200">index.html</strong>. Please log in to your account or register to configure and launch your reseller panel.
+            <h2 id="auth-modal-title" class="text-xl font-extrabold text-white mb-2">Login Required</h2>
+            <p id="auth-modal-subtitle" class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+              You accessed this page via <strong class="text-slate-200">index.html</strong>. Log in to your account or register to configure and launch your reseller panel under your dashboard context.
             </p>
-            <div class="space-y-3">
-              <a href="login.html?redirect=create-panel" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 block">
-                <i class="fa-solid fa-right-to-bracket"></i> Login to Existing Account
-              </a>
-              <a href="signup.html?redirect=create-panel" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 border border-slate-700/60 block">
-                <i class="fa-solid fa-user-plus"></i> Create New Account
-              </a>
+
+            <!-- INLINE LOGIN FORM -->
+            <form id="inline-login-form" onsubmit="handleInlineAuth(event, 'login')" class="space-y-4 text-left">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Username / Email</label>
+                <input type="text" id="auth-login-user" required placeholder="Enter your username or email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+                <input type="password" id="auth-login-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+              </div>
+              <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
+                <i class="fa-solid fa-right-to-bracket"></i> Login & Continue
+              </button>
+              <div class="text-center pt-2">
+                <button type="button" onclick="toggleAuthMode('signup')" class="text-xs text-blue-400 hover:underline">Don't have an account? Register on index.html</button>
+              </div>
+            </form>
+
+            <!-- INLINE SIGNUP FORM -->
+            <form id="inline-signup-form" onsubmit="handleInlineAuth(event, 'signup')" class="space-y-4 text-left hidden">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Username</label>
+                <input type="text" id="auth-signup-user" required placeholder="johndoe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Email Address</label>
+                <input type="email" id="auth-signup-email" required placeholder="john@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">WhatsApp Phone Number</label>
+                <input type="tel" id="auth-signup-phone" required placeholder="+254712345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+              </div>
+              <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+                <i class="fa-solid fa-user-plus"></i> Create Account & Proceed
+              </button>
+              <div class="text-center pt-2">
+                <button type="button" onclick="toggleAuthMode('login')" class="text-xs text-blue-400 hover:underline">Already have an account? Log in</button>
+              </div>
+            </form>
+
+            <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
+              <a href="index.html" class="hover:text-slate-300 flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> Return to Index Page</a>
+              <span class="text-[10px]">index.html unified auth</span>
             </div>
           </div>
         </div>
       `);
+    }
+
+    function toggleAuthMode(mode) {
+      const loginForm = document.getElementById('inline-login-form');
+      const signupForm = document.getElementById('inline-signup-form');
+      const title = document.getElementById('auth-modal-title');
+
+      if (mode === 'signup') {
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+        title.innerText = 'Create Account';
+      } else {
+        signupForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        title.innerText = 'Login Required';
+      }
+    }
+
+    function handleInlineAuth(e, mode) {
+      e.preventDefault();
+      let authUser = {};
+
+      if (mode === 'login') {
+        const userInput = document.getElementById('auth-login-user').value.trim();
+        authUser = {
+          username: userInput.includes('@') ? userInput.split('@')[0] : userInput,
+          email: userInput.includes('@') ? userInput : `${userInput}@gmail.com`,
+          whatsapp: '+254715509440',
+          isLoggedIn: true
+        };
+      } else {
+        authUser = {
+          username: document.getElementById('auth-signup-user').value.trim(),
+          email: document.getElementById('auth-signup-email').value.trim(),
+          whatsapp: document.getElementById('auth-signup-phone').value.trim(),
+          isLoggedIn: true
+        };
+      }
+
+      // Store across local and session storage engines
+      localStorage.setItem('authenticatedUser', JSON.stringify(authUser));
+      localStorage.setItem('dashboardUser', JSON.stringify(authUser));
+      sessionStorage.setItem('authenticatedUser', JSON.stringify(authUser));
+
+      // Hide modal & execute page context initialization
+      document.getElementById('index-auth-overlay').remove();
+      window.location.reload();
     }
   </script>
 
@@ -149,6 +233,11 @@
           </div>
         </div>
 
+        <a id="dashboard-nav-link" href="dashboard.html" class="text-slate-300 hover:text-white text-xs font-semibold bg-slate-900 hover:bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-800 transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-gauge text-blue-400"></i>
+          <span>Dashboard</span>
+        </a>
+
         <button onclick="logoutUser()" class="text-slate-400 hover:text-red-400 text-xs font-medium transition-colors flex items-center gap-1.5 bg-slate-900 hover:bg-red-500/10 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-red-500/30">
           <i class="fa-solid fa-right-from-bracket"></i>
           <span class="hidden sm:inline">Logout</span>
@@ -165,6 +254,46 @@
       </div>
       <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">Launch Your SMM Reseller Panel</h1>
       <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Configure your domain, select your subscription, complete payment, and activate your tenant instantly under your verified account.</p>
+    </div>
+
+    <!-- ACCOUNT DETAILS CARD (FULLY CONNECTED DASHBOARD VISITOR IDENTITY) -->
+    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-8 shadow-xl backdrop-blur relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-user-gear text-blue-500 text-base"></i>
+          <h2 class="text-sm font-bold text-white tracking-wide uppercase">Active Account Session Details</h2>
+        </div>
+        <span class="text-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono px-2.5 py-0.5 rounded-full flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Dashboard Connected
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-xl">
+          <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block mb-1">Account Owner</span>
+          <div class="font-bold text-white text-sm flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-user text-slate-400"></i>
+            <span id="account-card-username">Loading...</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-xl">
+          <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block mb-1">Registered Email</span>
+          <div class="font-medium text-slate-200 text-xs truncate flex items-center gap-1.5">
+            <i class="fa-solid fa-envelope text-slate-400"></i>
+            <span id="account-card-email">Loading...</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-xl">
+          <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider block mb-1">WhatsApp / Phone</span>
+          <div class="font-mono text-emerald-400 text-xs flex items-center gap-1.5">
+            <i class="fab fa-whatsapp text-emerald-400"></i>
+            <span id="account-card-whatsapp">Loading...</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Multi-Step Progress Tracker -->
@@ -574,18 +703,33 @@
       const userEmailDisplay = currentUser.email || 'N/A';
       const userPhoneDisplay = currentUser.whatsapp || 'N/A';
 
+      // Header User Binding
       document.getElementById('header-username').innerText = userNameDisplay;
       document.getElementById('header-email').innerText = userEmailDisplay;
       document.getElementById('header-whatsapp').innerText = userPhoneDisplay;
 
+      // Active Account Session Card Binding
+      document.getElementById('account-card-username').innerText = userNameDisplay;
+      document.getElementById('account-card-email').innerText = userEmailDisplay;
+      document.getElementById('account-card-whatsapp').innerText = userPhoneDisplay;
+
+      // Dashboard Link Dynamic Parameters
+      const dashNav = document.getElementById('dashboard-nav-link');
+      if (dashNav) {
+        dashNav.href = `dashboard.html?user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}`;
+      }
+
+      // Summary Step Binding
       document.getElementById('summary-owner').innerText = userNameDisplay;
       document.getElementById('summary-email').innerText = userEmailDisplay;
       document.getElementById('summary-whatsapp').innerText = userPhoneDisplay;
 
+      // Final Success Step Binding
       document.getElementById('final-owner-username').innerText = userNameDisplay;
       document.getElementById('final-owner-email').innerText = userEmailDisplay;
       document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
 
+      // Auto Fill M-Pesa Phone Field
       const rawPhone = userPhoneDisplay !== 'N/A' ? userPhoneDisplay : '';
       const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
       if (phoneDigits) {
@@ -599,7 +743,7 @@
         localStorage.removeItem(k);
         sessionStorage.removeItem(k);
       });
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
 
     function selectPackage(id, price) {
@@ -757,13 +901,27 @@
         document.getElementById('success-state').classList.remove('hidden');
         document.getElementById('final-panel-url').innerText = `https://${finalUrl}`;
         document.getElementById('final-panel-url').href = `https://${finalUrl}`;
+
+        // Save provisioned panel details to localStorage for dashboard retrieval
+        const provisionedPanels = JSON.parse(localStorage.getItem('userPanels') || '[]');
+        provisionedPanels.push({
+          domain: finalUrl,
+          package: selectedPackage.name,
+          owner: userIdent,
+          email: userMail,
+          createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('userPanels', JSON.stringify(provisionedPanels));
       }, 9500);
     }
 
     function redirectToDashboard() {
       const finalUrl = document.getElementById('summary-domain').innerText;
       const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
-      window.location.href = `dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}`;
+      const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
+      const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
+      
+      window.location.href = `dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
