@@ -31,54 +31,57 @@
     }
   </style>
   <script>
-    // RELIABLE DASHBOARD SESSION & AUTHENTICATION RESOLVER
-    function getStoredUserSession() {
+    // HARDENED SESSION RESOLVER FOR DASHBOARD INTEGRATION
+    function resolveUserSession() {
       const urlParams = new URLSearchParams(window.location.search);
-      const urlUser = urlParams.get('username') || urlParams.get('user') || urlParams.get('name');
-      const urlEmail = urlParams.get('email');
-      const urlPhone = urlParams.get('phone') || urlParams.get('whatsapp');
+      let session = {};
 
-      const storageKeys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token'];
-      let mergedUser = {};
-
-      for (const key of storageKeys) {
-        for (const storageEngine of [localStorage, sessionStorage]) {
-          const rawItem = storageEngine.getItem(key);
-          if (rawItem) {
+      // 1. Scan Local Storage & Session Storage across common dashboard keys
+      const storageKeys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'account'];
+      for (const storageEngine of [localStorage, sessionStorage]) {
+        for (const key of storageKeys) {
+          const item = storageEngine.getItem(key);
+          if (item) {
             try {
-              const parsed = JSON.parse(rawItem);
-              if (typeof parsed === 'object' && parsed !== null) {
-                mergedUser = { ...mergedUser, ...parsed };
-              } else if (typeof parsed === 'string' || typeof parsed === 'number') {
-                mergedUser.username = mergedUser.username || String(parsed);
+              const parsed = JSON.parse(item);
+              if (parsed && typeof parsed === 'object') {
+                session = { ...session, ...parsed };
               }
             } catch (e) {
-              mergedUser.username = mergedUser.username || rawItem;
+              if (!session.username) session.username = item;
             }
           }
         }
       }
 
-      if (urlUser) mergedUser.username = urlUser;
-      if (urlEmail) mergedUser.email = urlEmail;
-      if (urlPhone) mergedUser.whatsapp = urlPhone;
+      // 2. URL Parameters take top priority (if passed directly via link from dashboard.html)
+      const paramUsername = urlParams.get('username') || urlParams.get('user') || urlParams.get('name');
+      const paramEmail = urlParams.get('email') || urlParams.get('mail');
+      const paramPhone = urlParams.get('phone') || urlParams.get('whatsapp') || urlParams.get('mobile');
 
-      return mergedUser;
+      if (paramUsername) session.username = paramUsername;
+      if (paramEmail) session.email = paramEmail;
+      if (paramPhone) session.whatsapp = paramPhone;
+
+      // 3. Normalize property aliases across different backend schemas
+      session.username = session.username || session.name || session.user_name || session.user || '';
+      session.email = session.email || session.mail || session.user_email || '';
+      session.whatsapp = session.whatsapp || session.phone || session.mobile || session.phoneNumber || '';
+
+      // Persist resolved session so all tabs stay synced
+      if (session.username || session.email) {
+        localStorage.setItem('authenticatedUser', JSON.stringify(session));
+      }
+
+      return session;
     }
 
-    const currentUser = getStoredUserSession();
+    const currentUser = resolveUserSession();
 
-    // Verification check ensures non-empty properties exist
+    // Verify active login state
     const isUserLoggedIn = Boolean(
       currentUser && 
-      (
-        currentUser.isLoggedIn === true || 
-        currentUser.isLoggedIn === "true" || 
-        Boolean(currentUser.token) || 
-        Boolean(currentUser.username) || 
-        Boolean(currentUser.email) || 
-        Boolean(currentUser.name)
-      )
+      (currentUser.username || currentUser.email || currentUser.isLoggedIn === true || currentUser.token)
     );
   </script>
 </head>
@@ -95,11 +98,11 @@
             </div>
             <h2 class="text-xl font-extrabold text-white mb-2">Authentication Required</h2>
             <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-              You are not allowed to visit or access the <strong class="text-slate-200">Create Your Own Panel</strong> page without logging in or signing up for an account first.
+              You are not allowed to access the <strong class="text-slate-200">Create Your Own Panel</strong> page without logging in to your dashboard first.
             </p>
             <div class="space-y-3">
-              <a href="index.html?redirect=create-panel" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 block">
-                <i class="fa-solid fa-right-to-bracket"></i> Login to Your Account
+              <a href="dashboard.html" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20 block">
+                <i class="fa-solid fa-right-to-bracket"></i> Return to Dashboard
               </a>
               <a href="signup.html?redirect=create-panel" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 border border-slate-700/60 block">
                 <i class="fa-solid fa-user-plus"></i> Create New Account
@@ -559,9 +562,10 @@
     document.addEventListener("DOMContentLoaded", () => {
       if (!isUserLoggedIn || !currentUser) return;
 
-      const userNameDisplay = currentUser.username || currentUser.name || 'Account Owner';
+      // Real user detail binding across all DOM sections
+      const userNameDisplay = currentUser.username || 'Account Owner';
       const userEmailDisplay = currentUser.email || 'N/A';
-      const userPhoneDisplay = currentUser.whatsapp || currentUser.phone || 'N/A';
+      const userPhoneDisplay = currentUser.whatsapp || 'N/A';
 
       document.getElementById('header-username').innerText = userNameDisplay;
       document.getElementById('header-email').innerText = userEmailDisplay;
@@ -575,6 +579,7 @@
       document.getElementById('final-owner-email').innerText = userEmailDisplay;
       document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
 
+      // Auto-prefill M-Pesa input with user's phone number if available
       const rawPhone = userPhoneDisplay !== 'N/A' ? userPhoneDisplay : '';
       const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
       if (phoneDigits) {
@@ -583,12 +588,12 @@
     });
 
     function logoutUser() {
-      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token'];
+      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token', 'account'];
       keys.forEach(k => {
         localStorage.removeItem(k);
         sessionStorage.removeItem(k);
       });
-      window.location.href = "index.html";
+      window.location.href = "dashboard.html";
     }
 
     function selectPackage(id, price) {
@@ -639,9 +644,9 @@
     }
 
     function updateWhatsAppLinks(domain) {
-      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'Valued User') : 'Valued User';
+      const userIdent = currentUser ? (currentUser.username || 'Valued User') : 'Valued User';
       const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
-      const userPhone = currentUser ? (currentUser.whatsapp || currentUser.phone || 'N/A') : 'N/A';
+      const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
       
       const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
       const baseWa = "https://wa.me/254715509440?text=";
@@ -701,7 +706,7 @@
       const generatedAccessCode = 'STK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
       document.getElementById('activation-code').value = generatedAccessCode;
       
-      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'User') : 'User';
+      const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
       alert(`STK Push initiated to +254${phone} for account ${userIdent}. Your activation code (${generatedAccessCode}) has been pre-filled.`);
     }
 
@@ -718,7 +723,7 @@
       document.getElementById('step-3').classList.add('hidden');
       document.getElementById('processing-state').classList.remove('hidden');
 
-      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'User') : 'User';
+      const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
       const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
 
       setTimeout(() => {
@@ -751,8 +756,8 @@
 
     function redirectToDashboard() {
       const finalUrl = document.getElementById('summary-domain').innerText;
-      const userIdent = currentUser ? (currentUser.username || currentUser.name || 'User') : 'User';
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}`;
+      const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
+      window.location.href = `dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
