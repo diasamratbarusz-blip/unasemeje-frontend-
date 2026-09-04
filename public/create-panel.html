@@ -31,32 +31,55 @@
     }
   </style>
   <script>
-    // STRICT AUTHENTICATION GUARD & ACCOUNT RETRIEVAL
-    // Checks localStorage and sessionStorage for actual user session
-    const rawStoredAuth = localStorage.getItem('authenticatedUser') || sessionStorage.getItem('userSession') || localStorage.getItem('userSession');
-    let storedAuth = null;
+    // DASHBOARD SESSION & AUTHENTICATION GUARD
+    function getStoredUserSession() {
+      // Parse query string parameters as primary or fallback source from dashboard.html
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlUser = urlParams.get('username') || urlParams.get('user') || urlParams.get('name');
+      const urlEmail = urlParams.get('email');
+      const urlPhone = urlParams.get('phone') || urlParams.get('whatsapp');
 
-    try {
-      storedAuth = rawStoredAuth ? JSON.parse(rawStoredAuth) : null;
-    } catch (e) {
-      storedAuth = null;
+      // Retrieve stored sessions across all common storage keys used by dashboard.html
+      const storageKeys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user'];
+      let storedData = null;
+
+      for (const key of storageKeys) {
+        const item = localStorage.getItem(key) || sessionStorage.getItem(key);
+        if (item) {
+          try {
+            storedData = JSON.parse(item);
+            if (storedData) break;
+          } catch (e) {
+            // In case string format is stored
+            storedData = { username: item };
+            break;
+          }
+        }
+      }
+
+      // Merge stored data or build session from URL params
+      let userObj = storedData || {};
+      if (urlUser) userObj.username = urlUser;
+      if (urlEmail) userObj.email = urlEmail;
+      if (urlPhone) userObj.whatsapp = urlPhone;
+
+      return userObj;
     }
 
-    // Determine if user has a valid authenticated session
-    const isUserLoggedIn = Boolean(
-      storedAuth && 
-      (storedAuth.isLoggedIn === true || storedAuth.isLoggedIn === "true" || storedAuth.token || storedAuth.username || storedAuth.email)
-    );
+    const currentUser = getStoredUserSession();
 
-    // Reference to real user details
-    const currentUser = isUserLoggedIn ? storedAuth : null;
+    // Verify if valid user identity exists
+    const isUserLoggedIn = Boolean(
+      currentUser && 
+      (currentUser.isLoggedIn === true || currentUser.isLoggedIn === "true" || currentUser.token || currentUser.username || currentUser.email || currentUser.name)
+    );
   </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
 
   <!-- AUTHENTICATION CHECK OVERLAY / GUARD CONTAINER -->
   <script>
-    // Only display lock overlay if user is NOT logged in. Logged-in users proceed without re-login prompts.
+    // Only display lock overlay if user is NOT logged in. Logged-in dashboard users proceed seamlessly.
     if (!isUserLoggedIn) {
       document.write(`
         <div class="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4">
@@ -543,25 +566,29 @@
 
     // Populate Authenticated User Real Account Details Across All Views
     document.addEventListener("DOMContentLoaded", () => {
-      if (!currentUser) return;
+      if (!isUserLoggedIn || !currentUser) return;
+
+      const userNameDisplay = currentUser.username || currentUser.name || 'Account Owner';
+      const userEmailDisplay = currentUser.email || 'N/A';
+      const userPhoneDisplay = currentUser.whatsapp || currentUser.phone || 'N/A';
 
       // Header Navigation Badge
-      document.getElementById('header-username').innerText = currentUser.username || currentUser.name || 'Account Owner';
-      document.getElementById('header-email').innerText = currentUser.email || 'N/A';
-      document.getElementById('header-whatsapp').innerText = currentUser.whatsapp || currentUser.phone || 'N/A';
+      document.getElementById('header-username').innerText = userNameDisplay;
+      document.getElementById('header-email').innerText = userEmailDisplay;
+      document.getElementById('header-whatsapp').innerText = userPhoneDisplay;
 
       // Step 3 Order Summary Details
-      document.getElementById('summary-owner').innerText = currentUser.username || currentUser.name || 'Account Owner';
-      document.getElementById('summary-email').innerText = currentUser.email || 'N/A';
-      document.getElementById('summary-whatsapp').innerText = currentUser.whatsapp || currentUser.phone || 'N/A';
+      document.getElementById('summary-owner').innerText = userNameDisplay;
+      document.getElementById('summary-email').innerText = userEmailDisplay;
+      document.getElementById('summary-whatsapp').innerText = userPhoneDisplay;
 
       // Success & Log States
-      document.getElementById('final-owner-username').innerText = currentUser.username || currentUser.name || 'Account Owner';
-      document.getElementById('final-owner-email').innerText = currentUser.email || 'N/A';
-      document.getElementById('log-account-user').innerText = currentUser.email || currentUser.username || 'N/A';
+      document.getElementById('final-owner-username').innerText = userNameDisplay;
+      document.getElementById('final-owner-email').innerText = userEmailDisplay;
+      document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
 
       // Pre-fill M-Pesa phone number input from user's registered WhatsApp / phone
-      const rawPhone = currentUser.whatsapp || currentUser.phone || '';
+      const rawPhone = userPhoneDisplay !== 'N/A' ? userPhoneDisplay : '';
       const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
       if (phoneDigits) {
         document.getElementById('mpesa-phone').value = phoneDigits;
@@ -569,9 +596,11 @@
     });
 
     function logoutUser() {
-      localStorage.removeItem('authenticatedUser');
-      localStorage.removeItem('userSession');
-      sessionStorage.removeItem('userSession');
+      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user'];
+      keys.forEach(k => {
+        localStorage.removeItem(k);
+        sessionStorage.removeItem(k);
+      });
       window.location.href = "index.html";
     }
 
