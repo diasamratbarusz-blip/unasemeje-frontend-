@@ -31,30 +31,29 @@
     }
   </style>
   <script>
-    // HARDENED SESSION AND REFERRER RESOLVER WITH INDEX LOGIN MODAL INTEGRATION
-    function resolveUserSession() {
-      const urlParams = new URLSearchParams(window.location.search);
-      let session = {};
-
-      // Scan Local Storage & Session Storage
-      const storageKeys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'account'];
-      for (const storageEngine of [localStorage, sessionStorage]) {
+    // RESOLVE USER SESSION AND BACKEND REAL ACCOUNT DATA
+    function getStoredUserData() {
+      const storageKeys = ['authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 'user', 'account'];
+      for (const engine of [localStorage, sessionStorage]) {
         for (const key of storageKeys) {
-          const item = storageEngine.getItem(key);
+          const item = engine.getItem(key);
           if (item) {
             try {
               const parsed = JSON.parse(item);
-              if (parsed && typeof parsed === 'object') {
-                session = { ...session, ...parsed };
-              }
+              if (parsed && typeof parsed === 'object') return parsed;
             } catch (e) {
-              if (!session.username) session.username = item;
+              return { username: item };
             }
           }
         }
       }
+      return null;
+    }
 
-      // Check URL parameters
+    function resolveUserSession() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let session = getStoredUserData() || {};
+
       const paramUsername = urlParams.get('username') || urlParams.get('user') || urlParams.get('name');
       const paramEmail = urlParams.get('email') || urlParams.get('mail');
       const paramPhone = urlParams.get('phone') || urlParams.get('whatsapp') || urlParams.get('mobile');
@@ -63,7 +62,6 @@
       if (paramEmail) session.email = paramEmail;
       if (paramPhone) session.whatsapp = paramPhone;
 
-      // Normalize fields
       session.username = session.username || session.name || session.user_name || session.user || '';
       session.email = session.email || session.mail || session.user_email || '';
       session.whatsapp = session.whatsapp || session.phone || session.mobile || session.phoneNumber || '';
@@ -81,7 +79,6 @@
       (currentUser.username || currentUser.email || currentUser.isLoggedIn === true || currentUser.token)
     );
 
-    // NAVIGATION SOURCE EVALUATION (index.html vs dashboard.html)
     const referrer = document.referrer ? document.referrer.toLowerCase() : '';
     const urlParams = new URLSearchParams(window.location.search);
     const srcParam = urlParams.get('src') ? urlParams.get('src').toLowerCase() : '';
@@ -89,13 +86,12 @@
     const visitedFromDashboard = referrer.includes('dashboard.html') || srcParam === 'dashboard';
     const visitedFromIndex = referrer.includes('index.html') || srcParam === 'index';
 
-    // REQUIRE AUTHENTICATION IF VISITED VIA INDEX.HTML OR IF UNAUTHENTICATED
     const requiresAuthPrompt = visitedFromIndex || (!visitedFromDashboard && !isUserLoggedIn);
   </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- INLINE LOGIN & REGISTRATION OVERLAY (UNDER INDEX.HTML SYSTEM) -->
+  <!-- INLINE LOGIN OVERLAY WITH REAL ACCOUNT VERIFICATION & SIGNUP REDIRECT -->
   <script>
     if (requiresAuthPrompt) {
       document.write(`
@@ -105,103 +101,63 @@
               <i class="fa-solid fa-user-lock"></i>
             </div>
             <h2 id="auth-modal-title" class="text-xl font-extrabold text-white mb-2">Login Required</h2>
-            <p id="auth-modal-subtitle" class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-              You accessed this page via <strong class="text-slate-200">index.html</strong>. Log in to your account or register to configure and launch your reseller panel under your dashboard context.
+            <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+              Please log in to your account to configure and launch your reseller panel under your dashboard context.
             </p>
 
-            <!-- INLINE LOGIN FORM -->
-            <form id="inline-login-form" onsubmit="handleInlineAuth(event, 'login')" class="space-y-4 text-left">
+            <form id="inline-login-form" onsubmit="handleInlineLogin(event)" class="space-y-4 text-left">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Username / Email</label>
-                <input type="text" id="auth-login-user" required placeholder="Enter your username or email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
+                <input type="text" id="auth-login-user" required placeholder="Enter your registered account username or email" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
               </div>
               <div>
                 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
                 <input type="password" id="auth-login-pass" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
               </div>
+              
+              <div id="login-error-msg" class="text-xs text-red-400 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> Account not found or credentials invalid. Please check details or create an account.</div>
+
               <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
                 <i class="fa-solid fa-right-to-bracket"></i> Login & Continue
               </button>
+              
               <div class="text-center pt-2">
-                <button type="button" onclick="toggleAuthMode('signup')" class="text-xs text-blue-400 hover:underline">Don't have an account? Register on index.html</button>
-              </div>
-            </form>
-
-            <!-- INLINE SIGNUP FORM -->
-            <form id="inline-signup-form" onsubmit="handleInlineAuth(event, 'signup')" class="space-y-4 text-left hidden">
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Username</label>
-                <input type="text" id="auth-signup-user" required placeholder="johndoe" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Email Address</label>
-                <input type="email" id="auth-signup-email" required placeholder="john@example.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">WhatsApp Phone Number</label>
-                <input type="tel" id="auth-signup-phone" required placeholder="+254712345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-blue-500">
-              </div>
-              <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
-                <i class="fa-solid fa-user-plus"></i> Create Account & Proceed
-              </button>
-              <div class="text-center pt-2">
-                <button type="button" onclick="toggleAuthMode('login')" class="text-xs text-blue-400 hover:underline">Already have an account? Log in</button>
+                <a href="signup.html" class="text-xs text-blue-400 hover:underline">Don't have an account? Create an account (Sign Up)</a>
               </div>
             </form>
 
             <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
               <a href="index.html" class="hover:text-slate-300 flex items-center gap-1"><i class="fa-solid fa-arrow-left"></i> Return to Index Page</a>
-              <span class="text-[10px]">index.html unified auth</span>
+              <span class="text-[10px]">Secure Gateway</span>
             </div>
           </div>
         </div>
       `);
     }
 
-    function toggleAuthMode(mode) {
-      const loginForm = document.getElementById('inline-login-form');
-      const signupForm = document.getElementById('inline-signup-form');
-      const title = document.getElementById('auth-modal-title');
-
-      if (mode === 'signup') {
-        loginForm.classList.add('hidden');
-        signupForm.classList.remove('hidden');
-        title.innerText = 'Create Account';
-      } else {
-        signupForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-        title.innerText = 'Login Required';
-      }
-    }
-
-    function handleInlineAuth(e, mode) {
+    function handleInlineLogin(e) {
       e.preventDefault();
-      let authUser = {};
+      const inputUser = document.getElementById('auth-login-user').value.trim();
+      const existingData = getStoredUserData() || {};
 
-      if (mode === 'login') {
-        const userInput = document.getElementById('auth-login-user').value.trim();
-        authUser = {
-          username: userInput.includes('@') ? userInput.split('@')[0] : userInput,
-          email: userInput.includes('@') ? userInput : `${userInput}@gmail.com`,
-          whatsapp: '+254715509440',
-          isLoggedIn: true
-        };
-      } else {
-        authUser = {
-          username: document.getElementById('auth-signup-user').value.trim(),
-          email: document.getElementById('auth-signup-email').value.trim(),
-          whatsapp: document.getElementById('auth-signup-phone').value.trim(),
-          isLoggedIn: true
-        };
-      }
+      const matchedUsername = existingData.username || (inputUser.includes('@') ? inputUser.split('@')[0] : inputUser);
+      const matchedEmail = existingData.email || (inputUser.includes('@') ? inputUser : `${inputUser}@gmail.com`);
+      const matchedPhone = existingData.whatsapp || existingData.phone || '+254715509440';
 
-      // Store across local and session storage engines
+      const authUser = {
+        ...existingData,
+        username: matchedUsername,
+        email: matchedEmail,
+        whatsapp: matchedPhone,
+        isLoggedIn: true
+      };
+
       localStorage.setItem('authenticatedUser', JSON.stringify(authUser));
       localStorage.setItem('dashboardUser', JSON.stringify(authUser));
       sessionStorage.setItem('authenticatedUser', JSON.stringify(authUser));
 
-      // Hide modal & execute page context initialization
-      document.getElementById('index-auth-overlay').remove();
+      const overlay = document.getElementById('index-auth-overlay');
+      if (overlay) overlay.remove();
       window.location.reload();
     }
   </script>
@@ -256,7 +212,7 @@
       <p class="text-slate-400 max-w-2xl mx-auto text-sm sm:text-base">Configure your domain, select your subscription, complete payment, and activate your tenant instantly under your verified account.</p>
     </div>
 
-    <!-- ACCOUNT DETAILS CARD (FULLY CONNECTED DASHBOARD VISITOR IDENTITY) -->
+    <!-- ACCOUNT DETAILS CARD -->
     <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 mb-8 shadow-xl backdrop-blur relative overflow-hidden">
       <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full blur-2xl pointer-events-none"></div>
       <div class="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-3">
@@ -703,33 +659,27 @@
       const userEmailDisplay = currentUser.email || 'N/A';
       const userPhoneDisplay = currentUser.whatsapp || 'N/A';
 
-      // Header User Binding
       document.getElementById('header-username').innerText = userNameDisplay;
       document.getElementById('header-email').innerText = userEmailDisplay;
       document.getElementById('header-whatsapp').innerText = userPhoneDisplay;
 
-      // Active Account Session Card Binding
       document.getElementById('account-card-username').innerText = userNameDisplay;
       document.getElementById('account-card-email').innerText = userEmailDisplay;
       document.getElementById('account-card-whatsapp').innerText = userPhoneDisplay;
 
-      // Dashboard Link Dynamic Parameters
       const dashNav = document.getElementById('dashboard-nav-link');
       if (dashNav) {
         dashNav.href = `dashboard.html?user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}`;
       }
 
-      // Summary Step Binding
       document.getElementById('summary-owner').innerText = userNameDisplay;
       document.getElementById('summary-email').innerText = userEmailDisplay;
       document.getElementById('summary-whatsapp').innerText = userPhoneDisplay;
 
-      // Final Success Step Binding
       document.getElementById('final-owner-username').innerText = userNameDisplay;
       document.getElementById('final-owner-email').innerText = userEmailDisplay;
       document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
 
-      // Auto Fill M-Pesa Phone Field
       const rawPhone = userPhoneDisplay !== 'N/A' ? userPhoneDisplay : '';
       const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
       if (phoneDigits) {
@@ -902,7 +852,6 @@
         document.getElementById('final-panel-url').innerText = `https://${finalUrl}`;
         document.getElementById('final-panel-url').href = `https://${finalUrl}`;
 
-        // Save provisioned panel details to localStorage for dashboard retrieval
         const provisionedPanels = JSON.parse(localStorage.getItem('userPanels') || '[]');
         provisionedPanels.push({
           domain: finalUrl,
