@@ -623,15 +623,15 @@
           <div class="bg-blue-950/20 border border-blue-500/30 rounded-xl p-5 space-y-3">
             <label class="block text-xs font-bold text-white flex items-center justify-between uppercase tracking-wider">
               <span><i class="fa-solid fa-key text-blue-400 mr-1.5"></i>Redeem Activation Code</span>
-              <span class="text-[10px] text-blue-400 font-normal normal-case">Issued via WhatsApp or Automated Push</span>
+              <span class="text-[10px] text-blue-400 font-normal normal-case">Verified Code Issued Exclusively via WhatsApp</span>
             </label>
             <div class="flex gap-2">
-              <input type="text" id="activation-code" placeholder="e.g. PANEL-9X4A" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
+              <input type="text" id="activation-code" placeholder="e.g. WA-8X92-VERIFIED" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
               <button onclick="redeemActivationCode()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2 shrink-0 shadow-lg shadow-blue-600/20">
                 <i class="fa-solid fa-unlock"></i> Activate
               </button>
             </div>
-            <p id="code-error-msg" class="text-xs text-red-400 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> Invalid or unverified activation code. Please check or request support.</p>
+            <p id="code-error-msg" class="text-xs text-red-400 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="code-error-text">Invalid or unverified activation code. Please contact WhatsApp support to receive your verified code.</span></p>
           </div>
         </div>
 
@@ -653,7 +653,7 @@
         </div>
         <div class="max-w-md mx-auto bg-slate-950 border border-slate-800 rounded-xl p-4 text-left text-xs font-mono space-y-2 text-slate-400 shadow-inner">
           <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Verifying customer session...</div>
-          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming ledger balance & tenant entitlement...</div>
+          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming backend WhatsApp activation code...</div>
           <div id="log-3" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Allocating database tenant & SSL certificate...</div>
           <div id="log-4" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Deploying panel dashboard...</div>
         </div>
@@ -803,7 +803,7 @@
       const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
       const formattedPrice = selectedPackage.price ? selectedPackage.price.toLocaleString() : '4,500';
       
-      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${formattedPrice} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
+      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${formattedPrice} for domain ${domain} (${selectedPackage.name}). Please issue my verified WhatsApp Activation Code.`);
       const baseWa = "https://wa.me/254715509440?text=";
       document.querySelectorAll('[id^="wa-link-"]').forEach(el => {
         el.href = baseWa + msg;
@@ -857,66 +857,101 @@
         alert('Please enter a valid M-Pesa phone number.');
         return;
       }
-
-      const generatedAccessCode = 'STK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      document.getElementById('activation-code').value = generatedAccessCode;
       
       const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
-      alert(`STK Push initiated to +254${phone} for account ${userIdent}. Your activation code (${generatedAccessCode}) has been pre-filled.`);
+      alert(`STK Push initiated to +254${phone} for account ${userIdent}. Upon completion, please request your verified WhatsApp activation code from support.`);
     }
 
-    function redeemActivationCode() {
-      const code = document.getElementById('activation-code').value.trim().toUpperCase();
-      
+    async function redeemActivationCode() {
+      const codeInput = document.getElementById('activation-code');
+      const errorMsg = document.getElementById('code-error-msg');
+      const errorText = document.getElementById('code-error-text');
+      const code = codeInput.value.trim().toUpperCase();
+
       if (!code || code.length < 5) {
-        document.getElementById('code-error-msg').classList.remove('hidden');
+        errorText.innerText = "Please enter a valid code received from WhatsApp.";
+        errorMsg.classList.remove('hidden');
         return;
       }
 
-      document.getElementById('code-error-msg').classList.add('hidden');
-
-      document.getElementById('step-3').classList.add('hidden');
-      document.getElementById('processing-state').classList.remove('hidden');
+      errorMsg.classList.add('hidden');
 
       const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
       const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
+      const targetDomain = document.getElementById('summary-domain').innerText;
 
-      setTimeout(() => {
-        document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${userIdent} - ${userMail})`;
-        document.getElementById('log-2').classList.remove('opacity-30');
-        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Confirming ledger balance & entitlement...';
-      }, 2000);
+      // Show processing animation
+      document.getElementById('step-3').classList.add('hidden');
+      document.getElementById('processing-state').classList.remove('hidden');
 
-      setTimeout(() => {
-        document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Payment & entitlement confirmed';
-        document.getElementById('log-3').classList.remove('opacity-30');
-        document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & SSL certificate...';
-        document.getElementById('status-heading').innerText = 'Building Your Reseller Panel...';
-      }, 4500);
-
-      setTimeout(() => {
-        document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Domain & SSL issued successfully';
-        document.getElementById('log-4').classList.remove('opacity-30');
-        document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Binding tenant to account ' + userIdent + '...';
-      }, 7000);
-
-      setTimeout(() => {
-        const finalUrl = document.getElementById('summary-domain').innerText;
-        document.getElementById('processing-state').classList.add('hidden');
-        document.getElementById('success-state').classList.remove('hidden');
-        document.getElementById('final-panel-url').innerText = `https://${finalUrl}`;
-        document.getElementById('final-panel-url').href = `https://${finalUrl}`;
-
-        const provisionedPanels = JSON.parse(localStorage.getItem('userPanels') || '[]');
-        provisionedPanels.push({
-          domain: finalUrl,
-          package: selectedPackage.name,
-          owner: userIdent,
-          email: userMail,
-          createdAt: new Date().toISOString()
+      try {
+        const BACKEND_URL = "https://unasemeje-backend.vercel.app";
+        const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: code,
+            username: userIdent,
+            email: userMail,
+            domain: targetDomain,
+            packageName: selectedPackage.name
+          })
         });
-        localStorage.setItem('userPanels', JSON.stringify(provisionedPanels));
-      }, 9500);
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          // Revert back to step 3 and display backend rejection error
+          document.getElementById('processing-state').classList.add('hidden');
+          document.getElementById('step-3').classList.remove('hidden');
+          errorText.innerText = result.message || "Invalid or unverified WhatsApp activation code. Please request support.";
+          errorMsg.classList.remove('hidden');
+          return;
+        }
+
+        // Execution path when backend confirms valid code
+        setTimeout(() => {
+          document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${userIdent} - ${userMail})`;
+          document.getElementById('log-2').classList.remove('opacity-30');
+          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Code verified by backend...';
+        }, 1000);
+
+        setTimeout(() => {
+          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> WhatsApp activation verified';
+          document.getElementById('log-3').classList.remove('opacity-30');
+          document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & SSL certificate...';
+          document.getElementById('status-heading').innerText = 'Building Your Reseller Panel...';
+        }, 2500);
+
+        setTimeout(() => {
+          document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Domain & SSL issued successfully';
+          document.getElementById('log-4').classList.remove('opacity-30');
+          document.getElementById('log-4').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Binding tenant to account ' + userIdent + '...';
+        }, 4000);
+
+        setTimeout(() => {
+          document.getElementById('processing-state').classList.add('hidden');
+          document.getElementById('success-state').classList.remove('hidden');
+          document.getElementById('final-panel-url').innerText = `https://${targetDomain}`;
+          document.getElementById('final-panel-url').href = `https://${targetDomain}`;
+
+          const provisionedPanels = JSON.parse(localStorage.getItem('userPanels') || '[]');
+          provisionedPanels.push({
+            domain: targetDomain,
+            package: selectedPackage.name,
+            owner: userIdent,
+            email: userMail,
+            createdAt: new Date().toISOString()
+          });
+          localStorage.setItem('userPanels', JSON.stringify(provisionedPanels));
+        }, 5500);
+
+      } catch (err) {
+        document.getElementById('processing-state').classList.add('hidden');
+        document.getElementById('step-3').classList.remove('hidden');
+        errorText.innerText = "Network error connecting to backend verification engine. Please try again.";
+        errorMsg.classList.remove('hidden');
+      }
     }
 
     function redirectToDashboard() {
