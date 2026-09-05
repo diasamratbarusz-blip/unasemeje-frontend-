@@ -45,9 +45,44 @@
 
     let currentUser = null;
 
-    // Helper: Fetch Account Details from Backend API or Local Storage Fallback
+    // Helper: Fetch Account Details from URL Parameters, Local Storage, or Backend API
     async function fetchAccountDetails() {
-      // 1. Attempt API fetch from Backend
+      // Step A: Parse URL parameters
+      const urlUser = urlParams.get('user') || urlParams.get('username') || urlParams.get('name');
+      const urlEmail = urlParams.get('email') || urlParams.get('mail');
+      const urlPhone = urlParams.get('phone') || urlParams.get('whatsapp') || urlParams.get('mobile');
+
+      if (urlUser || urlEmail || urlPhone) {
+        return {
+          username: urlUser || 'Account Owner',
+          email: urlEmail || 'N/A',
+          whatsapp: urlPhone || 'N/A'
+        };
+      }
+
+      // Step B: Check Local and Session Storage
+      const storageKeys = ['authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 'user', 'account'];
+      for (const storage of [localStorage, sessionStorage]) {
+        for (const key of storageKeys) {
+          const item = storage.getItem(key);
+          if (item) {
+            try {
+              const parsed = JSON.parse(item);
+              if (parsed && typeof parsed === 'object') {
+                return {
+                  username: parsed.username || parsed.name || parsed.user || 'Account Owner',
+                  email: parsed.email || parsed.mail || 'N/A',
+                  whatsapp: parsed.whatsapp || parsed.phone || parsed.mobile || 'N/A'
+                };
+              }
+            } catch (e) {
+              return { username: item, email: 'N/A', whatsapp: 'N/A' };
+            }
+          }
+        }
+      }
+
+      // Step C: Attempt API fetch from Backend
       try {
         const response = await fetch('/api/user/profile', {
           method: 'GET',
@@ -55,29 +90,18 @@
         });
         if (response.ok) {
           const apiUser = await response.json();
-          if (apiUser && (apiUser.username || apiUser.email)) {
-            return apiUser;
+          if (apiUser) {
+            return {
+              username: apiUser.username || apiUser.name || 'Account Owner',
+              email: apiUser.email || apiUser.mail || 'N/A',
+              whatsapp: apiUser.whatsapp || apiUser.phone || apiUser.mobile || 'N/A'
+            };
           }
         }
       } catch (err) {
-        console.warn('Backend API request skipped/unreachable. Checking local session storage.');
+        console.warn('Backend API request skipped/unreachable.');
       }
 
-      // 2. Fallback to Local Session Storage
-      const storageKeys = ['authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 'user'];
-      for (const storage of [localStorage, sessionStorage]) {
-        for (const key of storageKeys) {
-          const item = storage.getItem(key);
-          if (item) {
-            try {
-              const parsed = JSON.parse(item);
-              if (parsed && typeof parsed === 'object') return parsed;
-            } catch (e) {
-              return { username: item };
-            }
-          }
-        }
-      }
       return null;
     }
   </script>
@@ -610,7 +634,7 @@
       // Stop execution if user is coming from index and blocked by overlay
       if (requiresAuthPrompt) return;
 
-      // Asynchronously fetch real backend account data
+      // Asynchronously fetch real account data across URL params, storage, or backend API
       currentUser = await fetchAccountDetails();
 
       const userNameDisplay = (currentUser && (currentUser.username || currentUser.name)) || 'Account Owner';
