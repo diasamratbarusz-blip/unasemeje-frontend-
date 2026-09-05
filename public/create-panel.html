@@ -709,8 +709,9 @@
       const userIdent = currentUser ? (currentUser.username || 'Valued User') : 'Valued User';
       const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
       const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
+      const formattedPrice = selectedPackage.price ? selectedPackage.price.toLocaleString() : '4,500';
       
-      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${selectedPackage.price} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
+      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${formattedPrice} for domain ${domain} (${selectedPackage.name}). Please issue my Activation Code.`);
       const baseWa = "https://wa.me/254715509440?text=";
       document.querySelectorAll('[id^="wa-link-"]').forEach(el => {
         el.href = baseWa + msg;
