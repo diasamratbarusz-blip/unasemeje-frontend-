@@ -45,6 +45,13 @@
 
     let currentUser = null;
 
+    // Helper: Verify Active Subscription & Verified Code Status
+    function checkSubscriptionStatus() {
+      const isSubscribed = localStorage.getItem('isSubscribed') === 'true' || urlParams.get('subscribed') === 'true';
+      const verifiedCode = localStorage.getItem('activationCodeVerified') === 'true' || urlParams.get('activated') === 'true';
+      return isSubscribed && verifiedCode;
+    }
+
     // Helper: JWT Payload Decoder for offline fallback reading
     function parseJwt(token) {
       try {
@@ -208,6 +215,29 @@
     }
   </script>
 
+  <!-- SUBSCRIPTION & ACTIVATION LOCK OVERLAY -->
+  <div id="subscription-lock-overlay" class="fixed inset-0 z-[90] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="max-w-md w-full bg-slate-900 border border-amber-500/30 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
+      <div class="w-16 h-16 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+        <i class="fa-solid fa-shield-cat"></i>
+      </div>
+      <h2 class="text-xl font-extrabold text-white mb-2">Subscription & Verification Required</h2>
+      <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+        Access to <code class="text-blue-400 font-mono">customer-dashboard.html</code> is restricted. You must have an active subscription and a verified activation code to access the customer dashboard.
+      </p>
+
+      <div class="space-y-3">
+        <button onclick="closeLockOverlayAndFocusPayment()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
+          <i class="fa-solid fa-key"></i> Subscribe & Activate Now
+        </button>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-slate-800/80 text-xs text-slate-500">
+        <a href="index.html" class="hover:text-slate-300 flex items-center justify-center gap-1"><i class="fa-solid fa-arrow-left"></i> Return to Homepage</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Top Navigation Bar -->
   <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -235,8 +265,8 @@
           </div>
         </div>
 
-        <!-- PERMANENT CUSTOMER DASHBOARD BUTTON -->
-        <a id="dashboard-nav-link" href="dashboard.html" class="text-white font-semibold text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md shadow-blue-600/20 border border-blue-500">
+        <!-- RESTRICTED CUSTOMER DASHBOARD BUTTON LINK -->
+        <a id="dashboard-nav-link" href="javascript:void(0)" onclick="handleDashboardNavigation(event)" class="text-white font-semibold text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md shadow-blue-600/20 border border-blue-500">
           <i class="fa-solid fa-gauge text-white"></i>
           <span>Customer Dashboard</span>
         </a>
@@ -720,12 +750,6 @@
       document.getElementById('account-card-email').innerText = userEmailDisplay;
       document.getElementById('account-card-whatsapp').innerText = userPhoneDisplay;
 
-      // Set Permanent Customer Dashboard Header Link
-      const dashNav = document.getElementById('dashboard-nav-link');
-      if (dashNav) {
-        dashNav.href = `dashboard.html?user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}`;
-      }
-
       // Bind data to Order Summary & Provisioning Logs
       document.getElementById('summary-owner').innerText = userNameDisplay;
       document.getElementById('summary-email').innerText = userEmailDisplay;
@@ -742,8 +766,30 @@
       }
     });
 
+    function handleDashboardNavigation(e) {
+      if (e) e.preventDefault();
+      
+      const isEligible = checkSubscriptionStatus();
+      if (!isEligible) {
+        document.getElementById('subscription-lock-overlay').classList.remove('hidden');
+        return;
+      }
+
+      const userNameDisplay = (currentUser && (currentUser.username || currentUser.name)) || 'Account Owner';
+      const userEmailDisplay = (currentUser && (currentUser.email || currentUser.mail)) || 'N/A';
+      const userPhoneDisplay = (currentUser && (currentUser.whatsapp || currentUser.phone)) || 'N/A';
+      const finalUrl = document.getElementById('summary-domain') ? document.getElementById('summary-domain').innerText : '';
+
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}&subscribed=true&activated=true`;
+    }
+
+    function closeLockOverlayAndFocusPayment() {
+      document.getElementById('subscription-lock-overlay').classList.add('hidden');
+      goToStep(3);
+    }
+
     function logoutUser() {
-      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token', 'authToken', 'jwt', 'accessToken', 'account'];
+      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token', 'authToken', 'jwt', 'accessToken', 'account', 'isSubscribed', 'activationCodeVerified'];
       keys.forEach(k => {
         localStorage.removeItem(k);
         sessionStorage.removeItem(k);
@@ -915,6 +961,10 @@
           return;
         }
 
+        // Save verified subscription status to grant future access to customer-dashboard.html
+        localStorage.setItem('isSubscribed', 'true');
+        localStorage.setItem('activationCodeVerified', 'true');
+
         // Proceed with activation sequence only when verified by backend
         setTimeout(() => {
           document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${userIdent} - ${userMail})`;
@@ -966,7 +1016,7 @@
       const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
       const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
       
-      window.location.href = `dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}`;
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}&subscribed=true&activated=true`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
