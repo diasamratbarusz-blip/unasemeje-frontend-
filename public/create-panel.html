@@ -235,9 +235,10 @@
           </div>
         </div>
 
-        <a id="dashboard-nav-link" href="dashboard.html" class="text-slate-300 hover:text-white text-xs font-semibold bg-slate-900 hover:bg-slate-800 px-3.5 py-1.5 rounded-lg border border-slate-800 transition-colors flex items-center gap-1.5">
-          <i class="fa-solid fa-gauge text-blue-400"></i>
-          <span>Dashboard</span>
+        <!-- PERMANENT CUSTOMER DASHBOARD BUTTON -->
+        <a id="dashboard-nav-link" href="dashboard.html" class="text-white font-semibold text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md shadow-blue-600/20 border border-blue-500">
+          <i class="fa-solid fa-gauge text-white"></i>
+          <span>Customer Dashboard</span>
         </a>
 
         <button onclick="logoutUser()" class="text-slate-400 hover:text-red-400 text-xs font-medium transition-colors flex items-center gap-1.5 bg-slate-900 hover:bg-red-500/10 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-red-500/30">
@@ -719,7 +720,7 @@
       document.getElementById('account-card-email').innerText = userEmailDisplay;
       document.getElementById('account-card-whatsapp').innerText = userPhoneDisplay;
 
-      // Set Dashboard Link
+      // Set Permanent Customer Dashboard Header Link
       const dashNav = document.getElementById('dashboard-nav-link');
       if (dashNav) {
         dashNav.href = `dashboard.html?user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}`;
@@ -898,18 +899,23 @@
           })
         });
 
-        const result = await response.json();
+        let result = {};
+        try {
+          result = await response.json();
+        } catch(e) {
+          result = { success: false, message: "Invalid server response structure." };
+        }
 
+        // STRICT CHECK: Reject code if fake or backend verification fails
         if (!response.ok || !result.success) {
-          // Revert back to step 3 and display backend rejection error
           document.getElementById('processing-state').classList.add('hidden');
           document.getElementById('step-3').classList.remove('hidden');
-          errorText.innerText = result.message || "Invalid or unverified WhatsApp activation code. Please request support.";
+          errorText.innerText = result.message || "Invalid or fake activation code. Access denied. Please request support.";
           errorMsg.classList.remove('hidden');
           return;
         }
 
-        // Execution path when backend confirms valid code
+        // Proceed with activation sequence only when verified by backend
         setTimeout(() => {
           document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${userIdent} - ${userMail})`;
           document.getElementById('log-2').classList.remove('opacity-30');
@@ -949,7 +955,7 @@
       } catch (err) {
         document.getElementById('processing-state').classList.add('hidden');
         document.getElementById('step-3').classList.remove('hidden');
-        errorText.innerText = "Network error connecting to backend verification engine. Please try again.";
+        errorText.innerText = "Network error connecting to backend verification engine. Code verification failed.";
         errorMsg.classList.remove('hidden');
       }
     }
