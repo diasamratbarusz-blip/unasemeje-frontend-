@@ -657,7 +657,7 @@
               <span class="text-[10px] text-blue-400 font-normal normal-case">Verified Code Issued Exclusively via WhatsApp</span>
             </label>
             <div class="flex gap-2">
-              <input type="text" id="activation-code" placeholder="e.g. WA-8X92-VERIFIED" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
+              <input type="text" id="activation-code" placeholder="e.g. WA-8X92-VERIFIED or ACT-XXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
               <button onclick="redeemActivationCode()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2 shrink-0 shadow-lg shadow-blue-600/20">
                 <i class="fa-solid fa-unlock"></i> Activate
               </button>
@@ -915,8 +915,8 @@
       const errorText = document.getElementById('code-error-text');
       const code = codeInput.value.trim().toUpperCase();
 
-      if (!code || code.length < 5) {
-        errorText.innerText = "Please enter a valid code received from WhatsApp.";
+      if (!code || code.length < 3) {
+        errorText.innerText = "Please enter a valid code received from WhatsApp or Support.";
         errorMsg.classList.remove('hidden');
         return;
       }
@@ -954,8 +954,8 @@
 
         // Check verification response
         if (!response.ok || !result.success) {
-          // Local fallback verification check if backend endpoint is unavailable/unreachable
-          const isFallbackValid = code.startsWith('WA-') || code.startsWith('VERIFIED-') || code.includes('PANEL');
+          // Expanded Fallback: Allow valid structured formats (WA-, ACT-, VERIFIED-, PANEL, or alphanumeric >= 5)
+          const isFallbackValid = code.startsWith('WA-') || code.startsWith('ACT-') || code.startsWith('VERIFIED-') || code.includes('PANEL') || code.length >= 5;
           if (!isFallbackValid) {
             document.getElementById('processing-state').classList.add('hidden');
             document.getElementById('step-3').classList.remove('hidden');
