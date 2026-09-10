@@ -730,27 +730,22 @@
     let activePaymentMethod = 'mpesa-express';
 
     document.addEventListener("DOMContentLoaded", async () => {
-      // Stop execution if user is coming from index and blocked by overlay
       if (requiresAuthPrompt) return;
 
-      // Asynchronously fetch real account data across URL params, storage, JWT, or backend API
       currentUser = await fetchAccountDetails();
 
       const userNameDisplay = (currentUser && (currentUser.username || currentUser.name)) || 'Account Owner';
       const userEmailDisplay = (currentUser && (currentUser.email || currentUser.mail)) || 'N/A';
       const userPhoneDisplay = (currentUser && (currentUser.whatsapp || currentUser.phone)) || 'N/A';
 
-      // Bind data to Header Elements
       document.getElementById('header-username').innerText = userNameDisplay;
       document.getElementById('header-email').innerText = userEmailDisplay;
       document.getElementById('header-whatsapp').innerText = userPhoneDisplay;
 
-      // Bind data to Active Account Details Card
       document.getElementById('account-card-username').innerText = userNameDisplay;
       document.getElementById('account-card-email').innerText = userEmailDisplay;
       document.getElementById('account-card-whatsapp').innerText = userPhoneDisplay;
 
-      // Bind data to Order Summary & Provisioning Logs
       document.getElementById('summary-owner').innerText = userNameDisplay;
       document.getElementById('summary-email').innerText = userEmailDisplay;
       document.getElementById('summary-whatsapp').innerText = userPhoneDisplay;
@@ -915,8 +910,8 @@
       const errorText = document.getElementById('code-error-text');
       const code = codeInput.value.trim().toUpperCase();
 
-      if (!code || code.length < 3) {
-        errorText.innerText = "Please enter a valid code received from WhatsApp or Support.";
+      if (!code) {
+        errorText.innerText = "Please enter an activation code received from support.";
         errorMsg.classList.remove('hidden');
         return;
       }
@@ -952,20 +947,16 @@
           result = { success: false, message: "Invalid server response structure." };
         }
 
-        // Check verification response
+        // Strictly verify that the API returned HTTP 200/201 and explicit success: true
         if (!response.ok || !result.success) {
-          // Expanded Fallback: Allow valid structured formats (WA-, ACT-, VERIFIED-, PANEL, or alphanumeric >= 5)
-          const isFallbackValid = code.startsWith('WA-') || code.startsWith('ACT-') || code.startsWith('VERIFIED-') || code.includes('PANEL') || code.length >= 5;
-          if (!isFallbackValid) {
-            document.getElementById('processing-state').classList.add('hidden');
-            document.getElementById('step-3').classList.remove('hidden');
-            errorText.innerText = result.message || "Invalid activation code. Please request your code from WhatsApp support.";
-            errorMsg.classList.remove('hidden');
-            return;
-          }
+          document.getElementById('processing-state').classList.add('hidden');
+          document.getElementById('step-3').classList.remove('hidden');
+          errorText.innerText = result.message || "Invalid or expired activation code. Please check your code or contact support.";
+          errorMsg.classList.remove('hidden');
+          return;
         }
 
-        // Save verified subscription status to grant future access to customer-dashboard.html
+        // Save verified status
         localStorage.setItem('isSubscribed', 'true');
         localStorage.setItem('activationCodeVerified', 'true');
 
