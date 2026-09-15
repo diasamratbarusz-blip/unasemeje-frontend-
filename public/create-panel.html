@@ -68,8 +68,10 @@
       });
     }
 
+    // STRICT BACKEND VERIFICATION: Checks if the code is a REAL, backend-generated code
     async function checkSubscriptionStatus() {
-      const storedCode = localStorage.getItem('activeActivationCode') || urlParams.get('code');
+      // SECURITY FIX: Only trust localStorage. NEVER trust URL parameters for activation codes to prevent spoofing.
+      const storedCode = localStorage.getItem('activeActivationCode');
 
       if (!storedCode || storedCode.trim() === '') {
         purgeLocalAndBlockUser();
@@ -81,6 +83,7 @@
         const headers = { 'Content-Type': 'application/json' };
         if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
 
+        // SEND CODE TO BACKEND TO CHECK FIRST before allowing entry
         const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
           method: 'POST',
           headers: headers,
@@ -89,15 +92,16 @@
 
         if (response.ok) {
           const resData = await response.json();
-          // STRICT CHECK: Backend must return explicit success
+          // STRICT CHECK: Backend must return explicit success for a real, admin-generated code
           if (resData && (resData.success === true || resData.valid === true) && resData.status !== 'error') {
-            return true;
+            return true; // Code is REAL and verified
           }
         }
       } catch (err) {
         console.error("Backend database verification error:", err);
       }
 
+      // If backend check fails, network fails, or code is fake: BLOCK and PURGE
       purgeLocalAndBlockUser();
       return false;
     }
@@ -729,11 +733,13 @@
       document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
     });
 
+    // STRICT: Verify with backend BEFORE allowing navigation to dashboard
     async function handleDashboardNavigation(e) {
       if (e) e.preventDefault();
       
       const isEligible = await checkSubscriptionStatus();
       if (!isEligible) {
+        // Block access and show the unverified overlay
         document.getElementById('subscription-lock-overlay').classList.remove('hidden');
         return;
       }
@@ -742,9 +748,10 @@
       const userEmailDisplay = (currentUser && currentUser.email) || 'N/A';
       const userPhoneDisplay = (currentUser && currentUser.whatsapp) || 'N/A';
       const finalUrl = document.getElementById('summary-domain') ? document.getElementById('summary-domain').innerText : '';
-      const storedCode = localStorage.getItem('activeActivationCode') || '';
-
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}&code=${encodeURIComponent(storedCode)}&subscribed=true&activated=true`;
+      
+      // SECURITY: Removed &code= from URL to prevent activation code leakage in browser history/logs. 
+      // The dashboard will read it securely from localStorage.
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}&subscribed=true&activated=true`;
     }
 
     function closeLockOverlayAndFocusPayment() {
@@ -962,10 +969,12 @@
       }
     }
 
+    // STRICT: Verify with backend BEFORE allowing navigation to dashboard
     async function redirectToDashboard() {
       const isEligible = await checkSubscriptionStatus();
       if (!isEligible) {
         alert("Activation verification failed on backend database. Unverified session blocked.");
+        purgeLocalAndBlockUser();
         return;
       }
 
@@ -973,9 +982,10 @@
       const userIdent = currentUser ? currentUser.username : 'User';
       const userMail = currentUser ? currentUser.email : 'N/A';
       const userPhone = currentUser ? currentUser.whatsapp : 'N/A';
-      const storedCode = localStorage.getItem('activeActivationCode') || '';
       
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}&code=${encodeURIComponent(storedCode)}&subscribed=true&activated=true`;
+      // SECURITY: Removed &code= from URL to prevent activation code leakage in browser history/logs. 
+      // The dashboard will read it securely from localStorage.
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}&subscribed=true&activated=true`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
@@ -983,4 +993,4 @@
     });
   </script>
 </body>
-</html>
+              </html>
