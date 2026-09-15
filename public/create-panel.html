@@ -32,33 +32,40 @@
   </style>
 
   <script>
-    // 1. ROUTE PROTECTION & REFERRER ANALYSIS
+    const BACKEND_URL = "https://unasemeje-backend.vercel.app";
     const referrer = document.referrer ? document.referrer.toLowerCase() : '';
     const urlParams = new URLSearchParams(window.location.search);
     const srcParam = urlParams.get('src') ? urlParams.get('src').toLowerCase() : '';
 
     const visitedFromDashboard = referrer.includes('dashboard.html') || srcParam === 'dashboard';
     const visitedFromIndex = referrer.includes('index.html') || srcParam === 'index';
-
-    // If coming from index, or NOT coming from dashboard, prompt for redirect
     const requiresAuthPrompt = visitedFromIndex || !visitedFromDashboard;
 
     let currentUser = null;
 
-    // Helper: Strict Asynchronous Verification with Backend Server ONLY
+    // Helper: Purge local cache and immediately block invalid/fake sessions
+    function purgeLocalAndBlockUser() {
+      const keys = [
+        'isSubscribed', 'activationCodeVerified', 'activeActivationCode',
+        'authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 
+        'user', 'token', 'authToken', 'jwt', 'accessToken', 'account', 'userPanels'
+      ];
+      keys.forEach(k => {
+        localStorage.removeItem(k);
+        sessionStorage.removeItem(k);
+      });
+    }
+
+    // STRICT BACKEND VERIFICATION: Enforces admin-generated database activation codes
     async function checkSubscriptionStatus() {
       const storedCode = localStorage.getItem('activeActivationCode') || urlParams.get('code');
 
-      // Reject instantly if no activation code is present
       if (!storedCode || storedCode.trim() === '') {
-        localStorage.removeItem('isSubscribed');
-        localStorage.removeItem('activationCodeVerified');
+        purgeLocalAndBlockUser();
         return false;
       }
 
-      // Strict Backend Verification Check - No Client-Side Local Storage Bypasses Allowed
       try {
-        const BACKEND_URL = "https://unasemeje-backend.vercel.app";
         const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -67,21 +74,20 @@
 
         if (response.ok) {
           const resData = await response.json();
-          if (resData && resData.success === true) {
+          // STRICT RULE: Backend MUST confirm success and code authenticity from admin DB
+          if (resData && resData.success === true && resData.isValidAdminCode === true) {
             return true;
           }
         }
       } catch (err) {
-        console.warn("Backend verification error during route check:", err);
+        console.error("Backend security enforcement error:", err);
       }
 
-      // Purge fake local flags if backend check fails or rejects code
-      localStorage.removeItem('isSubscribed');
-      localStorage.removeItem('activationCodeVerified');
+      // Block user immediately if verification fails or code is unverified
+      purgeLocalAndBlockUser();
       return false;
     }
 
-    // Helper: JWT Payload Decoder for offline fallback reading
     function parseJwt(token) {
       try {
         const base64Url = token.split('.')[1];
@@ -95,9 +101,7 @@
       }
     }
 
-    // Helper: Fetch Account Details from URL Parameters, Local/Session Storage, JWT Token, or Backend API
     async function fetchAccountDetails() {
-      // Step A: Parse URL parameters
       const urlUser = urlParams.get('user') || urlParams.get('username') || urlParams.get('name');
       const urlEmail = urlParams.get('email') || urlParams.get('mail');
       const urlPhone = urlParams.get('phone') || urlParams.get('whatsapp') || urlParams.get('mobile');
@@ -110,10 +114,8 @@
         };
       }
 
-      // Step B: Check Local and Session Storage for direct objects or JWT token
-      const tokenKeys = ['token', 'authToken', 'jwt', 'accessToken'];
       let jwtToken = null;
-
+      const tokenKeys = ['token', 'authToken', 'jwt', 'accessToken'];
       for (const storage of [localStorage, sessionStorage]) {
         for (const key of tokenKeys) {
           const item = storage.getItem(key);
@@ -125,84 +127,37 @@
         if (jwtToken) break;
       }
 
-      const storageKeys = ['authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 'user', 'account'];
-      for (const storage of [localStorage, sessionStorage]) {
-        for (const key of storageKeys) {
-          const item = storage.getItem(key);
-          if (item) {
-            try {
-              const parsed = JSON.parse(item);
-              if (parsed && typeof parsed === 'object') {
-                const targetObj = parsed.user || parsed.data || parsed;
-                const extractedUser = targetObj.username || targetObj.name || targetObj.user || targetObj.fullName || 'Account Owner';
-                const extractedEmail = targetObj.email || targetObj.mail || 'N/A';
-                const extractedPhone = targetObj.whatsapp || targetObj.phone || targetObj.mobile || targetObj.phoneNumber || 'N/A';
-
-                if (extractedEmail !== 'N/A' || extractedPhone !== 'N/A') {
-                  return {
-                    username: extractedUser,
-                    email: extractedEmail,
-                    whatsapp: extractedPhone
-                  };
-                }
-              }
-            } catch (e) {
-              if (item && typeof item === 'string' && !item.startsWith('{')) {
-                return { username: item, email: 'N/A', whatsapp: 'N/A' };
-              }
-            }
-          }
-        }
-      }
-
-      // Step C: Decode JWT payload directly if available
-      if (jwtToken) {
-        const decoded = parseJwt(jwtToken);
-        if (decoded) {
-          const jwtUser = decoded.username || decoded.name || decoded.user || 'Account Owner';
-          const jwtEmail = decoded.email || decoded.mail || 'N/A';
-          const jwtPhone = decoded.whatsapp || decoded.phone || decoded.mobile || 'N/A';
-          
-          if (jwtEmail !== 'N/A' || jwtPhone !== 'N/A') {
-            return {
-              username: jwtUser,
-              email: jwtEmail,
-              whatsapp: jwtPhone
-            };
-          }
-        }
-      }
-
-      // Step D: Attempt API fetch from explicit backend URL
-      const BACKEND_URL = "https://unasemeje-backend.vercel.app";
-      const endpoints = [`${BACKEND_URL}/api/me`, `${BACKEND_URL}/api/user/profile`, '/api/me', '/api/user/profile'];
-
+      const endpoints = [`${BACKEND_URL}/api/me`, `${BACKEND_URL}/api/user/profile` ];
       for (const endpoint of endpoints) {
         try {
           const headers = { 'Content-Type': 'application/json' };
-          if (jwtToken) {
-            headers['Authorization'] = `Bearer ${jwtToken}`;
-          }
+          if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
 
-          const response = await fetch(endpoint, {
-            method: 'GET',
-            headers: headers
-          });
-
+          const response = await fetch(endpoint, { method: 'GET', headers: headers });
           if (response.ok) {
             const resData = await response.json();
             const apiUser = resData.user || resData.data || resData;
-
             if (apiUser) {
               return {
-                username: apiUser.username || apiUser.name || apiUser.fullName || 'Account Owner',
+                username: apiUser.username || apiUser.name || 'Account Owner',
                 email: apiUser.email || apiUser.mail || 'N/A',
-                whatsapp: apiUser.whatsapp || apiUser.phone || apiUser.mobile || apiUser.phoneNumber || 'N/A'
+                whatsapp: apiUser.whatsapp || apiUser.phone || 'N/A'
               };
             }
           }
         } catch (err) {
-          console.warn(`Backend API endpoint unreachable: ${endpoint}`);
+          console.warn(`Backend endpoint offline: ${endpoint}`);
+        }
+      }
+
+      if (jwtToken) {
+        const decoded = parseJwt(jwtToken);
+        if (decoded) {
+          return {
+            username: decoded.username || decoded.name || 'Account Owner',
+            email: decoded.email || decoded.mail || 'N/A',
+            whatsapp: decoded.whatsapp || decoded.phone || 'N/A'
+          };
         }
       }
 
@@ -212,7 +167,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- AUTHENTICATION REDIRECT MODAL FOR VISITORS COMING FROM INDEX -->
+  <!-- AUTHENTICATION REDIRECT MODAL -->
   <script>
     if (requiresAuthPrompt) {
       document.write(`
@@ -244,20 +199,20 @@
     }
   </script>
 
-  <!-- SUBSCRIPTION & ACTIVATION LOCK OVERLAY -->
+  <!-- STRICT UNVERIFIED ACCESS BLOCK MODAL -->
   <div id="subscription-lock-overlay" class="fixed inset-0 z-[90] bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 hidden">
-    <div class="max-w-md w-full bg-slate-900 border border-amber-500/30 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
-      <div class="w-16 h-16 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
-        <i class="fa-solid fa-shield-cat"></i>
+    <div class="max-w-md w-full bg-slate-900 border border-red-500/30 rounded-2xl p-6 sm:p-8 text-center shadow-2xl relative overflow-hidden">
+      <div class="w-16 h-16 bg-red-500/10 border border-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto text-2xl mb-4">
+        <i class="fa-solid fa-ban"></i>
       </div>
-      <h2 class="text-xl font-extrabold text-white mb-2">Subscription & Verification Required</h2>
+      <h2 class="text-xl font-extrabold text-white mb-2">Access Denied: Real Code Required</h2>
       <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-        Access to <code class="text-blue-400 font-mono">customer-dashboard.html</code> is restricted. You must have an active subscription and an admin-generated activation code verified by the backend server.
+        Unauthorized or fake activation codes are strictly blocked. Activation codes must be generated by the administrator in the admin backend.
       </p>
 
       <div class="space-y-3">
         <button onclick="closeLockOverlayAndFocusPayment()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
-          <i class="fa-solid fa-key"></i> Subscribe & Activate Now
+          <i class="fa-solid fa-key"></i> Get Valid Activation Code
         </button>
       </div>
 
@@ -294,7 +249,6 @@
           </div>
         </div>
 
-        <!-- RESTRICTED CUSTOMER DASHBOARD BUTTON LINK -->
         <a id="dashboard-nav-link" href="javascript:void(0)" onclick="handleDashboardNavigation(event)" class="text-white font-semibold text-xs bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg transition-all flex items-center gap-2 shadow-md shadow-blue-600/20 border border-blue-500">
           <i class="fa-solid fa-gauge text-white"></i>
           <span>Customer Dashboard</span>
@@ -537,11 +491,8 @@
         <div class="space-y-3">
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Choose Payment Method</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            
             <div onclick="switchPaymentMethod('mpesa-express')" id="opt-mpesa-express" class="payment-option active-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-lg">
-                <i class="fa-solid fa-bolt"></i>
-              </div>
+              <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-bolt"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">M-Pesa STK Push</p>
                 <p class="text-[10px] text-slate-400">Instant Phone Prompt</p>
@@ -549,9 +500,7 @@
             </div>
 
             <div onclick="switchPaymentMethod('mpesa-till')" id="opt-mpesa-till" class="payment-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-lg">
-                <i class="fa-solid fa-store"></i>
-              </div>
+              <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-store"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">M-Pesa Till (9257710)</p>
                 <p class="text-[10px] text-slate-400">Buy Goods & Services</p>
@@ -559,9 +508,7 @@
             </div>
 
             <div onclick="switchPaymentMethod('airtel-ug')" id="opt-airtel-ug" class="payment-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-red-500/20 text-red-400 rounded-lg flex items-center justify-center font-bold text-lg">
-                <i class="fa-solid fa-mobile-screen"></i>
-              </div>
+              <div class="w-10 h-10 bg-red-500/20 text-red-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-mobile-screen"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">Airtel Uganda</p>
                 <p class="text-[10px] text-slate-400">*185*1*4# Transfer</p>
@@ -569,9 +516,7 @@
             </div>
 
             <div onclick="switchPaymentMethod('worldremit')" id="opt-worldremit" class="payment-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-lg flex items-center justify-center font-bold text-lg">
-                <i class="fa-solid fa-globe"></i>
-              </div>
+              <div class="w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-globe"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">WorldRemit</p>
                 <p class="text-[10px] text-slate-400">Global Remittance</p>
@@ -579,9 +524,7 @@
             </div>
 
             <div onclick="switchPaymentMethod('mtn-ug')" id="opt-mtn-ug" class="payment-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-yellow-500/20 text-yellow-400 rounded-lg flex items-center justify-center font-bold text-lg">
-                <i class="fa-solid fa-mobile-retro"></i>
-              </div>
+              <div class="w-10 h-10 bg-yellow-500/20 text-yellow-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-mobile-retro"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">MTN Uganda</p>
                 <p class="text-[10px] text-slate-400">*165# Cross-Border</p>
@@ -589,15 +532,12 @@
             </div>
 
             <div onclick="switchPaymentMethod('somalia')" id="opt-somalia" class="payment-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center font-bold text-lg">
-                <i class="fa-solid fa-flag"></i>
-              </div>
+              <div class="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-flag"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">Somalia Transfers</p>
                 <p class="text-[10px] text-slate-400">Remitly / WorldRemit</p>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -623,7 +563,7 @@
             <li>Enter the target amount and confirm with your PIN.</li>
           </ol>
           <a id="wa-link-till" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
-            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Admin Code
           </a>
         </div>
 
@@ -636,7 +576,7 @@
             <li>Recipient Mobile: <strong class="text-emerald-400 font-mono">+254 715 509 440</strong></li>
           </ul>
           <a id="wa-link-airtel-ug" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
-            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Admin Code
           </a>
         </div>
 
@@ -649,7 +589,7 @@
             <li>Recipient Number: <strong class="text-emerald-400 font-mono">+254 715 509 440</strong></li>
           </ul>
           <a id="wa-link-worldremit" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
-            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Admin Code
           </a>
         </div>
 
@@ -662,7 +602,7 @@
             <li>Recipient Number: <strong class="text-emerald-400 font-mono">+254 715 509 440</strong></li>
           </ul>
           <a id="wa-link-mtn-ug" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
-            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Admin Code
           </a>
         </div>
 
@@ -674,7 +614,7 @@
             <li>Recipient Mobile: <strong class="text-emerald-400 font-mono">+254 715 509 440</strong></li>
           </ul>
           <a id="wa-link-somalia" href="#" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
-            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Activation Code
+            <i class="fab fa-whatsapp text-lg"></i> Send Receipt on WhatsApp for Admin Code
           </a>
         </div>
 
@@ -683,15 +623,15 @@
           <div class="bg-blue-950/20 border border-blue-500/30 rounded-xl p-5 space-y-3">
             <label class="block text-xs font-bold text-white flex items-center justify-between uppercase tracking-wider">
               <span><i class="fa-solid fa-key text-blue-400 mr-1.5"></i>Redeem Activation Code</span>
-              <span class="text-[10px] text-blue-400 font-normal normal-case">Verified Code Issued Exclusively via WhatsApp</span>
+              <span class="text-[10px] text-amber-400 font-normal normal-case"><i class="fa-solid fa-lock text-amber-400 mr-1"></i>Admin Generated Database Code Required</span>
             </label>
             <div class="flex gap-2">
-              <input type="text" id="activation-code" placeholder="e.g. WA-8X92-VERIFIED or ACT-XXXXXX" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
+              <input type="text" id="activation-code" placeholder="ENTER ADMIN ACTIVATION CODE" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white font-mono uppercase tracking-widest text-sm focus:outline-none focus:border-blue-500">
               <button onclick="redeemActivationCode()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2 shrink-0 shadow-lg shadow-blue-600/20">
-                <i class="fa-solid fa-unlock"></i> Activate
+                <i class="fa-solid fa-shield-halved"></i> Verify & Activate
               </button>
             </div>
-            <p id="code-error-msg" class="text-xs text-red-400 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> <span id="code-error-text">Invalid or unverified activation code. Please contact WhatsApp support to receive your verified code.</span></p>
+            <p id="code-error-msg" class="text-xs text-red-400 hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> <span id="code-error-text">Fake or unverified activation code detected. Account access blocked immediately.</span></p>
           </div>
         </div>
 
@@ -708,12 +648,12 @@
           </div>
         </div>
         <div class="space-y-2">
-          <h3 id="status-heading" class="text-xl font-bold text-white">Validating Account & Code...</h3>
-          <p id="status-subtext" class="text-xs text-slate-400 max-w-md mx-auto">Verifying token entitlements for account <span id="log-account-user" class="text-blue-400 font-mono">...</span></p>
+          <h3 id="status-heading" class="text-xl font-bold text-white">Validating Activation Code...</h3>
+          <p id="status-subtext" class="text-xs text-slate-400 max-w-md mx-auto">Verifying authorization with backend database server for <span id="log-account-user" class="text-blue-400 font-mono">...</span></p>
         </div>
         <div class="max-w-md mx-auto bg-slate-950 border border-slate-800 rounded-xl p-4 text-left text-xs font-mono space-y-2 text-slate-400 shadow-inner">
-          <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Verifying customer session...</div>
-          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming backend activation code...</div>
+          <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Connecting to Admin Database...</div>
+          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Checking code authenticity against admin records...</div>
           <div id="log-3" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Allocating database tenant & SSL certificate...</div>
           <div id="log-4" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Deploying panel dashboard...</div>
         </div>
@@ -726,7 +666,7 @@
         </div>
         <div>
           <h3 class="text-2xl font-black text-white">Your Panel is Live!</h3>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Your reseller panel has been automatically provisioned under your account.</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Your reseller panel has been successfully provisioned under your account.</p>
         </div>
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 max-w-md mx-auto text-left space-y-2">
           <div class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Access Details</div>
@@ -763,9 +703,9 @@
 
       currentUser = await fetchAccountDetails();
 
-      const userNameDisplay = (currentUser && (currentUser.username || currentUser.name)) || 'Account Owner';
-      const userEmailDisplay = (currentUser && (currentUser.email || currentUser.mail)) || 'N/A';
-      const userPhoneDisplay = (currentUser && (currentUser.whatsapp || currentUser.phone)) || 'N/A';
+      const userNameDisplay = (currentUser && currentUser.username) || 'Account Owner';
+      const userEmailDisplay = (currentUser && currentUser.email) || 'N/A';
+      const userPhoneDisplay = (currentUser && currentUser.whatsapp) || 'N/A';
 
       document.getElementById('header-username').innerText = userNameDisplay;
       document.getElementById('header-email').innerText = userEmailDisplay;
@@ -793,16 +733,15 @@
     async function handleDashboardNavigation(e) {
       if (e) e.preventDefault();
       
-      // Strict Backend Verification Check
       const isEligible = await checkSubscriptionStatus();
       if (!isEligible) {
         document.getElementById('subscription-lock-overlay').classList.remove('hidden');
         return;
       }
 
-      const userNameDisplay = (currentUser && (currentUser.username || currentUser.name)) || 'Account Owner';
-      const userEmailDisplay = (currentUser && (currentUser.email || currentUser.mail)) || 'N/A';
-      const userPhoneDisplay = (currentUser && (currentUser.whatsapp || currentUser.phone)) || 'N/A';
+      const userNameDisplay = (currentUser && currentUser.username) || 'Account Owner';
+      const userEmailDisplay = (currentUser && currentUser.email) || 'N/A';
+      const userPhoneDisplay = (currentUser && currentUser.whatsapp) || 'N/A';
       const finalUrl = document.getElementById('summary-domain') ? document.getElementById('summary-domain').innerText : '';
       const storedCode = localStorage.getItem('activeActivationCode') || '';
 
@@ -815,11 +754,7 @@
     }
 
     function logoutUser() {
-      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token', 'authToken', 'jwt', 'accessToken', 'account', 'isSubscribed', 'activationCodeVerified', 'activeActivationCode'];
-      keys.forEach(k => {
-        localStorage.removeItem(k);
-        sessionStorage.removeItem(k);
-      });
+      purgeLocalAndBlockUser();
       window.location.href = "index.html";
     }
 
@@ -871,12 +806,12 @@
     }
 
     function updateWhatsAppLinks(domain) {
-      const userIdent = currentUser ? (currentUser.username || 'Valued User') : 'Valued User';
-      const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
-      const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
+      const userIdent = currentUser ? currentUser.username : 'Valued User';
+      const userMail = currentUser ? currentUser.email : 'N/A';
+      const userPhone = currentUser ? currentUser.whatsapp : 'N/A';
       const formattedPrice = selectedPackage.price ? selectedPackage.price.toLocaleString() : '4,500';
       
-      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${formattedPrice} for domain ${domain} (${selectedPackage.name}). Please issue my verified WhatsApp Activation Code.`);
+      const msg = encodeURIComponent(`Hello Support, I am logged in as ${userIdent} (${userMail}, WhatsApp: ${userPhone}). I paid KES ${formattedPrice} for domain ${domain} (${selectedPackage.name}). Please issue my admin-generated activation code.`);
       const baseWa = "https://wa.me/254715509440?text=";
       document.querySelectorAll('[id^="wa-link-"]').forEach(el => {
         el.href = baseWa + msg;
@@ -931,10 +866,11 @@
         return;
       }
       
-      const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
-      alert(`STK Push initiated to +254${phone} for account ${userIdent}. Upon completion, please request your verified WhatsApp activation code from support.`);
+      const userIdent = currentUser ? currentUser.username : 'User';
+      alert(`STK Push initiated to +254${phone} for account ${userIdent}. Upon completion, please request your admin-generated activation code.`);
     }
 
+    // REDEEM AND STRICTLY VERIFY ACTIVATION CODE WITH BACKEND DB
     async function redeemActivationCode() {
       const codeInput = document.getElementById('activation-code');
       const errorMsg = document.getElementById('code-error-msg');
@@ -942,23 +878,21 @@
       const code = codeInput.value.trim().toUpperCase();
 
       if (!code) {
-        errorText.innerText = "Please enter an activation code received from support.";
+        errorText.innerText = "Please enter an activation code generated by admin.";
         errorMsg.classList.remove('hidden');
         return;
       }
 
       errorMsg.classList.add('hidden');
 
-      const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
-      const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
+      const userIdent = currentUser ? currentUser.username : 'User';
+      const userMail = currentUser ? currentUser.email : 'N/A';
       const targetDomain = document.getElementById('summary-domain').innerText;
 
-      // Show processing animation
       document.getElementById('step-3').classList.add('hidden');
       document.getElementById('processing-state').classList.remove('hidden');
 
       try {
-        const BACKEND_URL = "https://unasemeje-backend.vercel.app";
         const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -975,37 +909,33 @@
         try {
           result = await response.json();
         } catch(e) {
-          result = { success: false, message: "Invalid server response structure." };
+          result = { success: false, isValidAdminCode: false, message: "Invalid server security authorization." };
         }
 
-        // Reject anything that is not HTTP 200/201 and explicit success: true from backend
-        if (!response.ok || !result.success) {
+        // STRICT REJECTION: Reject any response that isn't success & isValidAdminCode from admin DB
+        if (!response.ok || !result.success || result.isValidAdminCode !== true) {
+          purgeLocalAndBlockUser();
           document.getElementById('processing-state').classList.add('hidden');
           document.getElementById('step-3').classList.remove('hidden');
-          errorText.innerText = result.message || "Invalid or unverified activation code. Please check your code or contact support.";
-          errorMsg.classList.remove('hidden');
           
-          // Clear any client state to ensure no bypass occurs
-          localStorage.removeItem('isSubscribed');
-          localStorage.removeItem('activationCodeVerified');
-          localStorage.removeItem('activeActivationCode');
+          errorText.innerText = result.message || "FAKE OR UNVERIFIED CODE STOPPED: Access blocked immediately. Only admin-generated backend codes are valid.";
+          errorMsg.classList.remove('hidden');
           return;
         }
 
-        // Save activation code strictly after backend authorization
+        // Set verified storage state only after strict backend approval
         localStorage.setItem('isSubscribed', 'true');
         localStorage.setItem('activationCodeVerified', 'true');
         localStorage.setItem('activeActivationCode', code);
 
-        // Proceed with activation sequence
         setTimeout(() => {
           document.getElementById('log-1').innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Identity verified (${userIdent} - ${userMail})`;
           document.getElementById('log-2').classList.remove('opacity-30');
-          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Code verified by backend...';
+          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Verifying admin DB records...';
         }, 1000);
 
         setTimeout(() => {
-          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Activation code verified by backend';
+          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Code verified in Admin Database';
           document.getElementById('log-3').classList.remove('opacity-30');
           document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & SSL certificate...';
           document.getElementById('status-heading').innerText = 'Building Your Reseller Panel...';
@@ -1022,42 +952,28 @@
           document.getElementById('success-state').classList.remove('hidden');
           document.getElementById('final-panel-url').innerText = `https://${targetDomain}`;
           document.getElementById('final-panel-url').href = `https://${targetDomain}`;
-
-          const provisionedPanels = JSON.parse(localStorage.getItem('userPanels') || '[]');
-          provisionedPanels.push({
-            domain: targetDomain,
-            package: selectedPackage.name,
-            owner: userIdent,
-            email: userMail,
-            createdAt: new Date().toISOString()
-          });
-          localStorage.setItem('userPanels', JSON.stringify(provisionedPanels));
         }, 5500);
 
       } catch (err) {
+        purgeLocalAndBlockUser();
         document.getElementById('processing-state').classList.add('hidden');
         document.getElementById('step-3').classList.remove('hidden');
-        errorText.innerText = "Network error connecting to verification server. Please check your connection or contact support.";
+        errorText.innerText = "Network error connecting to verification server. Access blocked.";
         errorMsg.classList.remove('hidden');
-
-        localStorage.removeItem('isSubscribed');
-        localStorage.removeItem('activationCodeVerified');
-        localStorage.removeItem('activeActivationCode');
       }
     }
 
     async function redirectToDashboard() {
-      // Re-verify strictly on backend before navigating
       const isEligible = await checkSubscriptionStatus();
       if (!isEligible) {
-        alert("Activation verification failed on backend. Please enter a valid activation code.");
+        alert("Activation verification failed on backend. Unverified session blocked.");
         return;
       }
 
       const finalUrl = document.getElementById('summary-domain').innerText;
-      const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
-      const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
-      const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
+      const userIdent = currentUser ? currentUser.username : 'User';
+      const userMail = currentUser ? currentUser.email : 'N/A';
+      const userPhone = currentUser ? currentUser.whatsapp : 'N/A';
       const storedCode = localStorage.getItem('activeActivationCode') || '';
       
       window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}&code=${encodeURIComponent(storedCode)}&subscribed=true&activated=true`;
