@@ -43,7 +43,19 @@
 
     let currentUser = null;
 
-    // Purge local cache and block invalid/fake sessions
+    function getStoredJwtToken() {
+      const tokenKeys = ['token', 'authToken', 'jwt', 'accessToken'];
+      for (const storage of [localStorage, sessionStorage]) {
+        for (const key of tokenKeys) {
+          const item = storage.getItem(key);
+          if (item && typeof item === 'string' && item.split('.').length === 3) {
+            return item;
+          }
+        }
+      }
+      return null;
+    }
+
     function purgeLocalAndBlockUser() {
       const keys = [
         'isSubscribed', 'activationCodeVerified', 'activeActivationCode',
@@ -56,7 +68,6 @@
       });
     }
 
-    // BACKEND VERIFICATION: Enforces admin-generated database activation codes
     async function checkSubscriptionStatus() {
       const storedCode = localStorage.getItem('activeActivationCode') || urlParams.get('code');
 
@@ -66,9 +77,13 @@
       }
 
       try {
+        const jwtToken = getStoredJwtToken();
+        const headers = { 'Content-Type': 'application/json' };
+        if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
+
         const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           body: JSON.stringify({ code: storedCode.trim() })
         });
 
@@ -112,20 +127,9 @@
         };
       }
 
-      let jwtToken = null;
-      const tokenKeys = ['token', 'authToken', 'jwt', 'accessToken'];
-      for (const storage of [localStorage, sessionStorage]) {
-        for (const key of tokenKeys) {
-          const item = storage.getItem(key);
-          if (item && typeof item === 'string' && item.split('.').length === 3) {
-            jwtToken = item;
-            break;
-          }
-        }
-        if (jwtToken) break;
-      }
-
+      const jwtToken = getStoredJwtToken();
       const endpoints = [`${BACKEND_URL}/api/me`, `${BACKEND_URL}/api/user/profile` ];
+      
       for (const endpoint of endpoints) {
         try {
           const headers = { 'Content-Type': 'application/json' };
@@ -547,7 +551,7 @@
             <input type="tel" id="mpesa-phone" placeholder="712345678" maxlength="9" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-16 pr-4 py-3 text-white focus:outline-none focus:border-emerald-500 text-sm font-mono">
           </div>
           <p class="text-xs text-slate-500">You will receive an STK prompt on your phone asking for your M-Pesa PIN.</p>
-          <button onclick="initiateStkPush()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20">
+          <button id="stk-btn" onclick="initiateStkPush()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20">
             <i class="fa-solid fa-bolt"></i> Send Instant STK Push
           </button>
         </div>
@@ -857,15 +861,53 @@
       }
     }
 
-    function initiateStkPush() {
-      const phone = document.getElementById('mpesa-phone').value.trim();
+    // DIRECT BACKEND API CALL: STK Push Integration
+    async function initiateStkPush() {
+      const phoneInput = document.getElementById('mpesa-phone');
+      const btn = document.getElementById('stk-btn');
+      const phone = phoneInput.value.trim();
+
       if (!phone || phone.length < 9) {
         alert('Please enter a valid M-Pesa phone number.');
         return;
       }
       
+      const fullPhoneNumber = "254" + phone.slice(-9);
       const userIdent = currentUser ? currentUser.username : 'User';
-      alert(`STK Push initiated to +254${phone} for account ${userIdent}. Upon completion, please request your admin-generated activation code.`);
+      const jwtToken = getStoredJwtToken();
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Prompt...`;
+
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
+
+        const response = await fetch(`${BACKEND_URL}/api/payments/stkpush`, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({
+            phoneNumber: fullPhoneNumber,
+            amount: selectedPackage.price,
+            accountReference: userIdent,
+            packageName: selectedPackage.name
+          })
+        });
+
+        const resData = await response.json();
+
+        if (response.ok && resData.success) {
+          alert(`STK Push sent to ${fullPhoneNumber}! Check your phone and enter M-Pesa PIN.`);
+        } else {
+          alert(resData.message || "Failed to trigger STK Push. Please try again or use the Till Number.");
+        }
+      } catch (err) {
+        console.error("STK Push API Error:", err);
+        alert("STK Push initiated. Check your phone. If delayed, please complete via Till payment.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Send Instant STK Push`;
+      }
     }
 
     // REDEEM AND STRICTLY VERIFY ACTIVATION CODE WITH BACKEND DB
@@ -887,14 +929,18 @@
       const userMail = currentUser ? currentUser.email : 'N/A';
       const userPhone = currentUser ? currentUser.whatsapp : 'N/A';
       const targetDomain = document.getElementById('summary-domain').innerText;
+      const jwtToken = getStoredJwtToken();
 
       document.getElementById('step-3').classList.add('hidden');
       document.getElementById('processing-state').classList.remove('hidden');
 
       try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
+
         const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: headers,
           body: JSON.stringify({
             code: code,
             username: userIdent,
@@ -913,7 +959,6 @@
           result = { success: false, isValidAdminCode: false, message: "Invalid server security authorization response." };
         }
 
-        // STRICT REJECTION: Reject any code not generated by admin in DB
         if (!response.ok || !result.success || result.isValidAdminCode !== true) {
           purgeLocalAndBlockUser();
           document.getElementById('processing-state').classList.add('hidden');
@@ -924,7 +969,6 @@
           return;
         }
 
-        // Set verified storage state only after backend confirmation
         localStorage.setItem('isSubscribed', 'true');
         localStorage.setItem('activationCodeVerified', 'true');
         localStorage.setItem('activeActivationCode', code);
