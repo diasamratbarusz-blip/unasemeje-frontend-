@@ -16,6 +16,76 @@
 </head>
 <body class="h-full text-slate-100 font-sans antialiased flex overflow-hidden">
 
+  <!-- STRICT BACKEND ACTIVATION CHECK & BLOCKING OVERLAY -->
+  <div id="activation-check-overlay" style="position:fixed;inset:0;z-index:9999;background:#020617;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:15px;">
+    <div style="width:40px;height:40px;border:4px solid #1e293b;border-top:4px solid #3b82f6;border-radius:50%;animation:spin 1s linear infinite;"></div>
+    <p style="font-size:14px;color:#94a3b8;font-family:sans-serif;">Verifying backend activation code...</p>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+  </div>
+
+  <script>
+    (async function enforceStrictActivation() {
+      const BACKEND_URL = "https://unasemeje-backend.vercel.app";
+      // STRICT: Only trust localStorage. URL parameters cannot bypass this.
+      const storedCode = localStorage.getItem('activeActivationCode');
+
+      function purgeAndBlock() {
+        const keys = [
+          'isSubscribed', 'activationCodeVerified', 'activeActivationCode',
+          'authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 
+          'user', 'token', 'authToken', 'jwt', 'accessToken', 'account', 'userPanels'
+        ];
+        keys.forEach(k => {
+          localStorage.removeItem(k);
+          sessionStorage.removeItem(k);
+        });
+        // Redirect to homepage with error flag
+        window.location.replace("index.html?error=unauthorized_no_valid_code");
+      }
+
+      // 1. If no code exists, block immediately
+      if (!storedCode || storedCode.trim() === '') {
+        purgeAndBlock();
+        return;
+      }
+
+      try {
+        const jwtToken = localStorage.getItem('jwt') || localStorage.getItem('authToken') || localStorage.getItem('token');
+        const headers = { 'Content-Type': 'application/json' };
+        if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
+
+        // 2. SEND CODE TO BACKEND TO CHECK FIRST before allowing entry
+        const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ code: storedCode.trim() })
+        });
+
+        // 3. If backend rejects the request (401, 403, 404, 500), block
+        if (!response.ok) {
+          purgeAndBlock();
+          return;
+        }
+
+        const resData = await response.json();
+        
+        // 4. STRICT CHECK: Backend must explicitly confirm this is a real, admin-generated code
+        if (resData && (resData.success === true || resData.valid === true) && resData.status !== 'error') {
+          // ✅ Code is REAL. Hide overlay and allow dashboard to be used.
+          document.getElementById('activation-check-overlay').style.display = 'none';
+          console.log("✅ Backend activation verified. Access granted.");
+        } else {
+          // ❌ Code is fake, expired, or invalid
+          purgeAndBlock();
+        }
+      } catch (err) {
+        console.error("Backend verification network error:", err);
+        // For maximum security, block access if the backend cannot be reached to prevent offline bypass attempts.
+        purgeAndBlock();
+      }
+    })();
+  </script>
+
   <!-- SIDEBAR NAVIGATION -->
   <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col justify-between shrink-0 hidden md:flex">
     <div class="p-5 overflow-y-auto">
@@ -396,4 +466,4 @@
     }
   </script>
 </body>
-</html>
+              </html>
