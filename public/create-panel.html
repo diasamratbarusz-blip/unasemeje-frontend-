@@ -89,12 +89,12 @@
 
         if (response.ok) {
           const resData = await response.json();
-          if (resData && resData.success === true && resData.isValidAdminCode === true) {
+          if (resData && (resData.success === true || resData.valid === true || resData.isValidAdminCode === true)) {
             return true;
           }
         }
       } catch (err) {
-        console.error("Backend security enforcement error:", err);
+        console.error("Backend security verification error:", err);
       }
 
       purgeLocalAndBlockUser();
@@ -128,8 +128,29 @@
       }
 
       const jwtToken = getStoredJwtToken();
+      const storageKeys = ['authenticatedUser', 'dashboardUser', 'userSession', 'currentUser', 'user', 'account'];
+      for (const storage of [localStorage, sessionStorage]) {
+        for (const key of storageKeys) {
+          const item = storage.getItem(key);
+          if (item) {
+            try {
+              const parsed = JSON.parse(item);
+              if (parsed && typeof parsed === 'object') {
+                const targetObj = parsed.user || parsed.data || parsed;
+                return {
+                  username: targetObj.username || targetObj.name || 'Account Owner',
+                  email: targetObj.email || targetObj.mail || 'N/A',
+                  whatsapp: targetObj.whatsapp || targetObj.phone || 'N/A'
+                };
+              }
+            } catch (e) {
+              if (item && typeof item === 'string') return { username: item, email: 'N/A', whatsapp: 'N/A' };
+            }
+          }
+        }
+      }
+
       const endpoints = [`${BACKEND_URL}/api/me`, `${BACKEND_URL}/api/user/profile` ];
-      
       for (const endpoint of endpoints) {
         try {
           const headers = { 'Content-Type': 'application/json' };
@@ -383,7 +404,7 @@
             </div>
             <ul class="space-y-2.5 text-xs text-slate-300">
               <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i>Multiple Custom Domains</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i>Automated M-Pesa Gateway</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i>Automated Payment Options</li>
               <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i>Priority 24/7 Support</li>
               <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-400"></i>Zero Transaction Fees</li>
             </ul>
@@ -493,15 +514,8 @@
         <div class="space-y-3">
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Choose Payment Method</label>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div onclick="switchPaymentMethod('mpesa-express')" id="opt-mpesa-express" class="payment-option active-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
-              <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-bolt"></i></div>
-              <div>
-                <p class="font-semibold text-xs text-white">M-Pesa STK Push</p>
-                <p class="text-[10px] text-slate-400">Instant Phone Prompt</p>
-              </div>
-            </div>
-
-            <div onclick="switchPaymentMethod('mpesa-till')" id="opt-mpesa-till" class="payment-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
+            
+            <div onclick="switchPaymentMethod('mpesa-till')" id="opt-mpesa-till" class="payment-option active-option border-2 border-slate-800 bg-slate-950/60 rounded-xl p-4 flex items-center gap-3">
               <div class="w-10 h-10 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center font-bold text-lg"><i class="fa-solid fa-store"></i></div>
               <div>
                 <p class="font-semibold text-xs text-white">M-Pesa Till (9257710)</p>
@@ -544,19 +558,7 @@
         </div>
 
         <!-- PAYMENT PANELS -->
-        <div id="panel-mpesa-express" class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4">
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">M-Pesa Phone Number</label>
-          <div class="relative">
-            <span class="absolute left-4 top-3.5 text-slate-400 text-sm font-bold">+254</span>
-            <input type="tel" id="mpesa-phone" placeholder="712345678" maxlength="9" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-16 pr-4 py-3 text-white focus:outline-none focus:border-emerald-500 text-sm font-mono">
-          </div>
-          <p class="text-xs text-slate-500">You will receive an STK prompt on your phone asking for your M-Pesa PIN.</p>
-          <button id="stk-btn" onclick="initiateStkPush()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20">
-            <i class="fa-solid fa-bolt"></i> Send Instant STK Push
-          </button>
-        </div>
-
-        <div id="panel-mpesa-till" class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4 hidden">
+        <div id="panel-mpesa-till" class="bg-slate-950 border border-slate-800 rounded-xl p-5 space-y-4">
           <h3 class="font-bold text-emerald-400 text-sm flex items-center gap-2"><i class="fa-solid fa-store"></i> Buy Goods & Services Instructions</h3>
           <ol class="list-decimal list-inside text-xs text-slate-300 space-y-2">
             <li>Go to M-Pesa Menu or open M-Pesa App.</li>
@@ -698,7 +700,7 @@
     let selectedPackage = { name: 'Pro Panel', price: 4500 };
     let domainType = 'subdomain';
     let currentStep = 1;
-    let activePaymentMethod = 'mpesa-express';
+    let activePaymentMethod = 'mpesa-till';
 
     document.addEventListener("DOMContentLoaded", async () => {
       if (requiresAuthPrompt) return;
@@ -724,12 +726,6 @@
       document.getElementById('final-owner-username').innerText = userNameDisplay;
       document.getElementById('final-owner-email').innerText = userEmailDisplay;
       document.getElementById('log-account-user').innerText = userEmailDisplay !== 'N/A' ? userEmailDisplay : userNameDisplay;
-
-      const rawPhone = userPhoneDisplay !== 'N/A' ? userPhoneDisplay : '';
-      const phoneDigits = rawPhone.replace(/\D/g, '').slice(-9);
-      if (phoneDigits) {
-        document.getElementById('mpesa-phone').value = phoneDigits;
-      }
     });
 
     async function handleDashboardNavigation(e) {
@@ -828,11 +824,13 @@
       });
       document.getElementById(`opt-${methodKey}`).classList.add('active-option');
 
-      const panels = ['mpesa-express', 'mpesa-till', 'airtel-ug', 'worldremit', 'mtn-ug', 'somalia'];
+      const panels = ['mpesa-till', 'airtel-ug', 'worldremit', 'mtn-ug', 'somalia'];
       panels.forEach(p => {
-        document.getElementById(`panel-${p}`).classList.add('hidden');
+        const panelEl = document.getElementById(`panel-${p}`);
+        if (panelEl) panelEl.classList.add('hidden');
       });
-      document.getElementById(`panel-${methodKey}`).classList.remove('hidden');
+      const activePanel = document.getElementById(`panel-${methodKey}`);
+      if (activePanel) activePanel.classList.remove('hidden');
     }
 
     function goToStep(step) {
@@ -858,55 +856,6 @@
         document.getElementById('summary-package').innerText = selectedPackage.name;
         document.getElementById('summary-price').innerText = `KES ${selectedPackage.price.toLocaleString()}`;
         updateDomainPreview();
-      }
-    }
-
-    // DIRECT BACKEND API CALL: STK Push Integration
-    async function initiateStkPush() {
-      const phoneInput = document.getElementById('mpesa-phone');
-      const btn = document.getElementById('stk-btn');
-      const phone = phoneInput.value.trim();
-
-      if (!phone || phone.length < 9) {
-        alert('Please enter a valid M-Pesa phone number.');
-        return;
-      }
-      
-      const fullPhoneNumber = "254" + phone.slice(-9);
-      const userIdent = currentUser ? currentUser.username : 'User';
-      const jwtToken = getStoredJwtToken();
-
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Prompt...`;
-
-      try {
-        const headers = { 'Content-Type': 'application/json' };
-        if (jwtToken) headers['Authorization'] = `Bearer ${jwtToken}`;
-
-        const response = await fetch(`${BACKEND_URL}/api/payments/stkpush`, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify({
-            phoneNumber: fullPhoneNumber,
-            amount: selectedPackage.price,
-            accountReference: userIdent,
-            packageName: selectedPackage.name
-          })
-        });
-
-        const resData = await response.json();
-
-        if (response.ok && resData.success) {
-          alert(`STK Push sent to ${fullPhoneNumber}! Check your phone and enter M-Pesa PIN.`);
-        } else {
-          alert(resData.message || "Failed to trigger STK Push. Please try again or use the Till Number.");
-        }
-      } catch (err) {
-        console.error("STK Push API Error:", err);
-        alert("STK Push initiated. Check your phone. If delayed, please complete via Till payment.");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Send Instant STK Push`;
       }
     }
 
@@ -956,10 +905,12 @@
         try {
           result = await response.json();
         } catch(e) {
-          result = { success: false, isValidAdminCode: false, message: "Invalid server security authorization response." };
+          result = { success: false, message: "Invalid response from verification server." };
         }
 
-        if (!response.ok || !result.success || result.isValidAdminCode !== true) {
+        const isCodeValid = response.ok && (result.success === true || result.valid === true || result.isValidAdminCode === true);
+
+        if (!isCodeValid) {
           purgeLocalAndBlockUser();
           document.getElementById('processing-state').classList.add('hidden');
           document.getElementById('step-3').classList.remove('hidden');
