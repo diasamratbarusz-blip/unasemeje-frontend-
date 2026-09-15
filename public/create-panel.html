@@ -45,11 +45,34 @@
 
     let currentUser = null;
 
-    // Helper: Verify Active Subscription & Verified Code Status
-    function checkSubscriptionStatus() {
+    // Helper: Asynchronous Verification with Backend Server
+    async function checkSubscriptionStatus() {
       const isSubscribed = localStorage.getItem('isSubscribed') === 'true' || urlParams.get('subscribed') === 'true';
-      const verifiedCode = localStorage.getItem('activationCodeVerified') === 'true' || urlParams.get('activated') === 'true';
-      return isSubscribed && verifiedCode;
+      const verifiedLocal = localStorage.getItem('activationCodeVerified') === 'true' || urlParams.get('activated') === 'true';
+      const storedCode = localStorage.getItem('activeActivationCode') || urlParams.get('code');
+
+      if (!isSubscribed || !verifiedLocal || !storedCode) {
+        return false;
+      }
+
+      // Backend Verification Check
+      try {
+        const BACKEND_URL = "https://unasemeje-backend.vercel.app";
+        const response = await fetch(`${BACKEND_URL}/api/activation/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: storedCode })
+        });
+
+        if (response.ok) {
+          const resData = await response.json();
+          return resData.success === true;
+        }
+      } catch (err) {
+        console.warn("Backend verification error during route check:", err);
+      }
+
+      return false;
     }
 
     // Helper: JWT Payload Decoder for offline fallback reading
@@ -223,7 +246,7 @@
       </div>
       <h2 class="text-xl font-extrabold text-white mb-2">Subscription & Verification Required</h2>
       <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-        Access to <code class="text-blue-400 font-mono">customer-dashboard.html</code> is restricted. You must have an active subscription and a verified activation code to access the customer dashboard.
+        Access to <code class="text-blue-400 font-mono">customer-dashboard.html</code> is restricted. You must have an active subscription and a verified activation code from the backend to access the customer dashboard.
       </p>
 
       <div class="space-y-3">
@@ -684,7 +707,7 @@
         </div>
         <div class="max-w-md mx-auto bg-slate-950 border border-slate-800 rounded-xl p-4 text-left text-xs font-mono space-y-2 text-slate-400 shadow-inner">
           <div id="log-1" class="flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Verifying customer session...</div>
-          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming backend WhatsApp activation code...</div>
+          <div id="log-2" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Confirming backend activation code...</div>
           <div id="log-3" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Allocating database tenant & SSL certificate...</div>
           <div id="log-4" class="flex items-center gap-2 opacity-30"><i class="fa-solid fa-circle"></i> Deploying panel dashboard...</div>
         </div>
@@ -761,10 +784,10 @@
       }
     });
 
-    function handleDashboardNavigation(e) {
+    async function handleDashboardNavigation(e) {
       if (e) e.preventDefault();
       
-      const isEligible = checkSubscriptionStatus();
+      const isEligible = await checkSubscriptionStatus();
       if (!isEligible) {
         document.getElementById('subscription-lock-overlay').classList.remove('hidden');
         return;
@@ -774,8 +797,9 @@
       const userEmailDisplay = (currentUser && (currentUser.email || currentUser.mail)) || 'N/A';
       const userPhoneDisplay = (currentUser && (currentUser.whatsapp || currentUser.phone)) || 'N/A';
       const finalUrl = document.getElementById('summary-domain') ? document.getElementById('summary-domain').innerText : '';
+      const storedCode = localStorage.getItem('activeActivationCode') || '';
 
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}&subscribed=true&activated=true`;
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userNameDisplay)}&email=${encodeURIComponent(userEmailDisplay)}&phone=${encodeURIComponent(userPhoneDisplay)}&code=${encodeURIComponent(storedCode)}&subscribed=true&activated=true`;
     }
 
     function closeLockOverlayAndFocusPayment() {
@@ -784,7 +808,7 @@
     }
 
     function logoutUser() {
-      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token', 'authToken', 'jwt', 'accessToken', 'account', 'isSubscribed', 'activationCodeVerified'];
+      const keys = ['dashboardUser', 'authenticatedUser', 'userSession', 'currentUser', 'user', 'token', 'authToken', 'jwt', 'accessToken', 'account', 'isSubscribed', 'activationCodeVerified', 'activeActivationCode'];
       keys.forEach(k => {
         localStorage.removeItem(k);
         sessionStorage.removeItem(k);
@@ -959,6 +983,7 @@
         // Save verified status strictly on backend approval
         localStorage.setItem('isSubscribed', 'true');
         localStorage.setItem('activationCodeVerified', 'true');
+        localStorage.setItem('activeActivationCode', code);
 
         // Proceed with activation sequence
         setTimeout(() => {
@@ -968,7 +993,7 @@
         }, 1000);
 
         setTimeout(() => {
-          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> WhatsApp activation verified';
+          document.getElementById('log-2').innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Activation code verified by backend';
           document.getElementById('log-3').classList.remove('opacity-30');
           document.getElementById('log-3').innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-blue-400"></i> Provisioning tenant schema & SSL certificate...';
           document.getElementById('status-heading').innerText = 'Building Your Reseller Panel...';
@@ -1005,13 +1030,20 @@
       }
     }
 
-    function redirectToDashboard() {
+    async function redirectToDashboard() {
+      const isEligible = await checkSubscriptionStatus();
+      if (!isEligible) {
+        alert("Activation verification failed on backend. Please re-enter a valid code.");
+        return;
+      }
+
       const finalUrl = document.getElementById('summary-domain').innerText;
       const userIdent = currentUser ? (currentUser.username || 'User') : 'User';
       const userMail = currentUser ? (currentUser.email || 'N/A') : 'N/A';
       const userPhone = currentUser ? (currentUser.whatsapp || 'N/A') : 'N/A';
+      const storedCode = localStorage.getItem('activeActivationCode') || '';
       
-      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}&subscribed=true&activated=true`;
+      window.location.href = `customer-dashboard.html?domain=${encodeURIComponent(finalUrl)}&user=${encodeURIComponent(userIdent)}&email=${encodeURIComponent(userMail)}&phone=${encodeURIComponent(userPhone)}&code=${encodeURIComponent(storedCode)}&subscribed=true&activated=true`;
     }
 
     document.getElementById('theme-color').addEventListener('input', (e) => {
